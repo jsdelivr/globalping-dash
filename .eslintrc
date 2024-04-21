@@ -1,0 +1,112 @@
+{
+	"extends": [
+		"@nuxt/eslint-config",
+		"@martin-kolarik/eslint-config/typescript"
+	],
+	"parserOptions": {
+		"ecmaVersion": 2020
+	},
+	"overrides": [
+		{
+			"files": [
+				"*.vue"
+			],
+			"rules": {
+				"vue/component-tags-order": "off",
+				"vue/block-order": ["error", {
+					"order": [ "template", "script", "style" ]
+				}],
+				"vue/html-indent": [
+					"error",
+					"tab",
+					{
+						"baseIndent": 1
+					}
+				],
+				"vue/script-indent": [
+					"error",
+					"tab",
+					{
+						"baseIndent": 1
+					}
+				],
+				"vue/html-closing-bracket-spacing": [
+					"error",
+					{
+						"selfClosingTag": "never"
+					}
+				],
+				"vue/max-attributes-per-line": ["error", {
+					"singleline": {
+						"max": 5
+					},
+					"multiline": {
+						"max": 1
+					}
+				}],
+				"vue/singleline-html-element-content-newline": "off"
+			}
+		},
+		{
+			"files": [
+				"src/**/*.ts"
+			],
+			"extends": "@martin-kolarik/eslint-config/typescript-type-checking",
+			"parserOptions": {
+				"project": true
+			}
+		},
+		{
+			"files": [
+				"**"
+			],
+			"rules": {
+				"jsonc/no-comments": "off"
+			}
+		},
+		{
+			"files": [
+				"test/**"
+			],
+			"rules": {
+				"@typescript-eslint/no-explicit-any": "off",
+				"@typescript-eslint/no-non-null-assertion": "off",
+				"no-restricted-properties": [
+					"error",
+					{
+						"object": "sinon",
+						"property": "spy"
+					},
+					{
+						"object": "sinon",
+						"property": "stub"
+					},
+					{
+						"object": "sinon",
+						"property": "mock"
+					},
+					{
+						"object": "sinon",
+						"property": "fake"
+					},
+					{
+						"object": "sinon",
+						"property": "restore"
+					},
+					{
+						"object": "sinon",
+						"property": "reset"
+					},
+					{
+						"object": "sinon",
+						"property": "resetHistory"
+					},
+					{
+						"object": "sinon",
+						"property": "resetBehavior"
+					}
+				]
+			}
+		}
+	]
+}

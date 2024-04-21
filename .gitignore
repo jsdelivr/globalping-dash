@@ -1,0 +1,9 @@
+node_modules/
+config/local*
+.DS_Store
+.eslintcache
+.env*
+!.env*.example
+.vscode/
+.nuxt/
+.output/

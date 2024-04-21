@@ -1,0 +1,26 @@
+{
+	"name": "globalping-dash",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "nuxt build",
+		"dev": "nuxt dev",
+		"generate": "nuxt generate",
+		"lint": "ESLINT_USE_FLAT_CONFIG=0 eslint --cache --max-warnings=0 .",
+		"lint:fix": "ESLINT_USE_FLAT_CONFIG=0 eslint --cache --max-warnings=0 --fix .",
+		"preview": "nuxt preview",
+		"postinstall": "nuxt prepare"
+	},
+	"dependencies": {
+		"nuxt": "^3.11.2",
+		"primevue": "3.49.1",
+		"vue": "^3.4.21",
+		"vue-router": "^4.3.0"
+	},
+	"devDependencies": {
+		"@martin-kolarik/eslint-config": "^7.3.0",
+		"@nuxt/eslint-config": "^0.3.8",
+		"eslint": "^8.57.0",
+		"nuxt-primevue": "^0.3.1"
+	}
+}

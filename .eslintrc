@@ -12,6 +12,7 @@
 				"*.vue"
 			],
 			"rules": {
+				"indent": "off",
 				"vue/component-tags-order": "off",
 				"vue/block-order": ["error", {
 					"order": [ "template", "script", "style" ]

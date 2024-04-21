@@ -3,6 +3,9 @@ export default defineNuxtConfig({
 	devtools: {
 		enabled: true,
 	},
+	devServer: {
+		port: 13010,
+	},
 	modules: [
 		[ 'nuxt-primevue', {
 

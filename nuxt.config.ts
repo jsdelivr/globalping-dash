@@ -6,10 +6,11 @@ export default defineNuxtConfig({
 	devServer: {
 		port: 13010,
 	},
-	modules: [
-		[ 'nuxt-primevue', {
+	directus: {
+		url: 'http://localhost:18055',
+	},
+	modules: [ [ 'nuxt-primevue', {
 
-		}],
-	],
+	}], 'nuxt-directus' ],
 	css: [ 'primevue/resources/themes/aura-light-green/theme.css', 'primeicons/primeicons.css' ],
 });

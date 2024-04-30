@@ -1,6 +1,9 @@
 <template>
 	<section class="grid" style="min-height: 100vh;">
-		<header class="header"><h2>Header</h2></header>
+		<header class="header">
+			<h2>{{ auth.getUser.github_username }}</h2>
+			<Button label="Logout" @click="auth.logout"/>
+		</header>
 		<aside class="sidebar">
 			<h2>Sidebar</h2>
 		</aside>
@@ -11,6 +14,9 @@
 </template>
 
 <script lang="ts" setup>
+	import { useAuth } from '~/store/auth';
+
+	const auth = useAuth();
 </script>
 
 <style>
@@ -33,5 +39,6 @@ body {
 
 	.header {
 		grid-column: 1 / 3;
+		display: flex;
 	}
 </style>

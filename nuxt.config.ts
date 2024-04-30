@@ -10,6 +10,7 @@ export default defineNuxtConfig({
 		[ 'nuxt-primevue', {
 
 		}],
+		'@pinia/nuxt',
 	],
 	css: [ 'primevue/resources/themes/aura-light-green/theme.css', 'primeicons/primeicons.css' ],
 });

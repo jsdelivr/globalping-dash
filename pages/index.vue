@@ -12,17 +12,11 @@
 </template>
 
 <script setup lang="ts">
-	import { createDirectus, rest, authentication, readItems } from '@directus/sdk';
+	import { readItems } from '@directus/sdk';
 
-	const { data: adoptedProbes, error } = useAsyncData('tokens', async () => {
-		const directus = createDirectus('http://localhost:18055') // TODO: make it configurable
-			.with(authentication('cookie', { credentials: 'include' }))
-			.with(rest({ credentials: 'include' }));
+	const { $directus } = useNuxtApp();
 
-		// TODO: extend logic to call this as needed
-		await directus.refresh();
-
-		const adoptedProbes = directus.request(readItems('gp_adopted_probes'));
-		return adoptedProbes;
-	}, { server: false });
+	const { data: adoptedProbes } = await useAsyncData('gp_adopted_probes', () => {
+		return $directus.request(readItems('gp_adopted_probes'));
+	});
 </script>

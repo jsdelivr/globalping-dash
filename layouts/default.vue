@@ -1,6 +1,9 @@
 <template>
 	<section class="grid" style="min-height: 100vh;">
-		<header class="header"><h2>Header</h2></header>
+		<header class="header">
+			<h2>Header</h2>
+			<Button label="Logout" @click="logoutClick"/>
+		</header>
 		<aside class="sidebar">
 			<h2>Sidebar</h2>
 		</aside>
@@ -11,6 +14,12 @@
 </template>
 
 <script lang="ts" setup>
+	const { logout } = useDirectusAuth();
+
+	const logoutClick = async () => {
+		await logout();
+		navigateTo('/login');
+	};
 </script>
 
 <style>

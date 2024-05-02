@@ -18,9 +18,7 @@
 	const password = ref('');
 
 	const onSubmit = async () => {
-		try {
-			await login({ email: email.value, password: password.value });
-			navigateTo('/');
-		} catch (e) {}
+		await login({ email: email.value, password: password.value });
+		navigateTo('/');
 	};
 </script>

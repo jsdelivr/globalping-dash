@@ -20,8 +20,13 @@
 	const username = user.value.github_username;
 
 	const logoutClick = async () => {
-		await logout();
-		navigateTo('/login');
+		try {
+			await logout();
+		} catch (error) {
+			console.error(error);
+		} finally {
+			reloadNuxtApp({ force: true });
+		}
 	};
 </script>
 

@@ -8,8 +8,6 @@ export default defineNuxtPlugin(async () => {
 		.with(authentication('cookie', { credentials: 'include' }))
 		.with(rest({ credentials: 'include' }));
 
-	// await new Promise(res => setTimeout(res, 1000));
-
 	// const { access_token: token } = await directus.refresh();
 	const token = null;
 	const auth = useAuth();

@@ -1,7 +1,7 @@
 <template>
 	<section class="grid" style="min-height: 100vh;">
 		<header class="header">
-			<h2>Header</h2>
+			<h2>{{ username }}</h2>
 			<Button label="Logout" @click="logoutClick"/>
 		</header>
 		<aside class="sidebar">
@@ -15,6 +15,9 @@
 
 <script lang="ts" setup>
 	const { logout } = useDirectusAuth();
+	const user = useDirectusUser();
+
+	const username = user.value.github_username;
 
 	const logoutClick = async () => {
 		await logout();

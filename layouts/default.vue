@@ -17,7 +17,7 @@
 	const { logout } = useDirectusAuth();
 	const user = useDirectusUser();
 
-	const username = user.value.github_username;
+	const username = user?.value?.github_username;
 
 	const logoutClick = async () => {
 		try {

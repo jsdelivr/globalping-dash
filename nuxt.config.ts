@@ -9,6 +9,9 @@ export default defineNuxtConfig({
 	},
 	directus: {
 		url: 'http://localhost:18055',
+		autoRefresh: true,
+		cookieNameToken: 'dash_directus_token',
+		cookieNameRefreshToken: 'dash_directus_refresh_token',
 	},
 	modules: [ [ 'nuxt-primevue', {
 

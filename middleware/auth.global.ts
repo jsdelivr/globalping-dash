@@ -1,5 +1,8 @@
 export default defineNuxtRouteMiddleware(async (to) => {
 	const { fetchUser, setUser } = useDirectusAuth();
+
+	refreshToken();
+
 	const user = useDirectusUser();
 
 	if (!user.value) {

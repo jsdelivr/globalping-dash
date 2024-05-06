@@ -1,7 +1,11 @@
 import { useAuth } from '~/store/auth';
 
-export default defineNuxtRouteMiddleware((to) => {
+export default defineNuxtRouteMiddleware(async (to) => {
 	const user = useAuth();
+
+	if (!user.isLoggedIn) {
+		await user.fetchUser();
+	}
 
 	if (user.isLoggedIn && to?.name === 'login') {
 		abortNavigation();

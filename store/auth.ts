@@ -18,49 +18,28 @@ export const useAuth = defineStore('auth', {
 	},
 
 	actions: {
-		async login ({ email, password, redirect }) {
-			const router = useRouter();
-			const { $directus } = useNuxtApp();
-			console.log('$directus', $directus);
-
-			try {
-				await $directus.login(email, password);
-				const user = await $directus.request(readMe());
-				this.isLoggedIn = true;
-				this.user = user;
-
-				router.push(redirect || '/');
-			} catch (e) {
-				console.log(e);
-				throw new Error('Wrong email address or password');
-			}
+		async login () {
+			const redirect = `${window.location.origin}${'/'}`;
+			await navigateTo(`http://127.0.0.1:18055/auth/login/github?redirect=${encodeURIComponent(redirect)}`, { external: true });
 		},
 		async logout () {
-			const router = useRouter();
 			const { $directus } = useNuxtApp();
 
-			try {
-				await $directus.logout();
-				this.$reset();
-				router.push('/login');
-			} catch (e) {
-				console.log(e);
-				throw new Error('Issue logging out');
-			}
+			await $directus.logout();
+			this.$reset();
+			navigateTo('/login');
 		},
 		async fetchUser () {
 			const { $directus } = useNuxtApp();
 
 			try {
-				const user = await $directus.users.me.read({ fields: [ '*' ] });
+				await $directus.refresh();
+				const user = await $directus.request(readMe());
 				this.isLoggedIn = true;
 				this.user = user;
-			} catch (e) {
-				console.log(e);
+			} catch (error) {
+				console.error(error);
 			}
-		},
-		async resetState () {
-			this.$reset();
 		},
 	},
 });

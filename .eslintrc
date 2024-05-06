@@ -1,7 +1,7 @@
 {
 	"extends": [
-		"@nuxt/eslint-config",
-		"@martin-kolarik/eslint-config/typescript"
+		"@martin-kolarik/eslint-config/typescript",
+		"@nuxt/eslint-config"
 	],
 	"parserOptions": {
 		"ecmaVersion": 2020
@@ -62,7 +62,8 @@
 				"**"
 			],
 			"rules": {
-				"jsonc/no-comments": "off"
+				"jsonc/no-comments": "off",
+				"n/no-missing-import": "off"
 			}
 		},
 		{

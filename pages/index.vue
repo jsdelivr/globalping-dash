@@ -16,7 +16,7 @@
 
 	const { $directus } = useNuxtApp();
 
-	const { data: adoptedProbes } = await useAsyncData('gp_adopted_probes', () => {
+	const { data: adoptedProbes } = await useAsyncData('adoptedProbes', () => {
 		return $directus.request(readItems('gp_adopted_probes'));
 	});
 </script>

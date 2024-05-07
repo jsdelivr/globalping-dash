@@ -2,12 +2,16 @@
 	<section class="grid" style="min-height: 100vh;">
 		<header class="header">
 			<h2>{{ auth.getUser.github_username }}</h2>
-			<NuxtLink to="/">Main</NuxtLink>
-			<NuxtLink to="/content">Content</NuxtLink>
 			<Button label="Logout" @click="auth.logout"/>
 		</header>
 		<aside class="sidebar">
 			<h2>Sidebar</h2>
+			<ul>
+				<li><NuxtLink to="/">Overview</NuxtLink></li>
+				<li><NuxtLink to="/probes">Probes</NuxtLink></li>
+				<li><NuxtLink to="/credits">Credits</NuxtLink></li>
+				<li><NuxtLink to="/tokens">Tokens</NuxtLink></li>
+			</ul>
 		</aside>
 		<div class="content">
 			<slot/>

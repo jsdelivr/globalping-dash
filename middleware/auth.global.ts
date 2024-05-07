@@ -1,18 +1,18 @@
 import { useAuth } from '~/store/auth';
 
 export default defineNuxtRouteMiddleware(async (to) => {
-	const user = useAuth();
+	const auth = useAuth();
 
-	if (!user.isLoggedIn) {
-		await user.fetchUser();
+	if (!auth.isLoggedIn) {
+		await auth.refresh();
 	}
 
-	if (user.isLoggedIn && to?.name === 'login') {
+	if (auth.isLoggedIn && to?.name === 'login') {
 		abortNavigation();
 		return navigateTo('/');
 	}
 
-	if (!user.isLoggedIn && to?.name !== 'login') {
+	if (!auth.isLoggedIn && to?.name !== 'login') {
 		abortNavigation();
 		return navigateTo('/login');
 	}

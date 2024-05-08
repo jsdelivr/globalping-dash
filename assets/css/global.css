@@ -1,0 +1,16 @@
+
+body, p {
+	margin: 0;
+}
+
+section {
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

@@ -1,5 +1,5 @@
 <template>
-	<section class="grid" style="min-height: 100vh;">
+	<section class="grid">
 		<header class="header">
 			<h2>{{ auth.getUser.github_username }}</h2>
 			<Button label="Logout" @click="auth.logout"/>
@@ -24,12 +24,6 @@
 
 	const auth = useAuth();
 </script>
-
-<style>
-body {
-	margin: 0;
-}
-</style>
 
 <style scoped>
 	.header, .sidebar, .content {

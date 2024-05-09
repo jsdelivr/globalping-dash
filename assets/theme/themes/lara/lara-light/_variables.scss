@@ -23,13 +23,14 @@ $shade500:#9ca3af !default;    //input icon
 $shade600:#6b7280 !default;    //text secondary color
 $shade700:#4b5563 !default;    //text color
 $shade800:#374151 !default;    //unused
-$shade900:#1f2937 !default;    //unused
+// $shade900:#1f2937 !default;    //unused
+$shade900:#282e38 !default;    //new text color
 
 //global
 $fontFamily:'Inter var', sans-serif !default;
 $fontSize:1rem !default;
 $fontWeight:normal !default;
-$textColor:$shade700 !default;
+$textColor:$shade900 !default;
 $textSecondaryColor:$shade600 !default;
 $borderRadius:6px !default;
 $transitionDuration:.2s !default;
@@ -71,7 +72,7 @@ $inputPadding:.75rem .75rem !default;
 $inputTextFontSize:1rem !default;
 
 $inputBg:$shade000 !default;
-$inputTextColor:$shade700 !default;
+$inputTextColor:$shade900 !default;
 $inputIconColor:$shade600 !default;
 $inputBorder:1px solid $shade400 !default;
 $inputHoverBorderColor:$primaryColor !default;
@@ -89,16 +90,16 @@ $inputGroupAddOnMinWidth: 3rem !default;
 
 //input lists (e.g. dropdown, autocomplete, multiselect, orderlist)
 $inputListBg:$shade000 !default;
-$inputListTextColor:$shade700 !default;
+$inputListTextColor:$shade900 !default;
 $inputListBorder:$inputBorder !default;
 $inputListPadding:.75rem 0 !default;
 $inputListItemPadding:.75rem 1.25rem !default;
 $inputListItemBg:transparent !default;
-$inputListItemTextColor:$shade700 !default;
+$inputListItemTextColor:$shade900 !default;
 $inputListItemHoverBg:$shade200 !default;
-$inputListItemTextHoverColor:$shade700 !default;
+$inputListItemTextHoverColor:$shade900 !default;
 $inputListItemFocusBg:$shade300 !default;
-$inputListItemTextFocusColor:$shade700 !default;
+$inputListItemTextFocusColor:$shade900 !default;
 $inputListItemBorder:0 none !default;
 $inputListItemBorderRadius:0 !default;
 $inputListItemMargin:0 !default;
@@ -216,9 +217,9 @@ $contrastButtonBorder:1px solid $contrastButtonBg !default;
 $contrastButtonHoverBg:$shade800 !default;
 $contrastButtonTextHoverColor:$contrastButtonTextColor !default;
 $contrastButtonHoverBorderColor:$shade800 !default;
-$contrastButtonActiveBg:$shade700 !default;
+$contrastButtonActiveBg:$shade900 !default;
 $contrastButtonTextActiveColor:$contrastButtonTextColor !default;
-$contrastButtonActiveBorderColor:$shade700 !default;
+$contrastButtonActiveBorderColor:$shade900 !default;
 $contrastButtonFocusShadow:none !default;
 
 $linkButtonColor:$primaryDarkerColor !default;
@@ -260,11 +261,11 @@ $colorPickerHandleColor:$shade000 !default;
 //togglebutton
 $toggleButtonBg:$inputBg !default;
 $toggleButtonBorder:1px solid $shade400 !default;
-$toggleButtonTextColor:$shade700 !default;
+$toggleButtonTextColor:$shade900 !default;
 $toggleButtonIconColor:$shade600 !default;
 $toggleButtonHoverBg:$shade200 !default;
 $toggleButtonHoverBorderColor:$shade400 !default;
-$toggleButtonTextHoverColor:$shade700 !default;
+$toggleButtonTextHoverColor:$shade900 !default;
 $toggleButtonIconHoverColor:$shade800 !default;
 $toggleButtonActiveBg:$primaryColor !default;
 $toggleButtonActiveBorderColor:$primaryColor !default;
@@ -278,13 +279,13 @@ $toggleButtonIconActiveHoverColor:$primaryTextColor !default;
 //inplace
 $inplacePadding:$inputPadding !default;
 $inplaceHoverBg:$shade200 !default;
-$inplaceTextHoverColor:$shade700 !default;
+$inplaceTextHoverColor:$shade900 !default;
 
 //rating
 $ratingIconFontSize:1.143rem !default;
 $ratingCancelIconColor:#ea5455 !default;
 $ratingCancelIconHoverColor:#e73d3e !default;
-$ratingStarIconOffColor:$shade700 !default;
+$ratingStarIconOffColor:$shade900 !default;
 $ratingStarIconOnColor:$primaryColor !default;
 $ratingStarIconHoverColor:$primaryColor !default;
 
@@ -307,7 +308,7 @@ $calendarTableMargin:.5rem 0 !default;
 $calendarPadding:.5rem !default;
 $calendarBg:$shade000 !default;
 $calendarInlineBg:$calendarBg !default;
-$calendarTextColor:$shade700 !default;
+$calendarTextColor:$shade900 !default;
 $calendarBorder:$inputListBorder !default;
 $calendarOverlayBorder:$inputOverlayBorder !default;
 
@@ -315,7 +316,7 @@ $calendarHeaderPadding:.5rem !default;
 $calendarHeaderBg:$shade000 !default;
 $calendarInlineHeaderBg:$calendarBg !default;
 $calendarHeaderBorder:1px solid $shade300 !default;
-$calendarHeaderTextColor:$shade700 !default;
+$calendarHeaderTextColor:$shade900 !default;
 $calendarHeaderFontWeight:600 !default;
 $calendarHeaderCellPadding:.5rem !default;
 $calendarMonthYearHeaderHoverTextColor: $primaryColor !default;
@@ -328,7 +329,7 @@ $calendarCellDateBorder:1px solid transparent !default;
 $calendarCellDateHoverBg:$shade200 !default;
 $calendarCellDateTodayBg:$shade400 !default;
 $calendarCellDateTodayBorderColor:transparent !default;
-$calendarCellDateTodayTextColor:$shade700 !default;
+$calendarCellDateTodayTextColor:$shade900 !default;
 
 $calendarButtonBarPadding:1rem 0 !default;
 $calendarTimePickerPadding:.5rem !default;
@@ -370,12 +371,12 @@ $panelContentBorderColor: $shade300 !default;
 $panelContentBorder:1px solid $shade300 !default;
 $panelContentBg:$shade000 !default;
 $panelContentEvenRowBg:#f8f8fa !default;
-$panelContentTextColor:$shade700 !default;
+$panelContentTextColor:$shade900 !default;
 $panelContentPadding:1.25rem !default;
 
 $panelFooterBorder:1px solid $shade300 !default;
 $panelFooterBg:$shade000 !default;
-$panelFooterTextColor:$shade700 !default;
+$panelFooterTextColor:$shade900 !default;
 $panelFooterPadding:0.75rem 1.25rem !default;
 
 //accordion
@@ -505,10 +506,10 @@ $tableHeaderCellHighlightTextHoverColor:$highlightTextColor !default;
 $tableSortableColumnBadgeSize:1.143rem !default;
 
 $tableBodyRowBg:$shade000 !default;
-$tableBodyRowTextColor:$shade700 !default;
+$tableBodyRowTextColor:$shade900 !default;
 $tableBodyRowEvenBg:#f8f8fa !default;
 $tableBodyRowHoverBg:$shade200 !default;
-$tableBodyRowTextHoverColor:$shade700 !default;
+$tableBodyRowTextHoverColor:$shade900 !default;
 $tableBodyCellBorder:1px solid $shade300 !default;
 $tableBodyCellBorderWidth:0 0 1px 0 !default;
 $tableBodyCellPadding:1rem 1rem !default;
@@ -633,7 +634,7 @@ $confirmPopupContentPadding:$panelContentPadding !default;
 $confirmPopupFooterPadding:0 1.25rem 1.25rem 1.25rem !default;
 
 //tooltip
-$tooltipBg:$shade700 !default;
+$tooltipBg:$shade900 !default;
 $tooltipTextColor:$shade000 !default;
 $tooltipPadding:$inputPadding !default;
 
@@ -644,7 +645,7 @@ $stepsItemTextColor:$shade600 !default;
 $stepsItemNumberWidth:2rem !default;
 $stepsItemNumberHeight:2rem !default;
 $stepsItemNumberFontSize:1.143rem !default;
-$stepsItemNumberColor:$shade700 !default;
+$stepsItemNumberColor:$shade900 !default;
 $stepsItemNumberBorderRadius:50% !default;
 $stepsItemActiveFontWeight:700 !default;
 
@@ -665,16 +666,16 @@ $progressSpinnerColorFour:$warningMessageTextColor !default;
 $menuWidth:12.5rem !default;
 $menuBg:$shade000 !default;
 $menuBorder:1px solid $shade300 !default;
-$menuTextColor:$shade700 !default;
+$menuTextColor:$shade900 !default;
 $menuitemPadding:.75rem 1.25rem !default;
 $menuitemBorderRadius:0 !default;
-$menuitemTextColor:$shade700 !default;
+$menuitemTextColor:$shade900 !default;
 $menuitemIconColor:$shade600 !default;
-$menuitemTextHoverColor:$shade700 !default;
+$menuitemTextHoverColor:$shade900 !default;
 $menuitemIconHoverColor:$shade600 !default;
 $menuitemHoverBg:$shade200 !default;
-$menuitemTextFocusColor:$shade700 !default;
-$menuitemIconFocusColor:$shade700 !default;
+$menuitemTextFocusColor:$shade900 !default;
+$menuitemIconFocusColor:$shade900 !default;
 $menuitemFocusBg:$shade300 !default;
 $menuitemTextActiveColor:$highlightTextColor !default;
 $menuitemIconActiveColor:$highlightTextColor !default;
@@ -823,7 +824,7 @@ $speedDialButtonHeight: 4rem !default;
 $speedDialButtonIconFontSize: 1.3rem !default;
 $speedDialActionWidth: 3rem !default;
 $speedDialActionHeight: 3rem !default;
-$speedDialActionBg: $shade700 !default;
+$speedDialActionBg: $shade900 !default;
 $speedDialActionHoverBg: #022354 !default;
 $speedDialActionTextColor: #fff !default;
 $speedDialActionTextHoverColor: #fff !default;
@@ -857,17 +858,17 @@ $imagePreviewActionIconBorderRadius:50% !default;
 
 :root {
     font-family:'Inter var', sans-serif;
-    font-feature-settings: "cv02","cv03","cv04","cv11";
+    // font-feature-settings: "cv02","cv03","cv04","cv11";
     font-variation-settings: normal;
     --font-family:'Inter var', sans-serif;
-    --font-feature-settings: "cv02","cv03","cv04","cv11";
+    // --font-feature-settings: "cv02","cv03","cv04","cv11";
     --surface-a:#{$shade000};
     --surface-b:#{$shade100};
     --surface-c:#{$shade200};
     --surface-d:#{$shade300};
     --surface-e:#{$shade000};
     --surface-f:#{$shade000};
-    --text-color:#{$shade700};
+    --text-color:#{$shade900};
     --text-color-secondary:#{$shade600};
     --primary-color:#{$primaryColor};
     --primary-color-text:#{$primaryTextColor};

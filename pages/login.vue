@@ -61,30 +61,23 @@
 	.login__jsd-link {
 		font-size: 12px;
 		margin: 8px;
-		color: var(--bluegray-500);
+		color: var(--bluegray-200);
 
 	}
 
 	.login__title {
 		font-size: 28px;
 		line-height: 34px;
-		color: var(--bluegray-900);
 		margin-bottom: 24px;
 	}
 
 	.login__text {
-		font-size: 14px;
 		margin-bottom: 24px;
 	}
 
 	.login__gh-button {
 		width: 336px;
-		height: 40px;
-		font-size: 14px;
-		font-weight: bold;
 		text-align: left;
-		padding-left: 18px;
-		padding-right: 18px;
 	}
 
 	.image {

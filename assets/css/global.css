@@ -1,22 +1,10 @@
-@font-face {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("~/public/fonts/Inter/Inter-Regular.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("~/public/fonts/Inter/Inter-Bold.woff2") format("woff2");
+html {
+  font-size: 14px;
 }
 
 body {
-  font-family: 'Inter', sans-serif;
 	margin: 0;
+  color: var(--text-color);
 }
 
 p, h1 {

@@ -13,5 +13,5 @@ export default defineNuxtConfig({
 		}],
 		'@pinia/nuxt',
 	],
-	css: [ '~/assets/css/global.css', 'primevue/resources/themes/aura-light-green/theme.css', 'primeicons/primeicons.css' ],
+	css: [ 'primevue/resources/themes/aura-light-green/theme.css', 'primeicons/primeicons.css', '~/assets/css/global.css' ],
 });

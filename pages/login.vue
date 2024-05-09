@@ -52,14 +52,14 @@
 	}
 
 	.login__main-logo {
-		width: 178px;
+		width: 180px;
 		height: 36px;
 	}
 
 	.login__jsd-link {
 		font-size: 12px;
 		margin: 8px;
-		color: var(--surface-400);
+		color: var(--bluegray-500);
 
 	}
 

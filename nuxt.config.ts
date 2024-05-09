@@ -1,4 +1,3 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 	ssr: false,
 	devtools: {
@@ -13,5 +12,5 @@ export default defineNuxtConfig({
 		}],
 		'@pinia/nuxt',
 	],
-	css: [ 'primevue/resources/themes/aura-light-green/theme.css', 'primeicons/primeicons.css', '~/assets/css/global.css' ],
+	css: [ '~/assets/theme/themes/lara/lara-light/green/theme.scss', 'primeicons/primeicons.css', '~/assets/css/global.css' ],
 });

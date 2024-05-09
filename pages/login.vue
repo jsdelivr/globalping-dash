@@ -17,6 +17,7 @@
 				label="Log in with GitHub"
 				@click="auth.login"
 			/>
+			<div class="login__filler"/>
 			<p class="login__bottom-text">Not authenticated</p>
 		</div>
 		<div class="image"/>
@@ -42,7 +43,8 @@
 
 	.login {
 		padding: 48px;
-		position: relative;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.login__logo {
@@ -92,10 +94,11 @@
 		border-radius: 12px;
 	}
 
+	.login__filler {
+		flex-grow: 1;
+	}
+
 	.login__bottom-text {
 		color: var(--bluegray-500);
-		position: absolute;
-		bottom: 48px;
-		left: 48px;
 	}
 </style>

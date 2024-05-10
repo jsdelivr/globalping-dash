@@ -2,10 +2,10 @@
 	<section>
 		<div class="login">
 			<div class="login__logo">
-				<a href="/">
+				<NuxtLink to="/">
 					<img class="login__main-logo" src="~/assets/images/gp-logo.svg" alt="Globalping logo">
-				</a>
-				<a href="https://www.jsdelivr.com/" class="login__jsd-link">by jsDelivr</a>
+				</NuxtLink>
+				<NuxtLink to="https://www.jsdelivr.com/" class="login__jsd-link">by jsDelivr</NuxtLink>
 			</div>
 			<h1 class="login__title">Manage your jsDelivr and Globalping statistics</h1>
 			<p class="login__text">Welcome! Log in to your account.</p>
@@ -62,7 +62,6 @@
 		font-size: 12px;
 		margin: 8px;
 		color: var(--bluegray-200);
-
 	}
 
 	.login__title {

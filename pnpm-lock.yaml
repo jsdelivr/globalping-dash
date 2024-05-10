@@ -14,6 +14,9 @@ importers:
       '@pinia/nuxt':
         specifier: ^0.5.1
         version: 0.5.1(rollup@4.14.3)(typescript@5.4.5)(vue@3.4.23(typescript@5.4.5))
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       nuxt:
         specifier: ^3.11.2
         version: 3.11.2(@parcel/watcher@2.4.1)(@types/node@20.12.7)(@unocss/reset@0.59.4)(encoding@0.1.13)(eslint@8.57.0)(floating-vue@5.2.2(@nuxt/kit@3.11.2(rollup@4.14.3))(vue@3.4.23(typescript@5.4.5)))(ioredis@5.4.1)(optionator@0.9.3)(rollup@4.14.3)(sass@1.77.0)(terser@5.30.3)(typescript@5.4.5)(unocss@0.59.4(postcss@8.4.38)(rollup@4.14.3)(vite@5.2.9(@types/node@20.12.7)(sass@1.77.0)(terser@5.30.3)))(vite@5.2.9(@types/node@20.12.7)(sass@1.77.0)(terser@5.30.3))
@@ -39,6 +42,9 @@ importers:
       '@nuxt/eslint-config':
         specifier: ^0.3.8
         version: 0.3.8(eslint@8.57.0)(typescript@5.4.5)
+      '@types/lodash':
+        specifier: ^4.17.1
+        version: 4.17.1
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -940,6 +946,9 @@ packages:
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
+
+  '@types/lodash@4.17.1':
+    resolution: {integrity: sha512-X+2qazGS3jxLAIz5JDXDzglAF3KpijdhFxlf/V1+hEsOUc+HnWi81L/uv/EvGuV90WY+7mPGFCUDGfQC3Gj95Q==}
 
   '@types/node@20.12.7':
     resolution: {integrity: sha512-wq0cICSkRLVaf3UGLMGItu/PtdY7oaXaI/RVU+xliKVOtRna3PRY57ZDfztpDL0n11vfymMUnXv8QwYCO7L1wg==}
@@ -5293,6 +5302,8 @@ snapshots:
       '@types/node': 20.12.7
 
   '@types/json-schema@7.0.15': {}
+
+  '@types/lodash@4.17.1': {}
 
   '@types/node@20.12.7':
     dependencies:

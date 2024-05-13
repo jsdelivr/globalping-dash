@@ -11,14 +11,6 @@ section {
   min-height: 100vh;
 }
 
-a {
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
 .p-overlaypanel {
   margin-top: 0px;
 }
@@ -29,10 +21,6 @@ a:hover {
 
 .p-overlaypanel-content {
   padding: 0;
-}
-
-.p-accordion-header a:hover {
-  text-decoration: none;
 }
 
 .p-accordion-header .p-accordion-header-link {

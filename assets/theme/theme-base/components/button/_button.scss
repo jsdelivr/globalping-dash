@@ -125,18 +125,21 @@
 
     &.p-button-text {
         background-color: transparent;
-        color: $buttonBg;
+        // color: $buttonBg;
+        color: $shade000;
         border-color: transparent;
 
         &:not(:disabled):hover {
             background: rgba($buttonBg, $textButtonHoverBgOpacity);
-            color: $buttonBg;
+            // color: $buttonBg;
+            color: $shade000;
             border-color: transparent;
         }
 
         &:not(:disabled):active {
             background: rgba($buttonBg, $textButtonActiveBgOpacity);
-            color: $buttonBg;
+            // color: $buttonBg;
+            color: $shade000;
             border-color: transparent;
         }
 

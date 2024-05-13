@@ -59,9 +59,14 @@
 	}
 
 	.login__jsd-link {
+		text-decoration: none;
 		font-size: 12px;
 		margin: 8px;
 		color: var(--bluegray-200);
+	}
+
+	.login__jsd-link:hover {
+		text-decoration: underline;
 	}
 
 	.login__title {

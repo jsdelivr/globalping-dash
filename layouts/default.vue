@@ -26,12 +26,25 @@
 					</AccordionTab>
 				</Accordion>
 			</OverlayPanel>
-			<div class="profile">
+			<Button class="profile" text rounded @click="toggleProfile">
 				<i class="pi pi-user profile__user-icon" style="font-size: 1.1rem"/>
 				<p class="profile__username">{{ user.github_username }}</p>
 				<i class="pi pi-chevron-down" style="font-size: 0.7rem"/>
-			</div>
-			<!-- <Button label="Logout" @click="auth.logout"/> -->
+			</Button>
+			<TieredMenu ref="profilePanel" :model="items" popup>
+				<template #item="{ item }">
+					<router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
+						<a class="p-menuitem-link" :href="href" @click="navigate">
+							<span class="p-menuitem-icon" :class="item.icon"/>
+							<span>{{ item.label }}</span>
+						</a>
+					</router-link>
+					<a v-else class="p-menuitem-link" :href="item.url" :target="item.target">
+						<span class="p-menuitem-icon" :class="item.icon"/>
+						<span>{{ item.label }}</span>
+					</a>
+				</template>
+			</TieredMenu>
 		</header>
 		<aside class="sidebar">
 			<h2>Sidebar</h2>
@@ -54,12 +67,14 @@
 	import { readNotifications, updateNotifications } from '@directus/sdk';
 	import markdownit from 'markdown-it';
 
-	const md = markdownit();
-
 	const { $directus } = useNuxtApp();
 
 	const auth = useAuth();
 	const user = auth.getUser;
+
+	// NOTIFICATIONS
+
+	const md = markdownit();
 
 	const notificationsPanel = ref();
 	const toggleNotifications = async (event) => {
@@ -77,6 +92,34 @@
 	const newNotifications = computed(() => notifications.value.filter(notification => notification.status === 'inbox'));
 
 	const reverseNotifications = computed(() => [ ...notifications.value ].reverse());
+
+	// NOTIFICATIONS END
+
+	// PROFILE
+
+	const items = ref([
+		{
+			label: 'Settings',
+			icon: 'pi pi-file',
+			route: '/probes',
+		},
+		{
+			separator: true,
+		},
+		{
+			label: 'Log out',
+			icon: 'pi pi-file-edit',
+			command: auth.logout,
+		},
+	]);
+
+	const profilePanel = ref();
+	const toggleProfile = async (event) => {
+		profilePanel.value.toggle(event);
+	};
+
+	// PROFILE END
+
 </script>
 
 <style scoped>
@@ -100,9 +143,14 @@
 	}
 
 	.header__jsd-link {
+		text-decoration: none;
 		font-size: 12px;
 		margin: 8px;
 		color: var(--bluegray-600);
+	}
+
+	.header__jsd-link:hover {
+		text-decoration: underline;
 	}
 
 	.header__filler {
@@ -110,8 +158,13 @@
 	}
 
 	.header__external-link {
+		text-decoration: none;
 		color: var(--surface-0);
 		margin-left: 24px;
+	}
+
+	.header__external-link:hover {
+		text-decoration: underline;
 	}
 
 	.header__external-link i {
@@ -134,7 +187,6 @@
 	}
 
 	.notifications {
-		color: var(--surface-0);
 		margin-right: 48px;
 		position: relative;
 	}

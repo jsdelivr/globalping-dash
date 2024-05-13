@@ -76,6 +76,7 @@
 
 	.login__gh-button {
 		width: 336px;
+		height: 40px;
 		text-align: left;
 	}
 

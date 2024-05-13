@@ -17,11 +17,11 @@
 			<p class="header__account-type-title">Account type: <span class="header__account-type">{{ capitalize(user.user_type) }}</span></p>
 			<Button class="notifications" text rounded @click="toggleNotifications">
 				<i class="pi pi-bell" style="font-size: 1.3rem"/>
-				<i class="pi pi-circle-fill notifications__new-icon" style="font-size: 0.3rem"/>
+				<i v-if="newNotifications.length" class="pi pi-circle-fill notifications__new-icon" style="font-size: 0.3rem"/>
 			</Button>
 			<OverlayPanel ref="notificationsPanel">
 				<Accordion class="notifications__accordion" expand-icon="pi pi-chevron-up">
-					<AccordionTab v-for="notification in notifications" :key="notification.id" :header="notification.subject">
+					<AccordionTab v-for="notification in reverseNotifications" :key="notification.id" :header="notification.subject">
 						<span class="notifications__content" v-html="md.render(notification.message)"/>
 					</AccordionTab>
 				</Accordion>
@@ -51,7 +51,7 @@
 <script lang="ts" setup>
 	import { useAuth } from '~/store/auth';
 	import capitalize from 'lodash/capitalize';
-	import { readNotifications } from '@directus/sdk';
+	import { readNotifications, updateNotifications } from '@directus/sdk';
 	import markdownit from 'markdown-it';
 
 	const md = markdownit();
@@ -62,15 +62,21 @@
 	const user = auth.getUser;
 
 	const notificationsPanel = ref();
-	const toggleNotifications = (event) => {
+	const toggleNotifications = async (event) => {
 		notificationsPanel.value.toggle(event);
+
+		if (newNotifications.value.length) {
+			await $directus.request(updateNotifications(newNotifications.value.map(notification => notification.id), { status: 'archived' }));
+		}
 	};
 
-	const { data: notifications } = await useAsyncData('adoptedProbes', () => {
+	const { data: notifications } = await useAsyncData('notifications', () => {
 		return $directus.request(readNotifications());
 	});
 
-	console.log('notifications', notifications.value);
+	const newNotifications = computed(() => notifications.value.filter(notification => notification.status === 'inbox'));
+
+	const reverseNotifications = computed(() => [ ...notifications.value ].reverse());
 </script>
 
 <style scoped>
@@ -136,8 +142,8 @@
 	.notifications__new-icon {
 		color: var(--primary-color);
 		position: absolute;
-		top: 8px;
-		right: 15px;
+		top: 5px;
+		right: 12px;
 	}
 
 	.notifications__accordion {

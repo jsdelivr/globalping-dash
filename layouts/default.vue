@@ -48,8 +48,8 @@
 		</header>
 		<aside class="sidebar">
 			<NuxtLink active-class="active" class="sidebar__link" to="/"><i class="pi pi-home"/>Overview</NuxtLink>
-			<NuxtLink active-class="active" class="sidebar__link" to="/probes"><i class="pi pi-home"/>Probes</NuxtLink>
-			<NuxtLink active-class="active" class="sidebar__link" to="/credits"><i class="pi pi-home"/>Credits</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar__link" to="/probes"><nuxt-icon class="pi" name="probe"/>Probes</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar__link" to="/credits"><nuxt-icon class="pi" name="coin"/>Credits</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar__link" to="/tokens"><i class="pi pi-database"/>Tokens</NuxtLink>
 		</aside>
 		<div class="content">

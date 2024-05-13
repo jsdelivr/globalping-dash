@@ -23,6 +23,9 @@ importers:
       nuxt:
         specifier: ^3.11.2
         version: 3.11.2(@parcel/watcher@2.4.1)(@types/node@20.12.7)(@unocss/reset@0.59.4)(encoding@0.1.13)(eslint@8.57.0)(floating-vue@5.2.2(@nuxt/kit@3.11.2(rollup@4.14.3))(vue@3.4.23(typescript@5.4.5)))(ioredis@5.4.1)(optionator@0.9.3)(rollup@4.14.3)(sass@1.77.0)(terser@5.30.3)(typescript@5.4.5)(unocss@0.59.4(postcss@8.4.38)(rollup@4.14.3)(vite@5.2.9(@types/node@20.12.7)(sass@1.77.0)(terser@5.30.3)))(vite@5.2.9(@types/node@20.12.7)(sass@1.77.0)(terser@5.30.3))
+      nuxt-icons:
+        specifier: ^3.2.1
+        version: 3.2.1(rollup@4.14.3)
       pinia:
         specifier: ^2.1.7
         version: 2.1.7(typescript@5.4.5)(vue@3.4.23(typescript@5.4.5))
@@ -2949,6 +2952,9 @@ packages:
     resolution: {integrity: sha512-AW71TpxRHNg8MplQVju9tEFvXPvX42e0wPYknutSStDuAjV99vWTWYed4jxr/grk2FtKAuv2KvdJxcn2W59qyg==}
     engines: {node: ^16.10.0 || >=18.0.0}
     hasBin: true
+
+  nuxt-icons@3.2.1:
+    resolution: {integrity: sha512-trvAFq9oWYwWEQ0qZDHVxvLK+TwOdFnoXYOXQvN1CRUlp1DBJdxC8vXO3mED2Kb+Suag+bpWLC6eXGrRwhfffQ==}
 
   nuxt-primevue@0.3.1:
     resolution: {integrity: sha512-wTFvUbniEhntFamnRP4znMqU9a4lYr7eXvA7FW5nGX51YCV3nJzXZlCML4l6kEL0pyJsSV4DTb0Qo61nZnn9JQ==}
@@ -7720,6 +7726,13 @@ snapshots:
   nuxi@3.11.1:
     optionalDependencies:
       fsevents: 2.3.3
+
+  nuxt-icons@3.2.1(rollup@4.14.3):
+    dependencies:
+      '@nuxt/kit': 3.11.2(rollup@4.14.3)
+    transitivePeerDependencies:
+      - rollup
+      - supports-color
 
   nuxt-primevue@0.3.1(rollup@4.14.3)(vue@3.4.23(typescript@5.4.5)):
     dependencies:

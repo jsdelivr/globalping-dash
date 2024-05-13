@@ -15,7 +15,17 @@
 				<span>Globalping</span>
 			</NuxtLink>
 			<p class="header__account-type-title">Account type: <span class="header__account-type">{{ capitalize(user.user_type) }}</span></p>
-			<i class="pi pi-bell header__notifications-icon" style="font-size: 1.3rem"/>
+			<Button class="notifications" text rounded @click="toggleNotifications">
+				<i class="pi pi-bell" style="font-size: 1.3rem"/>
+				<i class="pi pi-circle-fill notifications__new-icon" style="font-size: 0.3rem"/>
+			</Button>
+			<OverlayPanel ref="notificationsPanel">
+				<Accordion class="notifications__accordion" expand-icon="pi pi-chevron-up">
+					<AccordionTab v-for="notification in notifications" :header="notification.subject">
+						<p>{{ notification.message }}</p>
+					</AccordionTab>
+				</Accordion>
+			</OverlayPanel>
 			<div class="profile">
 				<i class="pi pi-user profile__user-icon" style="font-size: 1.1rem"/>
 				<p class="profile__username">{{ user.github_username }}</p>
@@ -41,9 +51,23 @@
 <script lang="ts" setup>
 	import { useAuth } from '~/store/auth';
 	import capitalize from 'lodash/capitalize';
+	import { readNotifications } from '@directus/sdk';
+
+	const { $directus } = useNuxtApp();
 
 	const auth = useAuth();
 	const user = auth.getUser;
+
+	const notificationsPanel = ref();
+	const toggleNotifications = (event) => {
+		notificationsPanel.value.toggle(event);
+	};
+
+	const { data: notifications } = await useAsyncData('adoptedProbes', () => {
+		return $directus.request(readNotifications());
+	});
+
+	console.log('notifications', notifications.value);
 </script>
 
 <style scoped>
@@ -100,9 +124,23 @@
 		border-radius: 32px;
 	}
 
-.header__notifications-icon {
-	margin-right: 48px;
-}
+	.notifications {
+		color: var(--surface-0);
+		margin-right: 48px;
+		position: relative;
+	}
+
+	.notifications__new-icon {
+		color: var(--primary-color);
+		position: absolute;
+		top: 8px;
+		right: 15px;
+	}
+
+	.notifications__accordion {
+		box-sizing: border-box;
+		width: 340px
+	}
 
 	.profile {
 		display: flex;

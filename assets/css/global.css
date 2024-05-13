@@ -18,3 +18,23 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.p-overlaypanel {
+  margin-top: 0px;
+}
+
+.p-overlaypanel:before, .p-overlaypanel:after {
+  content: none;
+}
+
+.p-overlaypanel-content {
+  padding: 0;
+}
+
+.p-accordion-header a:hover {
+  text-decoration: none;
+}
+
+.p-accordion-header .p-accordion-header-link {
+  padding: 12px 18px;
+}

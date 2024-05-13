@@ -100,15 +100,15 @@
 	const items = ref([
 		{
 			label: 'Settings',
-			icon: 'pi pi-file',
-			route: '/probes',
+			icon: 'pi pi-cog',
+			route: '/settings',
 		},
 		{
 			separator: true,
 		},
 		{
 			label: 'Log out',
-			icon: 'pi pi-file-edit',
+			icon: 'pi pi-power-off',
 			command: auth.logout,
 		},
 	]);

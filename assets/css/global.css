@@ -7,6 +7,12 @@ body, p, h1 {
   margin: 0;
 }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 section {
   min-height: 100vh;
 }
@@ -37,5 +43,5 @@ section {
 }
 
 .p-accordion-content a {
-		color: var(--primary-color);
-	}
+  color: var(--primary-color);
+}

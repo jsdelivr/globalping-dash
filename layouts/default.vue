@@ -47,13 +47,10 @@
 			</TieredMenu>
 		</header>
 		<aside class="sidebar">
-			<h2>Sidebar</h2>
-			<ul>
-				<li><NuxtLink to="/">Overview</NuxtLink></li>
-				<li><NuxtLink to="/probes">Probes</NuxtLink></li>
-				<li><NuxtLink to="/credits">Credits</NuxtLink></li>
-				<li><NuxtLink to="/tokens">Tokens</NuxtLink></li>
-			</ul>
+			<NuxtLink active-class="active" class="sidebar__link" to="/"><i class="pi pi-home"/>Overview</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar__link" to="/probes"><i class="pi pi-home"/>Probes</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar__link" to="/credits"><i class="pi pi-home"/>Credits</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar__link" to="/tokens"><i class="pi pi-database"/>Tokens</NuxtLink>
 		</aside>
 		<div class="content">
 			<slot/>
@@ -211,10 +208,61 @@
 	.profile__user-icon {
 		border-radius: 50%;
 		padding: 7px;
-		border: 1.5px solid white;
+		border: 1.5px solid #fff;
 	}
 
 	.profile__username {
 		margin: 8px;
+	}
+
+	.sidebar {
+		display: flex;
+		flex-direction: column;
+		background: var(--surface-100);
+		border: 1px var(--surface-300) solid;
+		padding: 16px;
+	}
+
+	.sidebar__link {
+		position: relative;
+		height: 40px;
+		width: 100%;
+		padding: 4px;
+		margin-bottom: 8px;
+		border-radius: 6px;
+		text-decoration: none;
+		color: var(--text-color);
+		border: 1px transparent solid;
+		display: flex;
+		align-items: center;
+		box-sizing: border-box;
+	}
+
+	.sidebar__link .pi {
+		font-size: 1.2rem;
+		padding-left: 16px;
+		padding-right: 12px;
+	}
+
+	.sidebar__link.active {
+		background: #fff;
+		font-weight: 600;
+		border: 1px var(--surface-300) solid;
+	}
+
+	.sidebar__link.active::before {
+		content: '';
+		background: var(--primary-color);
+		border-radius: 5px;
+		position: absolute;
+		left: 5px;
+		top: 7px;
+		bottom: 7px;
+		width: 3px;
+	}
+
+	.sidebar__link:hover {
+		background: #fff;
+		border: 1px var(--surface-300) solid;
 	}
 </style>

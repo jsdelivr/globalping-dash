@@ -15,6 +15,7 @@
 		"@directus/sdk": "^15.1.0",
 		"@pinia/nuxt": "^0.5.1",
 		"lodash": "^4.17.21",
+		"markdown-it": "^14.1.0",
 		"nuxt": "^3.11.2",
 		"pinia": "^2.1.7",
 		"primeicons": "^7.0.0",
@@ -26,6 +27,7 @@
 		"@martin-kolarik/eslint-config": "^7.3.0",
 		"@nuxt/eslint-config": "^0.3.8",
 		"@types/lodash": "^4.17.1",
+		"@types/markdown-it": "^14.1.1",
 		"eslint": "^8.57.0",
 		"nuxt-primevue": "^0.3.1",
 		"sass": "^1.77.0"

@@ -21,8 +21,8 @@
 			</Button>
 			<OverlayPanel ref="notificationsPanel">
 				<Accordion class="notifications__accordion" expand-icon="pi pi-chevron-up">
-					<AccordionTab v-for="notification in notifications" :header="notification.subject">
-						<p>{{ notification.message }}</p>
+					<AccordionTab v-for="notification in notifications" :key="notification.id" :header="notification.subject">
+						<span class="notifications__content" v-html="md.render(notification.message)"/>
 					</AccordionTab>
 				</Accordion>
 			</OverlayPanel>
@@ -52,6 +52,9 @@
 	import { useAuth } from '~/store/auth';
 	import capitalize from 'lodash/capitalize';
 	import { readNotifications } from '@directus/sdk';
+	import markdownit from 'markdown-it';
+
+	const md = markdownit();
 
 	const { $directus } = useNuxtApp();
 

@@ -38,3 +38,16 @@ a:hover {
 .p-accordion-header .p-accordion-header-link {
   padding: 12px 18px;
 }
+
+
+.p-accordion-content p {
+  margin-bottom: 18px;
+}
+
+.p-accordion-content p:last-child {
+  margin-bottom: 0;
+}
+
+.p-accordion-content a {
+		color: var(--primary-color);
+	}

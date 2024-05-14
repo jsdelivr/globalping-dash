@@ -285,4 +285,9 @@
 	.sponsorship__text {
 		margin-bottom: 24px;
 	}
+
+	.content {
+		padding: 24px;
+		min-width: 980px;
+	}
 </style>

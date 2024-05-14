@@ -5,7 +5,7 @@
 				<img class="header__main-logo" src="~/assets/images/gp-logo-white.svg" alt="Globalping logo">
 			</NuxtLink>
 			<NuxtLink to="https://www.jsdelivr.com/" class="header__jsd-link">by jsDelivr</NuxtLink>
-			<div class="header__filler"/>
+			<div class="filler"/>
 			<NuxtLink class="header__external-link" to="https://www.jsdelivr.com/" target="_blank">
 				<i class="pi pi-external-link"/>
 				<span>jsDelivr</span>
@@ -51,6 +51,12 @@
 			<NuxtLink active-class="active" class="sidebar__link" to="/probes"><nuxt-icon class="pi" name="probe"/>Probes</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar__link" to="/credits"><nuxt-icon class="pi" name="coin"/>Credits</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar__link" to="/tokens"><i class="pi pi-database"/>Tokens</NuxtLink>
+			<div class="filler"/>
+			<div class="sponsorship">
+				<p class="sponsorship__title">Sponsorship</p>
+				<p class="sponsorship__text">Support the development of our products by becoming a sponsor.</p>
+				<Button label="Become a Sponsor" severity="contrast"/>
+			</div>
 		</aside>
 		<div class="content">
 			<slot/>
@@ -150,10 +156,6 @@
 		text-decoration: underline;
 	}
 
-	.header__filler {
-		flex-grow: 1;
-	}
-
 	.header__external-link {
 		text-decoration: none;
 		color: var(--surface-0);
@@ -219,7 +221,7 @@
 		display: flex;
 		flex-direction: column;
 		background: var(--surface-100);
-		border: 1px var(--surface-300) solid;
+		border: 1px solid var(--surface-300);
 		padding: 16px;
 	}
 
@@ -232,7 +234,7 @@
 		border-radius: 6px;
 		text-decoration: none;
 		color: var(--text-color);
-		border: 1px transparent solid;
+		border: 1px solid transparent;
 		display: flex;
 		align-items: center;
 		box-sizing: border-box;
@@ -245,9 +247,9 @@
 	}
 
 	.sidebar__link.active {
-		background: #fff;
+		background: var(--surface-0);
 		font-weight: 600;
-		border: 1px var(--surface-300) solid;
+		border: 1px solid var(--surface-300);
 	}
 
 	.sidebar__link.active::before {
@@ -262,7 +264,23 @@
 	}
 
 	.sidebar__link:hover {
-		background: #fff;
-		border: 1px var(--surface-300) solid;
+		background: var(--surface-0);
+		border: 1px solid var(--surface-300);
+	}
+
+	.sponsorship {
+		background: var(--surface-0);
+		padding: 24px;
+		border-radius: 12px;
+		border: 1px solid var(--surface-300);
+	}
+
+	.sponsorship__title {
+		font-weight: 700;
+		margin-bottom: 8px;
+	}
+
+	.sponsorship__text {
+		margin-bottom: 24px;
 	}
 </style>

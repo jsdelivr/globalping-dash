@@ -46,7 +46,7 @@
 	}
 
 	.block__title {
-		font-weight: 700;
+		font-weight: 600;
 		padding: 12px 24px;
 		border-bottom: 1px solid var(--surface-300);
 		color: var(--bluegray-700);
@@ -71,7 +71,7 @@
 
 	.big-number .number {
 		font-size: 28px;
-		font-weight: 700;
+		font-weight: 600;
 		margin-left: 12px;
 		margin-right: 8px;
 	}

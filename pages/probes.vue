@@ -59,7 +59,7 @@
 	}
 
 	.edit-input__save:hover {
-		font-weight: 700;
+		font-weight: 600;
 	}
 
 	.edit-input__input {

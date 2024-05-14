@@ -181,7 +181,7 @@
 	}
 
 	.header__account-type {
-		font-weight: 600;
+		font-weight: 500;
 		background: #35425a;
 		padding: 8px 12px;
 		border-radius: 32px;
@@ -278,7 +278,7 @@
 	}
 
 	.sponsorship__title {
-		font-weight: 700;
+		font-weight: 600;
 		margin-bottom: 8px;
 	}
 

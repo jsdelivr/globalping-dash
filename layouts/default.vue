@@ -90,7 +90,7 @@
 		}
 	};
 
-	const { data: notifications } = await useAsyncData('notifications', () => {
+	const { data: notifications } = await useAsyncData('directus_notifications', () => {
 		return $directus.request(readNotifications());
 	});
 

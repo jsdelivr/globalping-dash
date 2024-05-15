@@ -22,7 +22,7 @@
 
 	const { $directus } = useNuxtApp();
 
-	const { data: tokens } = await useAsyncData('tokens', () => {
+	const { data: tokens } = await useAsyncData('gp_tokens', () => {
 		return $directus.request(readItems('gp_tokens'));
 	});
 

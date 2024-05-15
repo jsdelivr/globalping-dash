@@ -5,14 +5,14 @@
 			<p class="block__title">Summary</p>
 			<div class="block__content">
 				<div class="block__main-content">
-					<div class="big-number"><BigIcon name="gp" border/><div><span class="number">2</span><span class="title">Probes</span></div></div>
+					<div class="big-number"><BigIcon name="gp" border/><div><span class="number">{{ adoptedProbes?.length }}</span><span class="title">Probes</span></div></div>
 					<div class="filler"/>
-					<div class="big-number"><BigIcon name="point-online" filled/><div><span class="number">2</span><span class="title">Online</span></div></div>
-					<div class="big-number"><BigIcon name="point-offline" filled/><div><span class="number">2</span><span class="title">Offline</span></div></div>
+					<div class="big-number"><BigIcon name="point-online" filled/><div><span class="number">{{ onlineProbes.length }}</span><span class="title">Online</span></div></div>
+					<div class="big-number"><BigIcon name="point-offline" filled/><div><span class="number">{{ offlineProbes.length }}</span><span class="title">Offline</span></div></div>
 				</div>
 				<div class="block__secondary-content">
-					<p>Locations: <span class="summary__country">Berlin <span class="summary__country-number">2</span></span></p>
-					<div class="filler"/>
+					<p>Locations: <span v-for="(count, name) in cities" :key="name" class="summary__country">{{ name }} <span class="summary__country-number">{{ count }}</span></span></p>
+					<div class="filler mw"/>
 					<Button severity="secondary" label="Adopt probe">
 						<nuxt-icon class="p-button-icon p-button-icon-left" name="capture"/>
 						<span class="p-button-label">Adopt probe</span>
@@ -29,6 +29,18 @@
 </template>
 
 <script setup lang="ts">
+	import { readItems } from '@directus/sdk';
+	import countBy from 'lodash/countBy';
+
+	const { $directus } = useNuxtApp();
+
+	const { data: adoptedProbes } = await useAsyncData('gp_adopted_probes', () => {
+		return $directus.request(readItems('gp_adopted_probes'));
+	});
+
+	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status === 'online'));
+	const offlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status === 'offline'));
+	const cities = computed(() => countBy(adoptedProbes.value, 'city'));
 </script>
 
 <style scoped>
@@ -83,6 +95,7 @@
 		display: flex;
 		align-items: center;
 		margin-top: 24px;
+		text-wrap: nowrap;
 	}
 
 	.summary__country {

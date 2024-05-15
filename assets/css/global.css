@@ -25,6 +25,10 @@ section {
   flex-grow: 1;
 }
 
+.mw {
+  min-width: 24px;
+}
+
 .p-overlaypanel {
   margin-top: 0px;
 }

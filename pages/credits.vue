@@ -24,13 +24,12 @@
 
 	const { $directus } = useNuxtApp();
 
-	const { data: creditsData } = await useAsyncData('creditsData', async () => {
+	const { data: creditsData } = await useAsyncData('gp_credits&gp_credits_additions&gp_credits_deductions', async () => {
 		const [ credits, creditsAdditions, creditsDeductions ] = await Promise.all([
 			$directus.request(readItems('gp_credits')),
 			$directus.request(readItems('gp_credits_additions')),
 			$directus.request(readItems('gp_credits_deductions')),
 		]);
-		console.log('creditsDeductions', creditsDeductions);
 
 		return { credits, creditsAdditions, creditsDeductions };
 	});

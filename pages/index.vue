@@ -21,14 +21,14 @@
 			</div>
 		</div>
 		<div class="block credits">
-			<p class="block__title">Credits</p>
+			<p class="block__title">Credits<i v-tooltip.top="user.github_username" class="pi pi-info-circle"/></p>
 			<div class="block__content">
 				<div class="block__main-content">
-					<div class="big-number"><BigIcon name="coin" border/><div><span class="number">3,200</span><span class="title">Total</span></div></div>
+					<div class="big-number"><BigIcon name="coin" border/><div><span class="number">{{ total }}</span><span class="title">Total</span></div></div>
 					<div class="filler"/>
 					<NuxtLink to="/credits" tabindex="-1">
 						<Button severity="secondary" label="Adopt probe">
-							<span class="p-button-label credits__per-day-number">+150</span>
+							<span class="p-button-label credits__per-day-number">+{{ perDay }}</span>
 							<span>Per day</span>
 						</Button>
 					</NuxtLink>
@@ -50,6 +50,7 @@
 </template>
 
 <script setup lang="ts">
+	import { useAuth } from '~/store/auth';
 	import { readItems } from '@directus/sdk';
 	import countBy from 'lodash/countBy';
 
@@ -59,9 +60,27 @@
 		return $directus.request(readItems('gp_adopted_probes'));
 	});
 
-	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status === 'online'));
-	const offlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status === 'offline'));
+	const onlineProbes = computed(() => adoptedProbes.value?.filter(({ status }) => status === 'online'));
+	const offlineProbes = computed(() => adoptedProbes.value?.filter(({ status }) => status === 'offline'));
 	const cities = computed(() => countBy(adoptedProbes.value, 'city'));
+
+	const auth = useAuth();
+	const user = auth.getUser;
+
+	const { data: credits } = await useAsyncData('gp_credits', () => {
+		return $directus.request(readItems('gp_credits'));
+	});
+	const total = computed(() => credits.value[0].amount.toLocaleString());
+
+	const { data: creditsAdditions } = await useAsyncData('gp_credits_additions_last_day', () => {
+		return $directus.request(readItems('gp_credits_additions', {
+			filter: {
+				date_created: { _gte: '$NOW(-1 day)' },
+				adopted_probe: { _nnull: true },
+			},
+		}));
+	});
+	const perDay = computed(() => creditsAdditions.value?.reduce((sum, { amount }) => sum += amount, 0));
 </script>
 
 <style scoped>
@@ -86,6 +105,10 @@
 		padding: 12px 24px;
 		border-bottom: 1px solid var(--surface-300);
 		color: var(--bluegray-700);
+	}
+
+	.block__title i {
+		margin-left: 10px;
 	}
 
 	.block__content {

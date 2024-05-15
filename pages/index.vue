@@ -1,7 +1,7 @@
 <template>
 	<div class="wrapper">
 		<h1 class="title">Overview</h1>
-		<div class="block">
+		<div class="block summary">
 			<p class="block__title">Summary</p>
 			<div class="block__content">
 				<div class="block__main-content">
@@ -13,14 +13,35 @@
 				<div class="block__secondary-content">
 					<p>Locations: <span v-for="(count, name) in cities" :key="name" class="summary__country">{{ name }} <span class="summary__country-number">{{ count }}</span></span></p>
 					<div class="filler mw"/>
-					<Button severity="secondary" label="Adopt probe">
+					<Button severity="secondary">
 						<nuxt-icon class="p-button-icon p-button-icon-left" name="capture"/>
 						<span class="p-button-label">Adopt probe</span>
 					</Button>
 				</div>
 			</div>
 		</div>
-		<div class="block credits"><p class="block__title">Credits</p></div>
+		<div class="block credits">
+			<p class="block__title">Credits</p>
+			<div class="block__content">
+				<div class="block__main-content">
+					<div class="big-number"><BigIcon name="coin" border/><div><span class="number">3,200</span><span class="title">Total</span></div></div>
+					<div class="filler"/>
+					<NuxtLink to="/credits" tabindex="-1">
+						<Button severity="secondary" label="Adopt probe">
+							<span class="p-button-label credits__per-day-number">+150</span>
+							<span>Per day</span>
+						</Button>
+					</NuxtLink>
+				</div>
+				<div class="block__secondary-content">
+					<Button severity="secondary" icon="pi pi-plus" label="Add credits"/>
+					<div class="filler"/>
+					<NuxtLink to="/credits" tabindex="-1">
+						<Button link label="Adopt probe" icon-pos="right" icon="pi pi-chevron-right"/>
+					</NuxtLink>
+				</div>
+			</div>
+		</div>
 		<div class="block probes">
 			<p class="block__title">Probes</p>
 			<p>Lorem</p>
@@ -111,5 +132,12 @@
 
 	.probes {
 		grid-column: 1 / 3;
+	}
+
+	/* CREDITS */
+
+	.credits__per-day-number {
+		color: var(--green-500);
+		margin-right: 8px;
 	}
 </style>

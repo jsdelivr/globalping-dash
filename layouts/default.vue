@@ -55,7 +55,7 @@
 			<div class="sponsorship">
 				<p class="sponsorship__title">Sponsorship</p>
 				<p class="sponsorship__text">Support the development of our products by becoming a sponsor.</p>
-				<NuxtLink to="https://github.com/sponsors/jsdelivr">
+				<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1">
 					<Button label="Become a Sponsor" severity="contrast"/>
 				</NuxtLink>
 			</div>

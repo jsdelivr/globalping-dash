@@ -253,8 +253,11 @@ $contrastButtonTextActiveColor: $contrastButtonTextColor !default;
 $contrastButtonActiveBorderColor: $shade700 !default;
 $contrastButtonFocusShadow: none !default;
 
-$linkButtonColor: $primaryDarkColor !default;
-$linkButtonHoverColor: $primaryDarkColor !default;
+// $linkButtonColor: $primaryDarkColor !default;
+// $linkButtonHoverColor: $primaryDarkColor !default;
+$linkButtonColor: var(--bluegray-900) !default;
+$linkButtonHoverColor: var(--bluegray-900) !default;
+
 $linkButtonTextHoverDecoration: underline !default;
 $linkButtonFocusShadow: none !default;
 

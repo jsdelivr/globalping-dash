@@ -1,26 +1,37 @@
 <template>
-	<div class="big-icon__wrapper">
-		<nuxt-icon class="pi big-icon" name="gp"/>
+	<div :class="{'big-icon__wrapper': border}">
+		<nuxt-icon class="big-icon" :class="{big: border}" :name="name" :filled="filled"/>
 	</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+	defineProps({
+		name: {
+			type: String,
+			default: '',
+		},
+		filled: Boolean,
+		border: Boolean,
+	});
+</script>
 
 <style scoped>
   .big-icon__wrapper {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border: 1px solid var(--surface-300);
     display: flex;
     justify-content: center;
     align-items: center;
+    border: 1px solid var(--surface-300);
   }
 
   .big-icon {
-    display: block;
     color: var(--primary-color);
-    font-size: 24px;
-
+    font-size: 16px;
   }
+
+.big-icon.big {
+  font-size: 22px;
+}
 </style>

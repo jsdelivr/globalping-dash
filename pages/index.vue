@@ -5,10 +5,10 @@
 			<p class="block__title">Summary</p>
 			<div class="block__content">
 				<div class="block__main-content">
-					<div class="big-number"><BigIcon name="probe"/><span class="number">2</span><span class="title">Probes</span></div>
+					<div class="big-number"><BigIcon name="gp" border/><span class="number">2</span><span class="title">Probes</span></div>
 					<div class="filler"/>
-					<div class="big-number"><BigIcon name="green-dot"/><span class="number">2</span><span class="title">Online</span></div>
-					<div class="big-number"><BigIcon name="gray-dot"/><span class="number">2</span><span class="title">Offline</span></div>
+					<div class="big-number"><BigIcon name="point-online" filled/><span class="number">2</span><span class="title">Online</span></div>
+					<div class="big-number"><BigIcon name="point-offline" filled/><span class="number">2</span><span class="title">Offline</span></div>
 				</div>
 				<div class="block__secondary-content">
 					<p>Locations: <span class="summary__country">Berlin <span class="summary__country-number">2</span></span></p>
@@ -62,7 +62,7 @@
 
 	.big-number {
 		display: flex;
-		align-items: baseline;
+		align-items: center;
 	}
 
 	.big-number + .big-number {
@@ -72,7 +72,7 @@
 	.big-number .number {
 		font-size: 28px;
 		font-weight: 600;
-		margin-left: 12px;
+		margin-left: 10px;
 		margin-right: 8px;
 	}
 

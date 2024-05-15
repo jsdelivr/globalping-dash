@@ -5,15 +5,18 @@
 			<p class="block__title">Summary</p>
 			<div class="block__content">
 				<div class="block__main-content">
-					<div class="big-number"><BigIcon name="gp" border/><span class="number">2</span><span class="title">Probes</span></div>
+					<div class="big-number"><BigIcon name="gp" border/><div><span class="number">2</span><span class="title">Probes</span></div></div>
 					<div class="filler"/>
-					<div class="big-number"><BigIcon name="point-online" filled/><span class="number">2</span><span class="title">Online</span></div>
-					<div class="big-number"><BigIcon name="point-offline" filled/><span class="number">2</span><span class="title">Offline</span></div>
+					<div class="big-number"><BigIcon name="point-online" filled/><div><span class="number">2</span><span class="title">Online</span></div></div>
+					<div class="big-number"><BigIcon name="point-offline" filled/><div><span class="number">2</span><span class="title">Offline</span></div></div>
 				</div>
 				<div class="block__secondary-content">
 					<p>Locations: <span class="summary__country">Berlin <span class="summary__country-number">2</span></span></p>
 					<div class="filler"/>
-					<Button severity="secondary" label="Adopt probe"/>
+					<Button severity="secondary" label="Adopt probe">
+						<nuxt-icon class="p-button-icon p-button-icon-left" name="capture"/>
+						<span class="p-button-label">Adopt probe</span>
+					</Button>
 				</div>
 			</div>
 		</div>

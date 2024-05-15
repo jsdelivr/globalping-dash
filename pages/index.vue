@@ -37,14 +37,26 @@
 					<Button severity="secondary" icon="pi pi-plus" label="Add credits"/>
 					<div class="filler"/>
 					<NuxtLink to="/credits" tabindex="-1">
-						<Button link label="Adopt probe" icon-pos="right" icon="pi pi-chevron-right"/>
+						<Button link label="See details" icon-pos="right" icon="pi pi-chevron-right"/>
 					</NuxtLink>
 				</div>
 			</div>
 		</div>
 		<div class="block probes">
-			<p class="block__title">Probes</p>
-			<p>Lorem</p>
+			<div class="block__title">
+				<span>Probes</span>
+				<div class="filler"/>
+				<NuxtLink to="/probes" tabindex="-1">
+					<Button link label="See all" icon-pos="right" icon="pi pi-chevron-right"/>
+				</NuxtLink>
+			</div>
+			<div class="block__content">
+				<div class="block__main-content">
+					<div class="probe">
+						<BigIcon name="gp" border online/>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -101,8 +113,11 @@
 	}
 
 	.block__title {
+		display: flex;
+		align-items: center;
 		font-weight: 600;
-		padding: 12px 24px;
+		padding: 0 24px;
+		min-height: 40px;
 		border-bottom: 1px solid var(--surface-300);
 		color: var(--bluegray-700);
 	}
@@ -162,5 +177,12 @@
 	.credits__per-day-number {
 		color: var(--green-500);
 		margin-right: 8px;
+	}
+
+	/* PROBES */
+
+	.probe {
+		width: 240px;
+		padding: 8px 0;
 	}
 </style>

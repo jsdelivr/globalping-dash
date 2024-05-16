@@ -1,7 +1,7 @@
 <template>
 	<div :class="{'big-icon': border}">
 		<nuxt-icon class="big-icon__icon" :class="{big: border}" :name="name" :filled="filled"/>
-		<i v-if="online" class="pi pi-circle-fill big-icon__online"/>
+		<i v-if="online" v-tooltip.top="'Available'" class="pi pi-circle-fill big-icon__online"/>
 	</div>
 </template>
 

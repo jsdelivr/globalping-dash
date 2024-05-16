@@ -17,6 +17,10 @@ ul {
   list-style: none;
 }
 
+b {
+  font-weight: 600;
+}
+
 section {
   min-height: 100vh;
 }

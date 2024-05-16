@@ -52,8 +52,26 @@
 			</div>
 			<div class="block__content">
 				<div class="block__main-content">
-					<div class="probe">
-						<BigIcon name="gp" border online/>
+					<div v-for="probe in adoptedProbes" :key="probe.id" class="probe">
+						<div class="probe__header">
+							<BigIcon class="probe__icon" name="gp" border online/>
+							<b>{{ probe.name || probe.city }}</b>
+							<p>203.96.28.92</p>
+						</div>
+						<div class="probe__properties">
+							<div class="probe__property">
+								<b>Location:</b>
+								<div class="filler"/>
+								<span class="probe__value">
+									{{ probe.city }}, {{ probe.country }}
+								</span>
+								<CountryFlag class="probe__flag" :country="probe.country" size="small"/>
+							</div>
+							<div class="probe__property">
+								<b>Version:</b>
+								<span>{{ probe.version }}</span>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -65,8 +83,12 @@
 	import { useAuth } from '~/store/auth';
 	import { readItems } from '@directus/sdk';
 	import countBy from 'lodash/countBy';
+	import CountryFlag from 'vue-country-flag-next';
 
+	console.log('CountryFlag', CountryFlag);
 	const { $directus } = useNuxtApp();
+
+	// SUMMARY
 
 	const { data: adoptedProbes } = await useAsyncData('gp_adopted_probes', () => {
 		return $directus.request(readItems('gp_adopted_probes'));
@@ -75,6 +97,8 @@
 	const onlineProbes = computed(() => adoptedProbes.value?.filter(({ status }) => status === 'online'));
 	const offlineProbes = computed(() => adoptedProbes.value?.filter(({ status }) => status === 'offline'));
 	const cities = computed(() => countBy(adoptedProbes.value, 'city'));
+
+	// CREDITS
 
 	const auth = useAuth();
 	const user = auth.getUser;
@@ -182,7 +206,60 @@
 	/* PROBES */
 
 	.probe {
+		box-sizing: content-box;
 		width: 240px;
 		padding: 8px 0;
+	}
+
+	.probe + .probe {
+		margin-left: 24px;
+		padding-left: 24px;
+		border-left: 1px solid var(--surface-300);
+	}
+
+	.probe__header {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		grid-template-rows: auto auto;
+		grid-column-gap: 12px;
+		margin-bottom: 24px;
+	}
+
+	.probe__icon {
+		grid-column: 1 / 2;
+		grid-row: 1 / 3;
+	}
+
+	.probe__header b {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+
+	}
+
+	.probe__header p {
+		grid-column: 2 / 3;
+		grid-row: 2 / 3;
+		font-size: 13px;
+		color: var(--bluegray-400);
+	}
+
+	.probe__property {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		text-wrap: nowrap;
+		margin-bottom: 10px;
+	}
+
+	.probe__value {
+		display: flex;
+		align-items: center;
+		justify-content: end;
+		margin-right: 8px;
+	}
+
+	.probe__flag.flag {
+		transform: scale(0.35);
+		border-radius: 5px;
 	}
 </style>

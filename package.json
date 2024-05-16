@@ -22,6 +22,7 @@
 		"primeicons": "^7.0.0",
 		"primevue": "3.49.1",
 		"vue": "^3.4.21",
+		"vue-country-flag-next": "^2.3.2",
 		"vue-router": "^4.3.0"
 	},
 	"devDependencies": {

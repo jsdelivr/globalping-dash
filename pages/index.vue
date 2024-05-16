@@ -11,7 +11,7 @@
 					<div class="big-number"><BigIcon name="point-offline" filled/><div><span class="number">{{ offlineProbes.length }}</span><span class="title">Offline</span></div></div>
 				</div>
 				<div class="block__secondary-content">
-					<p>Locations: <span v-for="(count, name) in cities" :key="name" class="summary__country">{{ name }} <span class="summary__country-number">{{ count }}</span></span></p>
+					<div class="summary__locations"><div>Locations: </div><div v-for="(count, name) in cities" :key="name" class="summary__country">{{ name }} <span class="summary__country-number">{{ count }}</span></div></div>
 					<div class="filler mw"/>
 					<Button severity="secondary">
 						<nuxt-icon class="p-button-icon p-button-icon-left" name="capture"/>
@@ -27,7 +27,7 @@
 					<div class="big-number"><BigIcon name="coin" border/><div><span class="number">{{ total }}</span><span class="title">Total</span></div></div>
 					<div class="filler"/>
 					<NuxtLink to="/credits" tabindex="-1">
-						<Button severity="secondary" label="Adopt probe">
+						<Button class="credits__per-day-button" severity="secondary" label="Adopt probe">
 							<span class="p-button-label credits__per-day-number">+{{ perDay }}</span>
 							<span>Per day</span>
 						</Button>
@@ -181,6 +181,12 @@
 		text-wrap: nowrap;
 	}
 
+	.summary__locations {
+		display: flex;
+		align-items: center;
+		overflow: hidden;
+	}
+
 	.summary__country {
 		padding: 8px 12px;
 		border-radius: 32px;
@@ -197,6 +203,10 @@
 	}
 
 	/* CREDITS */
+
+	.credits__per-day-button {
+		margin-left: 24px;
+	}
 
 	.credits__per-day-number {
 		color: var(--green-500);

@@ -288,6 +288,5 @@
 
 	.content {
 		padding: 24px;
-		min-width: 980px;
 	}
 </style>

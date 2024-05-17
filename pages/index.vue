@@ -50,7 +50,7 @@
 				</NuxtLink>
 			</div>
 			<div class="block__content">
-				<div class="block__main-content">
+				<div class="block__main-content probes__main-content fade-out">
 					<div v-for="probe in adoptedProbes" :key="probe.id" class="probe">
 						<div class="probe__header">
 							<BigIcon class="probe__icon" name="gp" border online/>
@@ -155,6 +155,11 @@
 
 	.block__main-content {
 		display: flex;
+	}
+
+	.probes__main-content {
+		overflow: hidden;
+		position: relative;
 	}
 
 	.big-number {

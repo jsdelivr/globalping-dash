@@ -9,7 +9,6 @@ body, p, h1 {
 
 body, html, #__nuxt, section {
   height: 100%;
-  min-width: 1050px;
 }
 
 h1 {
@@ -30,8 +29,15 @@ b {
   flex-grow: 1;
 }
 
-.mw {
-  min-width: 24px;
+.fade-out::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100px;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(to left, white, transparent);
 }
 
 .p-overlaypanel {

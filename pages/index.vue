@@ -12,8 +12,7 @@
 				</div>
 				<div class="block__secondary-content">
 					<div class="summary__locations"><div>Locations: </div><div v-for="(count, name) in cities" :key="name" class="summary__country">{{ name }} <span class="summary__country-number">{{ count }}</span></div></div>
-					<div class="filler mw"/>
-					<Button severity="secondary">
+					<Button class="summary__adopt-button" severity="secondary">
 						<nuxt-icon class="p-button-icon p-button-icon-left" name="capture"/>
 						<span class="p-button-label">Adopt probe</span>
 					</Button>
@@ -60,7 +59,7 @@
 						</div>
 						<div class="probe__properties">
 							<div class="probe__property">
-								<b>Location:</b>
+								<span class="probe__field">Location:</span>
 								<div class="filler"/>
 								<span class="probe__value">
 									{{ probe.city }}, {{ probe.country }}
@@ -198,8 +197,8 @@
 		color: var(--bluegray-500);
 	}
 
-	.probes {
-		grid-column: 1 / 3;
+	.summary__adopt-button {
+		margin-left: 24px;
 	}
 
 	/* CREDITS */
@@ -215,9 +214,13 @@
 
 	/* PROBES */
 
+	.probes {
+		grid-column: 1 / 3;
+	}
+
 	.probe {
 		box-sizing: content-box;
-		width: 240px;
+		min-width: 240px;
 		padding: 8px 0;
 	}
 
@@ -259,6 +262,11 @@
 		align-items: center;
 		text-wrap: nowrap;
 		margin-bottom: 10px;
+	}
+
+	.probe__field {
+		font-weight: 600;
+		margin-right: 24px;
 	}
 
 	.probe__value {

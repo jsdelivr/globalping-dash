@@ -1,5 +1,4 @@
 html {
-  font-size: 14px;
   color: var(--text-color);
 }
 
@@ -9,6 +8,10 @@ body, p, h1 {
 
 body, html, #__nuxt, section {
   height: 100%;
+}
+
+body {
+  font-size: 14px;
 }
 
 h1 {
@@ -27,6 +30,10 @@ b {
 
 .filler {
   flex-grow: 1;
+}
+
+.fade-out {
+  position: relative;
 }
 
 .fade-out::after {

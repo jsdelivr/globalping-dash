@@ -1,16 +1,16 @@
 <template>
-	<section>
-		<div class="login">
-			<div class="login__logo">
+	<section class="grid grid-cols-[480px_auto]">
+		<div class="p-12 flex flex-col">
+			<div class="flex items-center mb-12">
 				<NuxtLink to="/">
-					<img class="login__main-logo" src="~/assets/images/gp-logo.svg" alt="Globalping logo">
+					<img class="w-44 h-9" src="~/assets/images/gp-logo.svg" alt="Globalping logo">
 				</NuxtLink>
-				<NuxtLink to="https://www.jsdelivr.com/" class="login__jsd-link">by jsDelivr</NuxtLink>
+				<NuxtLink to="https://www.jsdelivr.com/" class="m-2 text-xs text-surface-200 no-underline hover:underline">by jsDelivr</NuxtLink>
 			</div>
-			<h1 class="login__title">Manage your jsDelivr and Globalping statistics</h1>
-			<p class="login__text">Welcome! Log in to your account.</p>
+			<h1 class="text-3xl mb-6">Manage your jsDelivr and Globalping statistics</h1>
+			<p class="mb-6">Welcome! Log in to your account.</p>
 			<Button
-				class="login__gh-button"
+				class="w-80 h-10 !text-left bg-black"
 				severity="contrast"
 				icon="pi pi-github"
 				icon-pos="right"
@@ -18,9 +18,9 @@
 				@click="auth.login"
 			/>
 			<div class="filler"/>
-			<p class="login__bottom-text">Not authenticated</p>
+			<p class="text-surface-500">Not authenticated</p>
 		</div>
-		<div class="image"/>
+		<div class="bg-[url('~/assets/images/right.svg')] bg-cover m-2 rounded-xl"/>
 	</section>
 </template>
 
@@ -33,65 +33,3 @@
 
 	const auth = useAuth();
 </script>
-
-<style scoped>
-	section {
-		display: grid;
-		grid-template-columns: 480px auto;
-	}
-
-	.login {
-		padding: 48px;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.login__logo {
-		display: flex;
-		align-items: center;
-		margin-bottom: 48px;
-	}
-
-	.login__main-logo {
-		width: 180px;
-		height: 36px;
-	}
-
-	.login__jsd-link {
-		text-decoration: none;
-		font-size: 12px;
-		margin: 8px;
-		color: var(--bluegray-200);
-	}
-
-	.login__jsd-link:hover {
-		text-decoration: underline;
-	}
-
-	.login__title {
-		font-size: 28px;
-		line-height: 34px;
-		margin-bottom: 24px;
-	}
-
-	.login__text {
-		margin-bottom: 24px;
-	}
-
-	.login__gh-button {
-		width: 336px;
-		height: 40px;
-		text-align: left;
-	}
-
-	.image {
-		background-image: url(~/assets/images/right.svg);
-		background-size: cover;
-		margin: 8px;
-		border-radius: 12px;
-	}
-
-	.login__bottom-text {
-		color: var(--bluegray-500);
-	}
-</style>

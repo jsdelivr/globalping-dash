@@ -11,7 +11,7 @@
 					<div class="big-number"><BigIcon name="point-offline" filled/><div><span class="number">{{ offlineProbes.length }}</span><span class="title">Offline</span></div></div>
 				</div>
 				<div class="block__secondary-content">
-					<div class="summary__locations"><div>Locations: </div><div v-for="(count, name) in cities" :key="name" class="summary__country">{{ name }} <span class="summary__country-number">{{ count }}</span></div></div>
+					<div class="summary__locations fade-out"><div>Locations: </div><div v-for="(count, name) in cities" :key="name" class="summary__country">{{ name }} <span class="summary__country-number">{{ count }}</span></div></div>
 					<Button class="summary__adopt-button" severity="secondary">
 						<nuxt-icon class="p-button-icon p-button-icon-left" name="capture"/>
 						<span class="p-button-label">Adopt probe</span>
@@ -121,7 +121,7 @@
 <style scoped>
 	.wrapper {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 		column-gap: 16px;
 		row-gap: 16px;
 	}
@@ -189,6 +189,8 @@
 		display: flex;
 		align-items: center;
 		overflow: hidden;
+		position: relative;
+		flex-grow: 1;
 	}
 
 	.summary__country {
@@ -204,6 +206,7 @@
 
 	.summary__adopt-button {
 		margin-left: 24px;
+		min-width: 140px;
 	}
 
 	/* CREDITS */

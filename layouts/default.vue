@@ -48,10 +48,10 @@
 			</TieredMenu>
 		</header>
 		<aside class="flex flex-col bg-surface-100 border border-surface-300 p-4">
-			<NuxtLink active-class="active" class="sidebar__link" to="/"><i class="pi pi-home"/>Overview</NuxtLink>
-			<NuxtLink active-class="active" class="sidebar__link" to="/probes"><nuxt-icon class="pi" name="probe"/>Probes</NuxtLink>
-			<NuxtLink active-class="active" class="sidebar__link" to="/credits"><nuxt-icon class="pi" name="coin"/>Credits</NuxtLink>
-			<NuxtLink active-class="active" class="sidebar__link" to="/tokens"><i class="pi pi-database"/>Tokens</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar-link" to="/"><i class="pi pi-home text-xl pl-4 pr-3 text-bluegray-400"/>Overview</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar-link" to="/probes"><nuxt-icon class="pi text-xl pl-4 pr-3 text-bluegray-400" name="probe"/>Probes</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar-link" to="/credits"><nuxt-icon class="pi text-xl pl-4 pr-3 text-bluegray-400" name="coin"/>Credits</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database text-xl pl-4 pr-3 text-bluegray-400"/>Tokens</NuxtLink>
 			<div class="filler"/>
 			<div class="sponsorship">
 				<p class="sponsorship__title">Sponsorship</p>
@@ -144,15 +144,7 @@
 </style>
 
 <style scoped>
-	.sidebar {
-		display: flex;
-		flex-direction: column;
-		background: var(--surface-100);
-		border: 1px solid var(--surface-300);
-		padding: 16px;
-	}
-
-	.sidebar__link {
+	.sidebar-link {
 		position: relative;
 		height: 40px;
 		width: 100%;
@@ -160,28 +152,25 @@
 		margin-bottom: 8px;
 		border-radius: 6px;
 		text-decoration: none;
-		color: var(--text-color);
 		border: 1px solid transparent;
 		display: flex;
 		align-items: center;
 		box-sizing: border-box;
 	}
 
-	.sidebar__link .pi {
-		font-size: 1.2rem;
-		padding-left: 16px;
-		padding-right: 12px;
-	}
-
-	.sidebar__link.active {
+	.sidebar-link.active {
 		background: var(--surface-0);
 		font-weight: 600;
 		border: 1px solid var(--surface-300);
 	}
 
-	.sidebar__link.active::before {
+	.sidebar-link.active .pi {
+		color: var(--surface-90)
+	}
+
+	.sidebar-link.active::before {
 		content: '';
-		background: var(--primary-color);
+		background: var(--primary);
 		border-radius: 5px;
 		position: absolute;
 		left: 5px;
@@ -190,7 +179,7 @@
 		width: 3px;
 	}
 
-	.sidebar__link:hover {
+	.sidebar-link:hover {
 		background: var(--surface-0);
 		border: 1px solid var(--surface-300);
 	}
@@ -203,7 +192,7 @@
 	}
 
 	.sponsorship__title {
-		font-weight: 600;
+		font-weight: 700;
 		margin-bottom: 8px;
 	}
 

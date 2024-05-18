@@ -12,6 +12,7 @@ export default {
 		headerAction: {
 			class: [
 				// Font
+				// 'font-medium',
 				'font-semibold',
 				'leading-none',
 
@@ -21,7 +22,9 @@ export default {
 				'relative',
 
 				// Sizing
-				'p-[1.125rem]',
+				// 'p-[1.125rem]',
+				'px-6',
+				'py-3',
 
 				// Shape
 				'rounded-md',

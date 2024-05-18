@@ -132,7 +132,8 @@ export default {
 			'focus:outline-none focus:outline-offset-0 focus:ring-1',
 
 			// Link
-			{ 'focus:ring-primary': props.link },
+			// { 'focus:ring-primary': props.link },
+			{ 'focus:ring-0': props.link },
 
 			// Plain
 			{ 'hover:bg-gray-600 hover:border-gray-600': props.plain && !props.outlined && !props.text },
@@ -141,7 +142,8 @@ export default {
 
 			// Primary
 			{ 'hover:bg-primary-hover hover:border-primary-hover': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain },
-			{ 'focus:ring-primary': props.severity === null },
+			// { 'focus:ring-primary': props.severity === null },
+			{ 'focus:ring-0': props.severity === null },
 			// Text & Outlined Button
 			{ 'hover:bg-primary-300/10': (props.text || props.outlined) && props.severity === null && !props.plain },
 

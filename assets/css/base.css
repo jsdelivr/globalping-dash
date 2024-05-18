@@ -39,7 +39,8 @@
   /* bluegray: */
   --surface-0: #ffffff;
   --surface-50: #f7f8f9;
-  --surface-100: #dadee3;
+  /* --surface-100: #dadee3; */
+  --surface-100: #edf0f2;
   --surface-200: #bcc3cd;
   --surface-300: #9fa9b7;
   --surface-400: #818ea1;

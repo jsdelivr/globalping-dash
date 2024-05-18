@@ -6,7 +6,7 @@ export default {
 
 			// Size
 			'min-w-[12rem]',
-			'p-1',
+			// 'p-1',
 
 			// Colors
 			'bg-surface-0 dark:bg-surface-900',
@@ -23,7 +23,7 @@ export default {
 		],
 	},
 	menuitem: {
-		class: 'relative my-[2px] [&:first-child]:mt-0',
+		class: 'relative my-[2px] [&:first-child]:mt-0 [&:last-child]:mb-0',
 	},
 	content: ({ context }) => ({
 		class: [
@@ -34,7 +34,8 @@ export default {
 			'text-surface-700 dark:text-white/80',
 			{
 				'text-surface-500 dark:text-white/70': !context.focused && !context.active,
-				'text-surface-500 dark:text-white/70 bg-surface-200': context.focused && !context.active,
+				// 'text-surface-500 dark:text-white/70 bg-surface-200': context.focused && !context.active,
+				'text-surface-500 dark:text-white/70 bg-surface-100': context.focused && !context.active,
 				'text-primary-highlight-inverse bg-primary-highlight': (context.focused && context.active) || context.active || (!context.focused && context.active),
 			},
 
@@ -95,7 +96,7 @@ export default {
 	submenu: {
 		class: [
 			// Spacing
-			'p-1',
+			// 'p-1',
 			'm-0',
 			'list-none',
 			'min-w-[12.5rem]',

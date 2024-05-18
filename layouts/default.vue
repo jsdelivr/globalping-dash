@@ -1,52 +1,53 @@
 <template>
-	<section>
-		<header class="header">
+	<section class="grid grid-cols-[256px_auto] grid-rows-[56px_auto]">
+		<header class="col-span-2 flex bg-[#17233A] items-center py-3 px-6 text-surface-0">
 			<NuxtLink to="/">
-				<img class="header__main-logo" src="~/assets/images/gp-logo-white.svg" alt="Globalping logo">
+				<img class="h-6" src="~/assets/images/gp-logo-white.svg" alt="Globalping logo">
 			</NuxtLink>
-			<NuxtLink to="https://www.jsdelivr.com/" class="header__jsd-link">by jsDelivr</NuxtLink>
+			<NuxtLink to="https://www.jsdelivr.com/" class="no-underline hover:underline text-xs m-2 text-surface-600">by jsDelivr</NuxtLink>
 			<div class="filler"/>
-			<NuxtLink class="header__external-link" to="https://www.jsdelivr.com/" target="_blank">
-				<i class="pi pi-external-link"/>
-				<span>jsDelivr</span>
+			<NuxtLink class="no-underline text-surface-0 ml-6 hover:underline" to="https://www.jsdelivr.com/" target="_blank">
+				<i class="pi pi-external-link text-surface-300"/>
+				<span class="m-2">jsDelivr</span>
 			</NuxtLink>
-			<NuxtLink class="header__external-link" to="https://www.jsdelivr.com/globalping" target="_blank">
-				<i class="pi pi-external-link"/>
-				<span>Globalping</span>
+			<NuxtLink class="no-underline text-surface-0 ml-6 hover:underline" to="https://www.jsdelivr.com/globalping" target="_blank">
+				<i class="pi pi-external-link text-surface-300"/>
+				<span class="m-2">Globalping</span>
 			</NuxtLink>
-			<p class="header__account-type-title">Account type: <span class="header__account-type">{{ capitalize(user.user_type) }}</span></p>
-			<Button class="notifications" text rounded @click="toggleNotifications">
-				<i class="pi pi-bell" style="font-size: 1.3rem"/>
-				<i v-if="newNotifications.length" class="pi pi-circle-fill notifications__new-icon" style="font-size: 0.3rem"/>
+			<p class="mx-12">Account type: <span class="font-medium py-2 px-3 rounded-full bg-[#35425A]">{{ capitalize(user.user_type) }}</span></p>
+			<Button class="mr-12 relative text-surface-0" text rounded @click="toggleNotifications">
+				<i class="pi pi-bell text-[1.3rem]"/>
+				<i v-if="newNotifications.length" class="pi pi-circle-fill text-[0.3rem] text-primary absolute top-1 right-3"/>
 			</Button>
 			<OverlayPanel ref="notificationsPanel">
-				<Accordion class="notifications__accordion" expand-icon="pi pi-chevron-up">
+				<Accordion class="box-border w-80" expand-icon="pi pi-chevron-right">
 					<AccordionTab v-for="notification in reverseNotifications" :key="notification.id" :header="notification.subject">
 						<span class="notifications__content" v-html="md.render(notification.message)"/>
 					</AccordionTab>
 				</Accordion>
 			</OverlayPanel>
-			<Button class="profile" text rounded @click="toggleProfile">
+			<Button class="profile text-surface-0" text rounded @click="toggleProfile">
 				<i class="pi pi-user profile__user-icon" style="font-size: 1.1rem"/>
 				<p class="profile__username">{{ user.github_username }}</p>
 				<i class="pi pi-chevron-down" style="font-size: 0.7rem"/>
 			</Button>
 			<TieredMenu ref="profilePanel" :model="items" popup>
-				<template #item="{ item }">
+				<template #item="{ item, props, hasSubmenu }">
 					<router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-						<a class="p-menuitem-link" :href="href" @click="navigate">
-							<span class="p-menuitem-icon" :class="item.icon"/>
-							<span>{{ item.label }}</span>
+						<a v-ripple :href="href" v-bind="props.action" @click="navigate">
+							<span :class="item.icon"/>
+							<span class="ml-2">{{ item.label }}</span>
 						</a>
 					</router-link>
-					<a v-else class="p-menuitem-link" :href="item.url" :target="item.target">
-						<span class="p-menuitem-icon" :class="item.icon"/>
-						<span>{{ item.label }}</span>
+					<a v-else v-ripple :href="item.url" :target="item.target" v-bind="props.action">
+						<span :class="item.icon"/>
+						<span class="ml-2">{{ item.label }}</span>
+						<span v-if="hasSubmenu" class="pi pi-angle-right ml-auto"/>
 					</a>
 				</template>
 			</TieredMenu>
 		</header>
-		<aside class="sidebar">
+		<!-- <aside class="sidebar">
 			<NuxtLink active-class="active" class="sidebar__link" to="/"><i class="pi pi-home"/>Overview</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar__link" to="/probes"><nuxt-icon class="pi" name="probe"/>Probes</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar__link" to="/credits"><nuxt-icon class="pi" name="coin"/>Credits</NuxtLink>
@@ -62,7 +63,7 @@
 		</aside>
 		<div class="content">
 			<slot/>
-		</div>
+		</div> -->
 	</section>
 </template>
 
@@ -127,82 +128,22 @@
 
 </script>
 
-<style scoped>
-	section {
-		display: grid;
-		grid-template-columns: 256px auto;
-		grid-template-rows: 56px auto;
+<style>
+	.notifications__content p {
+			margin-bottom: 18px;
+		}
+
+	.notifications__content p:last-child {
+		margin-bottom: 0;
 	}
 
-	.header {
-		grid-column: 1 / 3;
-		display: flex;
-		background: #17233A;
-		align-items: center;
-		padding: 12px 24px;
-		color: var(--surface-0);
-	}
-
-	.header__main-logo {
-		height: 24px;
-	}
-
-	.header__jsd-link {
-		text-decoration: none;
-		font-size: 12px;
-		margin: 8px;
-		color: var(--bluegray-600);
-	}
-
-	.header__jsd-link:hover {
-		text-decoration: underline;
-	}
-
-	.header__external-link {
-		text-decoration: none;
-		color: var(--surface-0);
-		margin-left: 24px;
-	}
-
-	.header__external-link:hover {
-		text-decoration: underline;
-	}
-
-	.header__external-link i {
-		color: var(--bluegray-300);
-	}
-
-	.header__external-link span {
-		margin: 8px;
-	}
-
-	.header__account-type-title {
-		margin: 0 48px;
-	}
-
-	.header__account-type {
+	.notifications__content a {
+		color: var(--primary);
 		font-weight: 500;
-		background: #35425a;
-		padding: 8px 12px;
-		border-radius: 32px;
 	}
+</style>
 
-	.notifications {
-		margin-right: 48px;
-		position: relative;
-	}
-
-	.notifications__new-icon {
-		color: var(--primary-color);
-		position: absolute;
-		top: 5px;
-		right: 12px;
-	}
-
-	.notifications__accordion {
-		box-sizing: border-box;
-		width: 340px
-	}
+<style scoped>
 
 	.profile {
 		display: flex;

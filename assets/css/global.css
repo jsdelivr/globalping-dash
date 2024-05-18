@@ -1,5 +1,5 @@
 html {
-  color: var(--text-color);
+  color: var(--surface-900);
 }
 
 body, p, h1 {
@@ -45,33 +45,4 @@ b {
   height: 100%;
   pointer-events: none;
   background: linear-gradient(to left, white, transparent);
-}
-
-.p-overlaypanel {
-  margin-top: 0px;
-}
-
-.p-overlaypanel:before, .p-overlaypanel:after {
-  content: none;
-}
-
-.p-overlaypanel-content {
-  padding: 0;
-}
-
-.p-accordion-header .p-accordion-header-link {
-  padding: 12px 18px;
-}
-
-
-.p-accordion-content p {
-  margin-bottom: 18px;
-}
-
-.p-accordion-content p:last-child {
-  margin-bottom: 0;
-}
-
-.p-accordion-content a {
-  color: var(--primary-color);
 }

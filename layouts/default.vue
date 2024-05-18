@@ -26,9 +26,9 @@
 					</AccordionTab>
 				</Accordion>
 			</OverlayPanel>
-			<Button class="profile text-surface-0" text rounded @click="toggleProfile">
-				<i class="pi pi-user profile__user-icon" style="font-size: 1.1rem"/>
-				<p class="profile__username">{{ user.github_username }}</p>
+			<Button class="flex items-center text-surface-0" text rounded @click="toggleProfile">
+				<i class="pi pi-user rounded-full p-2 border-[1.5px]" style="font-size: 1.1rem"/>
+				<p class="m-2">{{ user.github_username }}</p>
 				<i class="pi pi-chevron-down" style="font-size: 0.7rem"/>
 			</Button>
 			<TieredMenu ref="profilePanel" :model="items" popup>
@@ -47,7 +47,7 @@
 				</template>
 			</TieredMenu>
 		</header>
-		<!-- <aside class="sidebar">
+		<aside class="sidebar">
 			<NuxtLink active-class="active" class="sidebar__link" to="/"><i class="pi pi-home"/>Overview</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar__link" to="/probes"><nuxt-icon class="pi" name="probe"/>Probes</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar__link" to="/credits"><nuxt-icon class="pi" name="coin"/>Credits</NuxtLink>
@@ -62,8 +62,8 @@
 			</div>
 		</aside>
 		<div class="content">
-			<slot/>
-		</div> -->
+			<!-- <slot/> -->
+		</div>
 	</section>
 </template>
 
@@ -144,22 +144,6 @@
 </style>
 
 <style scoped>
-
-	.profile {
-		display: flex;
-		align-items: center;
-	}
-
-	.profile__user-icon {
-		border-radius: 50%;
-		padding: 7px;
-		border: 1.5px solid #fff;
-	}
-
-	.profile__username {
-		margin: 8px;
-	}
-
 	.sidebar {
 		display: flex;
 		flex-direction: column;

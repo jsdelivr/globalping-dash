@@ -23,7 +23,7 @@ export default {
 			{ 'rounded-none first:rounded-l-md last:rounded-r-md': parent.instance.$name == 'InputGroup' },
 
 			// Link Button
-			{ 'text-primary-600 bg-transparent border-transparent': props.link },
+			{ 'text-bluegray-900 bg-transparent border-transparent': props.link },
 
 			// Plain Button
 			{ 'text-white bg-gray-500 border border-gray-500': props.plain && !props.outlined && !props.text },

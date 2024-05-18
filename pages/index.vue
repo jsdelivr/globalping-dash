@@ -18,20 +18,20 @@
 				</div>
 			</div>
 		</div>
-		<!-- <div class="block credits">
-			<p class="block__title">Credits<i v-tooltip.top="user.github_username" class="pi pi-info-circle"/></p>
-			<div class="block__content">
-				<div class="block__main-content">
-					<div class="big-number"><BigIcon name="coin" border/><div><span class="number">{{ total }}</span><span class="title">Total</span></div></div>
+		<div class="border border-gray-300 rounded-xl">
+			<p class="flex items-center font-semibold px-6 py-3 border-b border-gray-300 text-bluegray-700">Credits<i v-tooltip.top="user.github_username" class="pi pi-info-circle ml-2"/></p>
+			<div class="p-6">
+				<div class="flex">
+					<div class="flex items-center"><BigIcon name="coin" border/><div><span class="text-3xl font-semibold mx-2">{{ total }}</span>Total</div></div>
 					<div class="filler"/>
 					<NuxtLink to="/credits" tabindex="-1">
-						<Button class="credits__per-day-button" severity="secondary" label="Adopt probe">
-							<span class="p-button-label credits__per-day-number">+{{ perDay }}</span>
+						<Button class="ml-6" severity="secondary" label="Adopt probe">
+							<span class="p-button-label text-green-500 mr-2 font-semibold">+{{ perDay }}</span>
 							<span>Per day</span>
 						</Button>
 					</NuxtLink>
 				</div>
-				<div class="block__secondary-content">
+				<div class="flex items-center mt-6 text-nowrap">
 					<Button severity="secondary" icon="pi pi-plus" label="Add credits"/>
 					<div class="filler"/>
 					<NuxtLink to="/credits" tabindex="-1">
@@ -40,7 +40,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="block probes">
+		<!-- <div class="block probes">
 			<div class="block__title">
 				<span>Probes</span>
 				<div class="filler"/>
@@ -118,24 +118,9 @@
 </script>
 
 <style scoped>
-	.block__title i {
-		margin-left: 10px;
-	}
-
 	.probes__main-content {
 		overflow: hidden;
 		position: relative;
-	}
-
-	/* CREDITS */
-
-	.credits__per-day-button {
-		margin-left: 24px;
-	}
-
-	.credits__per-day-number {
-		color: var(--green-500);
-		margin-right: 8px;
 	}
 
 	/* PROBES */

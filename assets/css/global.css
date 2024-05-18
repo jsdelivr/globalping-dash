@@ -6,12 +6,17 @@ body, p, h1 {
   margin: 0;
 }
 
-body, html, #__nuxt, section {
+body, html, #__nuxt {
   height: 100%;
+  min-width: 1280px;
 }
 
 body {
   font-size: 14px;
+}
+
+section {
+  height: 100%;
 }
 
 h1 {

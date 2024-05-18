@@ -1,25 +1,24 @@
 <template>
-	<div class="wrapper">
-		<h1 class="title">Overview</h1>
-		<div class="block summary">
-			<p class="block__title">Summary</p>
-			<div class="block__content">
-				<div class="block__main-content">
-					<div class="big-number"><BigIcon name="gp" border/><div><span class="number">{{ adoptedProbes?.length }}</span><span class="title">Probes</span></div></div>
-					<div class="filler"/>
-					<div class="big-number"><BigIcon name="point-online" filled/><div><span class="number">{{ onlineProbes.length }}</span><span class="title">Online</span></div></div>
-					<div class="big-number"><BigIcon name="point-offline" filled/><div><span class="number">{{ offlineProbes.length }}</span><span class="title">Offline</span></div></div>
+	<div class="wrapper grid grid-cols-2 gap-4">
+		<h1 class="title col-span-2 text-2xl font-semibold">Overview</h1>
+		<div class="block border border-gray-300 rounded-xl">
+			<p class="block__title flex font-semibold px-6 py-3 border-b border-gray-300 text-bluegray-700">Summary</p>
+			<div class="block__content p-6">
+				<div class="block__main-content flex">
+					<div class="big-number flex items-center"><BigIcon name="gp" border/><div><span class="number text-3xl font-semibold mx-2">{{ adoptedProbes?.length }}</span>Probes</div></div>
+					<div class="big-number ml-auto flex items-center mr-6"><BigIcon name="point-online" filled/><div><span class="number text-3xl font-semibold mx-2">{{ onlineProbes.length }}</span>Online</div></div>
+					<div class="big-number flex items-center"><BigIcon name="point-offline" filled/><div><span class="number text-3xl font-semibold mx-2">{{ offlineProbes.length }}</span>Offline</div></div>
 				</div>
-				<div class="block__secondary-content">
-					<div class="summary__locations fade-out"><div>Locations: </div><div v-for="(count, name) in cities" :key="name" class="summary__country">{{ name }} <span class="summary__country-number">{{ count }}</span></div></div>
-					<Button class="summary__adopt-button" severity="secondary">
-						<nuxt-icon class="p-button-icon p-button-icon-left" name="capture"/>
-						<span class="p-button-label">Adopt probe</span>
+				<div class="block__secondary-content flex items-center mt-6 text-nowrap">
+					<div class="summary__locations flex items-center flex-grow overflow-hidden fade-out"><div>Locations: </div><div v-for="(count, name) in cities" :key="name" class="summary__country border border-surface-300 px-3 py-2 rounded-full ml-3">{{ name }} <span class="summary__country-number text-bluegray-500">{{ count }}</span></div></div>
+					<Button class="summary__adopt-button grow min-w-36 ml-3" severity="secondary">
+						<nuxt-icon class="pi mt-[2px] mr-2" name="capture"/>
+						<span class="font-semibold">Adopt probe</span>
 					</Button>
 				</div>
 			</div>
 		</div>
-		<div class="block credits">
+		<!-- <div class="block credits">
 			<p class="block__title">Credits<i v-tooltip.top="user.github_username" class="pi pi-info-circle"/></p>
 			<div class="block__content">
 				<div class="block__main-content">
@@ -74,7 +73,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> -->
 	</div>
 </template>
 
@@ -119,94 +118,13 @@
 </script>
 
 <style scoped>
-	.wrapper {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-		column-gap: 16px;
-		row-gap: 16px;
-	}
-
-	.title {
-		grid-column: 1 / 3;
-	}
-
-	.block {
-		border: 1px solid var(--surface-300);
-		border-radius: 12px;
-	}
-
-	.block__title {
-		display: flex;
-		align-items: center;
-		font-weight: 600;
-		padding: 0 24px;
-		min-height: 40px;
-		border-bottom: 1px solid var(--surface-300);
-		color: var(--bluegray-700);
-	}
-
 	.block__title i {
 		margin-left: 10px;
-	}
-
-	.block__content {
-		padding: 24px;
-	}
-
-	.block__main-content {
-		display: flex;
 	}
 
 	.probes__main-content {
 		overflow: hidden;
 		position: relative;
-	}
-
-	.big-number {
-		display: flex;
-		align-items: center;
-	}
-
-	.big-number + .big-number {
-		margin-left: 24px;
-	}
-
-	.big-number .number {
-		font-size: 28px;
-		font-weight: 600;
-		margin-left: 10px;
-		margin-right: 8px;
-	}
-
-	.block__secondary-content {
-		display: flex;
-		align-items: center;
-		margin-top: 24px;
-		text-wrap: nowrap;
-	}
-
-	.summary__locations {
-		display: flex;
-		align-items: center;
-		overflow: hidden;
-		position: relative;
-		flex-grow: 1;
-	}
-
-	.summary__country {
-		padding: 8px 12px;
-		border-radius: 32px;
-		border: 1px solid var(--surface-300);
-		margin-left: 12px;
-	}
-
-	.summary__country-number {
-		color: var(--bluegray-500);
-	}
-
-	.summary__adopt-button {
-		margin-left: 24px;
-		min-width: 140px;
 	}
 
 	/* CREDITS */

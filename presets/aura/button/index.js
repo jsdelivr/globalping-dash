@@ -54,8 +54,8 @@ export default {
 			// Secondary Button
 			{
 				'text-bluegray-900 dark:text-white': props.severity === 'secondary' && !props.text && !props.outlined && !props.plain,
-				'bg-bluegray-100 dark:bg-bluegray-700': props.severity === 'secondary' && !props.text && !props.outlined && !props.plain,
-				'border border-bluegray-100 dark:border-bluegray-700': props.severity === 'secondary' && !props.text && !props.outlined && !props.plain,
+				'bg-surface-0 dark:bg-bluegray-700': props.severity === 'secondary' && !props.text && !props.outlined && !props.plain,
+				'border border-surface-300 dark:border-bluegray-700': props.severity === 'secondary' && !props.text && !props.outlined && !props.plain,
 			},
 			// Secondary Text Button
 			{ 'text-bluegray-500 dark:text-bluegray-300': props.text && props.severity === 'secondary' && !props.plain },
@@ -148,7 +148,7 @@ export default {
 			{ 'hover:bg-primary-300/10': (props.text || props.outlined) && props.severity === null && !props.plain },
 
 			// Secondary
-			{ 'hover:bg-bluegray-200 dark:hover:bg-bluegray-600 hover:border-bluegray-200 dark:hover:border-bluegray-600': props.severity === 'secondary' && !props.text && !props.outlined && !props.plain },
+			{ 'hover:bg-surface-200 dark:hover:bg-bluegray-600 hover:border-surface-200 dark:hover:border-bluegray-600': props.severity === 'secondary' && !props.text && !props.outlined && !props.plain },
 			{ 'focus:ring-bluegray-500 dark:focus:ring-bluegray-400': props.severity === 'secondary' },
 			// Text & Outlined Button
 			{ 'hover:bg-bluegray-300/10': (props.text || props.outlined) && props.severity === 'secondary' && !props.plain },
@@ -202,7 +202,7 @@ export default {
 	label: ({ props }) => ({
 		class: [
 			'duration-200',
-			'font-medium',
+			'font-semibold',
 			{
 				'hover:underline': props.link,
 			},

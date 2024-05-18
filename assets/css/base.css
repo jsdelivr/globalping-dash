@@ -35,6 +35,8 @@
   --surface-900: #212121;
   --surface-950: #020617;
 
+  --green-500: #22c55e;
+
   --primary: var(--primary-500);
   --primary-inverse: var(--surface-0);
   --primary-hover: var(--primary-600);

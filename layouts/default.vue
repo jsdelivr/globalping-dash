@@ -4,14 +4,14 @@
 			<NuxtLink to="/">
 				<img class="h-6" src="~/assets/images/gp-logo-white.svg" alt="Globalping logo">
 			</NuxtLink>
-			<NuxtLink to="https://www.jsdelivr.com/" class="no-underline hover:underline text-xs m-2 text-surface-600">by jsDelivr</NuxtLink>
+			<NuxtLink to="https://www.jsdelivr.com/" class="no-underline hover:underline text-xs m-2 text-bluegray-600">by jsDelivr</NuxtLink>
 			<div class="filler"/>
 			<NuxtLink class="no-underline text-surface-0 ml-6 hover:underline" to="https://www.jsdelivr.com/" target="_blank">
-				<i class="pi pi-external-link text-surface-300"/>
+				<i class="pi pi-external-link text-bluegray-300"/>
 				<span class="m-2">jsDelivr</span>
 			</NuxtLink>
 			<NuxtLink class="no-underline text-surface-0 ml-6 hover:underline" to="https://www.jsdelivr.com/globalping" target="_blank">
-				<i class="pi pi-external-link text-surface-300"/>
+				<i class="pi pi-external-link text-bluegray-300"/>
 				<span class="m-2">Globalping</span>
 			</NuxtLink>
 			<p class="mx-12">Account type: <span class="font-medium py-2 px-3 rounded-full bg-[#35425A]">{{ capitalize(user.user_type) }}</span></p>
@@ -47,7 +47,7 @@
 				</template>
 			</TieredMenu>
 		</header>
-		<aside class="sidebar">
+		<aside class="flex flex-col bg-surface-100 border border-surface-300 p-4">
 			<NuxtLink active-class="active" class="sidebar__link" to="/"><i class="pi pi-home"/>Overview</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar__link" to="/probes"><nuxt-icon class="pi" name="probe"/>Probes</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar__link" to="/credits"><nuxt-icon class="pi" name="coin"/>Credits</NuxtLink>

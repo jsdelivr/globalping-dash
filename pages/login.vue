@@ -5,7 +5,7 @@
 				<NuxtLink to="/">
 					<img class="w-44 h-9" src="~/assets/images/gp-logo.svg" alt="Globalping logo">
 				</NuxtLink>
-				<NuxtLink to="https://www.jsdelivr.com/" class="m-2 text-xs text-surface-200 no-underline hover:underline">by jsDelivr</NuxtLink>
+				<NuxtLink to="https://www.jsdelivr.com/" class="m-2 text-xs text-bluegray-200 no-underline hover:underline">by jsDelivr</NuxtLink>
 			</div>
 			<h1 class="text-3xl mb-6">Manage your jsDelivr and Globalping statistics</h1>
 			<p class="mb-6">Welcome! Log in to your account.</p>
@@ -18,7 +18,7 @@
 				@click="auth.login"
 			/>
 			<div class="filler"/>
-			<p class="text-surface-500">Not authenticated</p>
+			<p class="text-bluegray-500">Not authenticated</p>
 		</div>
 		<div class="bg-[url('~/assets/images/right.svg')] bg-cover m-2 rounded-xl"/>
 	</section>

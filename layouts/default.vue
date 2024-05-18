@@ -4,8 +4,7 @@
 			<NuxtLink to="/">
 				<img class="h-6" src="~/assets/images/gp-logo-white.svg" alt="Globalping logo">
 			</NuxtLink>
-			<NuxtLink to="https://www.jsdelivr.com/" class="no-underline hover:underline text-xs m-2 text-bluegray-600">by jsDelivr</NuxtLink>
-			<div class="filler"/>
+			<NuxtLink to="https://www.jsdelivr.com/" class="no-underline hover:underline text-xs m-2 text-bluegray-600 mr-auto">by jsDelivr</NuxtLink>
 			<NuxtLink class="no-underline text-surface-0 ml-6 hover:underline" to="https://www.jsdelivr.com/" target="_blank">
 				<i class="pi pi-external-link text-bluegray-300"/>
 				<span class="m-2">jsDelivr</span>
@@ -52,17 +51,16 @@
 			<NuxtLink active-class="active" class="sidebar-link" to="/probes"><nuxt-icon class="pi text-xl pl-4 pr-3 text-bluegray-400" name="probe"/>Probes</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/credits"><nuxt-icon class="pi text-xl pl-4 pr-3 text-bluegray-400" name="coin"/>Credits</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database text-xl pl-4 pr-3 text-bluegray-400"/>Tokens</NuxtLink>
-			<div class="filler"/>
-			<div class="sponsorship">
-				<p class="sponsorship__title">Sponsorship</p>
-				<p class="sponsorship__text">Support the development of our products by becoming a sponsor.</p>
+			<div class="bg-surface-0 p-6 rounded-xl border border-surface-300 mt-auto">
+				<p class="font-bold mb-2">Sponsorship</p>
+				<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
 				<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1">
 					<Button label="Become a Sponsor" severity="contrast"/>
 				</NuxtLink>
 			</div>
 		</aside>
-		<div class="content">
-			<!-- <slot/> -->
+		<div class="p-6">
+			<slot/>
 		</div>
 	</section>
 </template>
@@ -182,25 +180,5 @@
 	.sidebar-link:hover {
 		background: var(--surface-0);
 		border: 1px solid var(--surface-300);
-	}
-
-	.sponsorship {
-		background: var(--surface-0);
-		padding: 24px;
-		border-radius: 12px;
-		border: 1px solid var(--surface-300);
-	}
-
-	.sponsorship__title {
-		font-weight: 700;
-		margin-bottom: 8px;
-	}
-
-	.sponsorship__text {
-		margin-bottom: 24px;
-	}
-
-	.content {
-		padding: 24px;
 	}
 </style>

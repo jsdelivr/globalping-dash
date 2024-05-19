@@ -51,21 +51,21 @@
 			<div class="p-6">
 				<div class="overflow-hidden flex fade-out">
 					<div v-for="probe in adoptedProbes" :key="probe.id" class="probe box-content min-w-60 py-2">
-						<div class="probe__header grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 mb-6">
-							<BigIcon class="probe__icon grid-span-1 grid-row-2" name="gp" border online/>
+						<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 mb-6">
+							<BigIcon class="probe__icon col-span-1 row-span-2" name="gp" border online/>
 							<b class="col-start-2 col-end-3">{{ probe.name || probe.city }}</b>
-							<p>203.96.28.92</p>
+							<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-400">203.96.28.92</p>
 						</div>
-						<div class="probe__properties">
-							<div class="probe__property">
-								<span class="probe__field">Location:</span>
+						<div>
+							<div class="flex justify-between items-center text-nowrap mb-2">
+								<span class="font-semibold mr-6">Location:</span>
 								<div class="filler"/>
-								<span class="probe__value">
+								<span class="flex items-center justify-end mr-2">
 									{{ probe.city }}, {{ probe.country }}
 								</span>
 								<CountryFlag class="probe__flag" :country="probe.country" size="small"/>
 							</div>
-							<div class="probe__property">
+							<div class="flex justify-between items-center text-nowrap mb-2">
 								<b>Version:</b>
 								<span>{{ probe.version }}</span>
 							</div>
@@ -83,7 +83,6 @@
 	import countBy from 'lodash/countBy';
 	import CountryFlag from 'vue-country-flag-next';
 
-	console.log('CountryFlag', CountryFlag);
 	const { $directus } = useNuxtApp();
 
 	// SUMMARY
@@ -124,39 +123,7 @@
 		border-left: 1px solid var(--surface-300);
 	}
 
-	.probe__icon {
-		grid-column: 1 / 2;
-		grid-row: 1 / 3;
-	}
-
-	.probe__header p {
-		grid-column: 2 / 3;
-		grid-row: 2 / 3;
-		font-size: 13px;
-		color: var(--bluegray-400);
-	}
-
-	.probe__property {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		text-wrap: nowrap;
-		margin-bottom: 10px;
-	}
-
-	.probe__field {
-		font-weight: 600;
-		margin-right: 24px;
-	}
-
-	.probe__value {
-		display: flex;
-		align-items: center;
-		justify-content: end;
-		margin-right: 8px;
-	}
-
-	.probe__flag.flag {
+	.probe .flag {
 		transform: scale(0.35);
 		border-radius: 5px;
 	}

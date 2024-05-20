@@ -13,7 +13,7 @@
 				<i class="pi pi-external-link text-bluegray-300"/>
 				<span class="m-2">Globalping</span>
 			</NuxtLink>
-			<p class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-medium">{{ capitalize(user.user_type) }}</span></p>
+			<p class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(user.user_type) }}</span></p>
 			<Button class="text-surface-0 relative mr-12" text rounded @click="toggleNotifications">
 				<i class="pi pi-bell text-[1.3rem]"/>
 				<i v-if="newNotifications.length" class="pi pi-circle-fill text-primary absolute right-3 top-1 text-[0.3rem]"/>
@@ -137,7 +137,7 @@
 
 	.notifications__content a {
 		color: var(--primary);
-		font-weight: 500;
+		font-weight: 600;
 	}
 </style>
 

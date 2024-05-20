@@ -1,22 +1,22 @@
 <template>
 	<section class="grid grid-cols-[256px_auto] grid-rows-[56px_auto]">
-		<header class="col-span-2 flex bg-[#17233A] items-center py-3 px-6 text-surface-0">
+		<header class="text-surface-0 col-span-2 flex items-center bg-[#17233A] px-6 py-3">
 			<NuxtLink to="/">
 				<img class="h-6" src="~/assets/images/gp-logo-white.svg" alt="Globalping logo">
 			</NuxtLink>
-			<NuxtLink to="https://www.jsdelivr.com/" class="no-underline hover:underline text-xs m-2 text-bluegray-600 mr-auto">by jsDelivr</NuxtLink>
-			<NuxtLink class="no-underline text-surface-0 ml-6 hover:underline" to="https://www.jsdelivr.com/" target="_blank">
+			<NuxtLink to="https://www.jsdelivr.com/" class="text-bluegray-600 m-2 mr-auto text-xs no-underline hover:underline">by jsDelivr</NuxtLink>
+			<NuxtLink class="text-surface-0 ml-6 no-underline hover:underline" to="https://www.jsdelivr.com/" target="_blank">
 				<i class="pi pi-external-link text-bluegray-300"/>
 				<span class="m-2">jsDelivr</span>
 			</NuxtLink>
-			<NuxtLink class="no-underline text-surface-0 ml-6 hover:underline" to="https://www.jsdelivr.com/globalping" target="_blank">
+			<NuxtLink class="text-surface-0 ml-6 no-underline hover:underline" to="https://www.jsdelivr.com/globalping" target="_blank">
 				<i class="pi pi-external-link text-bluegray-300"/>
 				<span class="m-2">Globalping</span>
 			</NuxtLink>
-			<p class="mx-12">Account type: <span class="font-medium py-2 px-3 rounded-full bg-[#35425A]">{{ capitalize(user.user_type) }}</span></p>
-			<Button class="mr-12 relative text-surface-0" text rounded @click="toggleNotifications">
+			<p class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-medium">{{ capitalize(user.user_type) }}</span></p>
+			<Button class="text-surface-0 relative mr-12" text rounded @click="toggleNotifications">
 				<i class="pi pi-bell text-[1.3rem]"/>
-				<i v-if="newNotifications.length" class="pi pi-circle-fill text-[0.3rem] text-primary absolute top-1 right-3"/>
+				<i v-if="newNotifications.length" class="pi pi-circle-fill text-primary absolute right-3 top-1 text-[0.3rem]"/>
 			</Button>
 			<OverlayPanel ref="notificationsPanel">
 				<Accordion class="box-border w-80" expand-icon="pi pi-chevron-right">
@@ -25,8 +25,8 @@
 					</AccordionTab>
 				</Accordion>
 			</OverlayPanel>
-			<Button class="flex items-center text-surface-0" text rounded @click="toggleProfile">
-				<i class="pi pi-user rounded-full p-2 border-[1.5px]" style="font-size: 1.1rem"/>
+			<Button class="text-surface-0 flex items-center" text rounded @click="toggleProfile">
+				<i class="pi pi-user rounded-full border-[1.5px] p-2" style="font-size: 1.1rem"/>
 				<p class="m-2">{{ user.github_username }}</p>
 				<i class="pi pi-chevron-down" style="font-size: 0.7rem"/>
 			</Button>
@@ -46,13 +46,13 @@
 				</template>
 			</TieredMenu>
 		</header>
-		<aside class="flex flex-col bg-surface-100 border border-surface-300 p-4">
-			<NuxtLink active-class="active" class="sidebar-link" to="/"><i class="pi pi-home text-xl pl-4 pr-3 text-bluegray-400"/>Overview</NuxtLink>
-			<NuxtLink active-class="active" class="sidebar-link" to="/probes"><nuxt-icon class="pi text-xl pl-4 pr-3 text-bluegray-400" name="probe"/>Probes</NuxtLink>
-			<NuxtLink active-class="active" class="sidebar-link" to="/credits"><nuxt-icon class="pi text-xl pl-4 pr-3 text-bluegray-400" name="coin"/>Credits</NuxtLink>
-			<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database text-xl pl-4 pr-3 text-bluegray-400"/>Tokens</NuxtLink>
-			<div class="bg-surface-0 p-6 rounded-xl border border-surface-300 mt-auto">
-				<p class="font-bold mb-2">Sponsorship</p>
+		<aside class="bg-surface-100 border-surface-300 flex flex-col border p-4">
+			<NuxtLink active-class="active" class="sidebar-link" to="/"><i class="pi pi-home text-bluegray-400 pl-4 pr-3 text-xl"/>Overview</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar-link" to="/probes"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="probe"/>Probes</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar-link" to="/credits"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="coin"/>Credits</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database text-bluegray-400 pl-4 pr-3 text-xl"/>Tokens</NuxtLink>
+			<div class="bg-surface-0 border-surface-300 mt-auto rounded-xl border p-6">
+				<p class="mb-2 font-bold">Sponsorship</p>
 				<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
 				<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1">
 					<Button label="Become a Sponsor" severity="contrast"/>

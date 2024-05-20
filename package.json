@@ -32,6 +32,7 @@
 		"@types/lodash": "^4.17.1",
 		"@types/markdown-it": "^14.1.1",
 		"eslint": "^8.57.0",
+		"eslint-plugin-tailwindcss": "^3.15.2",
 		"nuxt-primevue": "^0.3.1",
 		"sass": "^1.77.0"
 	}

@@ -52,14 +52,14 @@
 					</div>
 					<NuxtLink class="ml-auto" to="/credits" tabindex="-1">
 						<Button severity="secondary" label="Adopt probe">
-							<span class="p-button-label mr-2 font-bold text-green-500">+{{ perDay }}</span>
+							<span class="p-button-label mr-2 font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500': !perDay }">+{{ perDay }}</span>
 							<span>Per day</span>
 						</Button>
 					</NuxtLink>
 				</div>
 				<div class="mt-6 flex items-center text-nowrap">
-					<Button severity="secondary" icon="pi pi-plus" label="Add credits"/>
-					<NuxtLink class="ml-auto" to="/credits" tabindex="-1">
+					<Button :severity="perDay ? 'secondary' : undefined" icon="pi pi-plus" label="Add credits"/>
+					<NuxtLink v-if="perDay" class="ml-auto" to="/credits" tabindex="-1">
 						<Button link label="See details" icon-pos="right" icon="pi pi-chevron-right"/>
 					</NuxtLink>
 				</div>
@@ -73,7 +73,7 @@
 				</NuxtLink>
 			</div>
 			<div class="p-6">
-				<div class="fade-out flex overflow-hidden">
+				<div v-if="adoptedProbes?.length" class="fade-out flex overflow-hidden">
 					<div v-for="probe in adoptedProbes" :key="probe.id" class="probe box-content min-w-60 py-2">
 						<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
 							<BigIcon class="probe__icon col-span-1 row-span-2" name="gp" border online/>
@@ -94,6 +94,14 @@
 							</div>
 						</div>
 					</div>
+				</div>
+				<div v-if="!adoptedProbes?.length" class="bg-surface-50 flex rounded-xl p-6 ">
+					<img class="w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
+					<p class="ml-6 leading-tight">
+						<b>You don't have any probes yet.</b><br><br>
+						Get started by going to <NuxtLink class="text-primary font-semibold hover:underline" to="/probes">Probes</NuxtLink> page to create a container probe.<br>
+						Or <NuxtLink class="text-primary font-semibold hover:underline" to="/probes">become a sponsor</NuxtLink> and get a free hardware ARM based device that is plug-and-play.
+					</p>
 				</div>
 			</div>
 		</div>

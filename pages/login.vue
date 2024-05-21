@@ -19,7 +19,7 @@
 			/>
 			<p class="text-bluegray-500 mt-auto">Not authenticated</p>
 		</div>
-		<div class="m-2 rounded-xl bg-[url('~/assets/images/right.svg')] bg-cover"/>
+		<div class="m-2 rounded-xl bg-[url('~/assets/images/login-bg.svg')] bg-cover"/>
 	</section>
 </template>
 

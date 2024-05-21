@@ -29,12 +29,22 @@
 				>
 					<p>To join the Globalping probe network all you have to do is run our container.</p>
 					<div class="mt-4">
-						<Button class="rounded-r-none" label="Docker"/>
-						<Button class="rounded-l-none" label="Podman" severity="secondary"/>
+						<Button class="rounded-r-none" label="Docker" :severity="command === dockerCommand ? undefined : 'secondary'" @click="toggleCommand"/>
+						<Button class="rounded-l-none" label="Podman" :severity="command === podmanCommand ? undefined : 'secondary'" @click="toggleCommand"/>
 					</div>
-					<div class="relative mt-4 flex items-center overflow-hidden rounded-xl border p-4">
-						<pre class=""><code>docker run -d --network host --restart=always --name globalping-probe ghcr.io/jsdelivr/globalping-probe</code></pre>
-						<Button class="!absolute right-2" icon="pi pi-copy" severity="secondary" raised/>
+					<div class="relative mt-4 flex items-center rounded-xl border p-4">
+						<pre class="overflow-hidden"><code>{{ command }}</code></pre>
+						<div class="!absolute right-2">
+							<Button
+								icon="pi pi-copy"
+								severity="secondary"
+								raised
+								@click="copyCommand"
+							/>
+							<div v-if="copyTooltip" class="bg-bluegray-700 text-surface-0 absolute left-1/2 top-[-40px] -translate-x-1/2 rounded-md p-2">
+								Copied!
+							</div>
+						</div>
 					</div>
 					<p class="mt-4">Once you connect you will become part of the global community that powers the Globalping Platform. The container will work on both x86 and ARM architectures.</p>
 				</Dialog>
@@ -82,6 +92,25 @@
 	});
 
 	const startProbeDialog = ref(false);
+
+	const dockerCommand = 'docker run -d --log-driver local --network host --restart=always --name globalping-probe ghcr.io/jsdelivr/globalping-probe';
+	const podmanCommand = 'sudo podman run -d --cap-add=NET_RAW --network host --restart=always --name globalping-probe ghcr.io/jsdelivr/globalping-probe';
+	const command = ref(dockerCommand);
+
+	const toggleCommand = () => {
+		if (command.value === dockerCommand) {
+			command.value = podmanCommand;
+		} else {
+			command.value = dockerCommand;
+		}
+	};
+
+	const copyTooltip = ref(false);
+	const copyCommand = async () => {
+		await navigator.clipboard.writeText(command.value);
+		copyTooltip.value = true;
+		setTimeout(() => copyTooltip.value = false, 1000);
+	};
 
 	const edit = async () => {
 		const result = await $directus.request(updateItem('gp_adopted_probes', '1', { name: 'asdf' }));

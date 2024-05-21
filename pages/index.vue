@@ -23,9 +23,8 @@
 			<div class="p-6">
 				<div class="flex">
 					<div class="flex items-center"><BigIcon name="coin" border/><div><span class="mx-2 text-3xl font-bold">{{ total }}</span>Total</div></div>
-					<div class="filler"/>
-					<NuxtLink to="/credits" tabindex="-1">
-						<Button class="ml-6" severity="secondary" label="Adopt probe">
+					<NuxtLink class="ml-auto" to="/credits" tabindex="-1">
+						<Button severity="secondary" label="Adopt probe">
 							<span class="p-button-label mr-2 font-bold text-green-500">+{{ perDay }}</span>
 							<span>Per day</span>
 						</Button>
@@ -33,8 +32,7 @@
 				</div>
 				<div class="mt-6 flex items-center text-nowrap">
 					<Button severity="secondary" icon="pi pi-plus" label="Add credits"/>
-					<div class="filler"/>
-					<NuxtLink to="/credits" tabindex="-1">
+					<NuxtLink class="ml-auto" to="/credits" tabindex="-1">
 						<Button link label="See details" icon-pos="right" icon="pi pi-chevron-right"/>
 					</NuxtLink>
 				</div>
@@ -43,8 +41,7 @@
 		<div class="col-span-2 rounded-xl border border-gray-300">
 			<div class="text-bluegray-700 flex h-10 items-center border-b border-gray-300 px-6 font-bold">
 				<span>Probes</span>
-				<div class="filler"/>
-				<NuxtLink to="/probes" tabindex="-1">
+				<NuxtLink class="ml-auto" to="/probes" tabindex="-1">
 					<Button link label="See all" icon-pos="right" icon="pi pi-chevron-right"/>
 				</NuxtLink>
 			</div>
@@ -57,10 +54,9 @@
 							<p class="text-bluegray-400 col-start-2 col-end-3 row-start-2 row-end-3 text-[13px]">203.96.28.92</p>
 						</div>
 						<div>
-							<div class="mb-2 flex items-center justify-between text-nowrap">
+							<div class="mb-2 flex items-center text-nowrap">
 								<span class="mr-6 font-semibold">Location:</span>
-								<div class="filler"/>
-								<span class="mr-2 flex items-center justify-end">
+								<span class="ml-auto mr-2 flex items-center justify-end">
 									{{ probe.city }}, {{ probe.country }}
 								</span>
 								<CountryFlag class="probe__flag" :country="probe.country" size="small"/>

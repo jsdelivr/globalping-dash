@@ -3,35 +3,17 @@ html {
   color: var(--bluegray-900);
 }
 
-body, p, h1 {
-  margin: 0;
-}
-
 body, html, #__nuxt {
   height: 100%;
   min-width: 1280px;
-}
-
-body {
-  font-size: 14px;
 }
 
 section {
   height: 100%;
 }
 
-ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-b {
-  font-weight: 600;
-}
-
-.filler {
-  flex-grow: 1;
+body {
+  font-size: 14px;
 }
 
 .fade-out {

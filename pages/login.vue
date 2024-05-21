@@ -17,8 +17,7 @@
 				label="Log in with GitHub"
 				@click="auth.login"
 			/>
-			<div class="filler"/>
-			<p class="text-bluegray-500">Not authenticated</p>
+			<p class="text-bluegray-500 mt-auto">Not authenticated</p>
 		</div>
 		<div class="m-2 rounded-xl bg-[url('~/assets/images/right.svg')] bg-cover"/>
 	</section>

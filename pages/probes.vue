@@ -1,5 +1,28 @@
 <template>
-	<div>
+	<div class="bg-surface-50 flex h-full flex-col p-6">
+		<div class="flex">
+			<h1 class="title col-span-2 text-2xl font-bold">Probes</h1>
+			<Button class="ml-auto">
+				<nuxt-icon class="pi mr-2 mt-[2px]" name="capture"/>
+				<span class="font-bold">Adopt a probe</span>
+			</Button>
+		</div>
+		<div class="bg-surface-0 mt-6 flex h-full grow flex-col rounded-xl border border-gray-300">
+			<p class="text-bluegray-700 flex border-b border-gray-300 px-6 py-3 font-bold">List of probes</p>
+			<div v-if="!adoptedProbes?.length" class="bg-surface-50 m-6 flex grow flex-col items-center justify-center rounded-xl text-center">
+				<img class="mx-auto w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
+				<p class="mt-6 leading-tight">
+					<b>You don't have any probes yet.</b><br><br>
+					Get started in 30 seconds by running a Docker container with our probe.  It's free and simple.<br>
+					Each probe will generate additional credits for you to use. Nowhere to run the container?<br>
+					<NuxtLink class="text-primary font-semibold hover:underline" to="https://github.com/sponsors/jsdelivr">Become a GitHub Sponsor</NuxtLink> and get a hardware ARM powered probe delivered to you.<br>
+					Plug-and-play simplicity guaranteed.
+				</p>
+				<Button class="mt-6" label="Start a probe"/>
+			</div>
+		</div>
+	</div>
+	<!-- <div>
 		<h1>Probes</h1>
 		<span class="edit-input">
 			<InputText v-model="value" type="text" class="edit-input__input"/>
@@ -27,7 +50,7 @@
 			<Column field="tags" header="tags"/>
 			<Column field="version" header="version"/>
 		</DataTable>
-	</div>
+	</div> -->
 </template>
 
 <script setup lang="ts">

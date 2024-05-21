@@ -1,5 +1,5 @@
 <template>
-	<div class="wrapper grid grid-cols-2 gap-4">
+	<div class="grid grid-cols-2 gap-4 p-6">
 		<h1 class="title col-span-2 text-2xl font-bold">Overview</h1>
 		<div class="rounded-xl border border-gray-300">
 			<p class="text-bluegray-700 flex border-b border-gray-300 px-6 py-3 font-bold">Summary</p>
@@ -30,7 +30,7 @@
 						</div>
 						<div v-if="!cities.length" class="ml-2">No locations to show</div>
 					</div>
-					<Button class="summary__adopt-button ml-auto min-w-36" :severity="adoptedProbes?.length ? 'secondary' : undefined">
+					<Button class="ml-auto min-w-36" :severity="adoptedProbes?.length ? 'secondary' : undefined">
 						<nuxt-icon class="pi mr-2 mt-[2px]" name="capture"/>
 						<span class="font-bold">{{ adoptedProbes?.length ? "Adopt probe" : "Adopt first probe" }}</span>
 					</Button>
@@ -100,7 +100,7 @@
 					<p class="ml-6 leading-tight">
 						<b>You don't have any probes yet.</b><br><br>
 						Get started by going to <NuxtLink class="text-primary font-semibold hover:underline" to="/probes">Probes</NuxtLink> page to create a container probe.<br>
-						Or <NuxtLink class="text-primary font-semibold hover:underline" to="/probes">become a sponsor</NuxtLink> and get a free hardware ARM based device that is plug-and-play.
+						Or <NuxtLink class="text-primary font-semibold hover:underline" to="https://github.com/sponsors/jsdelivr">become a sponsor</NuxtLink> and get a free hardware ARM based device that is plug-and-play.
 					</p>
 				</div>
 			</div>

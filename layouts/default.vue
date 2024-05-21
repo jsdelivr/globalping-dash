@@ -59,7 +59,7 @@
 				</NuxtLink>
 			</div>
 		</aside>
-		<div class="p-6">
+		<div>
 			<slot/>
 		</div>
 	</section>

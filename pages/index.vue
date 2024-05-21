@@ -5,24 +5,51 @@
 			<p class="text-bluegray-700 flex border-b border-gray-300 px-6 py-3 font-bold">Summary</p>
 			<div class="p-6">
 				<div class="flex">
-					<div class="flex items-center"><BigIcon name="gp" border/><div><span class="number mx-2 text-3xl font-bold">{{ adoptedProbes?.length }}</span>Probes</div></div>
-					<div class="ml-auto mr-6 flex items-center"><BigIcon name="point-online" filled/><div><span class="number mx-2 text-3xl font-bold">{{ onlineProbes.length }}</span>Online</div></div>
-					<div class="flex items-center"><BigIcon name="point-offline" filled/><div><span class="number mx-2 text-3xl font-bold">{{ offlineProbes.length }}</span>Offline</div></div>
+					<div class="flex items-center">
+						<BigIcon name="gp" border/>
+						<div><span class="number mx-2 text-3xl font-bold">{{ adoptedProbes?.length }}</span>Probes</div>
+					</div>
+					<div class="ml-auto mr-6 flex items-center">
+						<BigIcon name="point-online" filled/>
+						<div><span class="number mx-2 text-3xl font-bold">{{ onlineProbes.length }}</span>Online</div>
+					</div>
+					<div class="flex items-center">
+						<BigIcon name="point-offline" filled/>
+						<div><span class="number mx-2 text-3xl font-bold">{{ offlineProbes.length }}</span>Offline</div>
+					</div>
 				</div>
 				<div class="block__secondary-content mt-6 flex items-center text-nowrap">
-					<div class="summary__locations fade-out flex grow items-center overflow-hidden"><div>Locations: </div><div v-for="(count, name) in cities" :key="name" class="summary__country border-surface-300 ml-3 rounded-full border px-3 py-2">{{ name }} <span class="summary__country-number text-bluegray-500">{{ count }}</span></div></div>
-					<Button class="summary__adopt-button ml-3 min-w-36 grow" severity="secondary">
+					<div class="summary__locations fade-out flex grow items-center overflow-hidden">
+						<div>Locations: </div>
+						<div
+							v-for="(count, name) in cities"
+							:key="name"
+							class="summary__country border-surface-300 ml-3 rounded-full border px-3 py-2"
+						>
+							{{ name }} <span class="summary__country-number text-bluegray-500">{{ count }}</span>
+						</div>
+						<div v-if="!cities.length" class="ml-2">No locations to show</div>
+					</div>
+					<Button class="summary__adopt-button ml-auto min-w-36" :severity="adoptedProbes?.length ? 'secondary' : undefined">
 						<nuxt-icon class="pi mr-2 mt-[2px]" name="capture"/>
-						<span class="font-bold">Adopt probe</span>
+						<span class="font-bold">{{ adoptedProbes?.length ? "Adopt probe" : "Adopt first probe" }}</span>
 					</Button>
 				</div>
 			</div>
 		</div>
 		<div class="rounded-xl border border-gray-300">
-			<p class="text-bluegray-700 flex items-center border-b border-gray-300 px-6 py-3 font-bold">Credits<i v-tooltip.top="user.github_username" class="pi pi-info-circle ml-2"/></p>
+			<p class="text-bluegray-700 flex items-center border-b border-gray-300 px-6 py-3 font-bold">
+				Credits<i
+					v-tooltip.top="user.github_username"
+					class="pi pi-info-circle ml-2"
+				/>
+			</p>
 			<div class="p-6">
 				<div class="flex">
-					<div class="flex items-center"><BigIcon name="coin" border/><div><span class="mx-2 text-3xl font-bold">{{ total }}</span>Total</div></div>
+					<div class="flex items-center">
+						<BigIcon name="coin" border/>
+						<div><span class="mx-2 text-3xl font-bold">{{ total }}</span>Total</div>
+					</div>
 					<NuxtLink class="ml-auto" to="/credits" tabindex="-1">
 						<Button severity="secondary" label="Adopt probe">
 							<span class="p-button-label mr-2 font-bold text-green-500">+{{ perDay }}</span>
@@ -113,14 +140,14 @@
 </script>
 
 <style scoped>
-	.probe + .probe {
-		margin-left: 24px;
-		padding-left: 24px;
-		border-left: 1px solid var(--surface-300);
-	}
+.probe + .probe {
+	margin-left: 24px;
+	padding-left: 24px;
+	border-left: 1px solid var(--surface-300);
+}
 
-	.probe .flag {
-		transform: scale(0.35);
-		border-radius: 5px;
-	}
+.probe .flag {
+	transform: scale(0.35);
+	border-radius: 5px;
+}
 </style>

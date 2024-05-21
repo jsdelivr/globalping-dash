@@ -18,7 +18,7 @@ export default {
 			},
 
 			// Shapes
-			{ 'shadow-lg': props.raised },
+			// { 'shadow-lg': props.raised },
 			{ 'rounded-md': !props.rounded, 'rounded-full': props.rounded },
 			{ 'rounded-none first:rounded-l-md last:rounded-r-md': parent.instance.$name == 'InputGroup' },
 

@@ -14,7 +14,7 @@ export default {
 			// Color
 			'bg-surface-0 dark:bg-surface-900',
 			'[&:last-child]:border-b',
-			'border-surface-200 dark:border-surface-700',
+			'border-surface-200 dark:border-bluegray-900',
 
 			// Transitions
 			'transform',
@@ -39,20 +39,21 @@ export default {
 			'shrink-0',
 
 			// Spacing
-			'p-6',
+			'py-6',
+			'px-5',
 
 			// Shape
 			'rounded-tl-lg',
 			'rounded-tr-lg',
 
 			// Colors
-			'text-surface-700 dark:text-surface-0/80',
+			'text-bluegray-900 dark:text-surface-0/80',
 			'border border-b-0',
-			'border-surface-200 dark:border-surface-700',
+			'border-surface-200 dark:border-bluegray-900',
 		],
 	},
 	title: {
-		class: [ 'font-semibold text-xl leading-[normal]' ],
+		class: [ 'font-bold text-lg leading-[normal]' ],
 	},
 	icons: {
 		class: [ 'flex items-center' ],
@@ -81,7 +82,7 @@ export default {
 			'transition duration-200 ease-in-out',
 
 			// States
-			'hover:text-surface-700 dark:hover:text-white/80',
+			'hover:text-bluegray-900 dark:hover:text-white/80',
 			'hover:bg-surface-100 dark:hover:bg-[rgba(255,255,255,0.03)]',
 			'focus:outline-none focus:outline-offset-0 focus:ring-1',
 			'focus:ring-primary-500 dark:focus:ring-primary-400',
@@ -114,7 +115,7 @@ export default {
 			'transition duration-200 ease-in-out',
 
 			// States
-			'hover:text-surface-700 dark:hover:text-white/80',
+			'hover:text-bluegray-900 dark:hover:text-white/80',
 			'hover:bg-surface-100 dark:hover:bg-[rgba(255,255,255,0.03)]',
 			'focus:outline-none focus:outline-offset-0 focus:ring-1',
 			'focus:ring-primary-500 dark:focus:ring-primary-400',
@@ -158,9 +159,9 @@ export default {
 			},
 
 			// Colors
-			'text-surface-700 dark:text-surface-0/80',
+			'text-bluegray-900 dark:text-surface-0/80',
 			'border border-t-0 border-b-0',
-			'border-surface-200 dark:border-surface-700',
+			'border-surface-200 dark:border-bluegray-900',
 
 			// Misc
 			'overflow-y-auto',
@@ -184,9 +185,9 @@ export default {
 
 			// Colors
 			'bg-surface-0 dark:bg-surface-900',
-			'text-surface-700 dark:text-surface-0/80',
+			'text-bluegray-900 dark:text-surface-0/80',
 			'border border-t-0 border-b-0',
-			'border-surface-200 dark:border-surface-700',
+			'border-surface-200 dark:border-bluegray-900',
 		],
 	},
 	mask: ({ props }) => ({

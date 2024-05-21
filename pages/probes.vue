@@ -7,8 +7,8 @@
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
 		</div>
-		<div class="bg-surface-0 mt-6 flex h-full grow flex-col rounded-xl border border-gray-300">
-			<p class="text-bluegray-700 flex border-b border-gray-300 px-6 py-3 font-bold">List of probes</p>
+		<div class="bg-surface-0 mt-6 flex h-full grow flex-col rounded-xl border">
+			<p class="text-bluegray-700 flex border-b px-6 py-3 font-bold">List of probes</p>
 			<div v-if="!adoptedProbes?.length" class="bg-surface-50 m-6 flex grow flex-col items-center justify-center rounded-xl text-center">
 				<img class="mx-auto w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
 				<p class="mt-6 leading-tight">
@@ -18,7 +18,26 @@
 					<NuxtLink class="text-primary font-semibold hover:underline" to="https://github.com/sponsors/jsdelivr">Become a GitHub Sponsor</NuxtLink> and get a hardware ARM powered probe delivered to you.<br>
 					Plug-and-play simplicity guaranteed.
 				</p>
-				<Button class="mt-6" label="Start a probe"/>
+				<Button class="mt-6" label="Start a probe" @click="startProbeDialog = true"/>
+				<Dialog
+					v-model:visible="startProbeDialog"
+					class="min-w-[700px]"
+					modal
+					dismissable-mask
+					:draggable="false"
+					header="Start a probe"
+				>
+					<p>To join the Globalping probe network all you have to do is run our container.</p>
+					<div class="mt-4">
+						<Button class="rounded-r-none" label="Docker"/>
+						<Button class="rounded-l-none" label="Podman" severity="secondary"/>
+					</div>
+					<div class="relative mt-4 flex items-center overflow-hidden rounded-xl border p-4">
+						<pre class=""><code>docker run -d --network host --restart=always --name globalping-probe ghcr.io/jsdelivr/globalping-probe</code></pre>
+						<Button class="!absolute right-2" icon="pi pi-copy" severity="secondary" raised/>
+					</div>
+					<p class="mt-4">Once you connect you will become part of the global community that powers the Globalping Platform. The container will work on both x86 and ARM architectures.</p>
+				</Dialog>
 			</div>
 		</div>
 	</div>
@@ -61,6 +80,8 @@
 	const { data: adoptedProbes } = await useAsyncData('gp_adopted_probes', () => {
 		return $directus.request(readItems('gp_adopted_probes'));
 	});
+
+	const startProbeDialog = ref(false);
 
 	const edit = async () => {
 		const result = await $directus.request(updateItem('gp_adopted_probes', '1', { name: 'asdf' }));

@@ -1,8 +1,8 @@
 <template>
 	<div class="grid grid-cols-2 gap-4 p-6">
 		<h1 class="title col-span-2 text-2xl font-bold">Overview</h1>
-		<div class="rounded-xl border border-gray-300">
-			<p class="text-bluegray-700 flex border-b border-gray-300 px-6 py-3 font-bold">Summary</p>
+		<div class="rounded-xl border">
+			<p class="text-bluegray-700 flex border-b px-6 py-3 font-bold">Summary</p>
 			<div class="p-6">
 				<div class="flex">
 					<div class="flex items-center">
@@ -37,8 +37,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="rounded-xl border border-gray-300">
-			<p class="text-bluegray-700 flex items-center border-b border-gray-300 px-6 py-3 font-bold">
+		<div class="rounded-xl border">
+			<p class="text-bluegray-700 flex items-center border-b px-6 py-3 font-bold">
 				Credits<i
 					v-tooltip.top="user.github_username"
 					class="pi pi-info-circle ml-2"
@@ -65,8 +65,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-span-2 rounded-xl border border-gray-300">
-			<div class="text-bluegray-700 flex h-10 items-center border-b border-gray-300 px-6 font-bold">
+		<div class="col-span-2 rounded-xl border">
+			<div class="text-bluegray-700 flex h-10 items-center border-b px-6 font-bold">
 				<span>Probes</span>
 				<NuxtLink class="ml-auto" to="/probes" tabindex="-1">
 					<Button link label="See all" icon-pos="right" icon="pi pi-chevron-right"/>

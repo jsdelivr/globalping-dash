@@ -68,6 +68,9 @@ export default defineNuxtConfig({
 						'bluegray-900': 'var(--bluegray-900)',
 						'bluegray-950': 'var(--bluegray-950)',
 					},
+					borderColor: {
+						DEFAULT: 'var(--surface-300)',
+					},
 				},
 			},
 		},

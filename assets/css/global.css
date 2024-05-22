@@ -16,6 +16,11 @@ body {
   font-size: 14px;
 }
 
+.flag.small-flag {
+	transform: scale(0.35) !important;
+	border-radius: 5px;
+}
+
 .fade-out {
   position: relative;
 }

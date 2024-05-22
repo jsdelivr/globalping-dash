@@ -30,48 +30,65 @@
 					<StartAProbe/>
 				</Dialog>
 			</div>
+			<DataTable v-if="adoptedProbes?.length" :value="adoptedProbes">
+				<Column header="Name">
+					<template #body="slotProps">
+						<ProbeHeader :name="slotProps.data.name" :city="slotProps.data.city" :ip="slotProps.data.ip"/>
+					</template>
+				</Column>
+				<Column header="Location">
+					<template #body="slotProps">
+						<div class="flex items-center">
+							<CountryFlag :country="slotProps.data.country" size="small"/>
+							<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
+						</div>
+						<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
+					</template>
+				</Column>
+				<Column header="Tags">
+					<template #body="slotProps">
+						<Tag v-for="tag in slotProps.data.tags" :key="tag" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
+					</template>
+				</Column>
+				<Column header="Credits past month">
+					<template #body="">
+						<Tag severity="success" value="Success">
+							<nuxt-icon name="coin"/>+150
+						</Tag>
+					</template>
+				</Column>
+				<!-- <Column field="id" header="id"/>
+				<Column field="asn" header="asn"/>
+				<Column field="city" header="city"/>
+				<Column field="country" header="country"/>
+				<Column field="date_created" header="date_created"/>
+				<Column field="hardwareDevice" header="hardwareDevice"/>
+				<Column field="ip" header="ip"/>
+				<Column field="lastSyncDate" header="lastSyncDate"/>
+				<Column field="latitude" header="latitude"/>
+				<Column field="longitude" header="longitude"/>
+				<Column field="name" header="name"/>
+				<Column field="network" header="network"/>
+				<Column field="nodeVersion" header="nodeVersion"/>
+				<Column field="status" header="status"/>
+				<Column field="tags" header="tags"/>
+				<Column field="version" header="version"/> -->
+				<Column expander style="width: 5rem"/>
+			</DataTable>
 		</div>
 	</div>
-	<!-- <div>
-		<h1>Probes</h1>
-		<span class="edit-input">
-			<InputText v-model="value" type="text" class="edit-input__input"/>
-			<i class="pi pi-check edit-input__save" @click="edit"/>
-		</span>
-		<br>
-		<br>
-		<br>
-		<br>
-		<DataTable :value="adoptedProbes" table-style="min-width: 50rem">
-			<Column field="id" header="id"/>
-			<Column field="asn" header="asn"/>
-			<Column field="city" header="city"/>
-			<Column field="country" header="country"/>
-			<Column field="date_created" header="date_created"/>
-			<Column field="hardwareDevice" header="hardwareDevice"/>
-			<Column field="ip" header="ip"/>
-			<Column field="lastSyncDate" header="lastSyncDate"/>
-			<Column field="latitude" header="latitude"/>
-			<Column field="longitude" header="longitude"/>
-			<Column field="name" header="name"/>
-			<Column field="network" header="network"/>
-			<Column field="nodeVersion" header="nodeVersion"/>
-			<Column field="status" header="status"/>
-			<Column field="tags" header="tags"/>
-			<Column field="version" header="version"/>
-		</DataTable>
-	</div> -->
 </template>
 
 <script setup lang="ts">
+	import CountryFlag from 'vue-country-flag-next';
 	import { readItems, updateItem } from '@directus/sdk';
 
 	const { $directus } = useNuxtApp();
 
 	const { data: adoptedProbes } = await useAsyncData('gp_adopted_probes', () => {
-		// return $directus.request(readItems('gp_adopted_probes'));
-		return [];
+		return $directus.request(readItems('gp_adopted_probes'));
 	});
+	console.log('adoptedProbes.value', adoptedProbes.value);
 
 	const startProbeDialog = ref(false);
 

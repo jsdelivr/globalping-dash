@@ -75,18 +75,14 @@
 			<div class="p-6">
 				<div v-if="adoptedProbes?.length" class="fade-out flex overflow-hidden">
 					<div v-for="probe in adoptedProbes" :key="probe.id" class="probe box-content min-w-60 py-2">
-						<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
-							<BigIcon class="probe__icon col-span-1 row-span-2" name="gp" border online/>
-							<p class="col-start-2 col-end-3 font-bold">{{ probe.name || probe.city }}</p>
-							<p class="text-bluegray-400 col-start-2 col-end-3 row-start-2 row-end-3 text-[13px]">203.96.28.92</p>
-						</div>
+						<ProbeHeader :name="probe.name" :city="probe.city" :ip="probe.ip"/>
 						<div>
 							<div class="mb-2 flex items-center text-nowrap">
 								<span class="mr-6 font-semibold">Location:</span>
 								<span class="ml-auto mr-2 flex items-center justify-end">
 									{{ probe.city }}, {{ probe.country }}
 								</span>
-								<CountryFlag class="probe__flag" :country="probe.country" size="small"/>
+								<CountryFlag :country="probe.country" size="small"/>
 							</div>
 							<div class="mb-2 flex items-center justify-between text-nowrap">
 								<span class="mr-6 font-semibold">Version:</span>
@@ -152,10 +148,5 @@
 	margin-left: 24px;
 	padding-left: 24px;
 	border-left: 1px solid var(--surface-300);
-}
-
-.probe .flag {
-	transform: scale(0.35);
-	border-radius: 5px;
 }
 </style>

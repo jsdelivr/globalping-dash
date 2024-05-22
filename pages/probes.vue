@@ -7,7 +7,7 @@
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
 		</div>
-		<div class="bg-surface-0 mt-6 flex h-full grow flex-col rounded-xl border">
+		<div class="bg-surface-0 mt-6 flex flex-col overflow-hidden rounded-xl border">
 			<p class="text-bluegray-700 flex border-b px-6 py-3 font-bold">List of probes</p>
 			<div v-if="!adoptedProbes?.length" class="bg-surface-50 m-6 flex grow flex-col items-center justify-center rounded-xl text-center">
 				<img class="mx-auto w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
@@ -30,67 +30,108 @@
 					<StartAProbe/>
 				</Dialog>
 			</div>
-			<DataTable v-if="adoptedProbes?.length" :value="adoptedProbes">
-				<Column header="Name">
-					<template #body="slotProps">
-						<ProbeHeader :name="slotProps.data.name" :city="slotProps.data.city" :ip="slotProps.data.ip"/>
+			<div v-if="adoptedProbes?.length">
+				<DataTable
+					:value="customers"
+					lazy
+					paginator
+					:first="first"
+					:rows="5"
+					data-key="id"
+					:total-records="totalRecords"
+					:loading="loading"
+					@page="onPage($event)"
+				>
+					<Column header="Name">
+						<template #body="slotProps">
+							<ProbeHeader :name="slotProps.data.name" :city="slotProps.data.city" :ip="slotProps.data.ip"/>
+						</template>
+					</Column>
+					<Column header="Location">
+						<template #body="slotProps">
+							<div class="flex items-center">
+								<CountryFlag :country="slotProps.data.country" size="small"/>
+								<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
+							</div>
+							<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
+						</template>
+					</Column>
+					<Column header="Tags">
+						<template #body="slotProps">
+							<Tag v-for="tag in slotProps.data.tags" :key="tag" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
+						</template>
+					</Column>
+					<Column header="Credits past month">
+						<template #body="">
+							<Tag severity="success" value="Success">
+								<nuxt-icon name="coin"/>+150
+							</Tag>
+						</template>
+					</Column>
+					<template #footer>
+						<Button
+							class=""
+							severity="secondary"
+							label="Start a probe"
+							icon="pi pi-question-circle"
+						/>
 					</template>
-				</Column>
-				<Column header="Location">
-					<template #body="slotProps">
-						<div class="flex items-center">
-							<CountryFlag :country="slotProps.data.country" size="small"/>
-							<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
-						</div>
-						<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
-					</template>
-				</Column>
-				<Column header="Tags">
-					<template #body="slotProps">
-						<Tag v-for="tag in slotProps.data.tags" :key="tag" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
-					</template>
-				</Column>
-				<Column header="Credits past month">
-					<template #body="">
-						<Tag severity="success" value="Success">
-							<nuxt-icon name="coin"/>+150
-						</Tag>
-					</template>
-				</Column>
-				<!-- <Column field="id" header="id"/>
-				<Column field="asn" header="asn"/>
-				<Column field="city" header="city"/>
-				<Column field="country" header="country"/>
-				<Column field="date_created" header="date_created"/>
-				<Column field="hardwareDevice" header="hardwareDevice"/>
-				<Column field="ip" header="ip"/>
-				<Column field="lastSyncDate" header="lastSyncDate"/>
-				<Column field="latitude" header="latitude"/>
-				<Column field="longitude" header="longitude"/>
-				<Column field="name" header="name"/>
-				<Column field="network" header="network"/>
-				<Column field="nodeVersion" header="nodeVersion"/>
-				<Column field="status" header="status"/>
-				<Column field="tags" header="tags"/>
-				<Column field="version" header="version"/> -->
-				<Column expander style="width: 5rem"/>
-			</DataTable>
+					<Column expander style="width: 5rem"/>
+				</DataTable>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
 	import CountryFlag from 'vue-country-flag-next';
-	import { readItems, updateItem } from '@directus/sdk';
+	import { aggregate, readItems, updateItem } from '@directus/sdk';
 
 	const { $directus } = useNuxtApp();
 
 	const { data: adoptedProbes } = await useAsyncData('gp_adopted_probes', () => {
 		return $directus.request(readItems('gp_adopted_probes'));
 	});
-	console.log('adoptedProbes.value', adoptedProbes.value);
 
 	const startProbeDialog = ref(false);
+
+	const loading = ref(false);
+	const totalRecords = ref(0);
+	const customers = ref();
+	const first = ref(0);
+	const lazyParams = ref({});
+
+	const loadLazyData = async (event) => {
+		loading.value = true;
+		lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
+
+		const probes = await $directus.request(readItems('gp_adopted_probes', {
+			offset: lazyParams.value.first,
+			limit: 5,
+		}));
+
+		const [{ count }] = await $directus.request(aggregate('gp_adopted_probes', { aggregate: { count: '*' } }));
+
+		customers.value = probes;
+		totalRecords.value = count;
+		loading.value = false;
+	};
+
+	onMounted(() => {
+		loading.value = true;
+
+		lazyParams.value = {
+			first: 0,
+			rows: 5,
+		};
+
+		loadLazyData();
+	});
+
+	const onPage = (event) => {
+		lazyParams.value = event;
+		loadLazyData(event);
+	};
 
 	// const edit = async () => {
 	// 	const result = await $directus.request(updateItem('gp_adopted_probes', '1', { name: 'asdf' }));

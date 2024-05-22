@@ -5,7 +5,6 @@ export default defineNuxtConfig({
 	devtools: { enabled: true },
 	devServer: { port: 13010 },
 	modules: [ '@nuxtjs/tailwindcss', 'nuxt-primevue', '@pinia/nuxt', 'nuxt-icons' ],
-	// css: [ 'primeicons/primeicons.css', '~/assets/theme/themes/aura/aura-light/green/theme.scss', '~/assets/css/base.css', '~/assets/css/global.css' ],
 	css: [ 'primeicons/primeicons.css', '~/assets/css/base.css', '~/assets/css/global.css' ],
 	primevue: {
 		options: {

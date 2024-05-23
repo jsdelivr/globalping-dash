@@ -32,7 +32,7 @@
 			</div>
 			<div v-if="adoptedProbes?.length">
 				<DataTable
-					:value="customers"
+					:value="adoptedProbes"
 					lazy
 					paginator
 					:first="first"
@@ -89,15 +89,15 @@
 
 	const { $directus } = useNuxtApp();
 
-	const { data: adoptedProbes } = await useAsyncData('gp_adopted_probes', () => {
-		return $directus.request(readItems('gp_adopted_probes'));
-	});
+	// const { data: adoptedProbes } = await useAsyncData('gp_adopted_probes', () => {
+	// 	return $directus.request(readItems('gp_adopted_probes'));
+	// });
 
 	const startProbeDialog = ref(false);
 
 	const loading = ref(false);
 	const totalRecords = ref(0);
-	const customers = ref();
+	const adoptedProbes = ref([]);
 	const first = ref(0);
 	const lazyParams = ref({});
 
@@ -112,7 +112,7 @@
 
 		const [{ count }] = await $directus.request(aggregate('gp_adopted_probes', { aggregate: { count: '*' } }));
 
-		customers.value = probes;
+		adoptedProbes.value = probes;
 		totalRecords.value = count;
 		loading.value = false;
 	};

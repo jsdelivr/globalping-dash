@@ -36,7 +36,7 @@
 				</template>
 				<Column header="Name">
 					<template #body="slotProps">
-						<ProbeHeader :name="slotProps.data.name" :city="slotProps.data.city" :ip="slotProps.data.ip" ip-css="text-bluegray-900"/>
+						<ProbeHeader :name="slotProps.data.name" :city="slotProps.data.city" :ip="slotProps.data.ip" :status="slotProps.data.status" ip-css="text-bluegray-900"/>
 					</template>
 				</Column>
 				<Column header="Location">

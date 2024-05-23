@@ -66,6 +66,7 @@
 						severity="secondary"
 						label="Start a probe"
 						icon="pi pi-question-circle"
+						@click="startProbeDialog = true"
 					/>
 				</template>
 				<Column expander style="width: 5rem"/>

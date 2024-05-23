@@ -7,9 +7,9 @@
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
 		</div>
-		<div class="bg-surface-0 mt-6 flex flex-col overflow-hidden rounded-xl border">
+		<div v-if="!adoptedProbes?.length" class="bg-surface-0 mt-6 flex grow flex-col overflow-hidden rounded-xl border">
 			<p class="text-bluegray-700 flex border-b px-6 py-3 font-bold">List of probes</p>
-			<div v-if="!adoptedProbes?.length" class="bg-surface-50 m-6 flex grow flex-col items-center justify-center rounded-xl text-center">
+			<div class="bg-surface-50 m-6 flex grow flex-col items-center justify-center rounded-xl text-center">
 				<img class="mx-auto w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
 				<p class="mt-6 leading-tight">
 					<b>You don't have any probes yet.</b><br><br>
@@ -19,67 +19,67 @@
 					Plug-and-play simplicity guaranteed.
 				</p>
 				<Button class="mt-6" label="Start a probe" @click="startProbeDialog = true"/>
-				<Dialog
-					v-model:visible="startProbeDialog"
-					class="min-w-[700px]"
-					modal
-					dismissable-mask
-					:draggable="false"
-					header="Start a probe"
-				>
-					<StartAProbe/>
-				</Dialog>
-			</div>
-			<div v-if="adoptedProbes?.length">
-				<DataTable
-					:value="adoptedProbes"
-					lazy
-					paginator
-					:first="first"
-					:rows="5"
-					data-key="id"
-					:total-records="totalRecords"
-					:loading="loading"
-					@page="onPage($event)"
-				>
-					<Column header="Name">
-						<template #body="slotProps">
-							<ProbeHeader :name="slotProps.data.name" :city="slotProps.data.city" :ip="slotProps.data.ip"/>
-						</template>
-					</Column>
-					<Column header="Location">
-						<template #body="slotProps">
-							<div class="flex items-center">
-								<CountryFlag :country="slotProps.data.country" size="small"/>
-								<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
-							</div>
-							<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
-						</template>
-					</Column>
-					<Column header="Tags">
-						<template #body="slotProps">
-							<Tag v-for="tag in slotProps.data.tags" :key="tag" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
-						</template>
-					</Column>
-					<Column header="Credits past month">
-						<template #body="">
-							<Tag severity="success" value="Success">
-								<nuxt-icon name="coin"/>+150
-							</Tag>
-						</template>
-					</Column>
-					<template #footer>
-						<Button
-							class=""
-							severity="secondary"
-							label="Start a probe"
-							icon="pi pi-question-circle"
-						/>
-					</template>
-					<Column expander style="width: 5rem"/>
-				</DataTable>
 			</div>
 		</div>
+		<div v-if="adoptedProbes?.length">
+			<DataTable
+				:value="adoptedProbes"
+				lazy
+				paginator
+				:first="first"
+				:rows="5"
+				data-key="id"
+				:total-records="totalRecords"
+				:loading="loading"
+				@page="onPage($event)"
+			>
+				<Column header="Name">
+					<template #body="slotProps">
+						<ProbeHeader :name="slotProps.data.name" :city="slotProps.data.city" :ip="slotProps.data.ip"/>
+					</template>
+				</Column>
+				<Column header="Location">
+					<template #body="slotProps">
+						<div class="flex items-center">
+							<CountryFlag :country="slotProps.data.country" size="small"/>
+							<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
+						</div>
+						<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
+					</template>
+				</Column>
+				<Column header="Tags">
+					<template #body="slotProps">
+						<Tag v-for="tag in slotProps.data.tags" :key="tag" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
+					</template>
+				</Column>
+				<Column header="Credits past month">
+					<template #body="">
+						<Tag severity="success" value="Success">
+							<nuxt-icon name="coin"/>+150
+						</Tag>
+					</template>
+				</Column>
+				<template #footer>
+					<Button
+						class=""
+						severity="secondary"
+						label="Start a probe"
+						icon="pi pi-question-circle"
+					/>
+				</template>
+				<Column expander style="width: 5rem"/>
+			</DataTable>
+		</div>
+		<Dialog
+			v-model:visible="startProbeDialog"
+			class="min-w-[700px]"
+			modal
+			dismissable-mask
+			:draggable="false"
+			header="Start a probe"
+		>
+			<StartAProbe/>
+		</Dialog>
 	</div>
 </template>
 

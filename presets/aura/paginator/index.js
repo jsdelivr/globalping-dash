@@ -12,7 +12,7 @@ export default {
 
 			// Color
 			'bg-surface-0 dark:bg-surface-900',
-			'text-surface-500 dark:text-white/60',
+			// 'text-surface-500 dark:text-white/60',
 		],
 	},
 	firstpagebutton: ({ context }) => ({
@@ -30,7 +30,7 @@ export default {
 			'leading-none',
 
 			// Color
-			'text-surface-500 dark:text-white/60',
+			// 'text-surface-500 dark:text-white/60',
 
 			// State
 			{
@@ -43,7 +43,7 @@ export default {
 
 			// Misc
 			'user-none overflow-hidden',
-			{ 'cursor-default pointer-events-none opacity-60': context.disabled },
+			{ 'text-surface-400 cursor-default pointer-events-none opacity-60': context.disabled },
 		],
 	}),
 	previouspagebutton: ({ context }) => ({
@@ -61,7 +61,7 @@ export default {
 			'leading-none',
 
 			// Color
-			'text-surface-500 dark:text-white/60',
+			// 'text-surface-500 dark:text-white/60',
 
 			// State
 			{
@@ -74,7 +74,7 @@ export default {
 
 			// Misc
 			'user-none overflow-hidden',
-			{ 'cursor-default pointer-events-none opacity-60': context.disabled },
+			{ 'text-surface-400 cursor-default pointer-events-none opacity-60': context.disabled },
 		],
 	}),
 	nextpagebutton: ({ context }) => ({
@@ -92,7 +92,7 @@ export default {
 			'leading-none',
 
 			// Color
-			'text-surface-500 dark:text-white/60',
+			// 'text-surface-500 dark:text-white/60',
 
 			// State
 			{
@@ -105,7 +105,7 @@ export default {
 
 			// Misc
 			'user-none overflow-hidden',
-			{ 'cursor-default pointer-events-none opacity-60': context.disabled },
+			{ 'text-surface-400 cursor-default pointer-events-none opacity-60': context.disabled },
 		],
 	}),
 	lastpagebutton: ({ context }) => ({
@@ -123,7 +123,7 @@ export default {
 			'leading-none',
 
 			// Color
-			'text-surface-500 dark:text-white/60',
+			// 'text-surface-500 dark:text-white/60',
 
 			// State
 			{
@@ -136,7 +136,7 @@ export default {
 
 			// Misc
 			'user-none overflow-hidden',
-			{ 'cursor-default pointer-events-none opacity-60': context.disabled },
+			{ 'text-surface-400 cursor-default pointer-events-none opacity-60': context.disabled },
 		],
 	}),
 	pagebutton: ({ context }) => ({
@@ -154,12 +154,13 @@ export default {
 			'leading-none',
 
 			// Color
-			'text-surface-500 dark:text-white/60',
+			// 'text-surface-500 dark:text-white/60',
 
 			// State
 			{
 				'hover:bg-surface-50 dark:hover:bg-[rgba(255,255,255,0.03)]': !context.disabled,
 				'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400': !context.disabled,
+				'bg-primary !text-primary-inverse hover:!bg-primary-hover hover:!border-primary-hover': context.active,
 			},
 
 			// Transition
@@ -167,7 +168,7 @@ export default {
 
 			// Misc
 			'user-none overflow-hidden',
-			{ 'cursor-default pointer-events-none opacity-60': context.disabled },
+			{ 'text-surface-400 cursor-default pointer-events-none opacity-60': context.disabled },
 		],
 	}),
 	rowperpagedropdown: {

@@ -54,9 +54,9 @@
 					</template>
 				</Column>
 				<Column header="Credits past month">
-					<template #body="">
+					<template #body="slotProps">
 						<Tag class="flex items-center !text-sm" severity="success" value="Success">
-							<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+150
+							<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ slotProps.data.credits }}
 						</Tag>
 					</template>
 				</Column>
@@ -122,7 +122,23 @@
 
 		const [{ count }] = await $directus.request(aggregate('gp_adopted_probes', { aggregate: { count: '*' } }));
 
-		adoptedProbes.value = probes;
+		const creditsAdditions = await $directus.request(readItems('gp_credits_additions', {
+			filter: {
+				date_created: { _gte: '$NOW(-1 month)' },
+			},
+		}));
+
+		const creditsByProbeId = creditsAdditions.reduce((result, { adopted_probe, amount }) => {
+			if (adopted_probe && !result[adopted_probe]) {
+				result[adopted_probe] = amount;
+			} else if (adopted_probe) {
+				result[adopted_probe] += amount;
+			}
+
+			return result;
+		}, {});
+
+		adoptedProbes.value = probes.map(probe => ({ ...probe, credits: creditsByProbeId[probe.id] || 0 }));
 		totalRecords.value = count;
 		loading.value = false;
 	};

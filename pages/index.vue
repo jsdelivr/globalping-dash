@@ -75,7 +75,7 @@
 			<div class="p-6">
 				<div v-if="adoptedProbes?.length" class="fade-out flex overflow-hidden">
 					<div v-for="probe in adoptedProbes" :key="probe.id" class="probe box-content min-w-60 py-2">
-						<ProbeHeader :name="probe.name" :city="probe.city" :ip="probe.ip"/>
+						<ProbeHeader class="mb-6" :name="probe.name" :city="probe.city" :ip="probe.ip"/>
 						<div>
 							<div class="mb-2 flex items-center text-nowrap">
 								<span class="mr-6 font-semibold">Location:</span>

@@ -8,6 +8,8 @@ export default {
 
 			// Size
 			{ 'h-full': props.scrollable && props.scrollHeight === 'flex' },
+
+			'border border-surface-300 rounded-2xl overflow-hidden bg-surface-0 dark:bg-surface-900',
 		],
 	}),
 	loadingoverlay: {
@@ -39,6 +41,8 @@ export default {
 
 			// Size
 			{ 'h-full': props.scrollable && props.scrollHeight === 'flex' },
+
+			'py-3 px-4',
 		],
 	}),
 	header: ({ props }) => ({
@@ -46,15 +50,15 @@ export default {
 			'font-bold',
 
 			// Shape
-			props.showGridlines ? 'border-x border-t border-b-0' : 'border-y border-x-0',
+			props.showGridlines ? 'border-x border-t border-b-0' : 'border-b border-x-0',
 
 			// Spacing
-			'p-4',
+			'px-4 py-3',
 
 			// Color
 			'bg-surface-0 dark:bg-surface-900',
-			'border-surface-200 dark:border-surface-700',
-			'text-surface-700 dark:text-white/80',
+			'border-surface-300 dark:border-surface-700',
+			'text-bluegray-700 dark:text-white/80',
 		],
 	}),
 	table: {
@@ -87,14 +91,14 @@ export default {
 			'font-bold',
 
 			// Shape
-			'border-t-0 border-b border-x-0',
+			'border-t-0 border-x-0',
 
 			// Spacing
-			'p-4',
+			'px-4 pb-6',
 
 			// Color
 			'bg-surface-0 dark:bg-surface-900',
-			'border-surface-200 dark:border-surface-700',
+			'border-surface-300 dark:border-surface-700',
 			'text-surface-700 dark:text-white/80',
 		],
 	},
@@ -117,11 +121,11 @@ export default {
 				'border-0 border-b border-solid',
 
 				// Spacing
-				context?.size === 'small' ? 'py-[0.375rem] px-2' : context?.size === 'large' ? 'py-[0.9375rem] px-5' : 'py-3 px-4',
+				context?.size === 'small' ? 'py-[0.375rem] px-2' : context?.size === 'large' ? 'py-[0.9375rem] px-5' : 'pt-1 pb-2 px-4',
 
 				// Color
-				(props.sortable === '' || props.sortable) && context.sorted ? 'bg-primary-highlight text-primary-highlight-inverse' : 'bg-surface-0 text-surface-700 dark:text-white/80 dark:bg-surface-900',
-				'border-surface-200 dark:border-surface-700 ',
+				(props.sortable === '' || props.sortable) && context.sorted ? 'bg-primary-highlight text-primary-highlight-inverse' : 'bg-surface-0 dark:text-white/80 dark:bg-surface-900',
+				'border-surface-300 dark:border-surface-700 ',
 
 				// States
 				{ 'hover:bg-surface-100 dark:hover:bg-surface-800/50': (props.sortable === '' || props.sortable) && !context?.sorted },
@@ -163,11 +167,11 @@ export default {
 				// Spacing
 				{ 'py-[0.375rem] px-2': context?.size === 'small' && !state.d_editing },
 				{ 'py-[0.9375rem] px-5': context?.size === 'large' && !state.d_editing },
-				{ 'py-3 px-4': context?.size !== 'large' && context?.size !== 'small' && !state.d_editing },
+				{ 'py-3 px-2': context?.size !== 'large' && context?.size !== 'small' && !state.d_editing },
 				{ 'py-[0.6rem] px-2': state.d_editing },
 
 				// Color
-				'border-surface-200 dark:border-surface-700',
+				'border-surface-300 dark:border-surface-700',
 			],
 		}),
 		footercell: ({ context }) => ({
@@ -186,7 +190,7 @@ export default {
 				context?.size === 'small' ? 'p-2' : context?.size === 'large' ? 'p-5' : 'p-4',
 
 				// Color
-				'border-surface-200 dark:border-surface-700',
+				'border-surface-300 dark:border-surface-700',
 				'text-surface-700 dark:text-white/80',
 				'bg-surface-0 dark:bg-surface-900',
 			],
@@ -848,7 +852,7 @@ export default {
 					'opacity-0',
 					'rounded-md',
 					'outline-none',
-					'border-1 border-surface-200 dark:border-surface-700',
+					'border-1 border-surface-300 dark:border-surface-700',
 
 					// Misc
 					'appearance-none',
@@ -1091,7 +1095,7 @@ export default {
 			// Color
 			'dark:text-white/80',
 			{ 'bg-primary-highlight text-primary-highlight-inverse': context.selected },
-			{ 'bg-surface-0 text-surface-600 dark:bg-surface-900': !context.selected },
+			{ 'bg-surface-0 dark:bg-surface-900': !context.selected },
 			{ 'font-bold bg-surface-0 dark:bg-surface-900 z-20': props.frozenRow },
 			{ 'odd:bg-surface-0 odd:text-surface-600 dark:odd:bg-surface-900 even:bg-surface-50 even:text-surface-600 dark:even:bg-surface-800/50': context.stripedRows },
 

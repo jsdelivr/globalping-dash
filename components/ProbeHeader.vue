@@ -1,8 +1,8 @@
 <template>
-	<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
+	<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
 		<BigIcon class="probe__icon col-span-1 row-span-2" name="gp" border online/>
 		<p class="col-start-2 col-end-3 font-bold">{{ name || city }}</p>
-		<p class="text-bluegray-400 col-start-2 col-end-3 row-start-2 row-end-3 text-[13px]">{{ ip }}</p>
+		<p class="text-bluegray-400 col-start-2 col-end-3 row-start-2 row-end-3 text-[13px]" :class="ipCss">{{ ip }}</p>
 	</div>
 </template>
 
@@ -17,6 +17,10 @@
 			default: '',
 		},
 		ip: {
+			type: String,
+			default: '',
+		},
+		ipCss: {
 			type: String,
 			default: '',
 		},

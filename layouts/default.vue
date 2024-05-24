@@ -21,7 +21,7 @@
 			<OverlayPanel ref="notificationsPanel">
 				<Accordion class="box-border w-80" expand-icon="pi pi-chevron-right">
 					<AccordionTab v-for="notification in reverseNotifications" :key="notification.id" :header="notification.subject">
-						<span class="notifications__content" v-html="md.render(notification.message)"/>
+						<span class="notification" v-html="md.render(notification.message)"/>
 					</AccordionTab>
 				</Accordion>
 			</OverlayPanel>
@@ -127,15 +127,15 @@
 </script>
 
 <style>
-	.notifications__content p {
+	.notification p {
 			margin-bottom: 18px;
 		}
 
-	.notifications__content p:last-child {
+	.notification p:last-child {
 		margin-bottom: 0;
 	}
 
-	.notifications__content a {
+	.notification a {
 		color: var(--primary);
 		font-weight: 600;
 	}

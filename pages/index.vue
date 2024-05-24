@@ -1,32 +1,32 @@
 <template>
 	<div class="grid grid-cols-2 gap-4 p-6">
-		<h1 class="title col-span-2 text-2xl font-bold">Overview</h1>
+		<h1 class="col-span-2 text-2xl font-bold">Overview</h1>
 		<div class="rounded-xl border">
 			<p class="text-bluegray-700 flex border-b px-6 py-3 font-bold">Summary</p>
 			<div class="p-6">
 				<div class="flex">
 					<div class="flex items-center">
 						<BigIcon name="gp" border/>
-						<div><span class="number mx-2 text-3xl font-bold">{{ adoptedProbes?.length }}</span>Probes</div>
+						<div><span class="mx-2 text-3xl font-bold">{{ adoptedProbes?.length }}</span>Probes</div>
 					</div>
 					<div class="ml-auto mr-6 flex items-center">
 						<BigIcon name="point-online" filled/>
-						<div><span class="number mx-2 text-3xl font-bold">{{ onlineProbes.length }}</span>Online</div>
+						<div><span class="mx-2 text-3xl font-bold">{{ onlineProbes.length }}</span>Online</div>
 					</div>
 					<div class="flex items-center">
 						<BigIcon name="point-offline" filled/>
-						<div><span class="number mx-2 text-3xl font-bold">{{ offlineProbes.length }}</span>Offline</div>
+						<div><span class="mx-2 text-3xl font-bold">{{ offlineProbes.length }}</span>Offline</div>
 					</div>
 				</div>
-				<div class="block__secondary-content mt-6 flex items-center text-nowrap">
-					<div class="summary__locations fade-out flex grow items-center overflow-hidden">
+				<div class="mt-6 flex items-center text-nowrap">
+					<div class="fade-out flex grow items-center overflow-hidden">
 						<div>Locations: </div>
 						<div
 							v-for="(count, name) in cities"
 							:key="name"
-							class="summary__country border-surface-300 ml-3 rounded-full border px-3 py-2"
+							class="border-surface-300 ml-3 rounded-full border px-3 py-2"
 						>
-							{{ name }} <span class="summary__country-number text-bluegray-500">{{ count }}</span>
+							{{ name }} <span class="text-bluegray-500">{{ count }}</span>
 						</div>
 						<div v-if="!cities.length" class="ml-2">No locations to show</div>
 					</div>

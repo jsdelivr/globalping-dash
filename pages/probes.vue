@@ -164,25 +164,3 @@
 	// 	adoptedProbes.value = [ ...adoptedProbes.value.map(probe => probe.id === result.id ? result : probe) ];
 	// };
 </script>
-
-<style>
-	.edit-input {
-		position: relative;
-	}
-
-	.edit-input__save {
-		position: absolute;
-		right: 0.75rem;
-		margin-top: -0.5rem;
-		cursor: pointer;
-		top: 50%;
-	}
-
-	.edit-input__save:hover {
-		font-weight: 600;
-	}
-
-	.edit-input__input {
-		padding-right: 2.5rem;
-	}
-</style>

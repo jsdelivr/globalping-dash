@@ -97,9 +97,6 @@ export default {
 	},
 	content: {
 		class: [
-			'flex',
-			'flex-col',
-
 			// Spacing and Size
 			'p-[1.125rem]',
 			'pt-0',

@@ -15,6 +15,10 @@ body {
   font-size: 14px;
 }
 
+.filler {
+  flex-grow: 1;
+}
+
 .flag.small-flag {
 	transform: scale(0.35) !important;
 	border-radius: 5px;

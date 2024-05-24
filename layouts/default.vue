@@ -15,17 +15,10 @@
 					<span class="m-2">Globalping</span>
 				</NuxtLink>
 				<p class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(user.user_type) }}</span></p>
-				<Button class="text-surface-0 relative" text rounded @click="toggleNotifications">
+				<Button class="text-surface-0 relative mr-8" text rounded @click="toggleNotifications">
 					<i class="pi pi-bell text-[1.3rem]"/>
 					<i v-if="newNotifications.length" class="pi pi-circle-fill text-primary absolute right-3 top-1 text-[0.3rem]"/>
 				</Button>
-				<OverlayPanel ref="notificationsPanel">
-					<Accordion class="box-border w-80" expand-icon="pi pi-chevron-right">
-						<AccordionTab v-for="notification in reverseNotifications" :key="notification.id" :header="notification.subject">
-							<span class="notification" v-html="md.render(notification.message)"/>
-						</AccordionTab>
-					</Accordion>
-				</OverlayPanel>
 				<Button class="text-surface-0 flex items-center" text rounded @click="toggleProfile">
 					<i class="pi pi-user rounded-full border-[1.5px] p-2" style="font-size: 1.1rem"/>
 					<p class="m-2">{{ user.github_username }}</p>
@@ -48,15 +41,29 @@
 				</TieredMenu>
 			</div>
 			<div class="hidden max-lg:flex">
-				<Button class="text-surface-0" icon="pi pi-bars" text @click="mobileSidebar = true"/>
-				<Sidebar v-model:visible="mobileSidebar" class="bg-surface-100 border-surface-300 flex flex-col border pt-4" :header="user.github_username">
+				<Button class="text-surface-0 relative mr-4" text @click="toggleNotifications">
+					<i class="pi pi-bell text-[1.3rem]"/>
+					<i v-if="newNotifications.length" class="pi pi-circle-fill text-primary absolute right-3 top-1 text-[0.3rem]"/>
+				</Button>
+				<Button class="text-surface-0 text-[1.3rem]" icon="pi pi-bars" text @click="mobileSidebar = true"/>
+				<Sidebar v-model:visible="mobileSidebar" class="bg-surface-100 border-surface-300 border pt-4" :header="user.github_username">
 					<NuxtLink active-class="active" class="sidebar-link" to="/"><i class="pi pi-home text-bluegray-400 pl-4 pr-3 text-xl"/>Overview</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/probes"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="probe"/>Probes</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/credits"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="coin"/>Credits</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database text-bluegray-400 pl-4 pr-3 text-xl"/>Tokens</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/settings"><i class="pi pi-cog text-bluegray-400 pl-4 pr-3 text-xl"/>Settings</NuxtLink>
 					<button active-class="active" class="sidebar-link" @click="auth.logout"><i class="pi pi-power-off text-bluegray-400 pl-4 pr-3 text-xl"/>Log out</button>
-					<div class="bg-surface-0 border-surface-300 mt-auto rounded-xl border p-6">
+					<div class="flex flex-col border-t">
+						<NuxtLink class="text-bluegray-600 ml-6 mt-4 no-underline hover:underline" to="https://www.jsdelivr.com/" target="_blank">
+							<i class="pi pi-external-link text-bluegray-300"/>
+							<span class="m-2">jsDelivr</span>
+						</NuxtLink>
+						<NuxtLink class="text-bluegray-600 ml-6 mt-4 no-underline hover:underline" to="https://www.jsdelivr.com/globalping" target="_blank">
+							<i class="pi pi-external-link text-bluegray-300"/>
+							<span class="m-2">Globalping</span>
+						</NuxtLink>
+					</div>
+					<div class="bg-surface-0 border-surface-300 mt-8 rounded-xl border p-6">
 						<p class="mb-2 font-bold">Sponsorship</p>
 						<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
 						<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1">
@@ -65,6 +72,13 @@
 					</div>
 				</Sidebar>
 			</div>
+			<OverlayPanel ref="notificationsPanel">
+				<Accordion class="box-border w-80" expand-icon="pi pi-chevron-right">
+					<AccordionTab v-for="notification in reverseNotifications" :key="notification.id" :header="notification.subject">
+						<span class="notification" v-html="md.render(notification.message)"/>
+					</AccordionTab>
+				</Accordion>
+			</OverlayPanel>
 		</header>
 		<aside class="bg-surface-100 border-surface-300 flex flex-col border p-4 max-lg:hidden">
 			<NuxtLink active-class="active" class="sidebar-link" to="/"><i class="pi pi-home text-bluegray-400 pl-4 pr-3 text-xl"/>Overview</NuxtLink>

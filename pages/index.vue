@@ -1,7 +1,7 @@
 <template>
 	<div class="grid grid-cols-2 gap-4 p-6">
 		<h1 class="col-span-2 text-2xl font-bold">Overview</h1>
-		<div class="rounded-xl border">
+		<div class="rounded-xl border max-xl:col-span-2">
 			<p class="text-bluegray-700 flex border-b px-6 py-3 font-bold">Summary</p>
 			<div class="p-6">
 				<div class="flex">
@@ -28,7 +28,7 @@
 						>
 							{{ name }} <span class="text-bluegray-500">{{ count }}</span>
 						</div>
-						<div v-if="!cities.length" class="ml-2">No locations to show</div>
+						<div v-if="isEmpty(cities)" class="ml-2">No locations to show</div>
 					</div>
 					<Button class="ml-auto min-w-36" :severity="adoptedProbes?.length ? 'secondary' : undefined">
 						<nuxt-icon class="pi mr-2 mt-[2px]" name="capture"/>
@@ -37,7 +37,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="rounded-xl border">
+		<div class="rounded-xl border max-xl:col-span-2">
 			<p class="text-bluegray-700 flex items-center border-b px-6 py-3 font-bold">
 				Credits<i
 					v-tooltip.top="user.github_username"
@@ -108,14 +108,17 @@
 	import { useAuth } from '~/store/auth';
 	import { readItems } from '@directus/sdk';
 	import countBy from 'lodash/countBy';
+	import isEmpty from 'lodash/isEmpty';
 	import CountryFlag from 'vue-country-flag-next';
 
 	const { $directus } = useNuxtApp();
 
 	// SUMMARY
 
-	const { data: adoptedProbes } = await useAsyncData('gp_adopted_probes', () => {
-		return $directus.request(readItems('gp_adopted_probes'));
+	const { data: adoptedProbes } = await useAsyncData('gp_adopted_probes_limit_10', () => {
+		return $directus.request(readItems('gp_adopted_probes', {
+			limit: 10,
+		}));
 	});
 
 	const onlineProbes = computed(() => adoptedProbes.value?.filter(({ status }) => status === 'online'));

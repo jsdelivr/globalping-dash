@@ -20,7 +20,7 @@ export default {
 
 			// Colors
 			'bg-surface-0 dark:bg-surface-900',
-			'text-surface-700 dark:text-white/80',
+			// 'text-surface-700 dark:text-white/80',
 			'dark:border-surface-700',
 
 			// Transitions
@@ -39,10 +39,11 @@ export default {
 
 			// Spacing
 			'p-[1.125rem]',
+			'px-7',
 
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
-			'text-surface-700 dark:text-surface-0/80',
+			// 'bg-surface-0 dark:bg-surface-900',
+			// 'text-surface-700 dark:text-surface-0/80',
 		],
 	},
 	title: {
@@ -96,6 +97,9 @@ export default {
 	},
 	content: {
 		class: [
+			'flex',
+			'flex-col',
+
 			// Spacing and Size
 			'p-[1.125rem]',
 			'pt-0',

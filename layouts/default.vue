@@ -47,11 +47,11 @@
 				</Button>
 				<Button class="text-surface-0 text-[1.3rem]" icon="pi pi-bars" text @click="mobileSidebar = true"/>
 				<Sidebar v-model:visible="mobileSidebar" class="bg-surface-100 border-surface-300 border pt-4" :header="user.github_username">
-					<NuxtLink active-class="active" class="sidebar-link" to="/"><i class="pi pi-home text-bluegray-400 pl-4 pr-3 text-xl"/>Overview</NuxtLink>
-					<NuxtLink active-class="active" class="sidebar-link" to="/probes"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="probe"/>Probes</NuxtLink>
-					<NuxtLink active-class="active" class="sidebar-link" to="/credits"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="coin"/>Credits</NuxtLink>
-					<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database text-bluegray-400 pl-4 pr-3 text-xl"/>Tokens</NuxtLink>
-					<NuxtLink active-class="active" class="sidebar-link" to="/settings"><i class="pi pi-cog text-bluegray-400 pl-4 pr-3 text-xl"/>Settings</NuxtLink>
+					<NuxtLink active-class="active" class="sidebar-link" to="/" @click="mobileSidebar = false"><i class="pi pi-home text-bluegray-400 pl-4 pr-3 text-xl"/>Overview</NuxtLink>
+					<NuxtLink active-class="active" class="sidebar-link" to="/probes" @click="mobileSidebar = false"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="probe"/>Probes</NuxtLink>
+					<NuxtLink active-class="active" class="sidebar-link" to="/credits" @click="mobileSidebar = false"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="coin"/>Credits</NuxtLink>
+					<NuxtLink active-class="active" class="sidebar-link" to="/tokens" @click="mobileSidebar = false"><i class="pi pi-database text-bluegray-400 pl-4 pr-3 text-xl"/>Tokens</NuxtLink>
+					<NuxtLink active-class="active" class="sidebar-link" to="/settings" @click="mobileSidebar = false"><i class="pi pi-cog text-bluegray-400 pl-4 pr-3 text-xl"/>Settings</NuxtLink>
 					<button active-class="active" class="sidebar-link" @click="auth.logout"><i class="pi pi-power-off text-bluegray-400 pl-4 pr-3 text-xl"/>Log out</button>
 					<div class="flex flex-col border-t">
 						<NuxtLink class="text-bluegray-600 ml-6 mt-4 no-underline hover:underline" to="https://www.jsdelivr.com/" target="_blank">

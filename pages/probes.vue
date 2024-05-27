@@ -23,6 +23,7 @@
 		</div>
 		<div v-if="adoptedProbes?.length">
 			<DataTable
+				v-model:expandedRows="expandedRows"
 				:value="adoptedProbes"
 				lazy
 				:first="first"
@@ -30,6 +31,7 @@
 				data-key="id"
 				:total-records="totalRecords"
 				:loading="loading"
+				@row-click="toggleRow"
 			>
 				<template #header>
 					<h3>List of probes</h3>
@@ -60,6 +62,17 @@
 						</Tag>
 					</template>
 				</Column>
+				<Column expander>
+					<template #body="slotProps">
+						<i class="pi" :class="{'pi-chevron-down': expandedRows[slotProps.data.id], 'pi-chevron-right': !expandedRows[slotProps.data.id]}"/>
+					</template>
+				</Column>
+				<template #expansion="slotProps">
+					<div>
+						<h1>alo</h1>
+						<h2>{{ slotProps.data.name || slotProps.data.city }}</h2>
+					</div>
+				</template>
 				<template #footer>
 					<Button
 						class=""
@@ -69,7 +82,6 @@
 						@click="startProbeDialog = true"
 					/>
 				</template>
-				<Column expander style="width: 5rem"/>
 			</DataTable>
 			<Paginator
 				class="mt-9"
@@ -157,6 +169,19 @@
 	const onPage = (event) => {
 		lazyParams.value = event;
 		loadLazyData(event);
+	};
+
+	// PROBE DETAILS
+
+	const expandedRows = ref<Record<string, boolean>>({});
+	const toggleRow = (event) => {
+		if (expandedRows.value[event.data.id]) {
+			const copy = { ...expandedRows.value };
+			delete copy[event.data.id];
+			expandedRows.value = copy;
+		} else {
+			expandedRows.value = { ...expandedRows.value, [event.data.id]: true };
+		}
 	};
 
 	// const edit = async () => {

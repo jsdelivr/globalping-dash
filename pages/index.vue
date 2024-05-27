@@ -4,22 +4,22 @@
 		<div class="rounded-xl border max-xl:col-span-2">
 			<p class="text-bluegray-700 flex border-b px-6 py-3 font-bold">Summary</p>
 			<div class="p-6">
-				<div class="flex">
-					<div class="flex items-center">
+				<div class="flex max-sm:flex-wrap">
+					<div class="max-sm:bg-surface-50 flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:p-4">
 						<BigIcon name="gp" border/>
 						<div><span class="mx-2 text-3xl font-bold">{{ adoptedProbes?.length }}</span>Probes</div>
 					</div>
-					<div class="ml-auto mr-6 flex items-center">
+					<div class="ml-auto mr-6 flex items-center max-sm:ml-0 max-sm:mt-3">
 						<BigIcon name="point-online" filled/>
 						<div><span class="mx-2 text-3xl font-bold">{{ onlineProbes.length }}</span>Online</div>
 					</div>
-					<div class="flex items-center">
+					<div class="flex items-center max-sm:mt-3">
 						<BigIcon name="point-offline" filled/>
 						<div><span class="mx-2 text-3xl font-bold">{{ offlineProbes.length }}</span>Offline</div>
 					</div>
 				</div>
-				<div class="mt-6 flex items-center text-nowrap">
-					<div class="fade-out flex grow items-center overflow-hidden">
+				<div class="mt-6 flex items-center text-nowrap max-sm:flex-wrap">
+					<div class="fade-out flex grow items-center overflow-hidden max-sm:basis-full">
 						<div>Locations: </div>
 						<div
 							v-for="(count, name) in cities"
@@ -30,7 +30,7 @@
 						</div>
 						<div v-if="isEmpty(cities)" class="ml-2">No locations to show</div>
 					</div>
-					<Button class="ml-auto min-w-36" :severity="adoptedProbes?.length ? 'secondary' : undefined">
+					<Button class="ml-auto min-w-36 max-sm:ml-0 max-sm:mt-3" :severity="adoptedProbes?.length ? 'secondary' : undefined">
 						<nuxt-icon class="pi mr-2 mt-[2px]" name="capture"/>
 						<span class="font-bold">{{ adoptedProbes?.length ? "Adopt probe" : "Adopt first probe" }}</span>
 					</Button>
@@ -45,12 +45,12 @@
 				/>
 			</p>
 			<div class="p-6">
-				<div class="flex">
-					<div class="flex items-center">
+				<div class="flex max-sm:flex-wrap">
+					<div class="max-sm:bg-surface-50 flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:p-4">
 						<BigIcon name="coin" border/>
 						<div><span class="mx-2 text-3xl font-bold">{{ total }}</span>Total</div>
 					</div>
-					<NuxtLink class="ml-auto" to="/credits" tabindex="-1">
+					<NuxtLink class="ml-auto max-sm:ml-0 max-sm:mt-3" to="/credits" tabindex="-1">
 						<Button severity="secondary" label="Adopt probe">
 							<span class="p-button-label mr-2 font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500': !perDay }">+{{ perDay }}</span>
 							<span>Per day</span>
@@ -58,7 +58,9 @@
 					</NuxtLink>
 				</div>
 				<div class="mt-6 flex items-center text-nowrap">
-					<Button :severity="perDay ? 'secondary' : undefined" icon="pi pi-plus" label="Add credits"/>
+					<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1">
+						<Button :severity="perDay ? 'secondary' : undefined" icon="pi pi-plus" label="Add credits"/>
+					</NuxtLink>
 					<NuxtLink v-if="perDay" class="ml-auto" to="/credits" tabindex="-1">
 						<Button link label="See details" icon-pos="right" icon="pi pi-chevron-right"/>
 					</NuxtLink>
@@ -73,7 +75,7 @@
 				</NuxtLink>
 			</div>
 			<div class="p-6">
-				<div v-if="adoptedProbes?.length" class="fade-out flex overflow-hidden">
+				<div v-if="adoptedProbes?.length" class="probes-wrapper flex overflow-hidden max-sm:flex-col">
 					<div v-for="probe in adoptedProbes" :key="probe.id" class="probe box-content min-w-60 py-2">
 						<ProbeHeader class="mb-6" :name="probe.name" :city="probe.city" :ip="probe.ip" :status="probe.status"/>
 						<div>
@@ -151,5 +153,33 @@
 	margin-left: 24px;
 	padding-left: 24px;
 	border-left: 1px solid var(--surface-300);
+}
+
+@media (max-width: 640px) {
+	.probe + .probe {
+		margin-left: 0;
+		padding-left: 0;
+		border-left: 0;
+		margin-top: 24px;
+		padding-top: 24px;
+		border-top: 1px solid var(--surface-300);
+	}
+}
+
+@screen sm {
+	.probes-wrapper {
+		position: relative;
+	}
+
+	.probes-wrapper::after {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		width: 60px;
+		height: 100%;
+		pointer-events: none;
+		background: linear-gradient(to left, white, transparent);
+	}
 }
 </style>

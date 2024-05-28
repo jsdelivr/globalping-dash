@@ -36,11 +36,11 @@
 				<template #header>
 					<h3>List of probes</h3>
 				</template>
-				<Column header="Name">
+				<Column header="Name" class="w-1/4" body-class="!p-0">
 					<template #body="slotProps">
 						<div v-if="expandedRow === slotProps.data.id" class="relative min-h-48">
 							<h1>detailed</h1>
-							<div class="absolute bottom-0 h-1/2 w-full bg-green-300">map</div>
+							<div class="absolute bottom-0 h-1/2 w-[200%] bg-green-300">map</div>
 						</div>
 						<ProbeHeader
 							v-else
@@ -49,33 +49,42 @@
 							:ip="slotProps.data.ip"
 							:status="slotProps.data.status"
 							ip-css="text-bluegray-900"
+							class="px-2 py-4"
 						/>
 					</template>
 				</Column>
-				<Column header="Location">
+				<Column header="Location" class="w-1/4" body-class="!p-0">
 					<template #body="slotProps">
-						<div class="mb-1 flex items-center">
-							<CountryFlag :country="slotProps.data.country" size="small"/>
-							<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
+						<div class="px-2 py-4">
+							<div class="mb-1 flex items-center">
+								<CountryFlag :country="slotProps.data.country" size="small"/>
+								<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
+							</div>
+							<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
 						</div>
-						<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
 					</template>
 				</Column>
-				<Column header="Tags">
+				<Column header="Tags" class="w-[34%]" body-class="!p-0">
 					<template #body="slotProps">
-						<Tag v-for="tag in slotProps.data.tags" :key="tag" class="my-0.5 mr-1 flex font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
+						<div class="px-2 py-4">
+							<Tag v-for="tag in slotProps.data.tags" :key="tag" class="my-0.5 mr-1 flex font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
+						</div>
 					</template>
 				</Column>
-				<Column header="Credits past month">
+				<Column header="Credits past month" class="w-[13%]" body-class="!p-0">
 					<template #body="slotProps">
-						<Tag class="flex items-center !text-sm" severity="success" value="Success">
-							<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ slotProps.data.credits }}
-						</Tag>
+						<div class="px-2 py-4">
+							<Tag class="flex items-center !text-sm" severity="success" value="Success">
+								<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ slotProps.data.credits }}
+							</Tag>
+						</div>
 					</template>
 				</Column>
-				<Column expander>
+				<Column expander class="w-[3%]">
 					<template #body="slotProps">
-						<i class="pi" :class="{'pi-chevron-down': expandedRow === slotProps.data.id, 'pi-chevron-right': expandedRow !== slotProps.data.id}"/>
+						<div class="px-2 py-4">
+							<i class="pi" :class="{'pi-chevron-down': expandedRow === slotProps.data.id, 'pi-chevron-right': expandedRow !== slotProps.data.id}"/>
+						</div>
 					</template>
 				</Column>
 				<template #footer>

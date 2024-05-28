@@ -83,6 +83,7 @@
 							:city="probe.city"
 							:ip="probe.ip"
 							:status="probe.status"
+							:hardware-device="probe.hardwareDevice"
 							ip-css="text-[13px]"
 						/>
 						<div>

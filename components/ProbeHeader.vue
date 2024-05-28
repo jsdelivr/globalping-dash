@@ -1,6 +1,6 @@
 <template>
 	<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
-		<BigIcon class="col-span-1 row-span-2" name="gp" border :status="status"/>
+		<BigIcon class="col-span-1 row-span-2" :name="hardwareDevice ? 'gp' : 'docker'" border :status="status"/>
 		<p class="col-start-2 col-end-3 font-bold">{{ name || city }}</p>
 		<p class="text-bluegray-400 col-start-2 col-end-3 row-start-2 row-end-3" :class="ipCss">{{ ip }}</p>
 	</div>
@@ -8,6 +8,10 @@
 
 <script setup lang="ts">
 	defineProps({
+		hardwareDevice: {
+			type: String,
+			default: '',
+		},
 		name: {
 			type: String,
 			default: '',

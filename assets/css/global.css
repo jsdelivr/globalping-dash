@@ -39,6 +39,10 @@ body {
   background: linear-gradient(to left, white, transparent);
 }
 
+.nuxt-icon svg {
+  margin-bottom: 0 !important;
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

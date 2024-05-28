@@ -40,7 +40,7 @@
 					<template #body="slotProps">
 						<div v-if="expandedRow === slotProps.data.id">
 							<div class="mx-2 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 pt-3">
-								<BigIcon class="col-span-1 row-span-2" name="gp" border :status="slotProps.data.status"/>
+								<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'gp' : 'docker'" border :status="slotProps.data.status"/>
 								<p class="col-start-2 col-end-3 flex items-center font-bold">
 									{{ slotProps.data.name || slotProps.data.city }}<Button
 										icon="pi pi-pencil"
@@ -76,6 +76,7 @@
 							:city="slotProps.data.city"
 							:ip="slotProps.data.ip"
 							:status="slotProps.data.status"
+							:hardware-device="slotProps.data.hardwareDevice"
 							ip-css="text-bluegray-900"
 							class="px-2 py-3"
 						/>

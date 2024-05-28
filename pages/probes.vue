@@ -39,14 +39,20 @@
 				<Column header="Name" class="w-1/4" body-class="!p-0">
 					<template #body="slotProps">
 						<div v-if="expandedRow === slotProps.data.id">
-							<ProbeHeader
-								:name="slotProps.data.name"
-								:city="slotProps.data.city"
-								:ip="slotProps.data.ip"
-								:status="slotProps.data.status"
-								ip-css="text-bluegray-900"
-								class="mx-2 pt-3"
-							/>
+							<div class="mx-2 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 pt-3">
+								<BigIcon class="col-span-1 row-span-2" name="gp" border :status="slotProps.data.status"/>
+								<p class="col-start-2 col-end-3 flex items-center font-bold">
+									{{ slotProps.data.name || slotProps.data.city }}<Button
+										icon="pi pi-pencil"
+										class="text-surface-900 mx-1 w-6 !py-0"
+										severity="secondary"
+										text
+										aria-label="Edit name"
+										size="small"
+									/>
+								</p>
+								<p class="text-bluegray-900 col-start-2 col-end-3 row-start-2 row-end-3">{{ slotProps.data.ip }}</p>
+							</div>
 							<div class="mb-6 mt-24 w-[200%] pl-16 pr-2">
 								<p class="border-surface-300 border-b pb-2 font-bold">Probe details</p>
 								<div class="mt-3 flex h-32 items-center justify-center rounded-md bg-green-100">
@@ -80,7 +86,17 @@
 						<div v-if="expandedRow === slotProps.data.id" class="px-2 py-3">
 							<div class="mb-1 flex items-center">
 								<CountryFlag :country="slotProps.data.country" size="small"/>
-								<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
+								<p class="ml-2 font-bold">
+									{{ slotProps.data.city }}, {{ slotProps.data.country }}
+									<Button
+										icon="pi pi-pencil"
+										class="text-surface-900 mx-1 w-6 !py-0"
+										severity="secondary"
+										text
+										aria-label="Edit name"
+										size="small"
+									/>
+								</p>
 							</div>
 							<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
 							<p class="text-bluegray-400 mt-3 text-[0.65rem]">City where the probe is located. If you know that city is wrong it can be changed here: type in the valid city and click save.</p>

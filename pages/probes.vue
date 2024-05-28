@@ -49,7 +49,7 @@
 							/>
 							<div class="mb-6 mt-[110px] w-[200%] pl-16">
 								<p class="border-surface-300 border-b pb-2 font-bold">Probe details</p>
-								<div class="mt-3 h-32 rounded-md bg-green-100">
+								<div class="mt-3 flex h-32 items-center justify-center rounded-md bg-green-100">
 									Map goes here
 								</div>
 								<p class="mt-3">
@@ -112,8 +112,11 @@
 				</Column>
 				<Column expander class="w-[3%]" body-class="!p-0">
 					<template #body="slotProps">
-						<div class="px-2 py-3">
-							<i class="pi" :class="{'pi-chevron-down': expandedRow === slotProps.data.id, 'pi-chevron-right': expandedRow !== slotProps.data.id}"/>
+						<div v-if="expandedRow === slotProps.data.id" class="cursor-pointer px-2 py-5" @click.stop="expandedRow = ''">
+							<i class="pi pi-chevron-down"/>
+						</div>
+						<div v-else class="px-2 py-3">
+							<i class="pi pi-chevron-right"/>
 						</div>
 					</template>
 				</Column>

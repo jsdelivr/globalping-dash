@@ -23,6 +23,7 @@
 		</div>
 		<div v-if="adoptedProbes?.length">
 			<DataTable
+				v-model:expandedRows="expandedRows"
 				:value="adoptedProbes"
 				lazy
 				:first="first"
@@ -77,12 +78,6 @@
 						<i class="pi" :class="{'pi-chevron-down': expandedRow === slotProps.data.id, 'pi-chevron-right': expandedRow !== slotProps.data.id}"/>
 					</template>
 				</Column>
-				<template #expansion="slotProps">
-					<div>
-						<h1>alo</h1>
-						<h2>{{ slotProps.data.name || slotProps.data.city }}</h2>
-					</div>
-				</template>
 				<template #footer>
 					<Button
 						class=""
@@ -184,10 +179,9 @@
 	// PROBE DETAILS
 
 	const expandedRow = ref<string>('');
+	const expandedRows = computed(() => ({ [expandedRow.value]: true }));
 	const toggleRow = (event) => {
-		if (event.data.id === expandedRow.value) {
-			expandedRow.value = '';
-		} else {
+		if (event.data.id !== expandedRow.value) {
 			expandedRow.value = event.data.id;
 		}
 	};

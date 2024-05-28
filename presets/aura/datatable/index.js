@@ -1090,27 +1090,32 @@ export default {
 			leaveToClass: 'opacity-0',
 		},
 	},
-	bodyrow: ({ context, props }) => ({
-		class: [
+	bodyrow: ({ context, props }) => {
+		const expanded = props?.expandedRows[props?.rowData?.id];
+
+		return {
+			class: [
 			// Color
-			'dark:text-white/80',
-			'cursor-pointer hover:bg-surface-50',
-			{ 'bg-primary-highlight text-primary-highlight-inverse': context.selected },
-			{ 'bg-surface-0 dark:bg-surface-900': !context.selected },
-			{ 'font-bold bg-surface-0 dark:bg-surface-900 z-20': props.frozenRow },
-			{ 'odd:bg-surface-0 odd:text-surface-600 dark:odd:bg-surface-900 even:bg-surface-50 even:text-surface-600 dark:even:bg-surface-800/50': context.stripedRows },
+				'dark:text-white/80',
+				{ 'bg-surface-50': expanded },
+				{ 'cursor-pointer hover:bg-surface-50': !expanded },
+				{ 'bg-primary-highlight text-primary-highlight-inverse': context.selected },
+				{ 'bg-surface-0 dark:bg-surface-900': !context.selected },
+				{ 'font-bold bg-surface-0 dark:bg-surface-900 z-20': props.frozenRow },
+				{ 'odd:bg-surface-0 odd:text-surface-600 dark:odd:bg-surface-900 even:bg-surface-50 even:text-surface-600 dark:even:bg-surface-800/50': context.stripedRows },
 
-			// State
-			{ 'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 ring-inset dark:focus:ring-primary-400': context.selectable },
-			{ 'hover:bg-surface-300/20 dark:hover:bg-surface-800/50 hover:text-surface-600': props.selectionMode && !context.selected },
+				// State
+				{ 'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 ring-inset dark:focus:ring-primary-400': context.selectable },
+				{ 'hover:bg-surface-300/20 dark:hover:bg-surface-800/50 hover:text-surface-600': props.selectionMode && !context.selected },
 
-			// Transition
-			{ 'transition duration-200': (props.selectionMode && !context.selected) || props.rowHover },
+				// Transition
+				{ 'transition duration-200': (props.selectionMode && !context.selected) || props.rowHover },
 
-			// Misc
-			{ 'cursor-pointer': props.selectionMode },
-		],
-	}),
+				// Misc
+				{ 'cursor-pointer': props.selectionMode },
+			],
+		};
+	},
 	rowexpansion: {
 		class: 'bg-surface-0 dark:bg-surface-900 text-surface-600 dark:text-white/80',
 	},

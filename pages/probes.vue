@@ -38,9 +38,31 @@
 				</template>
 				<Column header="Name" class="w-1/4" body-class="!p-0">
 					<template #body="slotProps">
-						<div v-if="expandedRow === slotProps.data.id" class="relative min-h-48">
-							<h1>detailed</h1>
-							<div class="absolute bottom-0 h-1/2 w-[200%] bg-green-300">map</div>
+						<div v-if="expandedRow === slotProps.data.id">
+							<ProbeHeader
+								:name="slotProps.data.name"
+								:city="slotProps.data.city"
+								:ip="slotProps.data.ip"
+								:status="slotProps.data.status"
+								ip-css="text-bluegray-900"
+								class="mx-2 pt-3"
+							/>
+							<div class="mb-6 mt-[110px] w-[200%] pl-16">
+								<p class="border-surface-300 border-b pb-2 font-bold">Probe details</p>
+								<div class="mt-3 h-32 rounded-md bg-green-100">
+									Map goes here
+								</div>
+								<p class="mt-3">
+									Type:
+									<span class="ml-2 mr-8 font-bold">
+										{{ slotProps.data.hardwareDevice || 'Container' }}
+									</span>
+									Version
+									<span class="ml-2 font-bold">
+										{{ slotProps.data.version }}
+									</span>
+								</p>
+							</div>
 						</div>
 						<ProbeHeader
 							v-else
@@ -49,13 +71,21 @@
 							:ip="slotProps.data.ip"
 							:status="slotProps.data.status"
 							ip-css="text-bluegray-900"
-							class="px-2 py-4"
+							class="px-2 py-3"
 						/>
 					</template>
 				</Column>
 				<Column header="Location" class="w-1/4" body-class="!p-0">
 					<template #body="slotProps">
-						<div class="px-2 py-4">
+						<div v-if="expandedRow === slotProps.data.id" class="px-2 py-3">
+							<div class="mb-1 flex items-center">
+								<CountryFlag :country="slotProps.data.country" size="small"/>
+								<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
+							</div>
+							<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
+							<p class="text-bluegray-400 mt-3 text-xs">City where the probe is located. If you know that city is wrong it can be changed here: type in the valid city and click save.</p>
+						</div>
+						<div v-else class="px-2 py-3">
 							<div class="mb-1 flex items-center">
 								<CountryFlag :country="slotProps.data.country" size="small"/>
 								<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
@@ -66,23 +96,23 @@
 				</Column>
 				<Column header="Tags" class="w-[34%]" body-class="!p-0">
 					<template #body="slotProps">
-						<div class="px-2 py-4">
+						<div class="px-2 py-3">
 							<Tag v-for="tag in slotProps.data.tags" :key="tag" class="my-0.5 mr-1 flex font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
 						</div>
 					</template>
 				</Column>
 				<Column header="Credits past month" class="w-[13%]" body-class="!p-0">
 					<template #body="slotProps">
-						<div class="px-2 py-4">
+						<div class="px-2 py-3">
 							<Tag class="flex items-center !text-sm" severity="success" value="Success">
 								<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ slotProps.data.credits }}
 							</Tag>
 						</div>
 					</template>
 				</Column>
-				<Column expander class="w-[3%]">
+				<Column expander class="w-[3%]" body-class="!p-0">
 					<template #body="slotProps">
-						<div class="px-2 py-4">
+						<div class="px-2 py-3">
 							<i class="pi" :class="{'pi-chevron-down': expandedRow === slotProps.data.id, 'pi-chevron-right': expandedRow !== slotProps.data.id}"/>
 						</div>
 					</template>

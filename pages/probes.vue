@@ -47,7 +47,7 @@
 								ip-css="text-bluegray-900"
 								class="mx-2 pt-3"
 							/>
-							<div class="mb-6 mt-[110px] w-[200%] pl-16">
+							<div class="mb-6 mt-24 w-[200%] pl-16 pr-2">
 								<p class="border-surface-300 border-b pb-2 font-bold">Probe details</p>
 								<div class="mt-3 flex h-32 items-center justify-center rounded-md bg-green-100">
 									Map goes here
@@ -83,7 +83,7 @@
 								<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
 							</div>
 							<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
-							<p class="text-bluegray-400 mt-3 text-xs">City where the probe is located. If you know that city is wrong it can be changed here: type in the valid city and click save.</p>
+							<p class="text-bluegray-400 mt-3 text-[0.65rem]">City where the probe is located. If you know that city is wrong it can be changed here: type in the valid city and click save.</p>
 						</div>
 						<div v-else class="px-2 py-3">
 							<div class="mb-1 flex items-center">
@@ -96,8 +96,21 @@
 				</Column>
 				<Column header="Tags" class="w-[34%]" body-class="!p-0">
 					<template #body="slotProps">
-						<div class="px-2 py-3">
-							<Tag v-for="tag in slotProps.data.tags" :key="tag" class="my-0.5 mr-1 flex font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
+						<div v-if="expandedRow === slotProps.data.id" class="flex flex-col py-3">
+							<div class="px-2">
+								<div>
+									<Tag v-for="tag in slotProps.data.tags" :key="tag" class="my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
+								</div>
+								<Button class="mt-3" label="Edit tags" icon="pi pi-pencil" severity="secondary"/>
+								<p class="text-bluegray-400 mt-3 text-[0.65rem]">Public tags of the probe. They can be used as location filters for a measurement.</p>
+							</div>
+							<div class="mt-6 w-[145%] px-2">
+								<p class="border-surface-300 border-b pb-2 font-bold">Tests (last 24h)</p>
+								<p class="mt-2">Coming soon</p>
+							</div>
+						</div>
+						<div v-else class="px-2 py-3">
+							<Tag v-for="tag in slotProps.data.tags" :key="tag" class="my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
 						</div>
 					</template>
 				</Column>

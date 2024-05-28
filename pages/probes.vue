@@ -23,7 +23,6 @@
 		</div>
 		<div v-if="adoptedProbes?.length">
 			<DataTable
-				v-model:expandedRows="expandedRows"
 				:value="adoptedProbes"
 				lazy
 				:first="first"
@@ -38,7 +37,18 @@
 				</template>
 				<Column header="Name">
 					<template #body="slotProps">
-						<ProbeHeader :name="slotProps.data.name" :city="slotProps.data.city" :ip="slotProps.data.ip" :status="slotProps.data.status" ip-css="text-bluegray-900"/>
+						<div v-if="expandedRow === slotProps.data.id" class="relative min-h-48">
+							<h1>detailed</h1>
+							<div class="absolute bottom-0 h-1/2 w-full bg-green-300">map</div>
+						</div>
+						<ProbeHeader
+							v-else
+							:name="slotProps.data.name"
+							:city="slotProps.data.city"
+							:ip="slotProps.data.ip"
+							:status="slotProps.data.status"
+							ip-css="text-bluegray-900"
+						/>
 					</template>
 				</Column>
 				<Column header="Location">
@@ -64,7 +74,7 @@
 				</Column>
 				<Column expander>
 					<template #body="slotProps">
-						<i class="pi" :class="{'pi-chevron-down': expandedRows[slotProps.data.id], 'pi-chevron-right': !expandedRows[slotProps.data.id]}"/>
+						<i class="pi" :class="{'pi-chevron-down': expandedRow === slotProps.data.id, 'pi-chevron-right': expandedRow !== slotProps.data.id}"/>
 					</template>
 				</Column>
 				<template #expansion="slotProps">
@@ -173,14 +183,12 @@
 
 	// PROBE DETAILS
 
-	const expandedRows = ref<Record<string, boolean>>({});
+	const expandedRow = ref<string>('');
 	const toggleRow = (event) => {
-		if (expandedRows.value[event.data.id]) {
-			const copy = { ...expandedRows.value };
-			delete copy[event.data.id];
-			expandedRows.value = copy;
+		if (event.data.id === expandedRow.value) {
+			expandedRow.value = '';
 		} else {
-			expandedRows.value = { ...expandedRows.value, [event.data.id]: true };
+			expandedRow.value = event.data.id;
 		}
 	};
 

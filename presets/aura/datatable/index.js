@@ -1091,7 +1091,7 @@ export default {
 		},
 	},
 	bodyrow: ({ context, props }) => {
-		const expanded = props?.expandedRows[props?.rowData?.id];
+		const expanded = props?.expandedRows && props?.expandedRows[props?.rowData?.id];
 
 		return {
 			class: [

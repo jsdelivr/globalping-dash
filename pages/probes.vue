@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-surface-50 flex h-full flex-col p-6">
+	<div v-focustrap class="bg-surface-50 flex h-full flex-col p-6">
 		<div class="mb-6 flex">
 			<h1 class="title col-span-2 text-2xl font-bold">Probes</h1>
 			<Button class="ml-auto">
@@ -31,6 +31,7 @@
 				data-key="id"
 				:total-records="totalRecords"
 				:loading="loading"
+				table-class="table-fixed"
 				@row-click="toggleRow"
 			>
 				<template #header>
@@ -41,14 +42,37 @@
 						<div v-if="expandedRow === slotProps.data.id">
 							<div class="mx-2 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 pt-3">
 								<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'gp' : 'docker'" border :status="slotProps.data.status"/>
-								<p class="col-start-2 col-end-3 flex items-center font-bold">
-									{{ slotProps.data.name || slotProps.data.city }}<Button
+								<div v-if="editName" class="-mt-0.5 flex items-center border-b">
+									<InputText v-model="slotProps.data.name" class="w-full rounded-none border-0 bg-transparent !px-0 !py-1 font-bold" autofocus/>
+									<Button
+										icon="pi pi-check"
+										class="text-surface-900 h-6 w-4"
+										severity="secondary"
+										text
+										aria-label="Save name"
+										size="small"
+										@click="editName = false"
+									/>
+									<Button
+										icon="pi pi-times"
+										class="text-surface-900 h-6 w-4"
+										severity="secondary"
+										text
+										aria-label="Close edit"
+										size="small"
+										@click="editName = false"
+									/>
+								</div>
+								<p v-else class="col-start-2 col-end-3 flex items-center font-bold">
+									{{ slotProps.data.name || slotProps.data.city }}
+									<Button
 										icon="pi pi-pencil"
 										class="text-surface-900 mx-1 w-6 !py-0"
 										severity="secondary"
 										text
 										aria-label="Edit name"
 										size="small"
+										@click="editName = true"
 									/>
 								</p>
 								<p class="text-bluegray-900 col-start-2 col-end-3 row-start-2 row-end-3">{{ slotProps.data.ip }}</p>
@@ -257,6 +281,10 @@
 			expandedRow.value = event.data.id;
 		}
 	};
+
+	//  EDIT
+
+	const editName = ref<boolean>(false);
 
 	// const edit = async () => {
 	// 	const result = await $directus.request(updateItem('gp_adopted_probes', '1', { name: 'asdf' }));

@@ -7,7 +7,7 @@
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
 		</div>
-		<div v-if="!adoptedProbes?.length && !loading" class="bg-surface-0 mt-6 flex grow flex-col overflow-hidden rounded-xl border">
+		<div v-if="!probes?.length && !loading" class="bg-surface-0 mt-6 flex grow flex-col overflow-hidden rounded-xl border">
 			<p class="text-bluegray-700 flex border-b px-6 py-3 font-bold">List of probes</p>
 			<div class="bg-surface-50 m-6 flex grow flex-col items-center justify-center rounded-xl text-center">
 				<img class="mx-auto w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
@@ -21,15 +21,15 @@
 				<Button class="mt-6" label="Start a probe" @click="startProbeDialog = true"/>
 			</div>
 		</div>
-		<div v-if="adoptedProbes?.length">
+		<div v-if="probes?.length">
 			<DataTable
 				v-model:expandedRows="expandedRows"
-				:value="adoptedProbes"
+				:value="probes"
 				lazy
 				:first="first"
 				:rows="5"
 				data-key="id"
-				:total-records="totalRecords"
+				:total-records="probesCount"
 				:loading="loading"
 				table-class="table-fixed"
 				@row-click="toggleRow"
@@ -42,8 +42,8 @@
 						<div v-if="expandedRow === slotProps.data.id">
 							<div class="mx-2 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 pt-3">
 								<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'gp' : 'docker'" border :status="slotProps.data.status"/>
-								<div v-if="editName" v-focustrap class="-mt-0.5 flex items-center border-b">
-									<InputText v-model="slotProps.data.name" class="w-full rounded-none border-0 bg-transparent !px-0 !py-1 font-bold" autofocus/>
+								<div v-if="isEditingName" v-focustrap class="-mt-0.5 flex items-center border-b">
+									<InputText v-model="name" class="w-full rounded-none border-0 bg-transparent !px-0 !py-1 font-bold" autofocus/>
 									<Button
 										icon="pi pi-check"
 										class="text-surface-900 h-6 w-4"
@@ -51,7 +51,7 @@
 										text
 										aria-label="Save name"
 										size="small"
-										@click="editName = false"
+										@click="saveName(slotProps.data.id)"
 									/>
 									<Button
 										icon="pi pi-times"
@@ -60,7 +60,7 @@
 										text
 										aria-label="Close edit"
 										size="small"
-										@click="editName = false"
+										@click="cancelName"
 									/>
 								</div>
 								<p v-else class="col-start-2 col-end-3 flex items-center font-bold">
@@ -72,7 +72,7 @@
 										text
 										aria-label="Edit name"
 										size="small"
-										@click="editName = true"
+										@click="editName(slotProps.data.name)"
 									/>
 								</p>
 								<p class="text-bluegray-900 col-start-2 col-end-3 row-start-2 row-end-3">{{ slotProps.data.ip }}</p>
@@ -159,7 +159,7 @@
 					<template #body="slotProps">
 						<div class="px-2 py-3">
 							<Tag class="flex items-center !text-sm" severity="success" value="Success">
-								<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ slotProps.data.credits }}
+								<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ credits[slotProps.data.id] || 0 }}
 							</Tag>
 						</div>
 					</template>
@@ -188,7 +188,7 @@
 				class="mt-9"
 				:first="first"
 				:rows="5"
-				:total-records="totalRecords"
+				:total-records="probesCount"
 				template="PrevPageLink PageLinks NextPageLink"
 				@page="onPage($event)"
 			/>
@@ -212,15 +212,16 @@
 
 	const { $directus } = useNuxtApp();
 
-	// const { data: adoptedProbes } = await useAsyncData('gp_adopted_probes', () => {
+	// const { data: probes } = await useAsyncData('gp_adopted_probes', () => {
 	// 	return $directus.request(readItems('gp_adopted_probes'));
 	// });
 
 	const startProbeDialog = ref(false);
 
 	const loading = ref(false);
-	const totalRecords = ref(0);
-	const adoptedProbes = ref([]);
+	const probesCount = ref(0);
+	const probes = ref([]);
+	const credits = ref({});
 	const first = ref(0);
 	const lazyParams = ref({});
 
@@ -228,7 +229,7 @@
 		loading.value = true;
 		lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
 
-		const probes = await $directus.request(readItems('gp_adopted_probes', {
+		const adoptedProbes = await $directus.request(readItems('gp_adopted_probes', {
 			offset: lazyParams.value.first,
 			limit: 5,
 		}));
@@ -251,8 +252,9 @@
 			return result;
 		}, {});
 
-		adoptedProbes.value = probes.map(probe => ({ ...probe, credits: creditsByProbeId[probe.id] || 0 }));
-		totalRecords.value = count;
+		credits.value = creditsByProbeId;
+		probes.value = adoptedProbes;
+		probesCount.value = count;
 		loading.value = false;
 	};
 
@@ -278,16 +280,32 @@
 	const expandedRows = computed(() => ({ [expandedRow.value]: true }));
 	const toggleRow = (event) => {
 		if (event.data.id !== expandedRow.value) {
+			isEditingName.value = false;
 			expandedRow.value = event.data.id;
 		}
 	};
 
 	//  EDIT
 
-	const editName = ref<boolean>(false);
+	const isEditingName = ref<boolean>(false);
+	const name = ref<string>('');
+
+	const editName = (currentName) => {
+		isEditingName.value = true;
+		name.value = currentName;
+	};
+
+	const saveName = async (id) => {
+		isEditingName.value = false;
+		const result = await $directus.request(updateItem('gp_adopted_probes', id, { name: name.value }));
+		probes.value = [ ...probes.value.map(probe => probe.id === result.id ? result : probe) ];
+	};
+
+	const cancelName = () => {
+		name.value = '';
+		isEditingName.value = false;
+	};
 
 	// const edit = async () => {
-	// 	const result = await $directus.request(updateItem('gp_adopted_probes', '1', { name: 'asdf' }));
-	// 	adoptedProbes.value = [ ...adoptedProbes.value.map(probe => probe.id === result.id ? result : probe) ];
 	// };
 </script>

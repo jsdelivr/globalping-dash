@@ -1,5 +1,5 @@
 <template>
-	<div v-focustrap class="bg-surface-50 flex h-full flex-col p-6">
+	<div class="bg-surface-50 flex h-full flex-col p-6">
 		<div class="mb-6 flex">
 			<h1 class="title col-span-2 text-2xl font-bold">Probes</h1>
 			<Button class="ml-auto">
@@ -42,7 +42,7 @@
 						<div v-if="expandedRow === slotProps.data.id">
 							<div class="mx-2 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 pt-3">
 								<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'gp' : 'docker'" border :status="slotProps.data.status"/>
-								<div v-if="editName" class="-mt-0.5 flex items-center border-b">
+								<div v-if="editName" v-focustrap class="-mt-0.5 flex items-center border-b">
 									<InputText v-model="slotProps.data.name" class="w-full rounded-none border-0 bg-transparent !px-0 !py-1 font-bold" autofocus/>
 									<Button
 										icon="pi pi-check"

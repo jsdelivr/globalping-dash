@@ -110,16 +110,38 @@
 					<template #body="slotProps">
 						<div v-if="expandedRow === slotProps.data.id" class="px-2 py-3">
 							<div class="mb-1 flex items-center">
-								<CountryFlag :country="slotProps.data.country" size="small"/>
-								<p class="ml-2 font-bold">
+								<CountryFlag :country="slotProps.data.country" size="small" class="px-6"/>
+								<div v-if="isEditingCity" v-focustrap class="-mt-0.5 ml-2 flex w-full items-center border-b">
+									<InputText v-model="city" class="w-full rounded-none border-0 bg-transparent !px-0 !py-1 font-bold" autofocus/>
+									<Button
+										icon="pi pi-check"
+										class="text-surface-900 h-6 w-4"
+										severity="secondary"
+										text
+										aria-label="Save city"
+										size="small"
+										@click="saveCity(slotProps.data.id)"
+									/>
+									<Button
+										icon="pi pi-times"
+										class="text-surface-900 h-6 w-4"
+										severity="secondary"
+										text
+										aria-label="Close edit"
+										size="small"
+										@click="cancelCity"
+									/>
+								</div>
+								<p v-else class="ml-2 font-bold">
 									{{ slotProps.data.city }}, {{ slotProps.data.country }}
 									<Button
 										icon="pi pi-pencil"
 										class="text-surface-900 mx-1 w-6 !py-0"
 										severity="secondary"
 										text
-										aria-label="Edit name"
+										aria-label="Edit city"
 										size="small"
+										@click="editCity(slotProps.data.city)"
 									/>
 								</p>
 							</div>
@@ -285,7 +307,7 @@
 		}
 	};
 
-	//  EDIT
+	//  EDIT NAME
 
 	const isEditingName = ref<boolean>(false);
 	const name = ref<string>('');
@@ -306,6 +328,25 @@
 		isEditingName.value = false;
 	};
 
-	// const edit = async () => {
-	// };
+	// EDIT CITY
+
+	const isEditingCity = ref<boolean>(false);
+	const city = ref<string>('');
+
+	const editCity = (currentCity) => {
+		isEditingCity.value = true;
+		city.value = currentCity;
+	};
+
+	const saveCity = async (id) => {
+		isEditingCity.value = false;
+		const result = await $directus.request(updateItem('gp_adopted_probes', id, { city: city.value }));
+		probes.value = [ ...probes.value.map(probe => probe.id === result.id ? result : probe) ];
+	};
+
+	const cancelCity = () => {
+		city.value = '';
+		isEditingCity.value = false;
+	};
+
 </script>

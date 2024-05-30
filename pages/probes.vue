@@ -96,8 +96,7 @@
 						</div>
 						<ProbeHeader
 							v-else
-							:name="slotProps.data.name"
-							:city="slotProps.data.city"
+							:name="slotProps.data.name || slotProps.data.city"
 							:ip="slotProps.data.ip"
 							:status="slotProps.data.status"
 							:hardware-device="slotProps.data.hardwareDevice"

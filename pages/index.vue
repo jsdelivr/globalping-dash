@@ -7,7 +7,7 @@
 				<div class="flex max-sm:flex-wrap">
 					<div class="max-sm:bg-surface-50 flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:p-4">
 						<BigIcon name="gp" border/>
-						<div><span class="mx-2 text-3xl font-bold">{{ adoptedProbes?.length }}</span>Probes</div>
+						<div><span class="mx-2 text-3xl font-bold">{{ adoptedProbes.length }}</span>Probes</div>
 					</div>
 					<div class="ml-auto mr-6 flex items-center max-sm:ml-0 max-sm:mt-3">
 						<BigIcon name="point-online" filled/>
@@ -30,9 +30,9 @@
 						</div>
 						<div v-if="isEmpty(cities)" class="ml-2">No locations to show</div>
 					</div>
-					<Button class="ml-auto min-w-36 max-sm:ml-0 max-sm:mt-3" :severity="adoptedProbes?.length ? 'secondary' : undefined">
+					<Button class="ml-auto min-w-36 max-sm:ml-0 max-sm:mt-3" :severity="adoptedProbes.length ? 'secondary' : undefined">
 						<nuxt-icon class="pi mr-2 mt-[2px]" name="capture"/>
-						<span class="font-bold">{{ adoptedProbes?.length ? "Adopt probe" : "Adopt first probe" }}</span>
+						<span class="font-bold">{{ adoptedProbes.length ? "Adopt probe" : "Adopt first probe" }}</span>
 					</Button>
 				</div>
 			</div>
@@ -75,15 +75,14 @@
 				</NuxtLink>
 			</div>
 			<div class="p-6">
-				<div v-if="adoptedProbes?.length" class="probes-wrapper flex overflow-hidden max-sm:flex-col">
+				<div v-if="adoptedProbes.length" class="probes-wrapper flex overflow-hidden max-sm:flex-col">
 					<div v-for="probe in adoptedProbes" :key="probe.id" class="probe box-content min-w-60 py-2">
 						<ProbeHeader
 							class="mb-6"
-							:name="probe.name"
-							:city="probe.city"
+							:name="probe.name || probe.city"
 							:ip="probe.ip"
 							:status="probe.status"
-							:hardware-device="probe.hardwareDevice"
+							:hardware-device="!!probe.hardwareDevice"
 							ip-css="text-[13px]"
 						/>
 						<div>
@@ -101,7 +100,7 @@
 						</div>
 					</div>
 				</div>
-				<div v-if="!adoptedProbes?.length" class="bg-surface-50 flex rounded-xl p-6 ">
+				<div v-if="!adoptedProbes.length" class="bg-surface-50 flex rounded-xl p-6 ">
 					<img class="w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
 					<p class="ml-6 leading-tight">
 						<b>You don't have any probes yet.</b><br><br>
@@ -129,10 +128,10 @@
 		return $directus.request(readItems('gp_adopted_probes', {
 			limit: 10,
 		}));
-	});
+	}, { default: () => [] });
 
-	const onlineProbes = computed(() => adoptedProbes.value?.filter(({ status }) => status === 'online'));
-	const offlineProbes = computed(() => adoptedProbes.value?.filter(({ status }) => status === 'offline'));
+	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status === 'ready'));
+	const offlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status !== 'ready'));
 	const cities = computed(() => countBy(adoptedProbes.value, 'city'));
 
 	// CREDITS
@@ -142,18 +141,19 @@
 
 	const { data: credits } = await useAsyncData('gp_credits', () => {
 		return $directus.request(readItems('gp_credits'));
-	});
+	}, { default: () => [] });
 	const total = computed(() => credits.value[0].amount.toLocaleString());
 
 	const { data: creditsAdditions } = await useAsyncData('gp_credits_additions_last_day', () => {
 		return $directus.request(readItems('gp_credits_additions', {
 			filter: {
+				// @ts-ignore
 				date_created: { _gte: '$NOW(-1 day)' },
 				adopted_probe: { _nnull: true },
 			},
 		}));
-	});
-	const perDay = computed(() => creditsAdditions.value?.reduce((sum, { amount }) => sum += amount, 0));
+	}, { default: () => [] });
+	const perDay = computed(() => creditsAdditions.value.reduce((sum, { amount }) => sum += amount, 0));
 </script>
 
 <style scoped>

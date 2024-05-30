@@ -70,6 +70,9 @@ export default defineNuxtConfig({
 					borderColor: {
 						DEFAULT: 'var(--surface-300)',
 					},
+					fontSize: {
+						'2xs': [ '0.7rem', '0.85rem' ],
+					},
 				},
 			},
 		},

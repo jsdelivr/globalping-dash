@@ -146,7 +146,7 @@
 								</p>
 							</div>
 							<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
-							<p class="text-bluegray-400 mt-3 text-[0.65rem]">City where the probe is located. If you know that city is wrong it can be changed here: type in the valid city and click save.</p>
+							<p class="text-bluegray-400 text-2xs mt-3">City where the probe is located. If you know that city is wrong it can be changed here: type in the valid city and click save.</p>
 						</div>
 						<div v-else class="px-2 py-3">
 							<div class="mb-1 flex items-center">
@@ -162,19 +162,32 @@
 						<div v-if="expandedRow === slotProps.data.id" class="flex flex-col py-3">
 							<div class="px-2">
 								<div v-if="isEditingTags">
-									<div v-for="tag in tags" :key="tag" class="mb-2 flex items-center">
-										<Dropdown v-model="tag.uPrefix" class="w-40" :options="uPrefixes"/>
-										<span class="mx-2">-</span>
-										<InputText v-model="tag.value" class="w-[115px]"/>
-										<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900"/>
+									<div>
+										<div v-for="tag in tags" :key="tag" class="mb-2 flex items-center">
+											<Dropdown v-model="tag.uPrefix" class="w-40" :options="uPrefixes"/>
+											<span class="mx-2">-</span>
+											<InputText v-model="tag.value" class="w-[115px]"/>
+											<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900"/>
+										</div>
 									</div>
+									<div class="mt-6">
+										<Button label="Add tag" icon="pi pi-plus" severity="secondary"/>
+										<Button label="Save" icon="pi pi-check" severity="secondary" class="bg-surface-300 ml-1"/>
+									</div>
+									<p class="text-bluegray-400 text-2xs mt-3">
+										Public tags of the probe. They can be used as location filters for a measurement. Format is <code class="font-bold">u-${prefix}-${value}</code> where prefix is user/organization github login, and value is your custom string.
+
+										E.g. for user with github username <code class="font-bold">"jimaek"</code>
+										and tag <code class="font-bold">"home1"</code> location filter is<br>
+										<code class="font-bold">{ "tags": ["u-jimaek-home1"] }</code>.
+									</p>
 								</div>
 								<div v-else>
 									<div>
 										<Tag v-for="tag in slotProps.data.tags" :key="tag" class="my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
 									</div>
 									<Button class="mt-3" label="Edit tags" icon="pi pi-pencil" severity="secondary" @click="editTags(slotProps.data.tags)"/>
-									<p class="text-bluegray-400 mt-3 text-[0.65rem]">Public tags of the probe. They can be used as location filters for a measurement.</p>
+									<p class="text-bluegray-400 text-2xs mt-3">Public tags of the probe. They can be used as location filters for a measurement.</p>
 								</div>
 							</div>
 							<div class="mt-6 w-[145%] px-2">

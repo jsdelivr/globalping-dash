@@ -99,7 +99,7 @@
 							:name="slotProps.data.name || slotProps.data.city"
 							:ip="slotProps.data.ip"
 							:status="slotProps.data.status"
-							:hardware-device="slotProps.data.hardwareDevice"
+							:hardware-device="!!slotProps.data.hardwareDevice"
 							ip-css="text-bluegray-900"
 							class="px-2 py-3"
 						/>

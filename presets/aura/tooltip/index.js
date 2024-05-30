@@ -3,7 +3,7 @@ export default {
 		class: [
 			// Position and Shadows
 			'absolute',
-			'shadow-md',
+			// 'shadow-md',
 			'p-fadein',
 			// Spacing
 			{

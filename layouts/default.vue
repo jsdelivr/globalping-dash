@@ -93,7 +93,7 @@
 				</NuxtLink>
 			</div>
 		</aside>
-		<div>
+		<div class="max-lg:overflow-x-scroll">
 			<slot/>
 		</div>
 	</section>

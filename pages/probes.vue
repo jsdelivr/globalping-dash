@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-surface-50 flex h-full flex-col p-6">
+	<div class="bg-surface-50 flex h-full min-w-[1280px] flex-col p-6">
 		<div class="mb-6 flex">
 			<h1 class="title col-span-2 text-2xl font-bold">Probes</h1>
 			<Button class="ml-auto">
@@ -161,11 +161,21 @@
 					<template #body="slotProps">
 						<div v-if="expandedRow === slotProps.data.id" class="flex flex-col py-3">
 							<div class="px-2">
-								<div>
-									<Tag v-for="tag in slotProps.data.tags" :key="tag" class="my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
+								<div v-if="isEditingTags">
+									<div v-for="tag in tags" :key="tag" class="flex items-center">
+										<Dropdown v-model="tag.prefix" :options="[user.github_username, ...user.github_organizations]"/>
+										-
+										<InputText v-model="tag.value" class=""/>
+										<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900"/>
+									</div>
 								</div>
-								<Button class="mt-3" label="Edit tags" icon="pi pi-pencil" severity="secondary"/>
-								<p class="text-bluegray-400 mt-3 text-[0.65rem]">Public tags of the probe. They can be used as location filters for a measurement.</p>
+								<div v-else>
+									<div>
+										<Tag v-for="tag in slotProps.data.tags" :key="tag" class="my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
+									</div>
+									<Button class="mt-3" label="Edit tags" icon="pi pi-pencil" severity="secondary" @click="editTags(slotProps.data.tags)"/>
+									<p class="text-bluegray-400 mt-3 text-[0.65rem]">Public tags of the probe. They can be used as location filters for a measurement.</p>
+								</div>
 							</div>
 							<div class="mt-6 w-[145%] px-2">
 								<p class="border-surface-300 border-b pb-2 font-bold">Tests (last 24h)</p>
@@ -229,6 +239,7 @@
 </template>
 
 <script setup lang="ts">
+	import { useAuth } from '~/store/auth';
 	import CountryFlag from 'vue-country-flag-next';
 	import { aggregate, readItems, updateItem } from '@directus/sdk';
 
@@ -303,6 +314,8 @@
 	const toggleRow = (event) => {
 		if (event.data.id !== expandedRow.value) {
 			isEditingName.value = false;
+			isEditingCity.value = false;
+			isEditingTags.value = false;
 			expandedRow.value = event.data.id;
 		}
 	};
@@ -349,4 +362,27 @@
 		isEditingCity.value = false;
 	};
 
+	// EDIT TAGS
+
+	const auth = useAuth();
+	const user = auth.getUser;
+
+	const isEditingTags = ref<boolean>(false);
+	const tags = ref<object[]>();
+
+	const editTags = (currentTags) => {
+		isEditingTags.value = true;
+		tags.value = currentTags;
+	};
+
+	const saveTags = async (id) => {
+		isEditingTags.value = false;
+		const result = await $directus.request(updateItem('gp_adopted_probes', id, { tags: tags.value }));
+		probes.value = [ ...probes.value.map(probe => probe.id === result.id ? result : probe) ];
+	};
+
+	const cancelTags = () => {
+		tags.value = [];
+		isEditingTags.value = false;
+	};
 </script>

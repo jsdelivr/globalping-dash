@@ -3,11 +3,7 @@ html {
   color: var(--bluegray-900);
 }
 
-body, html, #__nuxt {
-  height: 100%;
-}
-
-section {
+body, html, #__nuxt, section {
   height: 100%;
 }
 

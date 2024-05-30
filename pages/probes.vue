@@ -162,10 +162,10 @@
 						<div v-if="expandedRow === slotProps.data.id" class="flex flex-col py-3">
 							<div class="px-2">
 								<div v-if="isEditingTags">
-									<div v-for="tag in tags" :key="tag" class="flex items-center">
-										<Dropdown v-model="tag.prefix" :options="[user.github_username, ...user.github_organizations]"/>
-										-
-										<InputText v-model="tag.value" class=""/>
+									<div v-for="tag in tags" :key="tag" class="mb-2 flex items-center">
+										<Dropdown v-model="tag.uPrefix" class="w-40" :options="uPrefixes"/>
+										<span class="mx-2">-</span>
+										<InputText v-model="tag.value" class="w-[115px]"/>
 										<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900"/>
 									</div>
 								</div>
@@ -370,9 +370,15 @@
 	const isEditingTags = ref<boolean>(false);
 	const tags = ref<object[]>();
 
+	const uPrefixes = [ user.github_username, ...user.github_organizations ].map(value => `u-${value}`);
+
 	const editTags = (currentTags) => {
 		isEditingTags.value = true;
-		tags.value = currentTags;
+
+		tags.value = currentTags.map(({ prefix, value }) => ({
+			uPrefix: `u-${prefix}`,
+			value,
+		}));
 	};
 
 	const saveTags = async (id) => {

@@ -54,7 +54,7 @@ export default {
 
 			// Sizing and Spacing
 			'w-[1%]',
-			'py-2 px-3',
+			'py-2 pl-3 pr-0',
 			{ 'pr-7': props.showClear },
 
 			// Shape
@@ -89,7 +89,7 @@ export default {
 			'text-surface-500',
 
 			// Size
-			'w-12',
+			'w-8',
 
 			// Shape
 			'rounded-r-md',

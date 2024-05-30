@@ -163,16 +163,17 @@
 							<div class="px-2">
 								<div v-if="isEditingTags">
 									<div>
-										<div v-for="tag in tags" :key="tag" class="mb-2 flex items-center">
+										<div v-for="(tag, index) in tags" :key="index" class="mb-2 flex items-center">
 											<Dropdown v-model="tag.uPrefix" class="w-40" :options="uPrefixes"/>
 											<span class="mx-2">-</span>
 											<InputText v-model="tag.value" class="w-[115px]"/>
-											<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900"/>
+											<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900" @click="removeTag(index)"/>
 										</div>
 									</div>
 									<div class="mt-6">
-										<Button label="Add tag" icon="pi pi-plus" severity="secondary"/>
-										<Button label="Save" icon="pi pi-check" severity="secondary" class="bg-surface-300 ml-1"/>
+										<Button label="Add tag" icon="pi pi-plus" severity="secondary" @click="addTag"/>
+										<Button label="Save" icon="pi pi-check" severity="secondary" class="bg-surface-300 ml-12" @click="saveTags(slotProps.data.id)"/>
+										<Button label="Cancel" severity="secondary" class="ml-1" @click="cancelTags"/>
 									</div>
 									<p class="text-bluegray-400 text-2xs mt-3">
 										Public tags of the probe. They can be used as location filters for a measurement. Format is <code class="font-bold">u-${prefix}-${value}</code> where prefix is user/organization github login, and value is your custom string.
@@ -345,8 +346,8 @@
 
 	const saveName = async (id) => {
 		isEditingName.value = false;
-		const result = await $directus.request(updateItem('gp_adopted_probes', id, { name: name.value }));
-		probes.value = [ ...probes.value.map(probe => probe.id === result.id ? result : probe) ];
+		const updatedProbe = await $directus.request(updateItem('gp_adopted_probes', id, { name: name.value }));
+		updateProbes(updatedProbe);
 	};
 
 	const cancelName = () => {
@@ -366,8 +367,8 @@
 
 	const saveCity = async (id) => {
 		isEditingCity.value = false;
-		const result = await $directus.request(updateItem('gp_adopted_probes', id, { city: city.value }));
-		probes.value = [ ...probes.value.map(probe => probe.id === result.id ? result : probe) ];
+		const updatedProbe = await $directus.request(updateItem('gp_adopted_probes', id, { city: city.value }));
+		updateProbes(updatedProbe);
 	};
 
 	const cancelCity = () => {
@@ -394,14 +395,31 @@
 		}));
 	};
 
+	const addTag = () => {
+		tags.value.push({ uPrefix: '', value: '' });
+	};
+
+	const removeTag = (index) => {
+		tags.value?.splice(index, 1);
+	};
+
 	const saveTags = async (id) => {
 		isEditingTags.value = false;
-		const result = await $directus.request(updateItem('gp_adopted_probes', id, { tags: tags.value }));
-		probes.value = [ ...probes.value.map(probe => probe.id === result.id ? result : probe) ];
+		const updatedProbe = await $directus.request(updateItem('gp_adopted_probes', id, { tags: tags.value.map(({ uPrefix, value }) => ({
+			prefix: uPrefix.replace('u-', ''),
+			value,
+		})) }));
+		updateProbes(updatedProbe);
 	};
 
 	const cancelTags = () => {
 		tags.value = [];
 		isEditingTags.value = false;
+	};
+
+	// UTILS
+
+	const updateProbes = (updatedProbe) => {
+		probes.value = [ ...probes.value.map(probe => probe.id === updatedProbe.id ? updatedProbe : probe) ];
 	};
 </script>

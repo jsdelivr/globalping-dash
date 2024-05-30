@@ -255,48 +255,44 @@
 	import { useAuth } from '~/store/auth';
 	import CountryFlag from 'vue-country-flag-next';
 	import { aggregate, readItems, updateItem } from '@directus/sdk';
+	import type { DataTablePageEvent, DataTableRowClickEvent } from 'primevue/datatable';
+	import type { PageState } from 'primevue/paginator';
 
 	const { $directus } = useNuxtApp();
-
-	// const { data: probes } = await useAsyncData('gp_adopted_probes', () => {
-	// 	return $directus.request(readItems('gp_adopted_probes'));
-	// });
 
 	const startProbeDialog = ref(false);
 
 	const loading = ref(false);
 	const probesCount = ref(0);
-	const probes = ref([]);
-	const credits = ref({});
+	const probes = ref<Probe[]>([]);
+	const credits = ref<Record<string, number>>({});
 	const first = ref(0);
-	const lazyParams = ref({});
+	// const lazyParams = ref<{first?: number, rows?: 5}>({});
+	const lazyParams = ref<Partial<DataTablePageEvent>>({});
 
-	const loadLazyData = async (event) => {
+	const loadLazyData = async (event?: PageState) => {
 		loading.value = true;
 		lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
 
-		const adoptedProbes = await $directus.request(readItems('gp_adopted_probes', {
-			offset: lazyParams.value.first,
-			limit: 5,
-		}));
+		const [ adoptedProbes, { count }, creditsAdditions ] = await Promise.all([
+			$directus.request(readItems('gp_adopted_probes', {
+				offset: lazyParams.value.first,
+				limit: 5,
+			})),
+			$directus.request<{count: number}>(aggregate('gp_adopted_probes', { aggregate: { count: '*' } })),
+			$directus.request(readItems('gp_credits_additions', {
+				filter: {
+					// @ts-ignore
+					date_created: { _gte: '$NOW(-1 month)' },
+				},
+			})),
+		]);
 
-		const [{ count }] = await $directus.request(aggregate('gp_adopted_probes', { aggregate: { count: '*' } }));
-
-		const creditsAdditions = await $directus.request(readItems('gp_credits_additions', {
-			filter: {
-				date_created: { _gte: '$NOW(-1 month)' },
-			},
-		}));
-
-		const creditsByProbeId = creditsAdditions.reduce((result, { adopted_probe, amount }) => {
-			if (adopted_probe && !result[adopted_probe]) {
-				result[adopted_probe] = amount;
-			} else if (adopted_probe) {
-				result[adopted_probe] += amount;
-			}
-
+		const creditsByProbeId = creditsAdditions.reduce((result, { adopted_probe: adoptedProbe, amount }) => {
+			const key = adoptedProbe ? adoptedProbe : 'no-probe';
+			result[key] = result[key] ? result[key] + amount : amount;
 			return result;
-		}, {});
+		}, {} as Record<string, number>);
 
 		credits.value = creditsByProbeId;
 		probes.value = adoptedProbes;
@@ -315,7 +311,7 @@
 		loadLazyData();
 	});
 
-	const onPage = (event) => {
+	const onPage = (event: PageState) => {
 		lazyParams.value = event;
 		loadLazyData(event);
 	};
@@ -324,7 +320,7 @@
 
 	const expandedRow = ref<string>('');
 	const expandedRows = computed(() => ({ [expandedRow.value]: true }));
-	const toggleRow = (event) => {
+	const toggleRow = (event: DataTableRowClickEvent) => {
 		if (event.data.id !== expandedRow.value) {
 			isEditingName.value = false;
 			isEditingCity.value = false;
@@ -338,12 +334,12 @@
 	const isEditingName = ref<boolean>(false);
 	const name = ref<string>('');
 
-	const editName = (currentName) => {
+	const editName = (currentName: string) => {
 		isEditingName.value = true;
 		name.value = currentName;
 	};
 
-	const saveName = async (id) => {
+	const saveName = async (id: number) => {
 		isEditingName.value = false;
 		const updatedProbe = await $directus.request(updateItem('gp_adopted_probes', id, { name: name.value }));
 		updateProbes(updatedProbe);
@@ -359,12 +355,12 @@
 	const isEditingCity = ref<boolean>(false);
 	const city = ref<string>('');
 
-	const editCity = (currentCity) => {
+	const editCity = (currentCity: string) => {
 		isEditingCity.value = true;
 		city.value = currentCity;
 	};
 
-	const saveCity = async (id) => {
+	const saveCity = async (id: number) => {
 		isEditingCity.value = false;
 		const updatedProbe = await $directus.request(updateItem('gp_adopted_probes', id, { city: city.value }));
 		updateProbes(updatedProbe);
@@ -378,14 +374,14 @@
 	// EDIT TAGS
 
 	const auth = useAuth();
-	const user = auth.getUser;
+	const user = auth.getUser as User;
 
 	const isEditingTags = ref<boolean>(false);
-	const tags = ref<object[]>();
+	const tags = ref<{ uPrefix: string, value: string }[]>([]);
 
 	const uPrefixes = [ user.github_username, ...user.github_organizations ].map(value => `u-${value}`);
 
-	const editTags = (currentTags) => {
+	const editTags = (currentTags: Probe['tags']) => {
 		currentTags = currentTags || [];
 		isEditingTags.value = true;
 
@@ -399,11 +395,11 @@
 		tags.value.push({ uPrefix: '', value: '' });
 	};
 
-	const removeTag = (index) => {
+	const removeTag = (index: number) => {
 		tags.value?.splice(index, 1);
 	};
 
-	const saveTags = async (id) => {
+	const saveTags = async (id: number) => {
 		isEditingTags.value = false;
 		const updatedProbe = await $directus.request(updateItem('gp_adopted_probes', id, { tags: tags.value.map(({ uPrefix, value }) => ({
 			prefix: uPrefix.replace('u-', ''),
@@ -419,7 +415,7 @@
 
 	// UTILS
 
-	const updateProbes = (updatedProbe) => {
+	const updateProbes = (updatedProbe: Probe) => {
 		probes.value = [ ...probes.value.map(probe => probe.id === updatedProbe.id ? updatedProbe : probe) ];
 	};
 </script>

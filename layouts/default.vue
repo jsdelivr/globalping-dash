@@ -75,7 +75,7 @@
 			<OverlayPanel ref="notificationsPanel">
 				<Accordion class="box-border w-80" expand-icon="pi pi-chevron-right">
 					<AccordionTab v-for="notification in reverseNotifications" :key="notification.id" :header="notification.subject">
-						<span class="notification" v-html="md.render(notification.message)"/>
+						<span v-if="notification.message" class="notification" v-html="md.render(notification.message)"/>
 					</AccordionTab>
 				</Accordion>
 			</OverlayPanel>
@@ -108,14 +108,14 @@
 	const { $directus } = useNuxtApp();
 
 	const auth = useAuth();
-	const user = auth.getUser;
+	const user = auth.getUser as User;
 
 	// NOTIFICATIONS
 
 	const md = markdownit();
 
 	const notificationsPanel = ref();
-	const toggleNotifications = async (event) => {
+	const toggleNotifications = async (event: Event) => {
 		notificationsPanel.value.toggle(event);
 
 		if (newNotifications.value.length) {
@@ -123,9 +123,9 @@
 		}
 	};
 
-	const { data: notifications } = await useAsyncData('directus_notifications', () => {
+	const { data: notifications } = await useAsyncData('directus_notifications', async () => {
 		return $directus.request(readNotifications());
-	});
+	}, { default: () => [] });
 
 	const newNotifications = computed(() => notifications.value.filter(notification => notification.status === 'inbox'));
 
@@ -152,7 +152,7 @@
 	]);
 
 	const profilePanel = ref();
-	const toggleProfile = async (event) => {
+	const toggleProfile = async (event: Event) => {
 		profilePanel.value.toggle(event);
 	};
 

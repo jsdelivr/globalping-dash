@@ -192,10 +192,10 @@
 							</div>
 							<div class="mt-6 w-[145%] px-2">
 								<p class="border-surface-300 border-b pb-2 font-bold">Tests (last 24h)</p>
-								<div class="py-4 text-center">
+								<div class="pb-4 pt-8 text-center">
 									<i class="pi pi-chart-bar text-primary py-4 text-lg"/>
 									<p class="font-bold">Tests data coming soon.</p>
-									<p>Here you will see the probe test statistics.</p>
+									<p>Here you will see the probe tests statistics.</p>
 								</div>
 							</div>
 						</div>

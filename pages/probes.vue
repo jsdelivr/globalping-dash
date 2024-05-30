@@ -387,6 +387,7 @@
 	const uPrefixes = [ user.github_username, ...user.github_organizations ].map(value => `u-${value}`);
 
 	const editTags = (currentTags) => {
+		currentTags = currentTags || [];
 		isEditingTags.value = true;
 
 		tags.value = currentTags.map(({ prefix, value }) => ({

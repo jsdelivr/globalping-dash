@@ -44,12 +44,10 @@ declare global {
     onlineTimesToday: number,
     state: string | null,
     status: 'initializing' | 'ready' | 'unbuffer-missing' | 'ping-test-failed' | 'sigterm';
-    tags: [
-      {
+    tags: {
         value: string;
         prefix: string;
-      }
-    ],
+      }[],
     userId: string;
     uuid: string;
     version: string;

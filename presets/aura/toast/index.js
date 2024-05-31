@@ -34,7 +34,7 @@ export default {
 			{
 				'text-blue-700 dark:text-blue-300': props.message.severity == 'info',
 				'text-green-700 dark:text-green-300': props.message.severity == 'success',
-				'text-surface-700 dark:text-surface-300': props.message.severity == 'secondary',
+				'text-surface-900 dark:text-surface-300': props.message.severity == 'secondary',
 				'text-orange-700 dark:text-orange-300': props.message.severity == 'warn',
 				'text-red-700 dark:text-red-300': props.message.severity == 'error',
 				'text-surface-0 dark:text-surface-950': props.message.severity == 'contrast',
@@ -69,7 +69,7 @@ export default {
 		class: 'font-medium block',
 	},
 	detail: ({ props }) => ({
-		class: [ 'block', 'text-sm', props.message.severity === 'contrast' ? 'text-surface-0 dark:text-surface-950' : 'text-surface-700 dark:text-surface-0', { 'mt-2': props.message.summary }],
+		class: [ 'block', 'text-sm', props.message.severity === 'contrast' ? 'text-surface-0 dark:text-surface-950' : 'text-surface-900 dark:text-surface-0', { 'mt-2': props.message.summary }],
 	}),
 	closebutton: ({ props }) => ({
 		class: [

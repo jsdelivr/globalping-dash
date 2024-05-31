@@ -264,6 +264,8 @@
 
 	const { $directus } = useNuxtApp();
 
+	const toast = useToast();
+
 	const startProbeDialog = ref(false);
 
 	const loading = ref(false);
@@ -345,8 +347,7 @@
 
 	const saveName = async (id: number) => {
 		isEditingName.value = false;
-		const updatedProbe = await $directus.request(updateItem('gp_adopted_probes', id, { name: name.value }));
-		updateProbes(updatedProbe);
+		await updateProbe(id, { name: name.value });
 	};
 
 	const cancelName = () => {
@@ -366,8 +367,7 @@
 
 	const saveCity = async (id: number) => {
 		isEditingCity.value = false;
-		const updatedProbe = await $directus.request(updateItem('gp_adopted_probes', id, { city: city.value }));
-		updateProbes(updatedProbe);
+		await updateProbe(id, { city: city.value });
 	};
 
 	const cancelCity = () => {
@@ -405,11 +405,11 @@
 
 	const saveTags = async (id: number) => {
 		isEditingTags.value = false;
-		const updatedProbe = await $directus.request(updateItem('gp_adopted_probes', id, { tags: tags.value.map(({ uPrefix, value }) => ({
+
+		await updateProbe(id, { tags: tags.value.map(({ uPrefix, value }) => ({
 			prefix: uPrefix.replace('u-', ''),
 			value,
-		})) }));
-		updateProbes(updatedProbe);
+		})) });
 	};
 
 	const cancelTags = () => {
@@ -419,7 +419,14 @@
 
 	// UTILS
 
-	const updateProbes = (updatedProbe: Probe) => {
-		probes.value = [ ...probes.value.map(probe => probe.id === updatedProbe.id ? updatedProbe : probe) ];
+	const updateProbe = async (id: number, newData: Partial<Probe>) => {
+		try {
+			const updatedProbe = await $directus.request(updateItem('gp_adopted_probes', id, newData));
+			probes.value = [ ...probes.value.map(probe => probe.id === updatedProbe.id ? updatedProbe : probe) ];
+		} catch (e: any) {
+			const summary = e?.response?.statusText ?? 'Error';
+			const detail = e.errors?.[0]?.message ?? '';
+			toast.add({ severity: 'error', summary, detail });
+		}
 	};
 </script>

@@ -68,7 +68,7 @@ export default {
 
 			// Colors
 			'bg-surface-0 dark:bg-surface-900',
-			'border-b border-surface-200 dark:border-surface-700',
+			'border-b dark:border-surface-700',
 			'text-surface-900 dark:text-surface-0/80',
 		],
 	},
@@ -106,7 +106,7 @@ export default {
 
 				// Colors and Conditions
 				{
-					'border-surface-200 dark:border-surface-700': parent.state.d_activeIndex !== context.index,
+					'dark:border-surface-700': parent.state.d_activeIndex !== context.index,
 					'bg-surface-0 dark:bg-surface-900': parent.state.d_activeIndex !== context.index,
 					'text-surface-700 dark:text-surface-0/80': parent.state.d_activeIndex !== context.index,
 

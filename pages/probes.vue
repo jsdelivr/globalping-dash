@@ -2,7 +2,7 @@
 	<div class="bg-surface-50 flex h-full min-w-[1280px] flex-col p-6">
 		<div class="mb-6 flex">
 			<h1 class="title col-span-2 text-2xl font-bold">Probes</h1>
-			<Button class="ml-auto">
+			<Button class="ml-auto" @click="adoptProbeDialog = true">
 				<nuxt-icon class="pi mr-2 mt-[2px]" name="capture"/>
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
@@ -250,7 +250,18 @@
 			:draggable="false"
 			header="Start a probe"
 		>
-			<StartAProbe/>
+			<StartProbe/>
+		</Dialog>
+		<Dialog
+			v-model:visible="adoptProbeDialog"
+			class="min-w-[700px]"
+			modal
+			dismissable-mask
+			:draggable="false"
+			header="Adopt a probe"
+			content-class="!p-0"
+		>
+			<AdoptProbe/>
 		</Dialog>
 	</div>
 </template>
@@ -267,6 +278,7 @@
 	const toast = useToast();
 
 	const startProbeDialog = ref(false);
+	const adoptProbeDialog = ref(false);
 
 	const loading = ref(false);
 	const probesCount = ref(0);

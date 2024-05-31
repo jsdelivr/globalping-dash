@@ -75,6 +75,7 @@ export default {
 	tabpanel: {
 		header: ({ props }) => ({
 			class: [
+				'flex-grow border-l first:border-l-0',
 				// Spacing
 				'mr-0',
 
@@ -87,6 +88,7 @@ export default {
 		}),
 		headerAction: ({ parent, context }) => ({
 			class: [
+				'justify-center',
 				'relative',
 
 				// Font
@@ -101,7 +103,6 @@ export default {
 
 				// Shape
 				'border-b-2',
-				'rounded-t-md',
 
 				// Colors and Conditions
 				{
@@ -115,7 +116,7 @@ export default {
 				},
 
 				// States
-				'focus:outline-none focus:outline-offset-0 focus-visible:ring-1 ring-inset focus-visible:ring-primary-400 dark:focus-visible:ring-primary-300',
+				// 'focus:outline-none focus:outline-offset-0 focus-visible:ring-1 ring-inset focus-visible:ring-primary-400 dark:focus-visible:ring-primary-300',
 				{
 					'hover:bg-surface-0 dark:hover:bg-surface-800/80': parent.state.d_activeIndex !== context.index,
 					'hover:text-surface-900 dark:hover:text-surface-0': parent.state.d_activeIndex !== context.index,

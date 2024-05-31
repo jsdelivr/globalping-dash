@@ -158,7 +158,7 @@
 				</Column>
 				<Column header="Tags" class="w-[34%]" body-class="!p-0">
 					<template #body="slotProps">
-						<div v-if="expandedRow === slotProps.data.id" class="flex flex-col py-3">
+						<div v-if="expandedRow === slotProps.data.id" class="flex flex-col py-4">
 							<div class="px-2">
 								<div v-if="isEditingTags">
 									<div>
@@ -199,14 +199,14 @@
 								</div>
 							</div>
 						</div>
-						<div v-else class="px-2 py-3">
+						<div v-else class="px-2 py-4">
 							<Tag v-for="tag in slotProps.data.tags" :key="tag" class="my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
 						</div>
 					</template>
 				</Column>
 				<Column header="Credits past month" class="w-[13%]" body-class="!p-0">
 					<template #body="slotProps">
-						<div class="px-2 py-3">
+						<div class="px-2 py-4">
 							<Tag class="flex items-center !text-sm" severity="success" value="Success">
 								<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ credits[slotProps.data.id] || 0 }}
 							</Tag>
@@ -218,7 +218,7 @@
 						<div v-if="expandedRow === slotProps.data.id" class="cursor-pointer px-2 py-5" @click.stop="expandedRow = ''">
 							<i class="pi pi-chevron-down"/>
 						</div>
-						<div v-else class="px-2 py-3">
+						<div v-else class="px-2 py-4">
 							<i class="pi pi-chevron-right"/>
 						</div>
 					</template>

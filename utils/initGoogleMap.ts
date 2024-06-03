@@ -1,93 +1,6 @@
-const INITIAL_MAP_STYLES = [
-	{
-		featureType: 'water',
-		elementType: 'geometry',
-		stylers: [
-			{
-				color: '#ffffff',
-			},
-			{
-				lightness: 0,
-			},
-		],
-	},
-	{
-		featureType: 'landscape',
-		elementType: 'geometry',
-		stylers: [
-			{
-				color: '#e2e6e9',
-			},
-			{
-				lightness: 0,
-			},
-		],
-	},
-	{
-		elementType: 'labels.text.stroke',
-		stylers: [
-			{
-				visibility: 'off',
-			},
-		],
-	},
-	{
-		elementType: 'labels.text.fill',
-		stylers: [
-			{
-				visibility: 'off',
-			},
-		],
-	},
-	{
-		elementType: 'labels.icon',
-		stylers: [
-			{
-				visibility: 'off',
-			},
-		],
-	},
-	{
-		featureType: 'administrative',
-		elementType: 'geometry.fill',
-		stylers: [
-			{
-				visibility: 'off',
-			},
-		],
-	},
-	{
-		featureType: 'administrative',
-		elementType: 'geometry.stroke',
-		stylers: [
-			{
-				color: '#d3d6d9',
-			},
-			{
-				lightness: 0,
-			},
-			{
-				weight: 1.2,
-			},
-		],
-	},
-	{
-		featureType: 'road',
-		stylers: [
-			{
-				visibility: 'off',
-			},
-		],
-	},
-	{
-		featureType: 'poi',
-		stylers: [
-			{
-				visibility: 'off',
-			},
-		],
-	},
-];
+import mapStyles from './mapStyles.json';
+
+const INITIAL_MAP_STYLES = mapStyles;
 const MAP_MIN_ZOOM = 2;
 const MAP_MAX_ZOOM = 22;
 const MAP_ZOOM_REG = 3.74;
@@ -114,16 +27,21 @@ const DETAILED_MAP_STYLES = [
 	},
 ];
 
-let map: any, marker: any, infoWindow: any;
+let map: google.maps.Map, marker: google.maps.Marker, infoWindow: google.maps.InfoWindow;
 
 export const initGoogleMap = async (probe: Probe) => {
 	if (!probe) {
 		return;
 	}
 
-	const { Map } = await google.maps.importLibrary('maps');
+	const { Map } = await google.maps.importLibrary('maps') as google.maps.MapsLibrary;
+	const element = document.getElementById('gp-map');
 
-	map = new Map(document.querySelector('#gp-map'), {
+	if (!element) {
+		return;
+	}
+
+	map = new Map(element, {
 		backgroundColor: '#fafafa',
 		styles: INITIAL_MAP_STYLES,
 		zoom: MAP_ZOOM_REG,
@@ -145,9 +63,9 @@ export const initGoogleMap = async (probe: Probe) => {
 		const currZoom = map.getZoom();
 
 		// handle map detalization on zoom
-		if (currZoom >= 14) {
+		if (currZoom && currZoom >= 14) {
 			map.setOptions({ styles: DETAILED_MAP_STYLES });
-		} else if (currZoom >= 5) {
+		} else if (currZoom && currZoom >= 5) {
 			map.setOptions({ styles: MODERATE_MAP_STYLES });
 		} else {
 			map.setOptions({ styles: INITIAL_MAP_STYLES });

@@ -54,6 +54,9 @@ importers:
       '@nuxt/eslint-config':
         specifier: ^0.3.8
         version: 0.3.8(eslint@8.57.0)(typescript@5.4.5)
+      '@types/google.maps':
+        specifier: ^3.55.9
+        version: 3.55.9
       '@types/lodash':
         specifier: ^4.17.1
         version: 4.17.1
@@ -981,6 +984,9 @@ packages:
 
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
+
+  '@types/google.maps@3.55.9':
+    resolution: {integrity: sha512-phaOMtezbT3NaXPKiI3m0OosUS7Nly0auw3Be5s/CgMWLVoDAUP1Yb/Ld0TRoRp8ibrlT4VqM5kmzfvUA0UNLQ==}
 
   '@types/http-proxy@1.17.14':
     resolution: {integrity: sha512-SSrD0c1OQzlFX7pGu1eXxSEjemej64aaNPRhhVYUGqXh0BtldAAx37MG8btcumvpgKyZp1F5Gn3JkktdxiFv6w==}
@@ -5688,6 +5694,8 @@ snapshots:
       '@types/json-schema': 7.0.15
 
   '@types/estree@1.0.5': {}
+
+  '@types/google.maps@3.55.9': {}
 
   '@types/http-proxy@1.17.14':
     dependencies:

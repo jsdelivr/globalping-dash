@@ -79,7 +79,7 @@
 							</div>
 							<div class="mb-6 mt-24 w-[200%] pl-16 pr-2">
 								<p class="border-surface-300 border-b pb-2 font-bold">Probe details</p>
-								<div id="gp-map" class="mt-3 h-32"/>
+								<div id="gp-map" class="mt-3 h-32 rounded-md"/>
 								<p class="mt-3">
 									Type:
 									<span class="ml-2 mr-8 font-bold">
@@ -169,8 +169,8 @@
 									</div>
 									<div class="mt-6">
 										<Button label="Add tag" icon="pi pi-plus" severity="secondary" @click="addTag"/>
-										<Button label="Save" icon="pi pi-check" severity="secondary" class="bg-surface-300 ml-12" @click="saveTags(slotProps.data.id)"/>
-										<Button label="Cancel" severity="secondary" class="ml-1" @click="cancelTags"/>
+										<Button label="Save" icon="pi pi-check" severity="secondary" class="ml-12" @click="saveTags(slotProps.data.id)"/>
+										<Button label="Cancel" severity="secondary" class="bg-surface-300 ml-1" @click="cancelTags"/>
 									</div>
 									<p class="text-bluegray-400 text-2xs mt-3">
 										Public tags of the probe. They can be used as location filters for a measurement. Format is <code class="font-bold">u-${prefix}-${value}</code> where prefix is user/organization github login, and value is your custom string.
@@ -435,7 +435,7 @@
 			probes.value = [ ...probes.value.map(probe => probe.id === updatedProbe.id ? updatedProbe : probe) ];
 		} catch (e: any) {
 			const summary = e?.response?.statusText ?? 'Error';
-			const detail = e.errors?.[0]?.message ?? '';
+			const detail = e.errors?.[0]?.message ?? e.message ?? 'Request failed';
 			toast.add({ severity: 'error', summary, detail });
 		}
 	};

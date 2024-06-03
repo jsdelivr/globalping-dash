@@ -142,7 +142,7 @@
 	const { data: credits } = await useAsyncData('gp_credits', () => {
 		return $directus.request(readItems('gp_credits'));
 	}, { default: () => [] });
-	const total = computed(() => credits.value[0].amount.toLocaleString());
+	const total = computed(() => credits.value?.[0]?.amount?.toLocaleString() ?? '0');
 
 	const { data: creditsAdditions } = await useAsyncData('gp_credits_additions_last_day', () => {
 		return $directus.request(readItems('gp_credits_additions', {

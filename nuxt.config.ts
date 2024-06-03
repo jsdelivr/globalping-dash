@@ -1,20 +1,16 @@
 import path from 'path';
 
 export default defineNuxtConfig({
+	runtimeConfig: {
+		public: {
+			GOOGLE_MAPS_KEY: process.env.GOOGLE_MAPS_KEY,
+		},
+	},
 	ssr: false,
 	devtools: { enabled: true },
 	devServer: { port: 13010 },
 	modules: [ '@nuxtjs/tailwindcss', 'nuxt-primevue', '@pinia/nuxt', 'nuxt-icons' ],
 	css: [ 'primeicons/primeicons.css', '~/assets/css/base.css', '~/assets/css/global.css' ],
-	app: {
-		head: {
-			script: [{
-				src: `https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_MAPS_KEY}`,
-				async: true,
-				defer: true,
-			}],
-		},
-	},
 	primevue: {
 		options: {
 			unstyled: true,

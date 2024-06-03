@@ -271,6 +271,16 @@
 	import type { DataTablePageEvent, DataTableRowClickEvent } from 'primevue/datatable';
 	import type { PageState } from 'primevue/paginator';
 
+	const config = useRuntimeConfig();
+
+	useHead({
+		script: [{
+			src: `https://maps.googleapis.com/maps/api/js?key=${config.public.GOOGLE_MAPS_KEY}`,
+			async: true,
+			defer: true,
+		}],
+	});
+
 	const { $directus } = useNuxtApp();
 	const toast = useToast();
 
@@ -283,6 +293,8 @@
 	const credits = ref<Record<string, number>>({});
 	const first = ref(0);
 	const lazyParams = ref<Partial<DataTablePageEvent>>({});
+	const expandedRow = ref<number>(0);
+	const expandedRows = computed(() => ({ [expandedRow.value]: true }));
 
 	const loadLazyData = async (event?: PageState) => {
 		loading.value = true;
@@ -332,8 +344,6 @@
 
 	// PROBE DETAILS
 
-	const expandedRow = ref<number>(0);
-	const expandedRows = computed(() => ({ [expandedRow.value]: true }));
 	const toggleRow = (event: DataTableRowClickEvent) => {
 		if (event.data.id !== expandedRow.value) {
 			isEditingName.value = false;

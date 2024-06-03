@@ -79,9 +79,7 @@
 							</div>
 							<div class="mb-6 mt-24 w-[200%] pl-16 pr-2">
 								<p class="border-surface-300 border-b pb-2 font-bold">Probe details</p>
-								<div class="mt-3 flex h-32 items-center justify-center rounded-md bg-green-100">
-									Map goes here
-								</div>
+								<div id="gp-map" class="mt-3 h-32"/>
 								<p class="mt-3">
 									Type:
 									<span class="ml-2 mr-8 font-bold">
@@ -215,7 +213,7 @@
 				</Column>
 				<Column expander class="w-[3%]" body-class="!p-0">
 					<template #body="slotProps">
-						<div v-if="expandedRow === slotProps.data.id" class="cursor-pointer px-2 py-5" @click.stop="expandedRow = ''">
+						<div v-if="expandedRow === slotProps.data.id" class="cursor-pointer px-2 py-5" @click.stop="expandedRow = 0">
 							<i class="pi pi-chevron-down"/>
 						</div>
 						<div v-else class="px-2 py-4">
@@ -274,7 +272,6 @@
 	import type { PageState } from 'primevue/paginator';
 
 	const { $directus } = useNuxtApp();
-
 	const toast = useToast();
 
 	const startProbeDialog = ref(false);
@@ -285,7 +282,6 @@
 	const probes = ref<Probe[]>([]);
 	const credits = ref<Record<string, number>>({});
 	const first = ref(0);
-	// const lazyParams = ref<{first?: number, rows?: 5}>({});
 	const lazyParams = ref<Partial<DataTablePageEvent>>({});
 
 	const loadLazyData = async (event?: PageState) => {
@@ -336,7 +332,7 @@
 
 	// PROBE DETAILS
 
-	const expandedRow = ref<string>('');
+	const expandedRow = ref<number>(0);
 	const expandedRows = computed(() => ({ [expandedRow.value]: true }));
 	const toggleRow = (event: DataTableRowClickEvent) => {
 		if (event.data.id !== expandedRow.value) {
@@ -344,6 +340,8 @@
 			isEditingCity.value = false;
 			isEditingTags.value = false;
 			expandedRow.value = event.data.id;
+			const probe = probes.value.find(probe => probe.id === expandedRow.value);
+			probe && initGoogleMap(probe);
 		}
 	};
 

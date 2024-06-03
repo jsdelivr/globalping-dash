@@ -48,3 +48,8 @@ body {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* Hide GoogleMaps InfoWindow close btn */
+#gp-map .gm-style-iw-chr {
+	display: none !important;
+}

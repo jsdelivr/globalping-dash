@@ -160,10 +160,13 @@
 							<div class="px-2">
 								<div v-if="isEditingTags">
 									<div>
-										<div v-for="(tag, index) in tags" :key="index" class="mb-2 flex items-center">
+										<div v-for="(tag, index) in tags" :key="index" class="mb-2 flex items-center" :class="{ 'mb-5': !isTagValid(tag.value) }">
 											<Dropdown v-model="tag.uPrefix" class="w-40" :options="uPrefixes"/>
 											<span class="mx-2">-</span>
-											<InputText v-model="tag.value" class="w-[115px]"/>
+											<span>
+												<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-[115px]"/>
+												<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
+											</span>
 											<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900" @click="removeTag(index)"/>
 										</div>
 									</div>
@@ -270,6 +273,7 @@
 	import { aggregate, readItems, updateItem } from '@directus/sdk';
 	import type { DataTablePageEvent, DataTableRowClickEvent } from 'primevue/datatable';
 	import type { PageState } from 'primevue/paginator';
+	import memoize from 'lodash/memoize';
 
 	const config = useRuntimeConfig();
 
@@ -431,6 +435,11 @@
 			value,
 		})) });
 	};
+
+	const tagRegex = /^[a-zA-Z0-9-]+$/;
+	const isTagValid = memoize((value: string) => {
+		return value === '' || (value.length <= 32 && tagRegex.test(value));
+	});
 
 	const cancelTags = () => {
 		tags.value = [];

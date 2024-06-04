@@ -1,7 +1,7 @@
 import mapStyles from './mapStyles.json';
 
 const INITIAL_MAP_STYLES = mapStyles;
-const MAP_MIN_ZOOM = 2;
+const MAP_MIN_ZOOM = 1;
 const MAP_MAX_ZOOM = 22;
 const MAP_ZOOM_REG = 3.74;
 const DEFAULT_MARKER_COLOR = '#17d4a7';

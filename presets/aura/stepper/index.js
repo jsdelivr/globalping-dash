@@ -35,11 +35,11 @@ export default {
 				// Flexbox
 				'flex',
 				'items-center',
-				context.last ? 'flex-initial' : 'flex-1',
+				'flex-1',
 				parent.props.orientation === 'vertical' ? 'flex-initial' : '',
 
 				// Spacing
-				'p-2',
+				// 'p-2',
 			],
 		}),
 		action: {
@@ -153,9 +153,6 @@ export default {
 			// Colors
 			'bg-surface-0 dark:bg-surface-900',
 			'text-surface-900 dark:text-surface-0',
-
-			// Spacing
-			'p-4',
 		],
 	},
 };

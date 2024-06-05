@@ -6,16 +6,16 @@
 			</template>
 			<template #separator/>
 			<template #content="{ nextCallback }">
-				<TabView class="border-t" :pt="{ inkbar: {class: 'hidden'}}">
+				<TabView :pt="{ inkbar: {class: 'hidden'}}">
 					<TabPanel>
 						<template #header>
 							<i class="pi pi-check mr-2"/>I'm already running a probe
 						</template>
 						<p class="mb-4 mt-2 text-lg font-bold">Set up your probe</p>
 						<p>First, update your container by running following commands:</p>
-						<div class="relative mt-4 rounded-xl border p-4">
+						<div class="relative mt-4 rounded-xl border p-4 pr-0">
 							<div class="no-scrollbar overflow-scroll">
-								<pre v-for="line in commands" :key="line.toString()"><code>{{ line[0] }}</code><code class="text-bluegray-300 mr-12">{{ line[1] }}</code></pre>
+								<pre v-for="line in commands" :key="line.toString()"><code>{{ line[0] }}</code><code class="text-bluegray-300 mr-16">{{ line[1] }}</code></pre>
 							</div>
 							<div class="!absolute right-2 top-2">
 								<Button

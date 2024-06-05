@@ -4,10 +4,10 @@
 		<Button class="rounded-r-none" label="Docker" :severity="platform === 'docker' ? undefined : 'secondary'" @click="togglePlatform"/>
 		<Button class="rounded-l-none" label="Podman" :severity="platform === 'podman' ? undefined : 'secondary'" @click="togglePlatform"/>
 	</div>
-	<div class="relative mt-4 rounded-xl border p-4">
-		<pre v-if="(size === 'compact')" class="no-scrollbar overflow-scroll"><code class="mr-12">{{ commands[platform][size] }}</code></pre>
+	<div class="relative mt-4 rounded-xl border p-4 pr-0">
+		<pre v-if="(size === 'compact')" class="no-scrollbar overflow-scroll"><code class="mr-16">{{ commands[platform][size] }}</code></pre>
 		<div v-if="size === 'expanded'" class="no-scrollbar overflow-scroll">
-			<pre v-for="line in commands[platform][size]" :key="line.toString()"><code>{{ line[0] }}</code><code class="text-bluegray-300 mr-12">{{ line[1] }}</code></pre>
+			<pre v-for="line in commands[platform][size]" :key="line.toString()"><code>{{ line[0] }}</code><code class="text-bluegray-300 mr-16">{{ line[1] }}</code></pre>
 		</div>
 		<div class="!absolute right-2 top-2">
 			<Button

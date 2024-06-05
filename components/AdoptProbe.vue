@@ -54,10 +54,18 @@
 					<p class="mb-4 mt-2 text-lg font-bold">Send adoption code</p>
 					<p>Enter your probe's public IP address and we will send it a verification code.</p>
 					<p class="font-semibold">Your probe will have the same IP as the network it's connected to.</p>
-					<InputText placeholder="Enter IP address of your probe" class="my-6 w-full"/>
-					<div class="text-right">
+					<InputText
+						v-model="ip"
+						placeholder="Enter IP address of your probe"
+						class="mt-6 w-full"
+						:invalid="!isIpValid"
+						@keyup.enter="sendAdoptionCode(nextCallback)"
+						@update:model-value="resetIsValid"
+					/>
+					<p v-if="!isIpValid" class="absolute pl-1 text-red-500">{{ invalidMessage }}</p>
+					<div class="mt-6 text-right">
 						<Button class="mr-2" label="Back" severity="contrast" text @click="prevCallback"/>
-						<Button label="Send code to probe" @click="nextCallback"/>
+						<Button label="Send code to probe" @click="sendAdoptionCode(nextCallback)"/>
 					</div>
 				</div>
 			</template>
@@ -75,9 +83,14 @@
 </template>
 
 <script setup lang="ts">
+	import { customEndpoint } from '@directus/sdk';
+	const { $directus } = useNuxtApp();
+
 	defineEmits([ 'cancel' ]);
 
 	const activeStep = ref(0);
+
+	// STEP 1
 
 	const commands = [
 		[ 'docker pull ghcr.io/jsdelivr/globalping-probe' ],
@@ -93,5 +106,35 @@
 		await navigator.clipboard.writeText(content);
 		copyTooltip.value = true;
 		setTimeout(() => copyTooltip.value = false, 1000);
+	};
+
+	// STEP 2
+
+	const ip = ref('');
+	const isIpValid = ref(true);
+	const invalidMessage = ref('');
+
+	const resetIsValid = () => {
+		isIpValid.value = true;
+		invalidMessage.value = '';
+	};
+
+	const sendAdoptionCode = async (nextCallback: Function) => {
+		const isValid = validateIp(ip.value);
+
+		if (!isValid) {
+			isIpValid.value = false;
+			invalidMessage.value = 'Invalid ip format';
+			return;
+		}
+
+		try {
+			await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/send-code', body: JSON.stringify({ ip: ip.value }) }));
+			nextCallback();
+		} catch (e: any) {
+			const detail = e.errors ?? e.message ?? 'Request failed';
+			isIpValid.value = false;
+			invalidMessage.value = detail;
+		}
 	};
 </script>

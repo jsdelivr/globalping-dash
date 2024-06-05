@@ -261,7 +261,7 @@
 			header="Adopt a probe"
 			content-class="!p-0"
 		>
-			<AdoptProbe/>
+			<AdoptProbe @cancel="adoptProbeDialog = false"/>
 		</Dialog>
 	</div>
 </template>

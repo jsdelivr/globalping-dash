@@ -142,7 +142,7 @@ export default {
 	panelcontainer: {
 		class: [
 			// Spacing
-			'p-[1.125rem] pt-[0.875rem]',
+			'p-5',
 
 			// Shape
 			'border-0 rounded-none',

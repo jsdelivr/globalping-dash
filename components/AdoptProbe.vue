@@ -38,6 +38,10 @@
 						<StartProbe/>
 					</TabPanel>
 				</TabView>
+				<div class="p-5 pt-2 text-right">
+					<Button class="mr-2" label="Cancel" severity="contrast" text @click="$emit('cancel')"/>
+					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="nextCallback"/>
+				</div>
 			</template>
 		</StepperPanel>
 		<StepperPanel>
@@ -62,10 +66,9 @@
 </template>
 
 <script setup lang="ts">
-	// Stepper
-	const activeStep = ref(0);
+	defineEmits([ 'cancel' ]);
 
-	// "Set up your probe" panel
+	const activeStep = ref(0);
 
 	const commands = [
 		[ 'docker pull ghcr.io/jsdelivr/globalping-probe' ],

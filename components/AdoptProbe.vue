@@ -1,7 +1,7 @@
 <template>
 	<Stepper v-model:activeStep="activeStep">
 		<StepperPanel>
-			<template #header="{ index, active, highlighted, clickCallback }">
+			<template #header="{ active, highlighted, clickCallback }">
 				<StepHeader :on-click="clickCallback" button-text="1" header-text="Set up your probe" :active="active" :highlighted="highlighted"/>
 			</template>
 			<template #separator/>
@@ -45,7 +45,7 @@
 			</template>
 		</StepperPanel>
 		<StepperPanel>
-			<template #header="{ index, active, highlighted, clickCallback }">
+			<template #header="{ active, highlighted, clickCallback }">
 				<StepHeader :on-click="clickCallback" button-text="2" header-text="Send adoption code" :active="active" :highlighted="highlighted"/>
 			</template>
 			<template #separator/>
@@ -71,12 +71,30 @@
 			</template>
 		</StepperPanel>
 		<StepperPanel>
-			<template #header="{ index, active, highlighted, clickCallback }">
+			<template #header="{ active, highlighted, clickCallback }">
 				<StepHeader :on-click="clickCallback" button-text="3" header-text="Verify" :active="active" :highlighted="highlighted"/>
 			</template>
 			<template #separator/>
-			<template #content="{ nextCallback }">
-				<Button label="Next 2" icon="pi pi-arrow-right" icon-pos="right" @click="nextCallback"/>
+			<template #content="{ prevCallback }">
+				<div class="p-5">
+					<p class="mb-4 mt-2 text-lg font-bold">Verify</p>
+					<p>Adoption code sent to <span class="font-semibold">your probe with IP address {{ ip }}</span>.</p>
+					<div class="mt-6">
+						<Button severity="secondary" class="mr-2 !rounded-xl !border-0" :class="{'text-primary bg-[#FCF0EE] font-semibold': probeType === 'docker'}" @click="toggleProbeType">
+							<nuxt-icon class="mr-2 text-inherit" name="docker"/>
+							For Docker probes
+						</Button>
+						<Button severity="secondary" class="mr-2 !rounded-xl !border-0" :class="{'text-primary bg-[#FCF0EE] font-semibold': probeType === 'hardware'}" @click="toggleProbeType">
+							<nuxt-icon class="mr-2 text-inherit" name="probe"/>
+							For hardware probes
+						</Button>
+					</div>
+					<p class="mt-6">Now you need to check the probe's log output to find the verification code. If you're running it inside a Docker container then you can quickly find it by running this command:</p>
+					<div class="mt-6 text-right">
+						<Button class="mr-2" label="Back" severity="contrast" text @click="prevCallback"/>
+						<Button label="Verify the code" @click="verifyCode"/>
+					</div>
+				</div>
 			</template>
 		</StepperPanel>
 	</Stepper>
@@ -137,4 +155,14 @@
 			invalidMessage.value = detail;
 		}
 	};
+
+	// STEP 3
+
+	const probeType = ref('docker');
+	const toggleProbeType = () => {
+		probeType.value = probeType.value === 'docker' ? 'hardware' : 'docker';
+	};
+
+	const verifyCode = () => {};
+
 </script>

@@ -41,7 +41,7 @@
 					<template #body="slotProps">
 						<div v-if="expandedRow === slotProps.data.id">
 							<div class="mx-2 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 pt-3">
-								<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'gp' : 'docker'" border :status="slotProps.data.status"/>
+								<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'probe' : 'docker'" border :status="slotProps.data.status"/>
 								<div v-if="isEditingName" v-focustrap class="-mt-0.5 flex items-center border-b">
 									<InputText v-model="name" class="w-full rounded-none border-0 bg-transparent !px-0 !py-1 font-bold" autofocus @keyup.enter="saveName(slotProps.data.id)"/>
 									<Button

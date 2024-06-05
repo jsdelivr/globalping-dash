@@ -49,8 +49,16 @@
 				<StepHeader :on-click="clickCallback" button-text="2" header-text="Send adoption code" :active="active" :highlighted="highlighted"/>
 			</template>
 			<template #separator/>
-			<template #content="{ nextCallback }">
-				<Button label="Next 1" icon="pi pi-arrow-right" icon-pos="right" @click="nextCallback"/>
+			<template #content="{ prevCallback, nextCallback }">
+				<div class="p-5">
+					<p class="mb-4 mt-2 text-lg font-bold">Send adoption code</p>
+					<p>Enter your probe's public IP address and we will send it a verification code.</p>
+					<p class="font-semibold">Your probe will have the same IP as the network it's connected to.</p>
+					<div class="text-right">
+						<Button class="mr-2" label="Back" severity="contrast" text @click="prevCallback"/>
+						<Button label="Send code to probe" @click="nextCallback"/>
+					</div>
+				</div>
 			</template>
 		</StepperPanel>
 		<StepperPanel>

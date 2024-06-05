@@ -53,7 +53,7 @@ export default {
 		],
 	},
 	title: {
-		class: [ 'font-bold text-lg leading-[normal]' ],
+		class: [ 'font-bold text-lg leading-[normal] text-bluegray-800' ],
 	},
 	icons: {
 		class: [ 'flex items-center' ],

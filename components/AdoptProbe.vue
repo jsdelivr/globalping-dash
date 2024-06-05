@@ -1,12 +1,8 @@
 <template>
 	<Stepper v-model:activeStep="activeStep">
 		<StepperPanel>
-			<template #header="{ index, clickCallback }">
-				<div class="flex w-full items-center">
-					<div class="bg-primary h-px w-full"/>
-					<Button rounded label="1" @click="clickCallback"/>
-					<div class="bg-surface-200 h-px w-full"/>
-				</div>
+			<template #header="{ index, active, highlighted, clickCallback }">
+				<StepHeader :on-click="clickCallback" button-text="1" header-text="Set up your probe" :active="active" :highlighted="highlighted"/>
 			</template>
 			<template #separator/>
 			<template #content="{ nextCallback }">
@@ -45,12 +41,8 @@
 			</template>
 		</StepperPanel>
 		<StepperPanel>
-			<template #header="{ index, clickCallback }">
-				<div class="flex w-full items-center">
-					<div class="bg-surface-200 h-px w-full"/>
-					<Button rounded label="2" @click="clickCallback"/>
-					<div class="bg-surface-200 h-px w-full"/>
-				</div>
+			<template #header="{ index, active, highlighted, clickCallback }">
+				<StepHeader :on-click="clickCallback" button-text="2" header-text="Send adoption code" :active="active" :highlighted="highlighted"/>
 			</template>
 			<template #separator/>
 			<template #content="{ nextCallback }">
@@ -58,12 +50,8 @@
 			</template>
 		</StepperPanel>
 		<StepperPanel>
-			<template #header="{ index, clickCallback }">
-				<div class="flex w-full items-center">
-					<div class="bg-surface-200 h-px w-full"/>
-					<Button rounded label="3" @click="clickCallback"/>
-					<div class="bg-surface-200 h-px w-full"/>
-				</div>
+			<template #header="{ index, active, highlighted, clickCallback }">
+				<StepHeader :on-click="clickCallback" button-text="3" header-text="Verify" :active="active" :highlighted="highlighted"/>
 			</template>
 			<template #separator/>
 			<template #content="{ nextCallback }">

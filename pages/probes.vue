@@ -226,7 +226,6 @@
 				</Column>
 				<template #footer>
 					<Button
-						class=""
 						severity="secondary"
 						label="Start a probe"
 						icon="pi pi-question-circle"

@@ -4,6 +4,8 @@ export default {
 	}),
 	nav: {
 		class: [
+			'bg-surface-50 border-t',
+
 			// Flexbox
 			'flex',
 			'justify-between',
@@ -11,7 +13,7 @@ export default {
 
 			// Spacing
 			'm-0',
-			'p-0',
+			'px-5 py-7',
 
 			// Positioning
 			'relative',

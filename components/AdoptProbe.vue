@@ -13,7 +13,7 @@
 						</template>
 						<p class="mb-4 mt-2 text-lg font-bold">Set up your probe</p>
 						<p>First, update your container by running following commands:</p>
-						<Code :commands="setUpCommands" class="mt-4"/>
+						<CodeBlock :commands="setUpCommands" class="mt-4"/>
 					</TabPanel>
 					<TabPanel>
 						<template #header>
@@ -45,9 +45,9 @@
 						class="mt-6 w-full"
 						:invalid="!isIpValid"
 						@keyup.enter="sendAdoptionCode(nextCallback)"
-						@update:model-value="resetIsValid"
+						@update:model-value="resetIsIpValid"
 					/>
-					<p v-if="!isIpValid" class="absolute pl-1 text-red-500">{{ invalidMessage }}</p>
+					<p v-if="!isIpValid" class="absolute pl-1 text-red-500">{{ invalidIpMessage }}</p>
 					<div class="mt-6 text-right">
 						<Button class="mr-2" label="Back" severity="contrast" text @click="prevCallback"/>
 						<Button label="Send code to probe" @click="sendAdoptionCode(nextCallback)"/>
@@ -75,8 +75,13 @@
 						</Button>
 					</div>
 					<p class="mt-6">Now you need to check the probe's log output to find the verification code. If you're running it inside a Docker container then you can quickly find it by running this command:</p>
-					<Code class="mt-3" :commands="probeType === 'docker' ? [['docker logs -f --tail 25 globalping-probe']] : [['ssh logs@IP-ADDRESS']]"/>
+					<CodeBlock class="mt-3" :commands="probeType === 'docker' ? [['docker logs -f --tail 25 globalping-probe']] : [['ssh logs@IP-ADDRESS']]"/>
 					<p class="mt-3">Find the code in the logs and input it here to verify ownership.</p>
+					<div class="bg-surface-50 mt-6 rounded-xl py-10 text-center">
+						<InputOtp v-model="code" integer-only :length="6" :invalid="!isCodeValid" @update:model-value="resetIsCodeValid"/>
+						<p v-if="!isCodeValid" class="mt-3 text-red-500">{{ invalidCodeMessage }}</p>
+						<Button class="mt-3" label="Resend code" severity="contrast" text @click="resendCode"/>
+					</div>
 					<div class="mt-6 text-right">
 						<Button class="mr-2" label="Back" severity="contrast" text @click="prevCallback"/>
 						<Button label="Verify the code" @click="verifyCode"/>
@@ -89,7 +94,9 @@
 
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
+
 	const { $directus } = useNuxtApp();
+	const toast = useToast();
 
 	defineEmits([ 'cancel' ]);
 
@@ -108,11 +115,11 @@
 
 	const ip = ref('');
 	const isIpValid = ref(true);
-	const invalidMessage = ref('');
+	const invalidIpMessage = ref('');
 
-	const resetIsValid = () => {
+	const resetIsIpValid = () => {
 		isIpValid.value = true;
-		invalidMessage.value = '';
+		invalidIpMessage.value = '';
 	};
 
 	const sendAdoptionCode = async (nextCallback: Function) => {
@@ -120,7 +127,7 @@
 
 		if (!isValid) {
 			isIpValid.value = false;
-			invalidMessage.value = 'Invalid ip format';
+			invalidIpMessage.value = 'Invalid ip format';
 			return;
 		}
 
@@ -128,19 +135,51 @@
 			await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/send-code', body: JSON.stringify({ ip: ip.value }) }));
 			nextCallback();
 		} catch (e: any) {
-			const detail = e.errors ?? e.message ?? 'Request failed';
+			const detail = e.errors ?? 'Request failed';
 			isIpValid.value = false;
-			invalidMessage.value = detail;
+			invalidIpMessage.value = detail;
 		}
 	};
 
 	// STEP 3
 
 	const probeType = ref('docker');
+	const code = ref('');
+	const isCodeValid = ref(true);
+	const invalidCodeMessage = ref('');
+
 	const toggleProbeType = () => {
 		probeType.value = probeType.value === 'docker' ? 'hardware' : 'docker';
 	};
 
-	const verifyCode = () => {};
+	const resetIsCodeValid = () => {
+		isCodeValid.value = true;
+		invalidCodeMessage.value = '';
+	};
+
+	const resendCode = async () => {
+		code.value = '';
+		resetIsCodeValid();
+
+		try {
+			await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/send-code', body: JSON.stringify({ ip: ip.value }) }));
+			toast.add({ severity: 'info', summary: 'Code was resent', detail: 'Now you need to get it and paste to the input', life: 5000 });
+		} catch (e: any) {
+			const detail = e.errors ?? 'Request failed';
+			isIpValid.value = false;
+			invalidIpMessage.value = detail;
+			toast.add({ severity: 'error', summary: 'Resend failed', detail, life: 20000 });
+		}
+	};
+
+	const verifyCode = async () => {
+		try {
+			await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/verify-code', body: JSON.stringify({ code: code.value.substring(0, 6) }) }));
+		} catch (e: any) {
+			const detail = e.errors ?? 'Request failed';
+			isCodeValid.value = false;
+			invalidCodeMessage.value = detail;
+		}
+	};
 
 </script>

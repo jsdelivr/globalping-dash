@@ -454,7 +454,7 @@
 		} catch (e: any) {
 			const summary = e?.response?.statusText ?? 'Error';
 			const detail = e.errors?.[0]?.message ?? e.message ?? 'Request failed';
-			toast.add({ severity: 'error', summary, detail });
+			toast.add({ severity: 'error', summary, detail, life: 20000 });
 		}
 	};
 </script>

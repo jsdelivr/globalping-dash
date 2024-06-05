@@ -4,11 +4,14 @@ export default {
 			// Alignment
 			'flex items-center',
 			'gap-2',
+			'justify-center',
 		],
 	},
 	input: {
 		root: ({ props, context, parent }) => ({
 			class: [
+				'text-lg font-bold',
+
 				// Font
 				'leading-none',
 
@@ -34,7 +37,7 @@ export default {
 				'placeholder:text-surface-400 dark:placeholder:text-surface-500',
 				{ 'bg-surface-0 dark:bg-surface-950': !context.disabled },
 				'border',
-				{ 'border-surface-300 dark:border-surface-700': !props.invalid },
+				{ 'border-bluegray-100 dark:border-surface-700': !props.invalid },
 
 				// Invalid State
 				'invalid:focus:ring-red-200',

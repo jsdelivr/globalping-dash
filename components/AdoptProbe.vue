@@ -13,22 +13,7 @@
 						</template>
 						<p class="mb-4 mt-2 text-lg font-bold">Set up your probe</p>
 						<p>First, update your container by running following commands:</p>
-						<div class="relative mt-4 rounded-xl border p-4 pr-0">
-							<div class="no-scrollbar overflow-scroll">
-								<pre v-for="line in commands" :key="line.toString()"><code>{{ line[0] }}</code><code class="text-bluegray-300 mr-16">{{ line[1] }}</code></pre>
-							</div>
-							<div class="!absolute right-2 top-2">
-								<Button
-									icon="pi pi-copy"
-									severity="secondary"
-									raised
-									@click="copyCommand"
-								/>
-								<div v-if="copyTooltip" class="bg-bluegray-700 text-surface-0 absolute left-1/2 top-[-40px] -translate-x-1/2 rounded-md p-2">
-									Copied!
-								</div>
-							</div>
-						</div>
+						<Code :commands="setUpCommands" class="mt-4"/>
 					</TabPanel>
 					<TabPanel>
 						<template #header>
@@ -90,6 +75,8 @@
 						</Button>
 					</div>
 					<p class="mt-6">Now you need to check the probe's log output to find the verification code. If you're running it inside a Docker container then you can quickly find it by running this command:</p>
+					<Code class="mt-3" :commands="probeType === 'docker' ? [['docker logs -f --tail 25 globalping-probe']] : [['ssh logs@IP-ADDRESS']]"/>
+					<p class="mt-3">Find the code in the logs and input it here to verify ownership.</p>
 					<div class="mt-6 text-right">
 						<Button class="mr-2" label="Back" severity="contrast" text @click="prevCallback"/>
 						<Button label="Verify the code" @click="verifyCode"/>
@@ -110,21 +97,12 @@
 
 	// STEP 1
 
-	const commands = [
+	const setUpCommands = [
 		[ 'docker pull ghcr.io/jsdelivr/globalping-probe' ],
 		[ 'docker stop globalping-probe' ],
 		[ 'docker rm globalping-probe' ],
 		[ 'docker run -d --log-driver local --network host --restart=always --name globalping-probe ghcr.io/jsdelivr/globalping-probe' ],
 	];
-
-	const copyTooltip = ref(false);
-	const copyCommand = async () => {
-		const content = commands.map(parts => parts.join('')).join('\n');
-
-		await navigator.clipboard.writeText(content);
-		copyTooltip.value = true;
-		setTimeout(() => copyTooltip.value = false, 1000);
-	};
 
 	// STEP 2
 

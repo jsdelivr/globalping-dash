@@ -54,6 +54,7 @@
 					<p class="mb-4 mt-2 text-lg font-bold">Send adoption code</p>
 					<p>Enter your probe's public IP address and we will send it a verification code.</p>
 					<p class="font-semibold">Your probe will have the same IP as the network it's connected to.</p>
+					<InputText placeholder="Enter IP address of your probe" class="my-6 w-full"/>
 					<div class="text-right">
 						<Button class="mr-2" label="Back" severity="contrast" text @click="prevCallback"/>
 						<Button label="Send code to probe" @click="nextCallback"/>

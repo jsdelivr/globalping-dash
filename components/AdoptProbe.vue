@@ -2,7 +2,14 @@
 	<Stepper v-model:activeStep="activeStep">
 		<StepperPanel>
 			<template #header="{ active, highlighted, clickCallback }">
-				<StepHeader :on-click="clickCallback" button-text="1" header-text="Set up your probe" :active="active" :highlighted="highlighted"/>
+				<StepHeader
+					:on-click="clickCallback"
+					button-text="1"
+					header-text="Set up your probe"
+					:active="active"
+					:highlighted="highlighted"
+					:is-success="isSuccess"
+				/>
 			</template>
 			<template #separator/>
 			<template #content="{ nextCallback }">
@@ -31,7 +38,14 @@
 		</StepperPanel>
 		<StepperPanel>
 			<template #header="{ active, highlighted, clickCallback }">
-				<StepHeader :on-click="clickCallback" button-text="2" header-text="Send adoption code" :active="active" :highlighted="highlighted"/>
+				<StepHeader
+					:on-click="clickCallback"
+					button-text="2"
+					header-text="Send adoption code"
+					:active="active"
+					:highlighted="highlighted"
+					:is-success="isSuccess"
+				/>
 			</template>
 			<template #separator/>
 			<template #content="{ prevCallback, nextCallback }">
@@ -57,11 +71,18 @@
 		</StepperPanel>
 		<StepperPanel>
 			<template #header="{ active, highlighted, clickCallback }">
-				<StepHeader :on-click="clickCallback" button-text="3" header-text="Verify" :active="active" :highlighted="highlighted"/>
+				<StepHeader
+					:on-click="clickCallback"
+					button-text="3"
+					header-text="Verify"
+					:active="active"
+					:highlighted="highlighted"
+					:is-success="isSuccess"
+				/>
 			</template>
 			<template #separator/>
 			<template #content="{ prevCallback }">
-				<div class="p-5">
+				<div v-if="!isSuccess" class="p-5">
 					<p class="mb-4 mt-2 text-lg font-bold">Verify</p>
 					<p>Adoption code sent to <span class="font-semibold">your probe with IP address {{ ip }}</span>.</p>
 					<div class="mt-6">
@@ -78,13 +99,39 @@
 					<CodeBlock class="mt-3" :commands="probeType === 'docker' ? [['docker logs -f --tail 25 globalping-probe']] : [['ssh logs@IP-ADDRESS']]"/>
 					<p class="mt-3">Find the code in the logs and input it here to verify ownership.</p>
 					<div class="bg-surface-50 mt-6 rounded-xl py-10 text-center">
-						<InputOtp v-model="code" integer-only :length="6" :invalid="!isCodeValid" @update:model-value="resetIsCodeValid"/>
+						<InputOtp
+							v-model="code"
+							integer-only
+							:length="6"
+							:invalid="!isCodeValid"
+							@update:model-value="resetIsCodeValid"
+						/>
 						<p v-if="!isCodeValid" class="mt-3 text-red-500">{{ invalidCodeMessage }}</p>
 						<Button class="mt-3" label="Resend code" severity="contrast" text @click="resendCode"/>
 					</div>
 					<div class="mt-6 text-right">
 						<Button class="mr-2" label="Back" severity="contrast" text @click="prevCallback"/>
 						<Button label="Verify the code" @click="verifyCode"/>
+					</div>
+				</div>
+				<div v-else class="px-5 py-7">
+					<div class="bg-green-50 p-6">
+						<p class="flex items-center justify-center text-center text-lg font-bold">
+							<i class="pi pi-verified mr-2 text-green-600"/>
+							Congratulations!
+						</p>
+						<p class="mt-4 text-center">You are now the owner of the following probe:</p>
+						<div v-if="probe" class="bg-surface-0 mt-4 rounded-xl border p-3 text-center">
+							<p class="font-bold">{{ probe.city }}</p>
+							<p class="flex items-center justify-center">
+								<CountryFlag :country="probe.country" size="small"/>
+								<span class="ml-2">{{ probe.network }}</span>
+							</p>
+						</div>
+					</div>
+					<p class="mt-4">The probe will now generate credits that you can use to run more tests. We also recommend you verify and correct the probe's location.</p>
+					<div class="mt-7 flex justify-end">
+						<Button label="Finish" @click="$emit('cancel')"/>
 					</div>
 				</div>
 			</template>
@@ -94,6 +141,7 @@
 
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
+	import CountryFlag from 'vue-country-flag-next';
 
 	const { $directus } = useNuxtApp();
 	const toast = useToast();
@@ -147,6 +195,7 @@
 	const code = ref('');
 	const isCodeValid = ref(true);
 	const invalidCodeMessage = ref('');
+	const probe = ref<Probe | null>(null);
 
 	const toggleProbeType = () => {
 		probeType.value = probeType.value === 'docker' ? 'hardware' : 'docker';
@@ -174,7 +223,9 @@
 
 	const verifyCode = async () => {
 		try {
-			await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/verify-code', body: JSON.stringify({ code: code.value.substring(0, 6) }) }));
+			const response = await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/verify-code', body: JSON.stringify({ code: code.value.substring(0, 6) }) })) as Probe;
+			probe.value = response;
+			isSuccess.value = true;
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';
 			isCodeValid.value = false;
@@ -182,4 +233,7 @@
 		}
 	};
 
+	// SUCCESS STEP
+
+	const isSuccess = ref(false);
 </script>

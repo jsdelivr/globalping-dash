@@ -3,7 +3,6 @@
 		<StepperPanel>
 			<template #header="{ active, highlighted, clickCallback }">
 				<StepHeader
-					:on-click="clickCallback"
 					button-text="1"
 					header-text="Set up your probe"
 					:active="active"
@@ -39,7 +38,6 @@
 		<StepperPanel>
 			<template #header="{ active, highlighted, clickCallback }">
 				<StepHeader
-					:on-click="clickCallback"
 					button-text="2"
 					header-text="Send adoption code"
 					:active="active"
@@ -72,7 +70,6 @@
 		<StepperPanel>
 			<template #header="{ active, highlighted, clickCallback }">
 				<StepHeader
-					:on-click="clickCallback"
 					button-text="3"
 					header-text="Verify"
 					:active="active"
@@ -105,6 +102,7 @@
 							:length="6"
 							:invalid="!isCodeValid"
 							@update:model-value="resetIsCodeValid"
+							@keydown="handleKeydown"
 						/>
 						<p v-if="!isCodeValid" class="mt-3 text-red-500">{{ invalidCodeMessage }}</p>
 						<Button class="mt-3" label="Resend code" severity="contrast" text @click="resendCode"/>
@@ -230,6 +228,12 @@
 			const detail = e.errors ?? 'Request failed';
 			isCodeValid.value = false;
 			invalidCodeMessage.value = detail;
+		}
+	};
+
+	const handleKeydown = async (event: KeyboardEvent) => {
+		if (event.key === 'Enter') {
+			await verifyCode();
 		}
 	};
 

@@ -304,12 +304,12 @@
 		loading.value = true;
 		lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
 
-		const [ adoptedProbes, { count }, creditsAdditions ] = await Promise.all([
+		const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
 			$directus.request(readItems('gp_adopted_probes', {
 				offset: lazyParams.value.first,
 				limit: 5,
 			})),
-			$directus.request<{count: number}>(aggregate('gp_adopted_probes', { aggregate: { count: '*' } })),
+			$directus.request<[{count: number}]>(aggregate('gp_adopted_probes', { aggregate: { count: '*' } })),
 			$directus.request(readItems('gp_credits_additions', {
 				filter: {
 					// @ts-ignore

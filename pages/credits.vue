@@ -29,18 +29,16 @@
 			data-key="id"
 			:total-records="creditsChangesCount"
 			:loading="loading"
-			:row-class="() => 'border-none'"
 		>
-			<Column header="Time" field="date_created" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
-				<template #body="slotProps">
-					{{ new Date(slotProps.data.date_created).toISOString().split('T')[0] }}
-				</template>
-			</Column>
+			<Column header="Time" field="time" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t"/>
 			<Column header="Comment" field="comment" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t"/>
 			<Column header="Amount" field="amount" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
 				<template #body="slotProps">
-					<Tag class="flex items-center !text-sm" severity="success" value="Success">
+					<Tag v-if="slotProps.data.type === 'addition'" class="flex items-center !text-sm" severity="success">
 						<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ slotProps.data.amount || 0 }}
+					</Tag>
+					<Tag v-else class="flex items-center !text-sm" severity="danger">
+						<nuxt-icon class="mr-1 mt-0.5" name="coin"/>-{{ slotProps.data.amount || 0 }}
 					</Tag>
 				</template>
 			</Column>
@@ -65,7 +63,12 @@
 
 	const loading = ref(false);
 	const creditsChangesCount = ref(0);
-	const creditsChanges = ref<CreditsAddition[]>([]);
+	const creditsChanges = ref<{
+		type: 'addition' | 'deduction',
+		time: string,
+		comment: string,
+		amount: number,
+	}[]>([]);
 	const first = ref(0);
 	const lazyParams = ref<Partial<DataTablePageEvent>>({});
 
@@ -73,22 +76,39 @@
 		loading.value = true;
 		lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
 
-		const [ creditsAdditions, { count }] = await Promise.all([
+		const [
+			creditsAdditions,
+			[{ count: additionsCount }],
+			creditsDeductions,
+			[{ count: deductionsCount }],
+		] = await Promise.all([
 			$directus.request(readItems('gp_credits_additions', {
 				offset: lazyParams.value.first,
 				limit: 5,
 			})),
-			$directus.request<{count: number}>(aggregate('gp_credits_additions', { aggregate: { count: '*' } })),
-			// $directus.request(readItems('gp_credits_deductions', {
-			// 	offset: lazyParams.value.first,
-			// 	limit: 5,
-			// })),
-			// $directus.request<{count: number}>(aggregate('gp_credits_deductions', { aggregate: { count: '*' } })),
+			$directus.request<[{count: number}]>(aggregate('gp_credits_additions', { aggregate: { count: '*' } })),
+			$directus.request(readItems('gp_credits_deductions', {
+				offset: lazyParams.value.first,
+				limit: 5,
+			})),
+			$directus.request<[{count: number}]>(aggregate('gp_credits_deductions', { aggregate: { count: '*' } })),
 		]);
 
-		console.log('creditsAdditions', creditsAdditions);
-		creditsChanges.value = creditsAdditions;
-		creditsChangesCount.value = count;
+		creditsChanges.value = [
+			...creditsAdditions.map(addition => ({
+				...addition,
+				type: 'addition' as const,
+				time: new Date(addition.date_created).toISOString().split('T')[0],
+			})),
+			...creditsDeductions.map(deduction => ({
+				...deduction,
+				type: 'deduction' as const,
+				comment: 'Globalping service usage',
+				time: new Date(deduction.date).toISOString().split('T')[0],
+			})),
+		];
+
+		creditsChangesCount.value = additionsCount + deductionsCount;
 		loading.value = false;
 	};
 

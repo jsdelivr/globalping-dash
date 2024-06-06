@@ -144,7 +144,7 @@
 	const { $directus } = useNuxtApp();
 	const toast = useToast();
 
-	defineEmits([ 'cancel' ]);
+	const emit = defineEmits([ 'cancel', 'adopted' ]);
 
 	const activeStep = ref(0);
 
@@ -224,6 +224,7 @@
 			const response = await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/verify-code', body: JSON.stringify({ code: code.value.substring(0, 6) }) })) as Probe;
 			probe.value = response;
 			isSuccess.value = true;
+			emit('adopted');
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';
 			isCodeValid.value = false;

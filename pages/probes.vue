@@ -32,6 +32,7 @@
 				:total-records="probesCount"
 				:loading="loading"
 				table-class="table-fixed"
+				:row-class="() => 'cursor-pointer hover:bg-surface-50'"
 				@row-click="toggleRow"
 			>
 				<template #header>

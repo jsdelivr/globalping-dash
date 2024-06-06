@@ -1098,7 +1098,6 @@ export default {
 			// Color
 				'dark:text-white/80',
 				{ 'bg-surface-50 align-top': expanded },
-				{ 'cursor-pointer hover:bg-surface-50': !expanded },
 				{ 'bg-primary-highlight text-primary-highlight-inverse': context.selected },
 				{ 'bg-surface-0 dark:bg-surface-900': !context.selected },
 				{ 'font-bold bg-surface-0 dark:bg-surface-900 z-20': props.frozenRow },

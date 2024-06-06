@@ -21,6 +21,7 @@
 			</div>
 		</div>
 		<DataTable
+			class="mt-6"
 			:value="creditsChanges"
 			lazy
 			:first="first"
@@ -28,10 +29,21 @@
 			data-key="id"
 			:total-records="creditsChangesCount"
 			:loading="loading"
+			:row-class="() => 'border-none'"
 		>
-			<Column header="Time" field="date_created"/>
-			<Column header="Comment" field="comment"/>
-			<Column header="Amount" field="amount"/>
+			<Column header="Time" field="date_created" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
+				<template #body="slotProps">
+					{{ new Date(slotProps.data.date_created).toISOString().split('T')[0] }}
+				</template>
+			</Column>
+			<Column header="Comment" field="comment" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t"/>
+			<Column header="Amount" field="amount" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
+				<template #body="slotProps">
+					<Tag class="flex items-center !text-sm" severity="success" value="Success">
+						<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ slotProps.data.amount || 0 }}
+					</Tag>
+				</template>
+			</Column>
 		</DataTable>
 		<Paginator
 			class="mt-9"

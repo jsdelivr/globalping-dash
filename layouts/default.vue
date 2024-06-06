@@ -67,7 +67,7 @@
 					<div class="bg-surface-0 border-surface-300 mt-8 rounded-xl border p-6">
 						<p class="mb-2 font-bold">Sponsorship</p>
 						<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
-						<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1">
+						<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank" rel="noopener">
 							<Button label="Become a Sponsor" severity="contrast"/>
 						</NuxtLink>
 					</div>
@@ -89,7 +89,7 @@
 			<div class="bg-surface-0 border-surface-300 mt-auto rounded-xl border p-6">
 				<p class="mb-2 font-bold">Sponsorship</p>
 				<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
-				<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1">
+				<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank" rel="noopener">
 					<Button label="Become a Sponsor" severity="contrast"/>
 				</NuxtLink>
 			</div>

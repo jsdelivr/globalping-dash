@@ -1,7 +1,7 @@
 <template>
 	<div class="bg-surface-50 flex h-full min-w-[1280px] flex-col p-6">
 		<div class="mb-6 flex">
-			<h1 class="title col-span-2 text-2xl font-bold">Probes</h1>
+			<h1 class="col-span-2 text-2xl font-bold">Probes</h1>
 			<Button class="ml-auto" @click="adoptProbeDialog = true">
 				<nuxt-icon class="pi mr-2 mt-[2px]" name="capture"/>
 				<span class="font-bold">Adopt a probe</span>

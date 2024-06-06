@@ -1,6 +1,6 @@
 <template>
 	<div class="grid grid-cols-2 gap-4 p-6">
-		<h1 class="col-span-2 text-2xl font-bold">Overview</h1>
+		<h1 class="col-span-2 mb-2 text-2xl font-bold">Overview</h1>
 		<div class="rounded-xl border max-xl:col-span-2">
 			<p class="text-bluegray-700 flex border-b px-6 py-3 font-bold">Summary</p>
 			<div class="p-6">
@@ -105,7 +105,7 @@
 					<p class="ml-6 leading-tight">
 						<b>You don't have any probes yet.</b><br><br>
 						Get started by going to <NuxtLink class="text-primary font-semibold hover:underline" to="/probes">Probes</NuxtLink> page to create a container probe.<br>
-						Or <NuxtLink class="text-primary font-semibold hover:underline" to="https://github.com/sponsors/jsdelivr">become a sponsor</NuxtLink> and get a free hardware ARM based device that is plug-and-play.
+						Or <NuxtLink class="text-primary font-semibold hover:underline" to="https://github.com/sponsors/jsdelivr" target="_blank" rel="noopener">become a sponsor</NuxtLink> and get a free hardware ARM based device that is plug-and-play.
 					</p>
 				</div>
 			</div>

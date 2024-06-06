@@ -7,23 +7,25 @@ declare global {
     gp_adopted_probes: Probe[];
     gp_credits: Credits[];
     gp_credits_additions: CreditsAddition[];
+    gp_credits_deductions: CreditsDeduction[];
 
     directus_users: User;
   };
 
   type Credits = {
-    id: number;
     amount: number;
-    user_id: string;
   };
 
   type CreditsAddition = {
-    id: number;
     amount: number;
     comment: string;
     date_created: string;
-    github_id: string;
     adopted_probe: number | null;
+  };
+
+  type CreditsDeduction = {
+    amount: number;
+    date: string;
   };
 
   type Probe = {

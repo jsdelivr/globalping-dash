@@ -28,6 +28,14 @@ declare global {
     date: string;
   };
 
+  type CreditsChange = {
+    type: 'addition' | 'deduction';
+    date_created: string;
+    comment?: string;
+    amount: number;
+    adopted_probe?: number | null;
+  };
+
   type Probe = {
     id: number;
     asn: number;

@@ -20,6 +20,10 @@
 				<p class="text-lg font-bold">35,000</p>
 			</div>
 		</div>
+		<div class="mt-6">
+			<p>Start amount</p>
+			<p class="text-lg font-bold">{{ startAmount }}</p>
+		</div>
 		<DataTable
 			class="mt-6"
 			:value="creditsChanges"
@@ -30,7 +34,7 @@
 			:total-records="creditsChangesCount"
 			:loading="loading"
 		>
-			<Column header="Time" field="time" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t"/>
+			<Column header="Time" field="date_created" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t"/>
 			<Column header="Comment" field="comment" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t"/>
 			<Column header="Amount" field="amount" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
 				<template #body="slotProps">
@@ -55,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-	import { aggregate, readItems } from '@directus/sdk';
+	import { aggregate, customEndpoint } from '@directus/sdk';
 	import type { DataTablePageEvent } from 'primevue/datatable';
 	import type { PageState } from 'primevue/paginator';
 
@@ -63,13 +67,9 @@
 
 	const loading = ref(false);
 	const creditsChangesCount = ref(0);
-	const creditsChanges = ref<{
-		type: 'addition' | 'deduction',
-		time: string,
-		comment: string,
-		amount: number,
-	}[]>([]);
+	const creditsChanges = ref<CreditsChange[]>([]);
 	const first = ref(0);
+	const startAmount = ref(0);
 	const lazyParams = ref<Partial<DataTablePageEvent>>({});
 
 	const loadLazyData = async (event?: PageState) => {
@@ -77,37 +77,26 @@
 		lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
 
 		const [
-			creditsAdditions,
+			{ amountBeforeChanges, changes },
 			[{ count: additionsCount }],
-			creditsDeductions,
 			[{ count: deductionsCount }],
 		] = await Promise.all([
-			$directus.request(readItems('gp_credits_additions', {
+			$directus.request<{amountBeforeChanges: number, changes: CreditsChange[]}>(customEndpoint({ method: 'GET', path: '/credits-timeline', params: {
 				offset: lazyParams.value.first,
 				limit: 5,
-			})),
+			} })),
 			$directus.request<[{count: number}]>(aggregate('gp_credits_additions', { aggregate: { count: '*' } })),
-			$directus.request(readItems('gp_credits_deductions', {
-				offset: lazyParams.value.first,
-				limit: 5,
-			})),
 			$directus.request<[{count: number}]>(aggregate('gp_credits_deductions', { aggregate: { count: '*' } })),
 		]);
 
 		creditsChanges.value = [
-			...creditsAdditions.map(addition => ({
+			...changes.map(addition => ({
 				...addition,
-				type: 'addition' as const,
-				time: new Date(addition.date_created).toISOString().split('T')[0],
-			})),
-			...creditsDeductions.map(deduction => ({
-				...deduction,
-				type: 'deduction' as const,
-				comment: 'Globalping service usage',
-				time: new Date(deduction.date).toISOString().split('T')[0],
+				date_created: addition.date_created.split('T')[0],
 			})),
 		];
 
+		startAmount.value = amountBeforeChanges;
 		creditsChangesCount.value = additionsCount + deductionsCount;
 		loading.value = false;
 	};

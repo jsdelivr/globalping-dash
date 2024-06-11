@@ -59,10 +59,13 @@
 </template>
 
 <script setup lang="ts">
+	import { useAuth } from '~/store/auth';
 	import { aggregate, customEndpoint } from '@directus/sdk';
 	import type { DataTablePageEvent } from 'primevue/datatable';
 	import type { PageState } from 'primevue/paginator';
 
+	const auth = useAuth();
+	const user = auth.getUser as User;
 	const { $directus } = useNuxtApp();
 
 	const loading = ref(false);
@@ -85,8 +88,16 @@
 				offset: lazyParams.value.first,
 				limit: 5,
 			} })),
-			$directus.request<[{count: number}]>(aggregate('gp_credits_additions', { aggregate: { count: '*' } })),
-			$directus.request<[{count: number}]>(aggregate('gp_credits_deductions', { aggregate: { count: '*' } })),
+			$directus.request<[{count: number}]>(aggregate('gp_credits_additions', {
+				aggregate: { count: '*' },
+				// @ts-ignore
+				query: { filter: { github_id: user.external_identifier || 'admin' } },
+			})),
+			$directus.request<[{count: number}]>(aggregate('gp_credits_deductions', {
+				aggregate: { count: '*' },
+				// @ts-ignore
+				query: { filter: { user_id: user.id } },
+			})),
 		]);
 
 		creditsChanges.value = [

@@ -3,34 +3,61 @@
 	<Chart type="line" :data="chartData" :options="chartOptions" class="h-30rem"/>
 </template>
 
-<script setup>
+<script setup lang="ts">
 	import Chart from 'primevue/chart';
-	import { ref, onMounted } from 'vue';
 
-	onMounted(() => {
-		chartData.value = setChartData();
-		chartOptions.value = setChartOptions();
+	const props = defineProps({
+		startAmount: {
+			type: Number,
+			default: 0,
+		},
+		creditsChanges: {
+			type: Array as () => CreditsChange[],
+			default: () => [],
+		},
 	});
 
-	const chartData = ref();
-	const chartOptions = ref();
+	const documentStyle = getComputedStyle(document.documentElement);
+	const bluegray400 = documentStyle.getPropertyValue('--bluegray-400');
+	const surface50 = documentStyle.getPropertyValue('--surface-50');
+	const surface300 = documentStyle.getPropertyValue('--surface-300');
+	const primary = documentStyle.getPropertyValue('--primary');
 
-	const setChartData = () => {
+	const chartData = computed(() => {
+		const reverseChanges = [ ...props.creditsChanges ].reverse();
+
+		const labels = reverseChanges.map(({ date_created }) => {
+			const [ _year, month, day ] = date_created.split('-');
+			return `${day}/${month}`;
+		});
+
+		const data: number[] = [];
+		let currentAmount = props.startAmount;
+		reverseChanges.forEach((change) => {
+			if (change.type === 'addition') {
+				data.push(currentAmount += change.amount);
+			} else if (change.type === 'deduction') {
+				data.push(currentAmount -= change.amount);
+			} else {
+				data.push(currentAmount);
+			}
+		});
+
 		return {
-			labels: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July' ],
+			labels,
 			datasets: [
 				{
-					data: [ 65, 59, 80, 81, 56, 55, 40 ],
+					data,
 					fill: 'origin',
 
 				},
 			],
 		};
-	};
+	});
 
-	let width, height, gradient;
+	let width: number, height: number, gradient: any;
 
-	function getGradient (ctx, chartArea) {
+	const getGradient = (ctx: any, chartArea: any) => {
 		const chartWidth = chartArea.right - chartArea.left;
 		const chartHeight = chartArea.bottom - chartArea.top;
 
@@ -45,76 +72,67 @@
 		}
 
 		return gradient;
-	}
+	};
 
-	const setChartOptions = () => {
-		const documentStyle = getComputedStyle(document.documentElement);
-		const bluegray400 = documentStyle.getPropertyValue('--bluegray-400');
-		const surface300 = documentStyle.getPropertyValue('--surface-300');
-		const primary = documentStyle.getPropertyValue('--primary');
-
-		return {
-			maintainAspectRatio: false,
-			aspectRatio: 0.6,
-			plugins: {
-				legend: {
+	const chartOptions = {
+		maintainAspectRatio: false,
+		aspectRatio: 0.6,
+		plugins: {
+			legend: {
+				display: false,
+			},
+		},
+		scales: {
+			x: {
+				ticks: {
+					color: bluegray400,
+					font: {
+						weight: 'bold',
+					},
+				},
+				grid: {
+					color: (context: any) => context.tick.value === 0 ? surface50 : surface300,
+				},
+				border: {
 					display: false,
 				},
 			},
-			scales: {
-				x: {
-					ticks: {
-						color: bluegray400,
-						font: {
-							weight: 'bold',
-						},
-					},
-					grid: {
-						color: surface300,
-					},
-					border: {
-						display: false,
-					},
+			y: {
+				beginAtZero: true,
+				ticks: {
+					color: bluegray400,
 				},
-				y: {
-					ticks: {
-						color: bluegray400,
-						font: {
-						},
-					},
-					grid: {
-						color: surface300,
-					},
-					border: {
-						display: false,
-					},
+				grid: {
+					color: surface300,
+				},
+				border: {
+					display: false,
 				},
 			},
-			elements: {
-				line: {
-					borderColor: primary,
-					backgroundColor: primary,
-					borderWidth: 2,
-					backgroundColor (context) {
-						const chart = context.chart;
-						const { ctx, chartArea } = chart;
+		},
+		elements: {
+			line: {
+				borderColor: primary,
+				borderWidth: 2,
+				backgroundColor (context: any) {
+					const chart = context.chart;
+					const { ctx, chartArea } = chart;
 
-						if (!chartArea) {
-							// This case happens on initial chart load
-							return;
-						}
+					if (!chartArea) {
+						// This case happens on initial chart load
+						return;
+					}
 
-						return getGradient(ctx, chartArea);
-					},
-				},
-				point: {
-					borderColor: primary,
-					backgroundColor: primary,
-					radius: 0,
-					hitRadius: 50,
-					hoverRadius: 5,
+					return getGradient(ctx, chartArea);
 				},
 			},
-		};
+			point: {
+				borderColor: primary,
+				backgroundColor: primary,
+				radius: 0,
+				hitRadius: 50,
+				hoverRadius: 5,
+			},
+		},
 	};
 </script>

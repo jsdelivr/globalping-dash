@@ -9,15 +9,15 @@
 		<div class="mt-2 flex">
 			<div class="mr-20">
 				<p>Total credits</p>
-				<p class="text-lg font-bold">124,567,010</p>
+				<p class="text-lg font-bold">{{ creditsStats.credits.toLocaleString() }}</p>
 			</div>
 			<div class="mr-20">
 				<p>Generated last 30 days</p>
-				<p class="text-lg font-bold">180,000</p>
+				<p class="text-lg font-bold">{{ creditsStats.additions.toLocaleString() }}</p>
 			</div>
 			<div>
 				<p>Spent last 30 days</p>
-				<p class="text-lg font-bold">35,000</p>
+				<p class="text-lg font-bold">{{ creditsStats.deductions.toLocaleString() }}</p>
 			</div>
 		</div>
 		<div class="mt-6">
@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 	import { useAuth } from '~/store/auth';
-	import { aggregate, customEndpoint } from '@directus/sdk';
+	import { aggregate, customEndpoint, readItems } from '@directus/sdk';
 	import type { DataTablePageEvent } from 'primevue/datatable';
 	import type { PageState } from 'primevue/paginator';
 
@@ -74,6 +74,39 @@
 	const first = ref(0);
 	const startAmount = ref(0);
 	const lazyParams = ref<Partial<DataTablePageEvent>>({});
+
+	const { data: creditsStats } = await useAsyncData('credits-stats', async () => {
+		const [ credits, additions, deductions ] = await Promise.all([
+			$directus.request<[{amount: number}]>(readItems('gp_credits', {
+				// @ts-ignore
+				query: { filter: { user_id: user.id } },
+			})),
+			$directus.request<[{sum: {amount: number}}]>(aggregate('gp_credits_additions', {
+				aggregate: { sum: 'amount' },
+				// @ts-ignore
+				query: { filter: {
+					github_id: user.external_identifier || 'admin',
+					// @ts-ignore
+					date_created: { _gte: '$NOW(-30 day)' },
+				} },
+			})),
+			$directus.request<[{sum: {amount: number}}]>(aggregate('gp_credits_deductions', {
+				aggregate: { sum: 'amount' },
+				// @ts-ignore
+				query: { filter: {
+					user_id: user.id,
+					// @ts-ignore
+					date: { _gte: '$NOW(-30 day)' },
+				} },
+			})),
+		]);
+
+		return {
+			credits: credits[0]?.amount || 0,
+			additions: additions[0]?.sum.amount || 0,
+			deductions: deductions[0]?.sum.amount || 0,
+		};
+	}, { default: () => ({ credits: 0, additions: 0, deductions: 0 }) });
 
 	const loadLazyData = async (event?: PageState) => {
 		loading.value = true;

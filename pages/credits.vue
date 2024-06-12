@@ -21,8 +21,7 @@
 			</div>
 		</div>
 		<div class="mt-6">
-			<p>Start amount</p>
-			<p class="text-lg font-bold">{{ startAmount }}</p>
+			<CreditsChart :start-amount="startAmount" :credits-changes="creditsChanges"/>
 		</div>
 		<DataTable
 			class="mt-6"
@@ -160,18 +159,4 @@
 		lazyParams.value = event;
 		loadLazyData(event);
 	};
-
-	// const { data: creditsData } = await useAsyncData('gp_credits&gp_credits_additions&gp_credits_deductions', async () => {
-	// 	const [ credits, creditsAdditions, creditsDeductions ] = await Promise.all([
-	// 		$directus.request(readItems('gp_credits')),
-	// 		$directus.request(readItems('gp_credits_additions')),
-	// 		$directus.request(readItems('gp_credits_deductions')),
-	// 	]);
-
-	// 	return { credits, creditsAdditions, creditsDeductions };
-	// });
-
-	// console.log(creditsData.value?.creditsDeductions);
-
-
 </script>

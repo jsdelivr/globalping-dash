@@ -117,7 +117,7 @@
 				callbacks: {
 					title: () => null,
 					label: () => null,
-					afterBody: ctx => `Total credits: ${changes.value[ctx[0].dataIndex].total}
+					afterBody: (ctx: any) => `Total credits: ${changes.value[ctx[0].dataIndex].total}
 Generated: ${changes.value[ctx[0].dataIndex].generated}
 Spent: ${changes.value[ctx[0].dataIndex].spent}`,
 				},

@@ -22,7 +22,7 @@
 	const surface300 = documentStyle.getPropertyValue('--surface-300');
 	const primary = documentStyle.getPropertyValue('--primary');
 
-	const chartData = computed(() => {
+	const changes = computed(() => {
 		const changesAsc = [ ...props.creditsChanges ].reverse();
 
 		const data: {
@@ -54,7 +54,7 @@
 					prevElem.spent = 0;
 				} else {
 					prevElem.generated = 0;
-					prevElem.spent = 0;
+					prevElem.spent = -updatedDiff;
 				}
 			} else if (change.type === 'addition') {
 				data.push({
@@ -73,11 +73,15 @@
 			}
 		});
 
+		return data;
+	});
+
+	const chartData = computed(() => {
 		return {
-			labels: data.map(({ label }) => label),
+			labels: changes.value.map(({ label }) => label),
 			datasets: [
 				{
-					data: data.map(({ total }) => total),
+					data: changes.value.map(({ total }) => total),
 				},
 			],
 		};
@@ -102,7 +106,7 @@
 		return gradient;
 	};
 
-	const chartOptions = {
+	const chartOptions = computed(() => ({
 		maintainAspectRatio: false,
 		aspectRatio: 0.6,
 		plugins: {
@@ -111,14 +115,11 @@
 			},
 			tooltip: {
 				callbacks: {
-					title: (args) => {
-						console.log(args);
-						return 'alo';
-					},
-					label: (args2) => {
-						console.log(args2);
-						return 'alo2';
-					},
+					title: () => null,
+					label: () => null,
+					afterBody: ctx => `Total credits: ${changes.value[ctx[0].dataIndex].total}
+Generated: ${changes.value[ctx[0].dataIndex].generated}
+Spent: ${changes.value[ctx[0].dataIndex].spent}`,
 				},
 			},
 		},
@@ -171,9 +172,9 @@
 				borderColor: primary,
 				backgroundColor: primary,
 				radius: 0,
-				hitRadius: 50,
+				hitRadius: 100,
 				hoverRadius: 5,
 			},
 		},
-	};
+	}));
 </script>

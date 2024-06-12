@@ -19,37 +19,65 @@
 
 	const documentStyle = getComputedStyle(document.documentElement);
 	const bluegray400 = documentStyle.getPropertyValue('--bluegray-400');
-	const surface50 = documentStyle.getPropertyValue('--surface-50');
 	const surface300 = documentStyle.getPropertyValue('--surface-300');
 	const primary = documentStyle.getPropertyValue('--primary');
 
 	const chartData = computed(() => {
-		const reverseChanges = [ ...props.creditsChanges ].reverse();
+		const changesAsc = [ ...props.creditsChanges ].reverse();
 
-		const labels = reverseChanges.map(({ date_created }) => {
-			const [ _year, month, day ] = date_created.split('-');
-			return `${day}/${month}`;
-		});
+		const data: {
+			label: string;
+			total: number;
+			generated: number;
+			spent: number;
+		}[] = [];
 
-		const data: number[] = [];
-		let currentAmount = props.startAmount;
-		reverseChanges.forEach((change) => {
-			if (change.type === 'addition') {
-				data.push(currentAmount += change.amount);
+		changesAsc.forEach((change) => {
+			const [ _year, month, day ] = change.date_created.split('-');
+			const label = `${day}/${month}`;
+			const prevElem = data.at(-1);
+
+			if (!prevElem) {
+				data.push({
+					label,
+					total: change.type === 'addition' ? props.startAmount + change.amount : props.startAmount - change.amount,
+					generated: change.type === 'addition' ? change.amount : 0,
+					spent: change.type === 'deduction' ? change.amount : 0,
+				});
+			} else if (prevElem.label === label) {
+				const currentDiff = prevElem.generated - prevElem.spent;
+				const updatedDiff = currentDiff + (change.type === 'addition' ? change.amount : -change.amount);
+				prevElem.total += change.type === 'addition' ? change.amount : -change.amount;
+
+				if (updatedDiff > 0) {
+					prevElem.generated = updatedDiff;
+					prevElem.spent = 0;
+				} else {
+					prevElem.generated = 0;
+					prevElem.spent = 0;
+				}
+			} else if (change.type === 'addition') {
+				data.push({
+					label,
+					total: prevElem.total + change.amount,
+					generated: change.amount,
+					spent: 0,
+				});
 			} else if (change.type === 'deduction') {
-				data.push(currentAmount -= change.amount);
-			} else {
-				data.push(currentAmount);
+				data.push({
+					label,
+					total: prevElem.total - change.amount,
+					generated: 0,
+					spent: change.amount,
+				});
 			}
 		});
 
 		return {
-			labels,
+			labels: data.map(({ label }) => label),
 			datasets: [
 				{
-					data,
-					fill: 'origin',
-
+					data: data.map(({ total }) => total),
 				},
 			],
 		};
@@ -81,6 +109,18 @@
 			legend: {
 				display: false,
 			},
+			tooltip: {
+				callbacks: {
+					title: (args) => {
+						console.log(args);
+						return 'alo';
+					},
+					label: (args2) => {
+						console.log(args2);
+						return 'alo2';
+					},
+				},
+			},
 		},
 		scales: {
 			x: {
@@ -91,7 +131,7 @@
 					},
 				},
 				grid: {
-					color: (context: any) => context.tick.value === 0 ? surface50 : surface300,
+					color: surface300,
 				},
 				border: {
 					display: false,
@@ -114,6 +154,7 @@
 			line: {
 				borderColor: primary,
 				borderWidth: 2,
+				fill: 'origin',
 				backgroundColor (context: any) {
 					const chart = context.chart;
 					const { ctx, chartArea } = chart;

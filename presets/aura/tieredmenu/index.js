@@ -23,21 +23,12 @@ export default {
 		],
 	},
 	menuitem: {
-		class: 'relative my-[2px] [&:first-child]:mt-0 [&:last-child]:mb-0',
+		class: 'text-bluegray-700 dark:text-white/80 relative my-[2px] [&:first-child]:mt-0 [&:last-child]:mb-0',
 	},
 	content: ({ context }) => ({
 		class: [
 			// Shape
 			'rounded-[4px]',
-
-			// Colors
-			'text-surface-700 dark:text-white/80',
-			{
-				'text-surface-500 dark:text-white/70': !context.focused && !context.active,
-				// 'text-surface-500 dark:text-white/70 bg-surface-200': context.focused && !context.active,
-				'text-surface-500 dark:text-white/70 bg-surface-100': context.focused && !context.active,
-				'text-primary-highlight-inverse bg-primary-highlight': (context.focused && context.active) || context.active || (!context.focused && context.active),
-			},
 
 			// Transitions
 			'transition-shadow',
@@ -62,11 +53,8 @@ export default {
 			'items-center',
 
 			// Spacing
-			'py-2',
-			'px-3',
-
-			// Color
-			'text-surface-700 dark:text-white/80',
+			'py-3',
+			'px-4',
 
 			// Misc
 			'no-underline',
@@ -79,9 +67,6 @@ export default {
 		class: [
 			// Spacing
 			'mr-2',
-
-			// Color
-			'text-surface-600 dark:text-white/70',
 		],
 	},
 	label: {

@@ -36,6 +36,15 @@
 						{{ formatDate(slotProps.data.expire) || 'Never' }}
 					</template>
 				</Column>
+				<Column :row-editor="true" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
+					<template #body="slotProps">
+						<TokenOptions
+							@edit="editToken(slotProps.data.id)"
+							@regenerate="regenerateToken(slotProps.data.id)"
+							@delete="deleteToken(slotProps.data.id)"
+						/>
+					</template>
+				</Column>
 			</DataTable>
 			<Paginator
 				class="mt-9"
@@ -101,5 +110,17 @@
 	const onPage = (event: PageState) => {
 		lazyParams.value = event;
 		loadLazyData(event);
+	};
+
+	const editToken = (...args) => {
+		console.log(args);
+	};
+
+	const regenerateToken = (...args) => {
+		console.log(args);
+	};
+
+	const deleteToken = (...args) => {
+		console.log(args);
 	};
 </script>

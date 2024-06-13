@@ -23,7 +23,7 @@
 		<div class="mt-6">
 			<CreditsChart :start-amount="startAmount" :credits-changes="creditsChanges"/>
 		</div>
-		<div v-if="creditsChanges.length" class="mt-6">
+		<div v-if="creditsChanges.length || loading" class="mt-6">
 			<DataTable
 				:value="creditsChanges"
 				lazy
@@ -55,7 +55,7 @@
 				@page="onPage($event)"
 			/>
 		</div>
-		<div v-else class="bg-surface-0 mt-6 rounded-xl border px-4 py-3">
+		<div v-else-if="!loading" class="bg-surface-0 mt-6 rounded-xl border px-4 py-3">
 			<div class="bg-surface-50 rounded-xl py-6 text-center">
 				<p class="font-semibold">No data to show</p>
 				<p class="mt-4">Adopt a probe or become a sponsor to track your credit usage</p>

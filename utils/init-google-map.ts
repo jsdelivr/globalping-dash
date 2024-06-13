@@ -1,4 +1,4 @@
-import mapStyles from './mapStyles.json';
+import mapStyles from './map-styles.json';
 
 const INITIAL_MAP_STYLES = mapStyles;
 const MAP_MIN_ZOOM = 1;

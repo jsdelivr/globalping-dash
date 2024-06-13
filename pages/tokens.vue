@@ -23,12 +23,12 @@
 				</Column>
 				<Column header="Created" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
 					<template #body="slotProps">
-						{{ formatDate(slotProps.data.date_created) || 'Never' }}
+						{{ getRelativeTimeString(slotProps.data.date_created) || 'Never' }}
 					</template>
 				</Column>
 				<Column header="Last used" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
 					<template #body="slotProps">
-						{{ formatDate(slotProps.data.date_last_used) || 'Never' }}
+						{{ getRelativeTimeString(slotProps.data.date_last_used) || 'Never' }}
 					</template>
 				</Column>
 				<Column header="Expires" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">

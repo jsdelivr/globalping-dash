@@ -5,7 +5,47 @@
 			<Button class="ml-auto" label="Generate new token"/>
 		</div>
 		<p class="xl:w-1/2">Generate a token and add it to your Globalping requests to upper your hourly measurements limit. After the limit is exhausted, you can proceed with measurements by spending the earned credits.</p>
-		<div v-if="false" class="mt-6">data</div>
+		<div v-if="tokens.length" class="mt-6">
+			<DataTable
+				:value="tokens"
+				lazy
+				:first="first"
+				:rows="5"
+				data-key="id"
+				:total-records="tokensCount"
+				:loading="loading"
+			>
+				<Column header="Name" field="name" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t"/>
+				<Column header="Origins" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
+					<template #body="slotProps">
+						<Tag v-for="(origin, index) in slotProps.data.origins" :key="index" class="my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="origin"/>
+					</template>
+				</Column>
+				<Column header="Created" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
+					<template #body="slotProps">
+						{{ formatDate(slotProps.data.date_created) || 'Never' }}
+					</template>
+				</Column>
+				<Column header="Last used" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
+					<template #body="slotProps">
+						{{ formatDate(slotProps.data.date_last_used) || 'Never' }}
+					</template>
+				</Column>
+				<Column header="Expires" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
+					<template #body="slotProps">
+						{{ formatDate(slotProps.data.expire) || 'Never' }}
+					</template>
+				</Column>
+			</DataTable>
+			<Paginator
+				class="mt-9"
+				:first="first"
+				:rows="5"
+				:total-records="tokensCount"
+				template="PrevPageLink PageLinks NextPageLink"
+				@page="onPage($event)"
+			/>
+		</div>
 		<div v-else class="bg-surface-0 mt-6 rounded-xl border px-4 py-3">
 			<div class="bg-surface-50 rounded-xl py-6 text-center">
 				<p class="font-semibold">No data to show</p>
@@ -16,13 +56,50 @@
 </template>
 
 <script setup lang="ts">
-	import { readItems } from '@directus/sdk';
+	import { aggregate, readItems } from '@directus/sdk';
+	import type { DataTablePageEvent } from 'primevue/datatable';
+	import type { PageState } from 'primevue/paginator';
 
 	const { $directus } = useNuxtApp();
 
-	const { data: tokens } = await useAsyncData('gp_tokens', () => {
-		return $directus.request(readItems('gp_tokens'));
+
+	const loading = ref(false);
+	const tokensCount = ref(0);
+	const tokens = ref<Token[]>([]);
+	const first = ref(0);
+	const lazyParams = ref<Partial<DataTablePageEvent>>({});
+
+	const loadLazyData = async (event?: PageState) => {
+		loading.value = true;
+		lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
+
+		const [ gpTokens, [{ count }] ] = await Promise.all([
+			$directus.request(readItems('gp_tokens', {
+				offset: lazyParams.value.first,
+				limit: 5,
+			})),
+			$directus.request<[{count: number}]>(aggregate('gp_tokens', { aggregate: { count: '*' } })),
+		]);
+
+		console.log('gpTokens', gpTokens);
+		tokens.value = gpTokens;
+		tokensCount.value = count;
+		loading.value = false;
+	};
+
+	onMounted(() => {
+		loading.value = true;
+
+		lazyParams.value = {
+			first: 0,
+			rows: 5,
+		};
+
+		loadLazyData();
 	});
 
-	console.log('tokens', tokens);
+	const onPage = (event: PageState) => {
+		lazyParams.value = event;
+		loadLazyData(event);
+	};
 </script>

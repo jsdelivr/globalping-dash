@@ -23,37 +23,44 @@
 		<div class="mt-6">
 			<CreditsChart :start-amount="startAmount" :credits-changes="creditsChanges"/>
 		</div>
-		<DataTable
-			class="mt-6"
-			:value="creditsChanges"
-			lazy
-			:first="first"
-			:rows="5"
-			data-key="id"
-			:total-records="creditsChangesCount"
-			:loading="loading"
-		>
-			<Column header="Time" field="date_created" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t"/>
-			<Column header="Comment" field="comment" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t"/>
-			<Column header="Amount" field="amount" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
-				<template #body="slotProps">
-					<Tag v-if="slotProps.data.type === 'addition'" class="flex items-center !text-sm" severity="success">
-						<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ slotProps.data.amount || 0 }}
-					</Tag>
-					<Tag v-else class="flex items-center !text-sm" severity="danger">
-						<nuxt-icon class="mr-1 mt-0.5" name="coin"/>-{{ slotProps.data.amount || 0 }}
-					</Tag>
-				</template>
-			</Column>
-		</DataTable>
-		<Paginator
-			class="mt-9"
-			:first="first"
-			:rows="5"
-			:total-records="creditsChangesCount"
-			template="PrevPageLink PageLinks NextPageLink"
-			@page="onPage($event)"
-		/>
+		<div v-if="creditsChanges.length" class="mt-6">
+			<DataTable
+				:value="creditsChanges"
+				lazy
+				:first="first"
+				:rows="5"
+				data-key="id"
+				:total-records="creditsChangesCount"
+				:loading="loading"
+			>
+				<Column header="Time" field="date_created" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t"/>
+				<Column header="Comment" field="comment" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t"/>
+				<Column header="Amount" field="amount" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
+					<template #body="slotProps">
+						<Tag v-if="slotProps.data.type === 'addition'" class="flex items-center !text-sm" severity="success">
+							<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ slotProps.data.amount || 0 }}
+						</Tag>
+						<Tag v-else class="flex items-center !text-sm" severity="danger">
+							<nuxt-icon class="mr-1 mt-0.5" name="coin"/>-{{ slotProps.data.amount || 0 }}
+						</Tag>
+					</template>
+				</Column>
+			</DataTable>
+			<Paginator
+				class="mt-9"
+				:first="first"
+				:rows="5"
+				:total-records="creditsChangesCount"
+				template="PrevPageLink PageLinks NextPageLink"
+				@page="onPage($event)"
+			/>
+		</div>
+		<div v-else class="bg-surface-0 mt-6 rounded-xl border px-4 py-3">
+			<div class="bg-surface-50 rounded-xl py-6 text-center">
+				<p class="font-semibold">No data to show</p>
+				<p class="mt-4">Adopt a probe or become a sponsor to track your credit usage</p>
+			</div>
+		</div>
 	</div>
 </template>
 

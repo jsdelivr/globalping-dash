@@ -139,6 +139,7 @@ Spent: ${changes.value[ctx[0].dataIndex].spent}`,
 				},
 			},
 			y: {
+				max: changes.value.length ? undefined : 1000,
 				beginAtZero: true,
 				ticks: {
 					color: bluegray400,

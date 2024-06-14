@@ -51,7 +51,7 @@
 						<div><span class="mx-2 text-3xl font-bold">{{ total }}</span>Total</div>
 					</div>
 					<NuxtLink class="ml-auto max-sm:ml-0 max-sm:mt-3" to="/credits" tabindex="-1">
-						<Button severity="secondary" label="Adopt probe">
+						<Button severity="secondary" outlined label="Adopt probe">
 							<span class="p-button-label mr-2 font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500': !perDay }">+{{ perDay }}</span>
 							<span>Per day</span>
 						</Button>

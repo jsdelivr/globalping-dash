@@ -2,7 +2,7 @@
 	<div class="bg-surface-50 flex h-full flex-col p-6">
 		<div class="mb-4 flex">
 			<h1 class="col-span-2 text-2xl font-bold">Tokens</h1>
-			<Button class="ml-auto" label="Generate new token"/>
+			<Button class="ml-auto" label="Generate new token" @click="generateTokenDialog = true"/>
 		</div>
 		<p class="xl:w-1/2">Generate a token and add it to your Globalping requests to upper your hourly measurements limit. After the limit is exhausted, you can proceed with measurements by spending the earned credits.</p>
 		<div v-if="tokens.length || loading" class="mt-6">
@@ -61,6 +61,17 @@
 				<p class="mt-4">Adopt a probe or become a sponsor to track your credit usage</p>
 			</div>
 		</div>
+		<Dialog
+			v-model:visible="generateTokenDialog"
+			class="min-w-[700px]"
+			modal
+			dismissable-mask
+			:draggable="false"
+			header="Generate new token"
+			content-class="!p-0"
+		>
+			<GenerateToken @cancel="generateTokenDialog = false" @generated="loadLazyData"/>
+		</Dialog>
 	</div>
 </template>
 
@@ -123,4 +134,8 @@
 	const deleteToken = (...args) => {
 		console.log(args);
 	};
+
+	// GENERATE NEW TOKEN
+
+	const generateTokenDialog = ref(false);
 </script>

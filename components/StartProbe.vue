@@ -1,8 +1,20 @@
 <template>
 	<p>To join the Globalping probe network all you have to do is run our container.</p>
 	<div class="mt-4">
-		<Button class="rounded-r-none" label="Docker" :severity="platform === 'docker' ? undefined : 'secondary'" @click="togglePlatform"/>
-		<Button class="rounded-l-none" label="Podman" :severity="platform === 'podman' ? undefined : 'secondary'" @click="togglePlatform"/>
+		<Button
+			class="rounded-r-none"
+			label="Docker"
+			:severity="platform === 'docker' ? undefined : 'secondary'"
+			:outlined="platform === 'docker' ? false : true"
+			@click="togglePlatform"
+		/>
+		<Button
+			class="rounded-l-none"
+			label="Podman"
+			:severity="platform === 'podman' ? undefined : 'secondary'"
+			:outlined="platform === 'podman' ? false : true"
+			@click="togglePlatform"
+		/>
 	</div>
 	<div class="relative mt-4 rounded-xl border p-4 pr-0">
 		<pre v-if="(size === 'compact')" class="no-scrollbar overflow-scroll"><code class="mr-16">{{ commands[platform][size] }}</code></pre>
@@ -11,9 +23,10 @@
 		</div>
 		<div class="!absolute right-2 top-2">
 			<Button
+				class="!bg-surface-0"
 				icon="pi pi-copy"
 				severity="secondary"
-				raised
+				outlined
 				@click="copyCommand"
 			/>
 			<div v-if="copyTooltip" class="bg-bluegray-700 text-surface-0 absolute left-1/2 top-[-40px] -translate-x-1/2 rounded-md p-2">
@@ -22,7 +35,14 @@
 		</div>
 	</div>
 	<div class="flex justify-center">
-		<Button class="size-6 rounded-t-none border-t-0" size="small" severity="secondary" aria-label="Expand" @click="toggleSize">
+		<Button
+			class="size-6 rounded-t-none border-t-0"
+			size="small"
+			outlined
+			severity="secondary"
+			aria-label="Expand"
+			@click="toggleSize"
+		>
 			<i class="pi text-xs" :class="{'pi-chevron-down': size === 'compact', 'pi-chevron-up': size === 'expanded'}"/>
 		</Button>
 	</div>

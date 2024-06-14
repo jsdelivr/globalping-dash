@@ -5,9 +5,10 @@
 		</div>
 		<div class="!absolute right-2 top-2">
 			<Button
+				class="!bg-surface-0"
 				icon="pi pi-copy"
 				severity="secondary"
-				raised
+				outlined
 				@click="copyCommand"
 			/>
 			<div v-if="copyTooltip" class="bg-bluegray-700 text-surface-0 absolute left-1/2 top-[-40px] -translate-x-1/2 rounded-md p-2">

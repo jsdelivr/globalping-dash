@@ -48,8 +48,19 @@
 			>
 				1 year
 			</Button>
-			<Button class="mr-2 flex items-center" :severity="activeExpire.custom ? undefined : 'secondary'" rounded>Custom <i class="pi pi-chevron-down ml-2"/></Button>
+			<Button
+				class="mr-2 flex items-center"
+				:severity="activeExpire.custom ? undefined : 'secondary'"
+				rounded
+				@click="toggleDatePanel"
+			>
+				{{ activeExpire.custom ? formatDate(expire) : 'Custom' }} <i class="pi pi-chevron-down ml-2"/>
+			</Button>
+			<OverlayPanel ref="datePanel">
+				<TokenDatePicker :value="expire && new Date(expire)" @change="changeDate"/>
+			</OverlayPanel>
 		</div>
+		<div class="mt-2 text-xs">{{ expire ? `Token will expire ${formatDate(expire)}` : 'Token will never expire' }}</div>
 		<p class="mt-6">Origins</p>
 		<div class="mt-2">
 			<div class="mr-1 inline-block">
@@ -114,9 +125,18 @@
 			expire.value = null;
 		} else {
 			const date = new Date();
-			date.setMonth(date.getMonth() - numberOfMonths);
+			date.setMonth(date.getMonth() + numberOfMonths);
 			expire.value = date.toISOString().split('T')[0];
 		}
+	};
+
+	const datePanel = ref();
+	const toggleDatePanel = (event: Event) => {
+		datePanel.value.toggle(event);
+	};
+
+	const changeDate = (date: Date | null) => {
+		expire.value = date ? date.toISOString().split('T')[0] : null;
 	};
 
 	// ///////////////////////

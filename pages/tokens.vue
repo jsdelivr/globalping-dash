@@ -70,7 +70,7 @@
 			header="Generate new token"
 			content-class="!p-0"
 		>
-			<GenerateToken @cancel="generateTokenDialog = false" @generated="loadLazyData"/>
+			<GenerateToken @cancel="generateTokenDialog = false" @generate="loadLazyData"/>
 		</Dialog>
 	</div>
 </template>

@@ -66,7 +66,7 @@
 			<div class="mr-1 inline-block">
 				<span class="bg-primary text-surface-0 flex items-center rounded-md border-0 px-1.5 py-0.5">http://jsdelivr.com
 					<Button
-						icon="pi pi-times"
+						icon="pi pi-times-circle"
 						class="text-surface-0 ml-0.5 h-6 w-4"
 						severity="secondary"
 						text

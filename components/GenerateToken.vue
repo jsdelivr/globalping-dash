@@ -64,7 +64,7 @@
 		<p class="mt-6">Origins</p>
 		<div class="mt-2">
 			<div class="mr-1 inline-block">
-				<span class="flex items-center rounded-md border p-1.5">http://jsdelivr.com
+				<span class="flex items-center rounded-xl border px-1.5 py-0.5">http://jsdelivr.com
 					<Button
 						icon="pi pi-times"
 						class="text-surface-900 ml-1 h-6 w-4"

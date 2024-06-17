@@ -91,9 +91,9 @@ export default {
 			},
 
 			// Size
-			{ 'w-auto p-3 ': !props.inline },
-			{ 'min-w-[80vw] w-auto p-3 ': props.touchUI },
-			{ 'p-3 min-w-full': props.inline },
+			{ 'w-auto ': !props.inline },
+			{ 'min-w-[80vw] w-auto ': props.touchUI },
+			{ 'min-w-full': props.inline },
 
 			// Shape
 			'border rounded-lg',
@@ -102,7 +102,7 @@ export default {
 			},
 
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-[#F9FAFC] dark:bg-surface-900',
 			'border-surface-200 dark:border-surface-700',
 
 			// misc
@@ -121,7 +121,7 @@ export default {
 			'flex items-center justify-between',
 
 			// Spacing
-			'p-0 pb-3 pt-1',
+			'p-0 p-3 pt-4',
 			'm-0',
 
 			// Shape
@@ -130,7 +130,7 @@ export default {
 
 			// Colors
 			'dark:text-white/80',
-			'bg-surface-0 dark:bg-surface-900',
+			'dark:bg-surface-900',
 			'border-surface-200 dark:border-surface-700',
 		],
 	},
@@ -260,20 +260,21 @@ export default {
 	table: {
 		class: [
 			// Font
-			'text-base leading-[normal]',
+			'text-sm leading-[normal]',
 			// Size & Shape
 			'border-collapse',
-			'w-full',
+			// 'w-full',
 
 			// Spacing
-			'm-0 mt-2',
+			'm-3',
 		],
 	},
 	tableheadercell: {
 		class: [
 			// Spacing
-			'p-1',
+			'pt-4 pb-2',
 			'font-semibold',
+			'border-b',
 		],
 	},
 	weekheader: {
@@ -292,7 +293,7 @@ export default {
 	day: {
 		class: [
 			// Spacing
-			'p-1',
+			'py-1.5 px-1',
 		],
 	},
 	weeklabelcontainer: ({ context }) => ({
@@ -316,7 +317,7 @@ export default {
 			// States
 			'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10',
 			{
-				'hover:bg-surface-50 dark:hover:bg-surface-500/10': !context.selected && !context.disabled,
+				'hover:bg-surface-100 dark:hover:bg-surface-500/10': !context.selected && !context.disabled,
 				'hover:bg-primary-highlight-hover': context.selected && !context.disabled,
 			},
 			{
@@ -339,7 +340,7 @@ export default {
 
 			// Colors
 			{
-				'bg-surface-100 dark:bg-surface-800 dark:text-white/70': context.date.today && !context.selected && !context.disabled,
+				'bg-surface-200 dark:bg-surface-800 dark:text-white/70': context.date.today && !context.selected && !context.disabled,
 				'bg-transparent dark:text-white/70': !context.selected && !context.disabled && !context.date.today,
 				'text-primary-highlight-inverse bg-primary-highlight': context.selected && !context.disabled,
 			},
@@ -347,7 +348,7 @@ export default {
 			// States
 			'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10',
 			{
-				'hover:bg-surface-50 dark:hover:bg-surface-500/10': !context.selected && !context.disabled,
+				'hover:bg-surface-100 dark:hover:bg-surface-500/10': !context.selected && !context.disabled,
 			},
 			{
 				'text-bluegray-300 opacity-60 cursor-default': context.disabled,
@@ -358,7 +359,7 @@ export default {
 	monthpicker: {
 		class: [
 			// Spacing
-			'mt-2',
+			'm-2',
 		],
 	},
 	month: ({ context }) => ({
@@ -395,7 +396,7 @@ export default {
 	yearpicker: {
 		class: [
 			// Spacing
-			'mt-2',
+			'm-2',
 		],
 	},
 	year: ({ context }) => ({

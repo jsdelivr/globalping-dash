@@ -57,7 +57,7 @@
 				{{ activeExpire.custom ? formatDate(expire) : 'Custom' }} <i class="pi pi-chevron-down ml-2"/>
 			</Button>
 			<OverlayPanel ref="datePanel">
-				<TokenDatePicker :value="expire && new Date(expire)" @change="changeDate"/>
+				<TokenCalendar :value="expire && new Date(expire)" @change="changeDate"/>
 			</OverlayPanel>
 		</div>
 		<div class="mt-2 text-xs">{{ expire ? `Token will expire ${formatDate(expire)}` : 'Token will never expire' }}</div>
@@ -137,6 +137,7 @@
 
 	const changeDate = (date: Date | null) => {
 		expire.value = date;
+		datePanel.value.hide();
 	};
 
 	// ///////////////////////

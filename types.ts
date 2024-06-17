@@ -8,6 +8,7 @@ declare global {
     gp_credits: Credits[];
     gp_credits_additions: CreditsAddition[];
     gp_credits_deductions: CreditsDeduction[];
+    gp_tokens: Token[];
 
     directus_users: User;
   };

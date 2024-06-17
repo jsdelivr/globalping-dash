@@ -54,7 +54,6 @@
 				template="PrevPageLink PageLinks NextPageLink"
 				@page="onPage($event)"
 			/>
-			<TokenDatePicker :value="expire && new Date(expire)" @change="changeDate"/>
 		</div>
 		<div v-else-if="!loading" class="bg-surface-0 mt-6 rounded-xl border px-4 py-3">
 			<div class="bg-surface-50 rounded-xl py-6 text-center">
@@ -102,7 +101,6 @@
 			$directus.request<[{count: number}]>(aggregate('gp_tokens', { aggregate: { count: '*' } })),
 		]);
 
-		console.log('gpTokens', gpTokens);
 		tokens.value = gpTokens;
 		tokensCount.value = count;
 		loading.value = false;

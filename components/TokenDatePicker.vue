@@ -1,6 +1,11 @@
 <template>
 	<div>
-		<Calendar :model-value="value" inline @update:model-value="(date: Date) => emit('change', date)"/>
+		<Calendar
+			:min-date="new Date()"
+			:model-value="value"
+			inline
+			@update:model-value="(date: Date) => emit('change', date)"
+		/>
 	</div>
 </template>
 

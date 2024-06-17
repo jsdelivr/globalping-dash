@@ -1,6 +1,6 @@
 <template>
 	<div class="text-bluegray-700 border-t px-5 py-7">
-		<p>Token name</p>
+		<p>Token name<i class="text-primary align-text-bottom">*</i></p>
 		<InputText
 			v-model="name"
 			class="mt-2 w-full"
@@ -79,10 +79,10 @@
 		<InputText
 			v-model="newOrigin"
 			class="mt-2 w-full"
-			placeholder="Type an origin"
+			placeholder="Type an origin and press Enter"
 		/>
 		<p class="mt-1 text-xs">
-			A list of origins which are allowed to use the token. If empty - any origin is valid. Examples of valid origins: "www.jsdelivr.com", "www.jsdelivr.com:10000". Hit Enter to add origin to the list.
+			A list of origins which are allowed to use the token. If empty - any origin is valid. Examples of valid origins: "www.jsdelivr.com", "www.jsdelivr.com:10000".
 		</p>
 		<div class="mt-7 text-right">
 			<Button class="mr-2" label="Cancel" severity="contrast" text @click="$emit('cancel')"/>
@@ -98,7 +98,7 @@
 
 	// EXPIRE
 
-	const expire = ref<string | null>(null);
+	const expire = ref<Date | null>(null);
 
 	const activeExpire = computed(() => {
 		const unlimited = !expire.value;
@@ -110,14 +110,14 @@
 		return { unlimited, months1, months3, months6, months12, custom };
 	});
 
-	const isMonthsAgo = (dateString: string | null, numberOfMonths: number) => {
-		if (!dateString) {
+	const isMonthsAgo = (expireDate: Date | null, numberOfMonths: number) => {
+		if (!expireDate) {
 			return false;
 		}
 
-		const date = new Date();
-		date.setMonth(date.getMonth() - numberOfMonths);
-		return dateString === date.toISOString().split('T')[0];
+		const buttonDate = new Date();
+		buttonDate.setMonth(buttonDate.getMonth() + numberOfMonths);
+		return expireDate.toISOString().split('T')[0] === buttonDate.toISOString().split('T')[0];
 	};
 
 	const changeExpiration = (numberOfMonths: number | null) => {
@@ -126,7 +126,7 @@
 		} else {
 			const date = new Date();
 			date.setMonth(date.getMonth() + numberOfMonths);
-			expire.value = date.toISOString().split('T')[0];
+			expire.value = date;
 		}
 	};
 
@@ -136,7 +136,7 @@
 	};
 
 	const changeDate = (date: Date | null) => {
-		expire.value = date ? date.toISOString().split('T')[0] : null;
+		expire.value = date;
 	};
 
 	// ///////////////////////

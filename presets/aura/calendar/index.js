@@ -121,7 +121,7 @@ export default {
 			'flex items-center justify-between',
 
 			// Spacing
-			'p-0 pb-2',
+			'p-0 pb-3 pt-1',
 			'm-0',
 
 			// Shape
@@ -129,7 +129,7 @@ export default {
 			'rounded-t-md',
 
 			// Colors
-			'text-surface-700 dark:text-white/80',
+			'dark:text-white/80',
 			'bg-surface-0 dark:bg-surface-900',
 			'border-surface-200 dark:border-surface-700',
 		],
@@ -149,7 +149,7 @@ export default {
 			'rounded-full',
 
 			// Colors
-			'text-surface-600 dark:text-white/70',
+			'text-bluegray-500 dark:text-white/70',
 			'border-0',
 			'bg-transparent',
 
@@ -176,13 +176,13 @@ export default {
 		class: [
 			// Font
 			'text-base leading-[normal]',
-			'font-medium',
+			'font-bold',
 
 			// shape
 			'rounded-md',
 
 			// Colors
-			'text-surface-700 dark:text-white/80',
+			'dark:text-white/80',
 
 			// Transitions
 			'transition duration-200',
@@ -203,13 +203,13 @@ export default {
 		class: [
 			// Font
 			'text-base leading-[normal]',
-			'font-medium',
+			'font-bold',
 
 			// shape
 			'rounded-md',
 
 			// Colors
-			'text-surface-700 dark:text-white/80',
+			'dark:text-white/80',
 
 			// Transitions
 			'transition duration-200',
@@ -241,7 +241,7 @@ export default {
 			'rounded-full',
 
 			// Colors
-			'text-surface-600 dark:text-white/70',
+			'text-bluegray-500 dark:text-white/70',
 			'border-0',
 			'bg-transparent',
 
@@ -273,19 +273,19 @@ export default {
 		class: [
 			// Spacing
 			'p-1',
-			'font-medium',
+			'font-semibold',
 		],
 	},
 	weekheader: {
-		class: [ 'leading-5', 'text-surface-600 dark:text-white/70', 'opacity-60 cursor-default' ],
+		class: [ 'leading-5', 'dark:text-white/70', 'opacity-60 cursor-default' ],
 	},
 	weeknumber: {
-		class: [ 'text-surface-600 dark:text-white/70', 'opacity-60 cursor-default' ],
+		class: [ 'dark:text-white/70', 'opacity-60 cursor-default' ],
 	},
 	weekday: {
 		class: [
 			// Colors
-			'text-surface-500 dark:text-white/60',
+			'dark:text-white/60',
 			'p-1',
 		],
 	},
@@ -309,7 +309,7 @@ export default {
 
 			// Colors
 			{
-				'text-surface-600 dark:text-white/70 bg-transparent': !context.selected && !context.disabled,
+				'dark:text-white/70 bg-transparent': !context.selected && !context.disabled,
 				'text-primary-highlight-inverse bg-primary-highlight': context.selected && !context.disabled,
 			},
 
@@ -320,7 +320,7 @@ export default {
 				'hover:bg-primary-highlight-hover': context.selected && !context.disabled,
 			},
 			{
-				'opacity-60 cursor-default': context.disabled,
+				'text-bluegray-300 opacity-60 cursor-default': context.disabled,
 				'cursor-pointer': !context.disabled,
 			},
 		],
@@ -339,8 +339,8 @@ export default {
 
 			// Colors
 			{
-				'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-white/70': context.date.today && !context.selected && !context.disabled,
-				'bg-transparent text-surface-600 dark:text-white/70': !context.selected && !context.disabled && !context.date.today,
+				'bg-surface-100 dark:bg-surface-800 dark:text-white/70': context.date.today && !context.selected && !context.disabled,
+				'bg-transparent dark:text-white/70': !context.selected && !context.disabled && !context.date.today,
 				'text-primary-highlight-inverse bg-primary-highlight': context.selected && !context.disabled,
 			},
 
@@ -350,7 +350,7 @@ export default {
 				'hover:bg-surface-50 dark:hover:bg-surface-500/10': !context.selected && !context.disabled,
 			},
 			{
-				'opacity-60 cursor-default': context.disabled,
+				'text-bluegray-300 opacity-60 cursor-default': context.disabled,
 				'cursor-pointer': !context.disabled,
 			},
 		],
@@ -375,7 +375,7 @@ export default {
 
 			// Colors
 			{
-				'text-surface-600 dark:text-white/70 bg-transparent': !context.selected && !context.disabled,
+				'dark:text-white/70 bg-transparent': !context.selected && !context.disabled,
 				'text-primary-highlight-inverse bg-primary-highlight': context.selected && !context.disabled,
 			},
 
@@ -386,7 +386,10 @@ export default {
 			},
 
 			// Misc
-			'cursor-pointer',
+			{
+				'text-bluegray-300 opacity-60 cursor-default': context.disabled,
+				'cursor-pointer': !context.disabled,
+			},
 		],
 	}),
 	yearpicker: {
@@ -409,7 +412,7 @@ export default {
 
 			// Colors
 			{
-				'text-surface-600 dark:text-white/70 bg-transparent': !context.selected && !context.disabled,
+				'dark:text-white/70 bg-transparent': !context.selected && !context.disabled,
 				'text-primary-highlight-inverse bg-primary-highlight': context.selected && !context.disabled,
 			},
 
@@ -420,7 +423,10 @@ export default {
 			},
 
 			// Misc
-			'cursor-pointer',
+			{
+				'text-bluegray-300 opacity-60 cursor-default': context.disabled,
+				'cursor-pointer': !context.disabled,
+			},
 		],
 	}),
 	timepicker: {
@@ -513,7 +519,7 @@ export default {
 			'rounded-full',
 
 			// Colors
-			'text-surface-600 dark:text-white/70',
+			'dark:text-white/70',
 			'border-0',
 			'bg-transparent',
 
@@ -544,7 +550,7 @@ export default {
 			'rounded-full',
 
 			// Colors
-			'text-surface-600 dark:text-white/70',
+			'dark:text-white/70',
 			'border-0',
 			'bg-transparent',
 

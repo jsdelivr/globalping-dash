@@ -70,7 +70,7 @@
 			header="Generate new token"
 			content-class="!p-0"
 		>
-			<GenerateToken @cancel="generateTokenDialog = false" @generate="loadLazyData"/>
+			<GenerateToken @cancel="generateTokenDialog = false" @generate="handleGenerate"/>
 		</Dialog>
 	</div>
 </template>
@@ -97,6 +97,7 @@
 			$directus.request(readItems('gp_tokens', {
 				offset: lazyParams.value.first,
 				limit: 5,
+				sort: '-date_created',
 			})),
 			$directus.request<[{count: number}]>(aggregate('gp_tokens', { aggregate: { count: '*' } })),
 		]);
@@ -137,4 +138,13 @@
 	// GENERATE NEW TOKEN
 
 	const generateTokenDialog = ref(false);
+
+	const token = ref<{id: number, value: string} | null>({ id: 8, value: 'asdfasdf%^&*^%^&*^'});
+
+	const handleGenerate = async (id: number, tokenValue: string) => {
+		lazyParams.value.first = 0;
+		await loadLazyData();
+		token.value = { id, value: tokenValue };
+		generateTokenDialog.value = false
+	};
 </script>

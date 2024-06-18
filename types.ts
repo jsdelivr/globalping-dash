@@ -85,6 +85,7 @@ declare global {
     expire: string | null;
     name: string | null;
     origins: string[];
+    value: string;
     user_created: string;
     user_updated: string | null;
   };

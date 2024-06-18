@@ -4,8 +4,11 @@
 		<InputText
 			v-model="name"
 			class="mt-2 w-full"
+			:invalid="isNameInvalid"
+			@update:model-value="resetInvalid"
 		/>
-		<p class="mt-1 text-xs">A unique name for this token</p>
+		<p v-if="isNameInvalid" class="pl-1 text-red-500">Name can't be empty</p>
+		<p class="mt-1 text-xs">A unique name for this token.</p>
 		<p class="mt-6">Expiration</p>
 		<div class="mt-2">
 			<Button
@@ -60,19 +63,19 @@
 				<TokenCalendar :value="expire && new Date(expire)" @change="changeDate"/>
 			</OverlayPanel>
 		</div>
-		<div class="mt-2 text-xs">{{ expire ? `Token will expire ${formatDate(expire)}` : 'Token will never expire' }}</div>
+		<div class="mt-2 text-xs">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
 		<p class="mt-6">Origins</p>
 		<div class="mt-2">
-			<div class="mr-1 inline-block">
-				<span class="bg-primary text-surface-0 flex items-center rounded-md border-0 px-1.5 py-0.5">http://jsdelivr.com
+			<div v-for="(origin, index) in origins" :key="index" class="mr-1 inline-block">
+				<span class="bg-primary text-surface-0 flex items-center rounded-md border-0 px-1.5 py-0.5">{{ origin }}
 					<Button
 						icon="pi pi-times-circle"
-						class="text-surface-0 ml-0.5 h-6 w-4"
+						class="text-surface-0 focus:ring-surface-0 ml-0.5 h-6 w-4"
 						severity="secondary"
 						text
 						aria-label="Remove origin"
 						size="small"
-						@click="removeOrigin"
+						@click="removeOrigin(index)"
 					/></span>
 			</div>
 		</div>
@@ -80,6 +83,7 @@
 			v-model="newOrigin"
 			class="mt-2 w-full"
 			placeholder="Type an origin and press Enter"
+			@keyup.enter="addOrigin"
 		/>
 		<p class="mt-1 text-xs">
 			A list of origins which are allowed to use the token. If empty - any origin is valid. Examples of valid origins: "www.jsdelivr.com", "www.jsdelivr.com:10000".
@@ -92,9 +96,19 @@
 </template>
 
 <script setup lang="ts">
+	import { createItem, customEndpoint } from '@directus/sdk';
+
+	// NAME
+
 	const emit = defineEmits([ 'generate', 'cancel' ]);
+	const { $directus } = useNuxtApp();
 
 	const name = ref('');
+	const isNameInvalid = ref(false);
+
+	const resetInvalid = () => {
+		isNameInvalid.value = false;
+	};
 
 	// EXPIRE
 
@@ -140,14 +154,40 @@
 		datePanel.value.hide();
 	};
 
-	// ///////////////////////
-
+	// ORIGINS
 
 	const origins = ref<string[]>([]);
 	const newOrigin = ref('');
 
+	const addOrigin = () => {
+		if (!newOrigin.value) {
+			return;
+		}
 
-	const removeOrigin = () => {};
+		origins.value.push(newOrigin.value);
+		newOrigin.value = '';
+	};
 
-	const generateToken = () => {};
+
+	const removeOrigin = (index: number) => {
+		origins.value.splice(index, 1);
+	};
+
+	const generateToken = async () => {
+		if (!name.value) {
+			isNameInvalid.value = true;
+			return;
+		}
+
+		const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/token-generator' }));
+
+		const response = await $directus.request(createItem('gp_tokens', {
+			name: name.value,
+			origins: origins.value,
+			expire: expire.value && expire.value.toISOString().split('T')[0],
+			value: token,
+		}));
+
+		emit('generate', response.id, token);
+	};
 </script>

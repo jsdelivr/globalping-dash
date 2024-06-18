@@ -98,10 +98,12 @@
 <script setup lang="ts">
 	import { createItem, customEndpoint } from '@directus/sdk';
 
-	// NAME
-
 	const emit = defineEmits([ 'generate', 'cancel' ]);
+
 	const { $directus } = useNuxtApp();
+	const toast = useToast();
+
+	// NAME
 
 	const name = ref('');
 	const isNameInvalid = ref(false);
@@ -179,15 +181,20 @@
 			return;
 		}
 
-		const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/token-generator' }));
+		try {
+			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/token-generator' }));
 
-		const response = await $directus.request(createItem('gp_tokens', {
-			name: name.value,
-			origins: origins.value,
-			expire: expire.value && expire.value.toISOString().split('T')[0],
-			value: token,
-		}));
+			const response = await $directus.request(createItem('gp_tokens', {
+				name: name.value,
+				origins: origins.value,
+				expire: expire.value && expire.value.toISOString().split('T')[0],
+				value: token,
+			}));
 
-		emit('generate', response.id, token);
+			emit('generate', response.id, token);
+		} catch (e: any) {
+			const detail = e.errors ?? 'Request failed';
+			toast.add({ severity: 'error', summary: 'Creation failed', detail, life: 20000 });
+		}
 	};
 </script>

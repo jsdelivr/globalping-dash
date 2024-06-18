@@ -227,6 +227,7 @@
 				</Column>
 				<template #footer>
 					<Button
+						class="mt-2"
 						severity="secondary"
 						label="Start a probe"
 						icon="pi pi-question-circle"

@@ -7,6 +7,7 @@
 		<p class="xl:w-1/2">Generate a token and add it to your Globalping requests to upper your hourly measurements limit. After the limit is exhausted, you can proceed with measurements by spending the earned credits.</p>
 		<div v-if="tokens.length || loading" class="mt-6">
 			<DataTable
+				v-model:expandedRows="expandedRows"
 				:value="tokens"
 				lazy
 				:first="first"
@@ -14,29 +15,31 @@
 				data-key="id"
 				:total-records="tokensCount"
 				:loading="loading"
+				:row-class="() => '!bg-surface-0 align-middle'"
+				class="pb-3"
 			>
-				<Column header="Name" field="name" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t"/>
-				<Column header="Origins" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
+				<Column header="Name" field="name" header-class="pl-1 pt-3"/>
+				<Column header="Origins" header-class="pl-1 pt-3">
 					<template #body="slotProps">
 						<Tag v-for="(origin, index) in slotProps.data.origins" :key="index" class="my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="origin"/>
 					</template>
 				</Column>
-				<Column header="Created" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
+				<Column header="Created" header-class="pl-1 pt-3">
 					<template #body="slotProps">
 						{{ getRelativeTimeString(slotProps.data.date_created) || 'Never' }}
 					</template>
 				</Column>
-				<Column header="Last used" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
+				<Column header="Last used" header-class="pl-1 pt-3">
 					<template #body="slotProps">
 						{{ getRelativeTimeString(slotProps.data.date_last_used) || 'Never' }}
 					</template>
 				</Column>
-				<Column header="Expires" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
+				<Column header="Expires" header-class="pl-1 pt-3">
 					<template #body="slotProps">
 						{{ formatDate(slotProps.data.expire) || 'Never' }}
 					</template>
 				</Column>
-				<Column :row-editor="true" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
+				<Column :row-editor="true" header-class="pl-1 pt-3">
 					<template #body="slotProps">
 						<TokenOptions
 							@edit="editToken(slotProps.data.id)"
@@ -45,6 +48,16 @@
 						/>
 					</template>
 				</Column>
+				<template #expansion="slotProps">
+					<div class="bg-surface-50 rounded-xl flex p-4">
+						<div><i class="pi pi-info-circle text-xl mr-3"/></div>
+						<div>
+							<p class="font-bold">Don't forget to copy your new personal access token.</p>
+							<p class="mt-2">This secret won't be shown again for your security.</p>
+							<CodeBlock class="mt-2" :commands="[[token!.value]]" />
+						</div>
+					</div>
+				</template>
 			</DataTable>
 			<Paginator
 				class="mt-9"
@@ -139,12 +152,15 @@
 
 	const generateTokenDialog = ref(false);
 
-	const token = ref<{id: number, value: string} | null>({ id: 8, value: 'asdfasdf%^&*^%^&*^'});
+	const expandedRows = ref({});
+	const token = ref<{id: number, value: string} | null>(null);
 
 	const handleGenerate = async (id: number, tokenValue: string) => {
 		lazyParams.value.first = 0;
 		await loadLazyData();
 		token.value = { id, value: tokenValue };
-		generateTokenDialog.value = false
+		expandedRows.value = { id: true };
+		generateTokenDialog.value = false;
 	};
+
 </script>

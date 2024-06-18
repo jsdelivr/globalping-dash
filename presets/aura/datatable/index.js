@@ -42,7 +42,7 @@ export default {
 			// Size
 			{ 'h-full': props.scrollable && props.scrollHeight === 'flex' },
 
-			'py-3 px-4',
+			'pt-3 px-4',
 		],
 	}),
 	header: ({ props }) => ({
@@ -62,7 +62,7 @@ export default {
 		],
 	}),
 	table: {
-		class: 'w-full border-spacing-0 border-separate',
+		class: 'w-full border-spacing-0 border-collapse',
 	},
 	thead: ({ context }) => ({
 		class: [
@@ -91,10 +91,10 @@ export default {
 			'font-bold',
 
 			// Shape
-			'border-t-0 border-x-0',
+			'border-t',
 
 			// Spacing
-			'px-4 pb-6',
+			'mx-4 px-2 pb-6',
 
 			// Color
 			'bg-surface-0 dark:bg-surface-900',
@@ -160,7 +160,6 @@ export default {
 				'text-left',
 
 				// Shape
-				'border-0 border-b border-solid',
 				{ 'first:border-l border-r border-b': context?.showGridlines },
 				{ 'bg-surface-0 dark:bg-surface-900': parent.instance.frozenRow || props.frozen || props.frozen === '' },
 
@@ -1103,6 +1102,9 @@ export default {
 				{ 'font-bold bg-surface-0 dark:bg-surface-900 z-20': props.frozenRow },
 				{ 'odd:bg-surface-0 odd:text-surface-600 dark:odd:bg-surface-900 even:bg-surface-50 even:text-surface-600 dark:even:bg-surface-800/50': context.stripedRows },
 
+				// Shape
+				'border-b last:border-b-0',
+
 				// State
 				{ 'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 ring-inset dark:focus:ring-primary-400': context.selectable },
 				{ 'hover:bg-surface-300/20 dark:hover:bg-surface-800/50 hover:text-surface-600': props.selectionMode && !context.selected },
@@ -1116,7 +1118,7 @@ export default {
 		};
 	},
 	rowexpansion: {
-		class: 'bg-surface-0 dark:bg-surface-900 text-surface-600 dark:text-white/80',
+		class: 'bg-surface-0 dark:bg-surface-900 dark:text-white/80',
 	},
 	rowgroupheader: {
 		class: [ 'sticky z-20', 'bg-surface-0 text-surface-600 dark:text-white/70', 'dark:bg-surface-900' ],

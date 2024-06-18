@@ -98,12 +98,12 @@
 </template>
 
 <script setup lang="ts">
-	import { aggregate, readItems } from '@directus/sdk';
+	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
 	import type { DataTablePageEvent } from 'primevue/datatable';
 	import type { PageState } from 'primevue/paginator';
 
 	const { $directus } = useNuxtApp();
-
+	const toast = useToast();
 
 	const loading = ref(false);
 	const tokensCount = ref(0);
@@ -143,14 +143,6 @@
 	const onPage = (event: PageState) => {
 		lazyParams.value = event;
 		loadLazyData(event);
-	};
-
-	const regenerateToken = (...args) => {
-		console.log(args);
-	};
-
-	const deleteToken = (...args) => {
-		console.log(args);
 	};
 
 	// TOKEN DETAILS
@@ -203,4 +195,33 @@
 		expandedRows.value = {};
 		tokenDetails.value = null;
 	};
+
+	// ACTIONS
+
+	const regenerateToken = async (id: number) => {
+		try {
+			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/token-generator' }));
+
+			await $directus.request(updateItem('gp_tokens', id, {
+				value: token,
+			}));
+
+			generatedToken.value = { id, value: token };
+			expandedRows.value = { [id]: true };
+		} catch (e: any) {
+			const detail = e.errors ?? 'Request failed';
+			toast.add({ severity: 'error', summary: 'Regeneration failed', detail, life: 20000 });
+		}
+	};
+
+	const deleteToken = async (id: number) => {
+		try {
+			await $directus.request(deleteItem('gp_tokens', id));
+			await loadLazyData();
+
+		} catch (e: any) {
+			const detail = e.errors ?? 'Request failed';
+			toast.add({ severity: 'error', summary: 'Deletion failed', detail, life: 20000 });
+		}
+	}
 </script>

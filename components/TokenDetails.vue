@@ -66,7 +66,7 @@
 		<div class="mt-2 text-xs">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
 		<p class="mt-6">Origins</p>
 		<div class="mt-2">
-			<div v-for="(origin, index) in origins" :key="index" class="mr-1 inline-block">
+			<div v-for="(origin, index) in origins" :key="index" class="mr-1 mb-1 inline-block">
 				<span class="bg-primary text-surface-0 flex items-center rounded-md border-0 px-1.5 py-0.5">{{ origin }}
 					<Button
 						icon="pi pi-times-circle"
@@ -81,7 +81,7 @@
 		</div>
 		<InputText
 			v-model="newOrigin"
-			class="mt-2 w-full"
+			class="mt-1 w-full"
 			placeholder="Type an origin and press Enter"
 			@keyup.enter="addOrigin"
 		/>
@@ -98,6 +98,13 @@
 <script setup lang="ts">
 	import { createItem, customEndpoint } from '@directus/sdk';
 
+	const props = defineProps({
+		token: {
+			type: Object as () => Token | null,
+			default: () => null,
+		}
+	});
+
 	const emit = defineEmits([ 'generate', 'cancel' ]);
 
 	const { $directus } = useNuxtApp();
@@ -105,7 +112,7 @@
 
 	// NAME
 
-	const name = ref('');
+	const name = ref(props.token?.name || '');
 	const isNameInvalid = ref(false);
 
 	const resetInvalid = () => {
@@ -114,7 +121,7 @@
 
 	// EXPIRE
 
-	const expire = ref<Date | null>(null);
+	const expire = ref<Date | null>(props.token?.expire ? new Date(props.token.expire) : null);
 
 	const activeExpire = computed(() => {
 		const unlimited = !expire.value;
@@ -158,7 +165,7 @@
 
 	// ORIGINS
 
-	const origins = ref<string[]>([]);
+	const origins = ref<string[]>(props.token?.origins ? [...props.token.origins] : []);
 	const newOrigin = ref('');
 
 	const addOrigin = () => {

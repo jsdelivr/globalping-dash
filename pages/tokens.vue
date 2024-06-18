@@ -2,7 +2,7 @@
 	<div class="bg-surface-50 flex h-full flex-col p-6">
 		<div class="mb-4 flex">
 			<h1 class="col-span-2 text-2xl font-bold">Tokens</h1>
-			<Button class="ml-auto" label="Generate new token" @click="generateTokenDialog = true"/>
+			<Button class="ml-auto" label="Generate new token" @click="openTokenDetails('generate')"/>
 		</div>
 		<p class="xl:w-1/2">Generate a token and add it to your Globalping requests to upper your hourly measurements limit. After the limit is exhausted, you can proceed with measurements by spending the earned credits.</p>
 		<div v-if="tokens.length || loading" class="mt-6">
@@ -42,7 +42,7 @@
 				<Column :row-editor="true" header-class="pl-1 pt-3">
 					<template #body="slotProps">
 						<TokenOptions
-							@edit="editToken(slotProps.data.id)"
+							@edit="openTokenDetails('edit', slotProps.data.id)"
 							@regenerate="regenerateToken(slotProps.data.id)"
 							@delete="deleteToken(slotProps.data.id)"
 						/>
@@ -54,7 +54,7 @@
 						<div>
 							<p class="font-bold">Don't forget to copy your new personal access token.</p>
 							<p class="mt-2">This secret won't be shown again for your security.</p>
-							<CodeBlock class="mt-2" :commands="[[token!.value]]" />
+							<CodeBlock class="mt-2" :commands="[[generatedToken!.value]]" />
 						</div>
 						<div class="ml-auto">
 							<Button icon="pi pi-times" severity="secondary" text rounded aria-label="Close" @click="closeToken" />
@@ -78,7 +78,7 @@
 			</div>
 		</div>
 		<Dialog
-			v-model:visible="generateTokenDialog"
+			v-model:visible="tokenDetailsDialog"
 			class="min-w-[700px]"
 			modal
 			dismissable-mask
@@ -86,7 +86,13 @@
 			header="Generate new token"
 			content-class="!p-0"
 		>
-			<GenerateToken @cancel="generateTokenDialog = false" @generate="handleGenerate"/>
+			<TokenDetails 
+				:token="tokenDetailsId ? tokens.find(({ id }) => id === tokenDetailsId) : null" 
+				@cancel="tokenDetailsDialog = false" 
+				@generate="handleGenerate" 
+				@save="handleSave" 
+				@regenerate="handleRegenerate"
+			/>
 		</Dialog>
 	</div>
 </template>
@@ -139,10 +145,6 @@
 		loadLazyData(event);
 	};
 
-	const editToken = (...args) => {
-		console.log(args);
-	};
-
 	const regenerateToken = (...args) => {
 		console.log(args);
 	};
@@ -151,24 +153,54 @@
 		console.log(args);
 	};
 
+	// TOKEN DETAILS
+
+	const tokenDetailsId = ref<number | null>(null);
+
+	const openTokenDetails = (mode: 'generate' | 'edit', id?: number) => {
+		generatedToken.value = null;
+		expandedRows.value = {};
+
+		if (mode === 'generate') {
+			tokenDetailsDialog.value = true;
+		} else if (mode === 'edit') {
+			tokenDetailsId.value = id!;
+			tokenDetailsDialog.value = true;
+		}
+	}
+
 	// GENERATE NEW TOKEN
 
-	const generateTokenDialog = ref(false);
+	const tokenDetailsDialog = ref(false);
 
 	const expandedRows = ref({});
-	const token = ref<{id: number, value: string} | null>(null);
+	const generatedToken = ref<{id: number, value: string} | null>(null);
 
 	const handleGenerate = async (id: number, tokenValue: string) => {
 		lazyParams.value.first = 0;
 		await loadLazyData();
-		token.value = { id, value: tokenValue };
+		generatedToken.value = { id, value: tokenValue };
 		expandedRows.value = { [id]: true };
-		generateTokenDialog.value = false;
+		tokenDetailsDialog.value = false;
 	};
 
 	const closeToken = () => {
-		token.value = null;
+		generatedToken.value = null;
 		expandedRows.value = {};
+	};
+
+	// EDIT TOKEN
+
+	const handleSave = async () => {
+		await loadLazyData();
+		tokenDetailsDialog.value = false;
+	};
+
+	const handleRegenerate = async (id: number, tokenValue: string) => {
+		await loadLazyData();
+		generatedToken.value = { id, value: tokenValue };
+		expandedRows.value = { [id]: true };
+		tokenDetailsDialog.value = false;
 	}
 
 </script>

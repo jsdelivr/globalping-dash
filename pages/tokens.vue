@@ -56,6 +56,9 @@
 							<p class="mt-2">This secret won't be shown again for your security.</p>
 							<CodeBlock class="mt-2" :commands="[[token!.value]]" />
 						</div>
+						<div class="ml-auto">
+							<Button icon="pi pi-times" severity="secondary" text rounded aria-label="Close" @click="closeToken" />
+						</div>
 					</div>
 				</template>
 			</DataTable>
@@ -159,8 +162,13 @@
 		lazyParams.value.first = 0;
 		await loadLazyData();
 		token.value = { id, value: tokenValue };
-		expandedRows.value = { id: true };
+		expandedRows.value = { [id]: true };
 		generateTokenDialog.value = false;
 	};
+
+	const closeToken = () => {
+		token.value = null;
+		expandedRows.value = {};
+	}
 
 </script>

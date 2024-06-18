@@ -87,7 +87,7 @@
 			content-class="!p-0"
 		>
 			<TokenDetails 
-				:token="tokenDetailsId ? tokens.find(({ id }) => id === tokenDetailsId) : null" 
+				:token="tokenDetails" 
 				@cancel="tokenDetailsDialog = false" 
 				@generate="handleGenerate" 
 				@save="handleSave" 
@@ -155,7 +155,7 @@
 
 	// TOKEN DETAILS
 
-	const tokenDetailsId = ref<number | null>(null);
+	const tokenDetails = ref<Token | null>(null);
 
 	const openTokenDetails = (mode: 'generate' | 'edit', id?: number) => {
 		generatedToken.value = null;
@@ -164,7 +164,8 @@
 		if (mode === 'generate') {
 			tokenDetailsDialog.value = true;
 		} else if (mode === 'edit') {
-			tokenDetailsId.value = id!;
+			const token = tokens.value.find(token => token.id === id);
+			tokenDetails.value = token ? { ...token } : null;
 			tokenDetailsDialog.value = true;
 		}
 	}

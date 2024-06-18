@@ -76,13 +76,13 @@ export default {
 			// Info Button
 			{
 				'text-white dark:text-bluegray-900': props.severity === 'info' && !props.text && !props.outlined && !props.plain,
-				'bg-blue-500 dark:bg-blue-400': props.severity === 'info' && !props.text && !props.outlined && !props.plain,
-				'border border-blue-500 dark:border-blue-400': props.severity === 'info' && !props.text && !props.outlined && !props.plain,
+				'bg-bluegray-500 dark:bg-bluegray-400': props.severity === 'info' && !props.text && !props.outlined && !props.plain,
+				'border border-bluegray-500 dark:border-bluegray-400': props.severity === 'info' && !props.text && !props.outlined && !props.plain,
 			},
 			// Info Text Button
-			{ 'text-blue-500 dark:text-blue-400': props.text && props.severity === 'info' && !props.plain },
+			{ 'text-bluegray-500 dark:text-bluegray-400': props.text && props.severity === 'info' && !props.plain },
 			// Info Outlined Button
-			{ 'text-blue-500 border border-blue-500 hover:bg-blue-300/10 ': props.outlined && props.severity === 'info' && !props.plain },
+			{ 'text-bluegray-500 border border-bluegray-500 hover:bg-bluegray-300/10 ': props.outlined && props.severity === 'info' && !props.plain },
 
 			// Warning Button
 			{
@@ -160,10 +160,10 @@ export default {
 			{ 'hover:bg-green-300/10': (props.text || props.outlined) && props.severity === 'success' && !props.plain },
 
 			// Info
-			{ 'hover:bg-blue-600 dark:hover:bg-blue-300 hover:border-blue-600 dark:hover:border-blue-300': props.severity === 'info' && !props.text && !props.outlined && !props.plain },
-			{ 'focus:ring-blue-500 dark:focus:ring-blue-400': props.severity === 'info' },
+			{ 'hover:bg-bluegray-600 dark:hover:bg-bluegray-300 hover:border-bluegray-600 dark:hover:border-bluegray-300': props.severity === 'info' && !props.text && !props.outlined && !props.plain },
+			{ 'focus:ring-bluegray-500 dark:focus:ring-bluegray-400': props.severity === 'info' },
 			// Text & Outlined Button
-			{ 'hover:bg-blue-300/10': (props.text || props.outlined) && props.severity === 'info' && !props.plain },
+			{ 'hover:bg-bluegray-300/10': (props.text || props.outlined) && props.severity === 'info' && !props.plain },
 
 			// Warning
 			{ 'hover:bg-orange-600 dark:hover:bg-orange-300 hover:border-orange-600 dark:hover:border-orange-300': props.severity === 'warning' && !props.text && !props.outlined && !props.plain },

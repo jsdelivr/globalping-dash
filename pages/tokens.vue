@@ -57,7 +57,7 @@
 							<CodeBlock class="mt-2" :commands="[[generatedToken!.value]]" />
 						</div>
 						<div class="ml-auto">
-							<Button icon="pi pi-times" severity="secondary" text rounded aria-label="Close" @click="closeToken" />
+							<Button icon="pi pi-times" severity="secondary" text rounded aria-label="Close" @click="resetState" />
 						</div>
 					</div>
 				</template>
@@ -83,14 +83,14 @@
 			modal
 			dismissable-mask
 			:draggable="false"
-			header="Generate new token"
+			:header="tokenDetails ? 'Edit token' : 'Generate new token'"
 			content-class="!p-0"
 		>
-			<TokenDetails 
-				:token="tokenDetails" 
-				@cancel="tokenDetailsDialog = false" 
-				@generate="handleGenerate" 
-				@save="handleSave" 
+			<TokenDetails
+				:token="tokenDetails"
+				@cancel="tokenDetailsDialog = false"
+				@generate="handleGenerate"
+				@save="handleSave"
 				@regenerate="handleRegenerate"
 			/>
 		</Dialog>
@@ -158,8 +158,7 @@
 	const tokenDetails = ref<Token | null>(null);
 
 	const openTokenDetails = (mode: 'generate' | 'edit', id?: number) => {
-		generatedToken.value = null;
-		expandedRows.value = {};
+		resetState();
 
 		if (mode === 'generate') {
 			tokenDetailsDialog.value = true;
@@ -185,11 +184,6 @@
 		tokenDetailsDialog.value = false;
 	};
 
-	const closeToken = () => {
-		generatedToken.value = null;
-		expandedRows.value = {};
-	};
-
 	// EDIT TOKEN
 
 	const handleSave = async () => {
@@ -202,6 +196,11 @@
 		generatedToken.value = { id, value: tokenValue };
 		expandedRows.value = { [id]: true };
 		tokenDetailsDialog.value = false;
-	}
+	};
 
+	const resetState = () => {
+		generatedToken.value = null;
+		expandedRows.value = {};
+		tokenDetails.value = null;
+	};
 </script>

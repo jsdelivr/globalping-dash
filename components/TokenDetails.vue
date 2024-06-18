@@ -88,7 +88,12 @@
 		<p class="mt-1 text-xs">
 			A list of origins which are allowed to use the token. If empty - any origin is valid. Examples of valid origins: "www.jsdelivr.com", "www.jsdelivr.com:10000".
 		</p>
-		<div class="mt-7 text-right">
+		<div v-if="token" class="mt-7 text-right">
+			<Button class="mr-2" label="Cancel" severity="contrast" text @click="$emit('cancel')"/>
+			<Button class="mr-2" severity="info" label="Regenerate token" @click="regenerateToken"/>
+			<Button label="Save" @click="updateToken"/>
+		</div>
+		<div v-else class="mt-7 text-right">
 			<Button class="mr-2" label="Cancel" severity="contrast" text @click="$emit('cancel')"/>
 			<Button label="Generate token" @click="generateToken"/>
 		</div>
@@ -96,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-	import { createItem, customEndpoint } from '@directus/sdk';
+	import { createItem, customEndpoint, updateItem } from '@directus/sdk';
 
 	const props = defineProps({
 		token: {
@@ -105,7 +110,7 @@
 		}
 	});
 
-	const emit = defineEmits([ 'generate', 'cancel' ]);
+	const emit = defineEmits([ 'generate', 'cancel', 'save', 'regenerate' ]);
 
 	const { $directus } = useNuxtApp();
 	const toast = useToast();
@@ -182,6 +187,8 @@
 		origins.value.splice(index, 1);
 	};
 
+	// ACTIONS
+
 	const generateToken = async () => {
 		if (!name.value) {
 			isNameInvalid.value = true;
@@ -202,6 +209,49 @@
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';
 			toast.add({ severity: 'error', summary: 'Creation failed', detail, life: 20000 });
+		}
+	};
+
+	const updateToken = async () => {
+		if (!name.value) {
+			isNameInvalid.value = true;
+			return;
+		}
+
+		try {
+			await $directus.request(updateItem('gp_tokens', props.token!.id, {
+				name: name.value,
+				origins: origins.value,
+				expire: expire.value && expire.value.toISOString().split('T')[0],
+			}));
+
+			emit('save');
+		} catch (e: any) {
+			const detail = e.errors ?? 'Request failed';
+			toast.add({ severity: 'error', summary: 'Edit failed', detail, life: 20000 });
+		}
+	};
+
+	const regenerateToken = async () => {
+		if (!name.value) {
+			isNameInvalid.value = true;
+			return;
+		}
+
+		try {
+			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/token-generator' }));
+
+			const response = await $directus.request(updateItem('gp_tokens', props.token!.id, {
+				name: name.value,
+				origins: origins.value,
+				expire: expire.value && expire.value.toISOString().split('T')[0],
+				value: token,
+			}));
+
+			emit('regenerate', response.id, token);
+		} catch (e: any) {
+			const detail = e.errors ?? 'Request failed';
+			toast.add({ severity: 'error', summary: 'Regeneration failed', detail, life: 20000 });
 		}
 	};
 </script>

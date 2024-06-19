@@ -43,21 +43,28 @@
 					<template #body="slotProps">
 						<TokenOptions
 							@edit="openTokenDetails('edit', slotProps.data.id)"
-							@regenerate="regenerateToken(slotProps.data.id)"
-							@delete="deleteToken(slotProps.data.id)"
+							@regenerate="openRegenerateDialog(slotProps.data.id)"
+							@delete="openDeleteDialog(slotProps.data.id)"
 						/>
 					</template>
 				</Column>
-				<template #expansion="slotProps">
-					<div class="bg-surface-50 rounded-xl flex p-4">
-						<div><i class="pi pi-info-circle text-xl mr-3"/></div>
+				<template #expansion="">
+					<div class="bg-surface-50 flex rounded-xl p-4">
+						<div><i class="pi pi-info-circle mr-3 text-xl"/></div>
 						<div>
 							<p class="font-bold">Don't forget to copy your new personal access token.</p>
 							<p class="mt-2">This secret won't be shown again for your security.</p>
-							<CodeBlock class="mt-2" :commands="[[generatedToken!.value]]" />
+							<CodeBlock class="mt-2" :commands="[[generatedToken!.value]]"/>
 						</div>
 						<div class="ml-auto">
-							<Button icon="pi pi-times" severity="secondary" text rounded aria-label="Close" @click="resetState" />
+							<Button
+								icon="pi pi-times"
+								severity="secondary"
+								text
+								rounded
+								aria-label="Close"
+								@click="resetState"
+							/>
 						</div>
 					</div>
 				</template>
@@ -93,6 +100,50 @@
 				@save="handleSave"
 				@regenerate="handleRegenerate"
 			/>
+		</Dialog>
+		<Dialog
+			v-model:visible="deleteDialog"
+			class="min-w-[700px]"
+			modal
+			dismissable-mask
+			:draggable="false"
+			header="Delete token"
+		>
+			<div class="flex items-center">
+				<div>
+					<i class="pi pi-exclamation-triangle text-primary text-xl"/>
+				</div>
+				<div class="ml-3">
+					<p>You're about to delete token <span class="font-bold">{{ tokenToDelete!.name }}</span>.</p>
+					<p>Are you sure you want to delete this token? You will not be able to undo this action.</p>
+				</div>
+			</div>
+			<div class="mt-7 text-right">
+				<Button class="mr-2" label="Cancel" severity="contrast" text @click="deleteDialog = false"/>
+				<Button label="Delete token" severity="danger" @click="deleteToken"/>
+			</div>
+		</Dialog>
+		<Dialog
+			v-model:visible="regenerateDialog"
+			class="min-w-[700px]"
+			modal
+			dismissable-mask
+			:draggable="false"
+			header="Regenerate token"
+		>
+			<div class="flex items-center">
+				<div>
+					<i class="pi pi-exclamation-triangle text-primary text-xl"/>
+				</div>
+				<div class="ml-3">
+					<p>You're about to regenerate token <span class="font-bold">{{ tokenToRegenerate!.name }}</span>.</p>
+					<p>Are you sure you want to regenerate this token? The previous value will stop working immediately.</p>
+				</div>
+			</div>
+			<div class="mt-7 text-right">
+				<Button class="mr-2" label="Cancel" severity="contrast" text @click="regenerateDialog = false"/>
+				<Button label="Regenerate" @click="regenerateToken"/>
+			</div>
 		</Dialog>
 	</div>
 </template>
@@ -150,7 +201,7 @@
 			tokenDetails.value = token ? { ...token } : null;
 			tokenDetailsDialog.value = true;
 		}
-	}
+	};
 
 	// GENERATE NEW TOKEN
 
@@ -187,11 +238,21 @@
 		tokenDetails.value = null;
 	};
 
-	// ACTIONS
+	// REGENERATE TOKEN
 
-	const regenerateToken = async (id: number) => {
+	const regenerateDialog = ref(false);
+	const tokenToRegenerate = ref<Token | null>(null);
+
+	const openRegenerateDialog = (id: number) => {
+		const token = tokens.value.find(token => token.id === id);
+		tokenToRegenerate.value = token!;
+		regenerateDialog.value = true;
+	};
+
+	const regenerateToken = async () => {
 		try {
 			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/token-generator' }));
+			const id = tokenToRegenerate.value!.id;
 
 			await $directus.request(updateItem('gp_tokens', id, {
 				value: token,
@@ -199,15 +260,28 @@
 
 			generatedToken.value = { id, value: token };
 			expandedRows.value = { [id]: true };
+			tokenToRegenerate.value = null;
+			regenerateDialog.value = false;
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';
 			toast.add({ severity: 'error', summary: 'Regeneration failed', detail, life: 20000 });
 		}
 	};
 
-	const deleteToken = async (id: number) => {
+	// DELETE TOKEN
+
+	const deleteDialog = ref(false);
+	const tokenToDelete = ref<Token | null>(null);
+
+	const openDeleteDialog = (id: number) => {
+		const token = tokens.value.find(token => token.id === id);
+		tokenToDelete.value = token!;
+		deleteDialog.value = true;
+	};
+
+	const deleteToken = async () => {
 		try {
-			await $directus.request(deleteItem('gp_tokens', id));
+			await $directus.request(deleteItem('gp_tokens', tokenToDelete.value!.id));
 
 			// Go to prev page if that is last item.
 			if (tokens.value.length === 1) {
@@ -216,10 +290,11 @@
 			}
 
 			await loadLazyData();
-
+			tokenToDelete.value = null;
+			deleteDialog.value = false;
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';
 			toast.add({ severity: 'error', summary: 'Deletion failed', detail, life: 20000 });
 		}
-	}
+	};
 </script>

@@ -99,7 +99,6 @@
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
-	import type { DataTablePageEvent } from 'primevue/datatable';
 	import type { PageState } from 'primevue/paginator';
 
 	const { $directus } = useNuxtApp();
@@ -109,15 +108,13 @@
 	const tokensCount = ref(0);
 	const tokens = ref<Token[]>([]);
 	const first = ref(0);
-	const lazyParams = ref<Partial<DataTablePageEvent>>({});
 
-	const loadLazyData = async (event?: PageState) => {
+	const loadLazyData = async () => {
 		loading.value = true;
-		lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
 
 		const [ gpTokens, [{ count }] ] = await Promise.all([
 			$directus.request(readItems('gp_tokens', {
-				offset: lazyParams.value.first,
+				offset: first.value,
 				limit: 5,
 				sort: '-date_created',
 			})),
@@ -131,18 +128,12 @@
 
 	onMounted(() => {
 		loading.value = true;
-
-		lazyParams.value = {
-			first: 0,
-			rows: 5,
-		};
-
 		loadLazyData();
 	});
 
 	const onPage = (event: PageState) => {
-		lazyParams.value = event;
-		loadLazyData(event);
+		first.value = event.first;
+		loadLazyData();
 	};
 
 	// TOKEN DETAILS
@@ -169,7 +160,7 @@
 	const generatedToken = ref<{id: number, value: string} | null>(null);
 
 	const handleGenerate = async (id: number, tokenValue: string) => {
-		lazyParams.value.first = 0;
+		first.value = 0;
 		await loadLazyData();
 		generatedToken.value = { id, value: tokenValue };
 		expandedRows.value = { [id]: true };
@@ -217,7 +208,7 @@
 	const deleteToken = async (id: number) => {
 		try {
 			await $directus.request(deleteItem('gp_tokens', id));
-			await loadLazyData();
+			await loadLazyData(); // here may be the empty list
 
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';

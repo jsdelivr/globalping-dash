@@ -39,7 +39,7 @@
 						{{ formatDate(slotProps.data.expire) || 'Never' }}
 					</template>
 				</Column>
-				<Column :row-editor="true" header-class="pl-1 pt-3">
+				<Column :row-editor="true" header-class="pl-1 pt-3" body-class="!py-2">
 					<template #body="slotProps">
 						<TokenOptions
 							@edit="openTokenDetails('edit', slotProps.data.id)"

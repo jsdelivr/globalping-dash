@@ -195,6 +195,8 @@
 			return;
 		}
 
+		addOrigin();
+
 		try {
 			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/token-generator' }));
 
@@ -207,7 +209,7 @@
 
 			emit('generate', response.id, token);
 		} catch (e: any) {
-			const detail = e.errors ?? 'Request failed';
+			const detail = e.errors?.[0]?.message ?? e.message ?? 'Request failed';
 			toast.add({ severity: 'error', summary: 'Creation failed', detail, life: 20000 });
 		}
 	};
@@ -217,6 +219,8 @@
 			isNameInvalid.value = true;
 			return;
 		}
+
+		addOrigin();
 
 		try {
 			await $directus.request(updateItem('gp_tokens', props.token!.id, {
@@ -250,7 +254,7 @@
 
 			emit('regenerate', response.id, token);
 		} catch (e: any) {
-			const detail = e.errors ?? 'Request failed';
+			const detail = e.errors?.[0]?.message ?? e.message ?? 'Request failed';
 			toast.add({ severity: 'error', summary: 'Regeneration failed', detail, life: 20000 });
 		}
 	};

@@ -208,7 +208,14 @@
 	const deleteToken = async (id: number) => {
 		try {
 			await $directus.request(deleteItem('gp_tokens', id));
-			await loadLazyData(); // here may be the empty list
+
+			// Go to prev page if that is last item.
+			if (tokens.value.length === 1) {
+				const newFirst = first.value - 5;
+				first.value = newFirst >= 0 ? newFirst : 0;
+			}
+
+			await loadLazyData();
 
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';

@@ -83,14 +83,15 @@ export default {
 			'inline-flex items-center',
 
 			// Spacings
-			'py-1 px-3 m-0',
+			'py-1 px-1 m-0',
 
 			// Shape
 			'rounded',
 
 			// Colors
-			'bg-surface-100 dark:bg-surface-700',
-			'text-surface-700 dark:text-white',
+			'dark:bg-surface-700',
+			'border',
+			'text-bluegray-900 dark:text-white',
 
 			// Misc
 			'cursor-default',
@@ -98,6 +99,8 @@ export default {
 	},
 	removeTokenIcon: {
 		class: [
+			'!flex items-center text-xs text-bluegray-500',
+
 			// Spacing
 			'ml-[0.375rem]',
 

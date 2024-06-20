@@ -65,26 +65,7 @@
 		</div>
 		<div class="mt-2 text-xs">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
 		<p class="mt-6">Origins</p>
-		<div class="mt-2">
-			<div v-for="(origin, index) in origins" :key="index" class="mb-1 mr-1 inline-block">
-				<span class="bg-primary text-surface-0 flex items-center rounded-md border-0 px-1.5 py-0.5">{{ origin }}
-					<Button
-						icon="pi pi-times-circle"
-						class="text-surface-0 focus:ring-surface-0 ml-0.5 h-6 w-4"
-						severity="secondary"
-						text
-						aria-label="Remove origin"
-						size="small"
-						@click="removeOrigin(index)"
-					/></span>
-			</div>
-		</div>
-		<InputText
-			v-model="newOrigin"
-			class="mt-1 w-full"
-			placeholder="Type an origin and press Enter"
-			@keyup.enter="addOrigin"
-		/>
+		<Chips v-model="origins" separator="," remove-token-icon="pi pi-times"/>
 		<p class="mt-1 text-xs">
 			A list of origins which are allowed to use the token. If empty - any origin is valid. Examples of valid origins: "www.jsdelivr.com", "www.jsdelivr.com:10000".
 		</p>
@@ -171,21 +152,6 @@
 	// ORIGINS
 
 	const origins = ref<string[]>(props.token?.origins ? [ ...props.token.origins ] : []);
-	const newOrigin = ref('');
-
-	const addOrigin = () => {
-		if (!newOrigin.value) {
-			return;
-		}
-
-		origins.value.push(newOrigin.value);
-		newOrigin.value = '';
-	};
-
-
-	const removeOrigin = (index: number) => {
-		origins.value.splice(index, 1);
-	};
 
 	// ACTIONS
 
@@ -194,8 +160,6 @@
 			isNameInvalid.value = true;
 			return;
 		}
-
-		addOrigin();
 
 		try {
 			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/token-generator' }));
@@ -220,8 +184,6 @@
 			return;
 		}
 
-		addOrigin();
-
 		try {
 			await $directus.request(updateItem('gp_tokens', props.token!.id, {
 				name: name.value,
@@ -241,8 +203,6 @@
 			isNameInvalid.value = true;
 			return;
 		}
-
-		addOrigin();
 
 		try {
 			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/token-generator' }));

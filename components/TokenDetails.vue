@@ -66,7 +66,7 @@
 		<div class="mt-2 text-xs">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
 		<p class="mt-6">Origins</p>
 		<div class="mt-2">
-			<div v-for="(origin, index) in origins" :key="index" class="mr-1 mb-1 inline-block">
+			<div v-for="(origin, index) in origins" :key="index" class="mb-1 mr-1 inline-block">
 				<span class="bg-primary text-surface-0 flex items-center rounded-md border-0 px-1.5 py-0.5">{{ origin }}
 					<Button
 						icon="pi pi-times-circle"
@@ -107,7 +107,7 @@
 		token: {
 			type: Object as () => Token | null,
 			default: () => null,
-		}
+		},
 	});
 
 	const emit = defineEmits([ 'generate', 'cancel', 'save', 'regenerate' ]);
@@ -170,7 +170,7 @@
 
 	// ORIGINS
 
-	const origins = ref<string[]>(props.token?.origins ? [...props.token.origins] : []);
+	const origins = ref<string[]>(props.token?.origins ? [ ...props.token.origins ] : []);
 	const newOrigin = ref('');
 
 	const addOrigin = () => {
@@ -241,6 +241,8 @@
 			isNameInvalid.value = true;
 			return;
 		}
+
+		addOrigin();
 
 		try {
 			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/token-generator' }));

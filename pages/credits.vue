@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-surface-50 flex h-full flex-col p-6">
+	<div class="bg-surface-50 flex h-full min-w-[640px] flex-col p-6">
 		<div class="mb-6 flex">
 			<h1 class="col-span-2 text-2xl font-bold">Credits</h1>
 			<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" class="ml-auto" target="_blank" rel="noopener">

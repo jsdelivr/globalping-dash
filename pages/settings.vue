@@ -18,9 +18,9 @@
 						severity="contrast"
 						text
 						label="Sync from GitHub"
-						icon="pi pi-sync"
+						:icon="{'pi pi-sync': true, 'pi-spin': loadingIconId === 1}"
 						class="!absolute right-8 top-[5px] h-6 !px-1"
-						@click="syncFromGithub"
+						@click="syncFromGithub(1)"
 					/>
 					<i class="pi pi-lock text-bluegray-500 absolute right-3 top-[10px]"/>
 					<InputText v-model="me.github_username" disabled class="!bg-surface-0 w-full pr-44"/>
@@ -56,9 +56,9 @@
 						severity="contrast"
 						text
 						label="Sync from GitHub"
-						icon="pi pi-sync"
+						:icon="{'pi pi-sync': true, 'pi-spin': loadingIconId === 2}"
 						class="!absolute right-8 top-[5px] h-6 !px-1"
-						@click="syncFromGithub"
+						@click="syncFromGithub(2)"
 					/>
 					<i class="pi pi-lock text-bluegray-500 absolute right-3 top-[10px]"/>
 					<InputText v-model="organizationsString" disabled class="!bg-surface-0 w-full pr-44"/>
@@ -131,13 +131,15 @@
 
 			toast.add({ severity: 'success', summary: 'Saved', detail: 'All settings saved', life: 4000 });
 		} catch (e: any) {
-			const detail = e.errors?.[0]?.message ?? e.message ?? 'Request failed';
+			const detail = e.errors?.[0]?.message ?? e.errors ?? e.message ?? 'Request failed';
 			toast.add({ severity: 'error', summary: 'Regeneration failed', detail, life: 20000 });
 		}
 	};
 
-	const syncFromGithub = async () => {
+	const loadingIconId = ref<number | null>(null);
+	const syncFromGithub = async (id: number) => {
 		try {
+			loadingIconId.value = id;
 			const response = await $directus.request(customEndpoint<{
 				github_username: string;
 				github_organizations: string[];
@@ -150,8 +152,11 @@
 
 			toast.add({ severity: 'success', summary: 'Synced', detail: 'GitHub data synced', life: 4000 });
 		} catch (e: any) {
-			const detail = e.errors?.[0]?.message ?? e.message ?? 'Request failed';
+			console.log(e);
+			const detail = e.errors?.[0]?.message ?? e.errors ?? e.message ?? 'Request failed';
 			toast.add({ severity: 'error', summary: 'Sync failed', detail, life: 20000 });
 		}
+
+		loadingIconId.value = null;
 	};
 </script>

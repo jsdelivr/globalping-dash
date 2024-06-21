@@ -455,7 +455,7 @@
 			probes.value = [ ...probes.value.map(probe => probe.id === updatedProbe.id ? updatedProbe : probe) ];
 		} catch (e: any) {
 			const summary = e?.response?.statusText ?? 'Error';
-			const detail = e.errors?.[0]?.message ?? e.message ?? 'Request failed';
+			const detail = e.errors?.[0]?.message ?? e.errors ?? e.message ?? 'Request failed';
 			toast.add({ severity: 'error', summary, detail, life: 20000 });
 		}
 	};

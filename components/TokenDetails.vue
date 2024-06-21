@@ -173,7 +173,7 @@
 
 			emit('generate', response.id, token);
 		} catch (e: any) {
-			const detail = e.errors?.[0]?.message ?? e.message ?? 'Request failed';
+			const detail = e.errors?.[0]?.message ?? e.errors ?? e.message ?? 'Request failed';
 			toast.add({ severity: 'error', summary: 'Creation failed', detail, life: 20000 });
 		}
 	};
@@ -216,7 +216,7 @@
 
 			emit('regenerate', response.id, token);
 		} catch (e: any) {
-			const detail = e.errors?.[0]?.message ?? e.message ?? 'Request failed';
+			const detail = e.errors?.[0]?.message ?? e.errors ?? e.message ?? 'Request failed';
 			toast.add({ severity: 'error', summary: 'Regeneration failed', detail, life: 20000 });
 		}
 	};

@@ -75,6 +75,7 @@ declare global {
     github_organizations: string[];
     github_username: string | null; // null for non-gh admin
     user_type: 'member' | 'special' | 'sponsor';
+    appearance: null | 'light' | 'dark';
   };
 
   type Token = {

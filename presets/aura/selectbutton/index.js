@@ -19,14 +19,14 @@ export default {
 			'last:rounded-tl-none last:rounded-bl-none last:rounded-r-md',
 
 			// Before
-			'before:absolute before:left-1 before:top-1 before:w-[calc(100%-0.5rem)] before:h-[calc(100%-0.5rem)] before:rounded-[4px] before:z-0',
-			'[&>*]:z-10',
+			// 'before:absolute before:left-1 before:top-1 before:w-[calc(100%-0.5rem)] before:h-[calc(100%-0.5rem)] before:rounded-[4px] before:z-0',
+			// '[&>*]:z-10',
 
 			// Color
-			'bg-surface-100 dark:bg-surface-950',
+			'dark:bg-surface-950 border border-r-0 last:border-r',
 			{
-				'text-surface-600 dark:text-white/60 before:bg-transparent': !context.active,
-				'text-surface-800 dark:text-white/80 before:bg-surface-0 dark:before:bg-surface-800': context.active,
+				'bg-surface-200 text-bluegray-500 dark:text-white/60 before:bg-transparent': !context.active,
+				'text-primary bg-surface-0 dark:text-white/80 before:bg-surface-0 dark:before:bg-surface-800': context.active,
 			},
 
 			// Invalid State

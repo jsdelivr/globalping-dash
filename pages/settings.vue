@@ -1,10 +1,10 @@
 <template>
-	<div class="bg-surface-50 flex h-full flex-col p-6">
+	<div class="bg-surface-50 min-min-h-full flex flex-col p-6">
 		<div>
 			<h1 class="col-span-2 text-2xl font-bold">Settings</h1>
 		</div>
-		<div class="bg-surface-0 mt-6 flex rounded-xl border p-6">
-			<div class="w-2/5">
+		<div class="bg-surface-0 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
+			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Account details</h5>
 			</div>
 			<div class="grow">
@@ -19,7 +19,7 @@
 						text
 						label="Sync from GitHub"
 						:icon="{'pi pi-sync': true, 'pi-spin': loadingIconId === 1}"
-						class="!absolute right-8 top-[5px] h-6 !px-1"
+						class="!bg-surface-0 !absolute right-8 top-[5px] h-6 !px-1"
 						@click="syncFromGithub(1)"
 					/>
 					<i class="pi pi-lock text-bluegray-500 absolute right-3 top-[10px]"/>
@@ -27,8 +27,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="bg-surface-0 mt-6 flex rounded-xl border p-6">
-			<div class="w-2/5">
+		<div class="bg-surface-0 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
+			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Interface</h5>
 			</div>
 			<div class="grow">
@@ -43,8 +43,8 @@
 				</SelectButton>
 			</div>
 		</div>
-		<div class="bg-surface-0 mt-6 flex rounded-xl border p-6">
-			<div class="w-2/5">
+		<div class="bg-surface-0 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
+			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Other</h5>
 			</div>
 			<div class="grow">
@@ -57,7 +57,7 @@
 						text
 						label="Sync from GitHub"
 						:icon="{'pi pi-sync': true, 'pi-spin': loadingIconId === 2}"
-						class="!absolute right-8 top-[5px] h-6 !px-1"
+						class="!bg-surface-0 !absolute right-8 top-[5px] h-6 !px-1"
 						@click="syncFromGithub(2)"
 					/>
 					<i class="pi pi-lock text-bluegray-500 absolute right-3 top-[10px]"/>
@@ -70,8 +70,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="bg-surface-0 mt-6 flex rounded-xl border p-6">
-			<div class="w-2/5">
+		<div class="bg-surface-0 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
+			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Data removal</h5>
 			</div>
 			<div class="grow">

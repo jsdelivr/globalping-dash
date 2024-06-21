@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-surface-50 flex h-full min-w-[640px] flex-col p-6">
+	<div class="bg-surface-50 flex min-h-full min-w-[640px] flex-col p-6">
 		<div class="mb-4 flex">
 			<h1 class="col-span-2 text-2xl font-bold">Tokens</h1>
 			<Button class="ml-auto" label="Generate new token" @click="openTokenDetails('generate')"/>

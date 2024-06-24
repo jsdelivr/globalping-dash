@@ -75,8 +75,8 @@
 				<h5 class="text-lg font-bold">Data removal</h5>
 			</div>
 			<div class="grow">
-				<p class="font-bold">Delete account</p>
-				<Button class="mt-2" severity="secondary" outlined label="Delete account"/>
+				<p class="mb-2 font-bold max-sm:hidden">Delete account</p>
+				<Button severity="secondary" outlined label="Delete account"/>
 			</div>
 		</div>
 		<div class="mt-6 text-right">

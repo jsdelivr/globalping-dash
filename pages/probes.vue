@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-surface-50 flex min-h-full min-w-[1280px] flex-col p-6">
+	<div class="bg-surface-50 flex min-h-full flex-col p-6" :class="{'min-w-[800px]': probes?.length}">
 		<div class="mb-6 flex">
 			<h1 class="col-span-2 text-2xl font-bold">Probes</h1>
 			<Button class="ml-auto" @click="adoptProbeDialog = true">

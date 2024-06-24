@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-surface-50 flex min-h-full min-w-[640px] flex-col p-6">
+	<div class="bg-surface-50 flex min-h-full flex-col p-6" :class="{'min-w-[640px]': tokens.length}">
 		<div class="mb-4 flex">
 			<h1 class="col-span-2 text-2xl font-bold">Tokens</h1>
 			<Button class="ml-auto" label="Generate new token" @click="openTokenDetails('generate')"/>
@@ -79,7 +79,7 @@
 			/>
 		</div>
 		<div v-else-if="!loading" class="bg-surface-0 mt-6 rounded-xl border px-4 py-3">
-			<div class="bg-surface-50 rounded-xl py-6 text-center">
+			<div class="bg-surface-50 rounded-xl p-6 text-center">
 				<p class="font-semibold">No data to show</p>
 				<p class="mt-4">Adopt a probe or become a sponsor to track your credit usage</p>
 			</div>

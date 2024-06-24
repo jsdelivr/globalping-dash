@@ -1,5 +1,5 @@
 <template>
-	<section class="grid grid-cols-[480px_auto]">
+	<section class="grid grid-cols-[480px_auto] max-md:grid-cols-1">
 		<div class="flex flex-col p-12">
 			<div class="mb-12 flex items-center">
 				<NuxtLink to="/">
@@ -10,7 +10,7 @@
 			<h1 class="mb-6 text-3xl font-bold">Manage your jsDelivr and Globalping statistics</h1>
 			<p class="mb-6">Welcome! Log in to your account.</p>
 			<Button
-				class="h-10 w-80 bg-black !text-left"
+				class="h-10 bg-black !text-left md:w-80"
 				severity="contrast"
 				icon="pi pi-github"
 				icon-pos="right"
@@ -19,7 +19,7 @@
 			/>
 			<p class="text-bluegray-500 mt-auto">Not authenticated</p>
 		</div>
-		<div class="m-2 rounded-xl bg-[url('~/assets/images/login-bg.svg')] bg-cover"/>
+		<div class="m-2 rounded-xl bg-[url('~/assets/images/login-bg.svg')] bg-cover max-md:hidden"/>
 	</section>
 </template>
 

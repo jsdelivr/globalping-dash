@@ -86,7 +86,7 @@
 		</div>
 		<Dialog
 			v-model:visible="tokenDetailsDialog"
-			class="min-w-[700px]"
+			class="min-w-[700px] max-md:min-w-[95%]"
 			modal
 			dismissable-mask
 			:draggable="false"
@@ -103,7 +103,7 @@
 		</Dialog>
 		<Dialog
 			v-model:visible="deleteDialog"
-			class="min-w-[700px]"
+			class="min-w-[700px] max-md:min-w-[95%]"
 			modal
 			dismissable-mask
 			:draggable="false"
@@ -125,7 +125,7 @@
 		</Dialog>
 		<Dialog
 			v-model:visible="regenerateDialog"
-			class="min-w-[700px]"
+			class="min-w-[700px] max-md:min-w-[95%]"
 			modal
 			dismissable-mask
 			:draggable="false"

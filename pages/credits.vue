@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-surface-50 flex min-h-full min-w-[640px] flex-col p-6">
+	<div class="bg-surface-50 flex min-h-full flex-col p-6" :class="{'min-w-[640px]': creditsChanges.length}">
 		<div class="mb-6 flex">
 			<h1 class="col-span-2 text-2xl font-bold">Credits</h1>
 			<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" class="ml-auto" target="_blank" rel="noopener">
@@ -56,7 +56,7 @@
 			/>
 		</div>
 		<div v-else-if="!loading" class="bg-surface-0 mt-6 rounded-xl border px-4 py-3">
-			<div class="bg-surface-50 rounded-xl py-6 text-center">
+			<div class="bg-surface-50 rounded-xl p-6 text-center">
 				<p class="font-semibold">No data to show</p>
 				<p class="mt-4">Adopt a probe or become a sponsor to track your credit usage</p>
 			</div>

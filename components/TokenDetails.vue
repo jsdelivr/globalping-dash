@@ -12,7 +12,7 @@
 		<p class="mt-6">Expiration</p>
 		<div class="mt-2">
 			<Button
-				class="mr-2"
+				class="mb-2 mr-2"
 				:severity="activeExpire.unlimited ? undefined : 'secondary'"
 				rounded
 				@click="changeExpiration(null)"
@@ -20,7 +20,7 @@
 				Unlimited
 			</Button>
 			<Button
-				class="mr-2"
+				class="mb-2 mr-2"
 				:severity="activeExpire.months1 ? undefined : 'secondary'"
 				rounded
 				@click="changeExpiration(1)"
@@ -28,7 +28,7 @@
 				1 month
 			</Button>
 			<Button
-				class="mr-2"
+				class="mb-2 mr-2"
 				:severity="activeExpire.months3 ? undefined : 'secondary'"
 				rounded
 				@click="changeExpiration(3)"
@@ -36,7 +36,7 @@
 				3 months
 			</Button>
 			<Button
-				class="mr-2"
+				class="mb-2 mr-2"
 				:severity="activeExpire.months6 ? undefined : 'secondary'"
 				rounded
 				@click="changeExpiration(6)"
@@ -44,7 +44,7 @@
 				6 month
 			</Button>
 			<Button
-				class="mr-2"
+				class="mb-2 mr-2"
 				:severity="activeExpire.months12 ? undefined : 'secondary'"
 				rounded
 				@click="changeExpiration(12)"
@@ -52,7 +52,7 @@
 				1 year
 			</Button>
 			<Button
-				class="mr-2 flex items-center"
+				class="mb-2 mr-2 flex items-center"
 				:severity="activeExpire.custom ? undefined : 'secondary'"
 				rounded
 				@click="toggleDatePanel"
@@ -63,7 +63,7 @@
 				<TokenCalendar :value="expire && new Date(expire)" @change="changeDate"/>
 			</OverlayPanel>
 		</div>
-		<div class="mt-2 text-xs">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
+		<div class="text-xs">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
 		<p class="mt-6">Origins</p>
 		<Chips v-model="origins" separator="," remove-token-icon="pi pi-times"/>
 		<p class="mt-1 text-xs">

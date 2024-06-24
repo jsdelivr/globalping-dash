@@ -9,7 +9,7 @@ export default {
 			// Flexbox
 			'flex',
 			'justify-between',
-			'items-center',
+			'items-baseline',
 
 			// Spacing
 			'm-0',

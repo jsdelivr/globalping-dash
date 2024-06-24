@@ -1,7 +1,7 @@
 <template>
 	<section class="grid grid-cols-[256px_auto] grid-rows-[56px_auto] max-lg:grid-cols-1">
 		<Toast/>
-		<header class="text-surface-0 col-span-2 flex items-center bg-[#17233A] px-6 py-3">
+		<header class="text-surface-0 col-span-2 flex items-center bg-[#17233A] px-6 py-3 max-lg:px-3">
 			<NuxtLink to="/">
 				<img class="h-6" src="~/assets/images/gp-logo-white.svg" alt="Globalping logo">
 			</NuxtLink>

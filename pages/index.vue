@@ -100,8 +100,8 @@
 						</div>
 					</div>
 				</div>
-				<div v-if="!adoptedProbes.length" class="bg-surface-50 flex rounded-xl p-6 ">
-					<img class="w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
+				<div v-if="!adoptedProbes.length" class="bg-surface-50 flex rounded-xl p-6 max-sm:flex-col max-sm:items-center">
+					<img class="size-24 max-sm:mb-4" src="~/assets/images/hw-probe.png" alt="Hardware probe">
 					<p class="ml-6 leading-tight">
 						<b>You don't have any probes yet.</b><br><br>
 						Get started by going to <NuxtLink class="text-primary font-semibold hover:underline" to="/probes">Probes</NuxtLink> page to create a container probe.<br>

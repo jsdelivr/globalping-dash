@@ -10,7 +10,7 @@
 			<h1 class="mb-6 text-3xl font-bold">Manage your jsDelivr and Globalping statistics</h1>
 			<p class="mb-6">Welcome! Log in to your account.</p>
 			<Button
-				class="h-10 bg-black !text-left md:w-80"
+				class="h-10 bg-black !text-left sm:w-80"
 				severity="contrast"
 				icon="pi pi-github"
 				icon-pos="right"

@@ -1,7 +1,7 @@
 <template>
 	<Stepper v-model:activeStep="activeStep">
 		<StepperPanel>
-			<template #header="{ active, highlighted, clickCallback }">
+			<template #header="{ active, highlighted }">
 				<StepHeader
 					button-text="1"
 					header-text="Set up your probe"
@@ -36,7 +36,7 @@
 			</template>
 		</StepperPanel>
 		<StepperPanel>
-			<template #header="{ active, highlighted, clickCallback }">
+			<template #header="{ active, highlighted }">
 				<StepHeader
 					button-text="2"
 					header-text="Send adoption code"
@@ -62,13 +62,13 @@
 					<p v-if="!isIpValid" class="absolute pl-1 text-red-500">{{ invalidIpMessage }}</p>
 					<div class="mt-6 text-right">
 						<Button class="mr-2" label="Back" severity="contrast" text @click="prevCallback"/>
-						<Button label="Send code to probe" @click="sendAdoptionCode(nextCallback)"/>
+						<Button label="Send code to probe" :loading="sendAdoptionCodeLoading" @click="sendAdoptionCode(nextCallback)"/>
 					</div>
 				</div>
 			</template>
 		</StepperPanel>
 		<StepperPanel>
-			<template #header="{ active, highlighted, clickCallback }">
+			<template #header="{ active, highlighted }">
 				<StepHeader
 					button-text="3"
 					header-text="Verify"
@@ -109,7 +109,7 @@
 					</div>
 					<div class="mt-6 text-right">
 						<Button class="mr-2" label="Back" severity="contrast" text @click="prevCallback"/>
-						<Button label="Verify the code" @click="verifyCode"/>
+						<Button label="Verify the code" :loading="verifyCodeLoading" @click="verifyCode"/>
 					</div>
 				</div>
 				<div v-else class="px-5 py-7">
@@ -168,6 +168,7 @@
 		invalidIpMessage.value = '';
 	};
 
+	const sendAdoptionCodeLoading = ref(false);
 	const sendAdoptionCode = async (nextCallback: Function) => {
 		const isValid = validateIp(ip.value);
 
@@ -177,6 +178,8 @@
 			return;
 		}
 
+		sendAdoptionCodeLoading.value = true;
+
 		try {
 			await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/send-code', body: JSON.stringify({ ip: ip.value }) }));
 			nextCallback();
@@ -185,6 +188,8 @@
 			isIpValid.value = false;
 			invalidIpMessage.value = detail;
 		}
+
+		sendAdoptionCodeLoading.value = false;
 	};
 
 	// STEP 3
@@ -219,7 +224,10 @@
 		}
 	};
 
+	const verifyCodeLoading = ref(false);
 	const verifyCode = async () => {
+		verifyCodeLoading.value = true;
+
 		try {
 			const response = await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/verify-code', body: JSON.stringify({ code: code.value.substring(0, 6) }) })) as Probe;
 			probe.value = response;
@@ -230,6 +238,8 @@
 			isCodeValid.value = false;
 			invalidCodeMessage.value = detail;
 		}
+
+		verifyCodeLoading.value = false;
 	};
 
 	const handleKeydown = async (event: KeyboardEvent) => {

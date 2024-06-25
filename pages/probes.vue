@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-surface-50 flex min-h-full flex-col p-6" :class="{'min-w-[800px]': probes?.length}">
+	<div class="bg-surface-50 flex min-h-full flex-col p-6" :class="{'min-w-[1024px]': probes?.length}">
 		<div class="mb-6 flex">
 			<h1 class="col-span-2 text-2xl font-bold">Probes</h1>
 			<Button class="ml-auto" @click="adoptProbeDialog = true">
@@ -171,9 +171,9 @@
 											<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900" @click="removeTag(index)"/>
 										</div>
 									</div>
-									<div class="mt-6">
+									<div class="mt-6 flex">
 										<Button label="Add tag" icon="pi pi-plus" severity="secondary" @click="addTag"/>
-										<Button label="Save" icon="pi pi-check" severity="secondary" class="ml-12" @click="saveTags(slotProps.data.id)"/>
+										<Button label="Save" icon="pi pi-check" severity="secondary" class="ml-auto" @click="saveTags(slotProps.data.id)"/>
 										<Button label="Cancel" severity="secondary" class="bg-surface-300 ml-1" @click="cancelTags"/>
 									</div>
 									<p class="text-bluegray-400 text-2xs mt-3">

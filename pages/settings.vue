@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-surface-50 min-min-h-full flex flex-col p-6">
+	<div class="bg-surface-50 flex min-h-full flex-col p-6">
 		<div>
 			<h1 class="col-span-2 text-2xl font-bold">Settings</h1>
 		</div>
@@ -76,17 +76,17 @@
 			</div>
 			<div class="grow">
 				<p class="mb-2 font-bold max-sm:hidden">Delete account</p>
-				<Button severity="secondary" outlined label="Delete account"/>
+				<Button severity="secondary" outlined label="Delete account" @click="deleteAccount"/>
 			</div>
 		</div>
 		<div class="mt-6 text-right">
-			<Button label="Apply settings" @click="save"/>
+			<Button label="Apply settings" :loading="saveLoading" @click="save"/>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import { customEndpoint, readMe, updateMe } from '@directus/sdk';
+	import { customEndpoint, deleteUser, readMe, updateMe } from '@directus/sdk';
 	import { useAuth } from '~/store/auth';
 
 	const { $directus } = useNuxtApp();
@@ -116,7 +116,12 @@
 		{ name: 'Dark', value: 'dark', icon: 'pi pi-moon' },
 	];
 
+	// SAVE
+
+	const saveLoading = ref(false);
 	const save = async () => {
+		saveLoading.value = true;
+
 		try {
 			const response = await $directus.request(updateMe({
 				first_name: me.value.first_name,
@@ -134,7 +139,11 @@
 			const detail = e.errors?.[0]?.message ?? e.errors ?? e.message ?? 'Request failed';
 			toast.add({ severity: 'error', summary: 'Regeneration failed', detail, life: 20000 });
 		}
+
+		saveLoading.value = false;
 	};
+
+	// SYNC WITH GITHUB
 
 	const loadingIconId = ref<number | null>(null);
 	const syncFromGithub = async (id: number) => {
@@ -152,11 +161,22 @@
 
 			toast.add({ severity: 'success', summary: 'Synced', detail: 'GitHub data synced', life: 4000 });
 		} catch (e: any) {
-			console.log(e);
 			const detail = e.errors?.[0]?.message ?? e.errors ?? e.message ?? 'Request failed';
 			toast.add({ severity: 'error', summary: 'Sync failed', detail, life: 20000 });
 		}
 
 		loadingIconId.value = null;
+	};
+
+	// DELETE ACCOUNT
+
+	const deleteAccount = async () => {
+		try {
+			await $directus.request(deleteUser(me.value.id!));
+			reloadNuxtApp();
+		} catch (e: any) {
+			const detail = e.errors?.[0]?.message ?? e.errors ?? e.message ?? 'Request failed';
+			toast.add({ severity: 'error', summary: 'Sync failed', detail, life: 20000 });
+		}
 	};
 </script>

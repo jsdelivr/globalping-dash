@@ -22,9 +22,8 @@ export default {
 			{ 'first:ml-0 -ml-px': parent.instance.$name == 'InputGroup' && !props.showButtons },
 
 			// Colors
-			'text-surface-800 dark:text-white/80',
 			'placeholder:text-bluegray-400 dark:placeholder:text-surface-500',
-			{ 'bg-surface-0 dark:bg-surface-950': !context.disabled },
+			{ 'text-surface-800 dark:text-white/80 bg-surface-0 dark:bg-surface-950': !context.disabled },
 			'border',
 			{ 'border-surface-300 dark:border-surface-700': !props.invalid },
 
@@ -37,7 +36,7 @@ export default {
 			{
 				'hover:border-surface-400 dark:hover:border-surface-600': !context.disabled && !props.invalid,
 				'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10': !context.disabled,
-				'!text-bluegray-400 bg-surface-50 dark:bg-surface-700 select-none pointer-events-none cursor-default': context.disabled,
+				'text-bluegray-500 bg-surface-50 dark:bg-surface-700 select-none pointer-events-none cursor-default': context.disabled,
 			},
 
 			// Filled State *for FloatLabel

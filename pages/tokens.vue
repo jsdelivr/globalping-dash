@@ -70,6 +70,7 @@
 				</template>
 			</DataTable>
 			<Paginator
+				v-if="tokens.length !== tokensCount"
 				class="mt-9"
 				:first="first"
 				:rows="5"

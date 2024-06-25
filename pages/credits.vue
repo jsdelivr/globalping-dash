@@ -47,6 +47,7 @@
 				</Column>
 			</DataTable>
 			<Paginator
+				v-if="creditsChanges.length !== creditsChangesCount"
 				class="mt-9"
 				:first="first"
 				:rows="5"

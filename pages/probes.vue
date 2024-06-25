@@ -236,6 +236,7 @@
 				</template>
 			</DataTable>
 			<Paginator
+				v-if="probes.length !== probesCount"
 				class="mt-9"
 				:first="first"
 				:rows="5"

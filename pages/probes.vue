@@ -231,7 +231,7 @@
 				@page="onPage($event)"
 			/>
 		</div>
-		<div v-else="!loading" class="bg-surface-0 flex grow flex-col overflow-hidden rounded-xl border">
+		<div v-else class="bg-surface-0 flex grow flex-col overflow-hidden rounded-xl border">
 			<p class="text-bluegray-700 flex border-b px-6 py-3 font-bold">List of probes</p>
 			<div class="bg-surface-50 m-6 flex grow flex-col items-center justify-center rounded-xl text-center">
 				<img class="mx-auto w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">

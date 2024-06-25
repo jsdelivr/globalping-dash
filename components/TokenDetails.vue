@@ -71,12 +71,18 @@
 		</p>
 		<div v-if="token" class="mt-7 text-right">
 			<Button class="mr-2" label="Cancel" severity="contrast" text @click="$emit('cancel')"/>
-			<Button class="mr-2" severity="info" label="Regenerate token" @click="regenerateToken"/>
-			<Button label="Save" @click="updateToken"/>
+			<Button
+				class="mr-2"
+				severity="info"
+				label="Regenerate token"
+				:loading="regenerateTokenLoading"
+				@click="regenerateToken"
+			/>
+			<Button label="Save" :loading="updateTokenLoading" @click="updateToken"/>
 		</div>
 		<div v-else class="mt-7 text-right">
 			<Button class="mr-2" label="Cancel" severity="contrast" text @click="$emit('cancel')"/>
-			<Button label="Generate token" @click="generateToken"/>
+			<Button label="Generate token" :loading="generateTokenLoading" @click="generateToken"/>
 		</div>
 	</div>
 </template>
@@ -155,11 +161,14 @@
 
 	// ACTIONS
 
+	const generateTokenLoading = ref(false);
 	const generateToken = async () => {
 		if (!name.value) {
 			isNameInvalid.value = true;
 			return;
 		}
+
+		generateTokenLoading.value = true;
 
 		try {
 			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/token-generator' }));
@@ -178,11 +187,14 @@
 		}
 	};
 
+	const updateTokenLoading = ref(false);
 	const updateToken = async () => {
 		if (!name.value) {
 			isNameInvalid.value = true;
 			return;
 		}
+
+		updateTokenLoading.value = true;
 
 		try {
 			await $directus.request(updateItem('gp_tokens', props.token!.id, {
@@ -198,11 +210,14 @@
 		}
 	};
 
+	const regenerateTokenLoading = ref(false);
 	const regenerateToken = async () => {
 		if (!name.value) {
 			isNameInvalid.value = true;
 			return;
 		}
+
+		regenerateTokenLoading.value = true;
 
 		try {
 			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/token-generator' }));

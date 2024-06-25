@@ -30,7 +30,7 @@
 						</div>
 						<div v-if="isEmpty(cities)" class="ml-2">No locations to show</div>
 					</div>
-					<Button class="ml-auto min-w-36 max-sm:ml-0 max-sm:mt-3" :severity="adoptedProbes.length ? 'secondary' : undefined">
+					<Button class="ml-auto min-w-36 max-sm:ml-0 max-sm:mt-3" :severity="adoptedProbes.length ? 'secondary' : undefined" @click="adoptProbeDialog = true">
 						<nuxt-icon class="pi mr-2 mt-[2px]" name="capture"/>
 						<span class="font-bold">{{ adoptedProbes.length ? "Adopt probe" : "Adopt first probe" }}</span>
 					</Button>
@@ -50,12 +50,10 @@
 						<BigIcon name="coin" border/>
 						<div><span class="mx-2 text-3xl font-bold">{{ total }}</span>Total</div>
 					</div>
-					<NuxtLink class="ml-auto max-sm:ml-0 max-sm:mt-3" to="/credits" tabindex="-1">
-						<Button severity="secondary" outlined label="Adopt probe">
-							<span class="p-button-label mr-2 font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500': !perDay }">+{{ perDay }}</span>
-							<span>Per day</span>
-						</Button>
-					</NuxtLink>
+					<div class="ml-auto flex items-center rounded-md border px-4 max-sm:ml-0 max-sm:mt-3">
+						<span class="p-button-label mr-2 font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500': !perDay }">+{{ perDay }}</span>
+						<span>Per day</span>
+					</div>
 				</div>
 				<div class="mt-6 flex items-center text-nowrap">
 					<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1">
@@ -110,6 +108,17 @@
 				</div>
 			</div>
 		</div>
+		<Dialog
+			v-model:visible="adoptProbeDialog"
+			class="min-w-[700px] max-md:min-w-[95%]"
+			modal
+			dismissable-mask
+			:draggable="false"
+			header="Adopt a probe"
+			content-class="!p-0"
+		>
+			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="refreshNuxtData"/>
+		</Dialog>
 	</div>
 </template>
 
@@ -124,10 +133,8 @@
 
 	// SUMMARY
 
-	const { data: adoptedProbes } = await useAsyncData('gp_adopted_probes_limit_10', () => {
-		return $directus.request(readItems('gp_adopted_probes', {
-			limit: 10,
-		}));
+	const { data: adoptedProbes } = await useAsyncData('gp_adopted_probes', () => {
+		return $directus.request(readItems('gp_adopted_probes'));
 	}, { default: () => [] });
 
 	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status === 'ready'));
@@ -154,6 +161,10 @@
 		}));
 	}, { default: () => [] });
 	const perDay = computed(() => creditsAdditions.value.reduce((sum, { amount }) => sum += amount, 0));
+
+	// ADOPT PROBE DIALOG
+
+	const adoptProbeDialog = ref(false);
 </script>
 
 <style scoped>

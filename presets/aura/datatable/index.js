@@ -9,14 +9,14 @@ export default {
 			// Size
 			{ 'h-full': props.scrollable && props.scrollHeight === 'flex' },
 
-			'border border-surface-300 rounded-2xl overflow-hidden bg-surface-0 dark:bg-surface-900 min-h-[110px]',
+			'border border-surface-300 rounded-2xl overflow-hidden bg-surface-0 dark:bg-surface-900 min-h-[160px]',
 		],
 	}),
 	loadingoverlay: {
 		class: [
 			// Position
 			'absolute',
-			'top-6 left-0',
+			'top-11 left-0 bottom-0',
 			'z-20',
 
 			// Flex & Alignment

@@ -60,7 +60,7 @@ export default {
 			// Secondary Text Button
 			{ 'text-bluegray-500 dark:text-bluegray-300': props.text && props.severity === 'secondary' && !props.plain },
 			// Secondary Outlined Button
-			{ 'text-bluegray-700 dark:text-bluegray-300 border hover:bg-bluegray-300/10': props.outlined && props.severity === 'secondary' && !props.plain },
+			{ 'text-bluegray-900 dark:text-bluegray-300 border hover:bg-bluegray-50': props.outlined && props.severity === 'secondary' && !props.plain },
 
 			// Success Button
 			{

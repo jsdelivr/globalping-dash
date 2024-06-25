@@ -30,7 +30,12 @@
 						</div>
 						<div v-if="isEmpty(cities)" class="ml-2">No locations to show</div>
 					</div>
-					<Button class="ml-auto min-w-36 max-sm:ml-0 max-sm:mt-3" :severity="adoptedProbes.length ? 'secondary' : undefined" @click="adoptProbeDialog = true">
+					<Button
+						class="ml-auto min-w-36 max-sm:ml-0 max-sm:mt-3"
+						:severity="adoptedProbes.length ? 'secondary' : undefined"
+						:outlined="adoptedProbes.length ? true : false"
+						@click="adoptProbeDialog = true"
+					>
 						<nuxt-icon class="pi mr-2 mt-[2px]" name="capture"/>
 						<span class="font-bold">{{ adoptedProbes.length ? "Adopt probe" : "Adopt first probe" }}</span>
 					</Button>
@@ -57,7 +62,12 @@
 				</div>
 				<div class="mt-6 flex items-center text-nowrap">
 					<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1">
-						<Button :severity="perDay ? 'secondary' : undefined" icon="pi pi-plus" label="Add credits"/>
+						<Button
+							:severity="perDay ? 'secondary' : undefined"
+							:outlined="perDay ? true : false"
+							icon="pi pi-plus"
+							label="Add credits"
+						/>
 					</NuxtLink>
 					<NuxtLink v-if="perDay" class="ml-auto" to="/credits" tabindex="-1">
 						<Button link label="See details" icon-pos="right" icon="pi pi-chevron-right"/>

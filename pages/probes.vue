@@ -215,6 +215,7 @@
 					<Button
 						class="mt-2"
 						severity="secondary"
+						outlined
 						label="Start a probe"
 						icon="pi pi-question-circle"
 						@click="startProbeDialog = true"

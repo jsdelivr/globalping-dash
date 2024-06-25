@@ -33,9 +33,9 @@
 				:total-records="creditsChangesCount"
 				:loading="loading"
 			>
-				<Column header="Time" field="date_created" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t"/>
-				<Column header="Comment" field="comment" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t"/>
-				<Column header="Amount" field="amount" header-class="pl-1 pt-3 border-none" body-class="border-b-0 border-t">
+				<Column header="Time" field="date_created" header-class="pl-1 pt-3"/>
+				<Column header="Comment" field="comment" header-class="pl-1 pt-3"/>
+				<Column header="Amount" field="amount" header-class="pl-1 pt-3">
 					<template #body="slotProps">
 						<Tag v-if="slotProps.data.type === 'addition'" class="flex items-center !text-sm" severity="success">
 							<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ slotProps.data.amount || 0 }}

@@ -7,21 +7,7 @@
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
 		</div>
-		<div v-if="!probes?.length && !loading" class="bg-surface-0 flex grow flex-col overflow-hidden rounded-xl border">
-			<p class="text-bluegray-700 flex border-b px-6 py-3 font-bold">List of probes</p>
-			<div class="bg-surface-50 m-6 flex grow flex-col items-center justify-center rounded-xl text-center">
-				<img class="mx-auto w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
-				<p class="mt-6 leading-tight">
-					<b>You don't have any probes yet.</b><br><br>
-					Get started in 30 seconds by running a Docker container with our probe.  It's free and simple.<br>
-					Each probe will generate additional credits for you to use. Nowhere to run the container?<br>
-					<NuxtLink class="text-primary font-semibold hover:underline" to="https://github.com/sponsors/jsdelivr">Become a GitHub Sponsor</NuxtLink> and get a hardware ARM powered probe delivered to you.<br>
-					Plug-and-play simplicity guaranteed.
-				</p>
-				<Button class="mt-6" label="Start a probe" @click="startProbeDialog = true"/>
-			</div>
-		</div>
-		<div v-if="probes?.length">
+		<div v-if="probes.length || loading">
 			<DataTable
 				v-model:expandedRows="expandedRows"
 				:value="probes"
@@ -225,7 +211,7 @@
 						</div>
 					</template>
 				</Column>
-				<template #footer>
+				<template v-if="!loading" #footer>
 					<Button
 						class="mt-2"
 						severity="secondary"
@@ -244,6 +230,20 @@
 				template="PrevPageLink PageLinks NextPageLink"
 				@page="onPage($event)"
 			/>
+		</div>
+		<div v-else="!loading" class="bg-surface-0 flex grow flex-col overflow-hidden rounded-xl border">
+			<p class="text-bluegray-700 flex border-b px-6 py-3 font-bold">List of probes</p>
+			<div class="bg-surface-50 m-6 flex grow flex-col items-center justify-center rounded-xl text-center">
+				<img class="mx-auto w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
+				<p class="mt-6 leading-tight">
+					<b>You don't have any probes yet.</b><br><br>
+					Get started in 30 seconds by running a Docker container with our probe.  It's free and simple.<br>
+					Each probe will generate additional credits for you to use. Nowhere to run the container?<br>
+					<NuxtLink class="text-primary font-semibold hover:underline" to="https://github.com/sponsors/jsdelivr">Become a GitHub Sponsor</NuxtLink> and get a hardware ARM powered probe delivered to you.<br>
+					Plug-and-play simplicity guaranteed.
+				</p>
+				<Button class="mt-6" label="Start a probe" @click="startProbeDialog = true"/>
+			</div>
 		</div>
 		<Dialog
 			v-model:visible="startProbeDialog"

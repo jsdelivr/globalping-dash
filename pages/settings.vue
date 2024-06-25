@@ -93,7 +93,7 @@
 	const toast = useToast();
 	const auth = useAuth();
 
-	const { data: me } = await useAsyncData('me', () => {
+	const { data: me } = await useLazyAsyncData('me', () => {
 		return $directus.request(readMe());
 	}, {
 		default: () => ({

@@ -133,7 +133,7 @@
 
 	// SUMMARY
 
-	const { data: adoptedProbes } = await useAsyncData('gp_adopted_probes', () => {
+	const { data: adoptedProbes } = await useLazyAsyncData('gp_adopted_probes', () => {
 		return $directus.request(readItems('gp_adopted_probes'));
 	}, { default: () => [] });
 
@@ -146,12 +146,12 @@
 	const auth = useAuth();
 	const user = auth.getUser;
 
-	const { data: credits } = await useAsyncData('gp_credits', () => {
+	const { data: credits } = await useLazyAsyncData('gp_credits', () => {
 		return $directus.request(readItems('gp_credits'));
 	}, { default: () => [] });
 	const total = computed(() => credits.value?.[0]?.amount?.toLocaleString() ?? '0');
 
-	const { data: creditsAdditions } = await useAsyncData('gp_credits_additions_last_day', () => {
+	const { data: creditsAdditions } = await useLazyAsyncData('gp_credits_additions_last_day', () => {
 		return $directus.request(readItems('gp_credits_additions', {
 			filter: {
 				// @ts-ignore

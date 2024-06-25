@@ -5,14 +5,16 @@ interface AuthState {
   isLoggedIn: boolean,
 	expiresAt: number,
   user: {
-    id?: string,
-    first_name?: string | null,
-    last_name?: string | null,
-		github_username?: string,
-		github_organizations?: string[],
-    email?: string | null,
-    last_page?: string | null,
-    external_identifier?: string | null,
+    id: string,
+    first_name: string | null,
+    last_name: string | null,
+		github_username: string,
+		github_organizations: string[],
+    email: string | null,
+    last_page: string | null,
+    external_identifier: string | null,
+		appearance: 'light' | 'dark' | null,
+		user_type: 'member' | 'sponsor' | 'special',
 	}
 }
 
@@ -20,13 +22,24 @@ export const useAuth = defineStore('auth', {
 	state: (): AuthState => ({
 		isLoggedIn: false,
 		expiresAt: 0,
-		user: {},
+		user: {
+			id: '',
+			first_name: '',
+			last_name: '',
+			github_username: '',
+			github_organizations: [],
+			email: '',
+			last_page: '',
+			external_identifier: '',
+			appearance: null,
+			user_type: 'member',
+		},
 	}),
 
 	getters: {
-		getIsLoggedIn: state => state.isLoggedIn,
 		getExpiresAt: state => state.expiresAt,
 		getUser: state => state.user,
+		getGithubUsername: state => state.user.github_username,
 	},
 
 	actions: {

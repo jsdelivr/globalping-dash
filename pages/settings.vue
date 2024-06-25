@@ -86,27 +86,13 @@
 </template>
 
 <script setup lang="ts">
-	import { customEndpoint, deleteUser, readMe, updateMe } from '@directus/sdk';
+	import { customEndpoint, deleteUser, updateMe } from '@directus/sdk';
 	import { useAuth } from '~/store/auth';
 
 	const { $directus } = useNuxtApp();
 	const toast = useToast();
 	const auth = useAuth();
-
-	const { data: me } = await useLazyAsyncData('me', () => {
-		return $directus.request(readMe());
-	}, {
-		default: () => ({
-			id: null,
-			first_name: '',
-			last_name: '',
-			email: '',
-			github_username: '',
-			github_organizations: [],
-			user_type: '',
-			appearance: null,
-		}),
-	});
+	const me = computed(() => auth.user);
 
 	const organizationsString = computed(() => me.value.github_organizations.join(', '));
 
@@ -123,14 +109,12 @@
 		saveLoading.value = true;
 
 		try {
-			const response = await $directus.request(updateMe({
+			await $directus.request(updateMe({
 				first_name: me.value.first_name,
 				last_name: me.value.last_name,
 				appearance: me.value.appearance,
 				email: me.value.email,
 			}));
-
-			me.value = response;
 
 			await auth.refresh();
 
@@ -149,6 +133,14 @@
 	const syncFromGithub = async (id: number) => {
 		try {
 			loadingIconId.value = id;
+
+			await $directus.request(updateMe({
+				first_name: me.value.first_name,
+				last_name: me.value.last_name,
+				appearance: me.value.appearance,
+				email: me.value.email,
+			}));
+
 			const response = await $directus.request(customEndpoint<{
 				github_username: string;
 				github_organizations: string[];

@@ -10,14 +10,15 @@ html {
 
 html.dark {
   background: var(--dark-900);
+  color: var(--surface-0);
 }
 
 body {
   font-size: 14px;
 }
 
-*, ::before, ::after {
-  @apply dark:border-dark-600 text-surface-0;
+.dark *, .dark ::before, .dark ::after {
+  @apply dark:border-dark-600;
 }
 
 .filler {

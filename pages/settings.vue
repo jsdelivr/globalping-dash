@@ -9,9 +9,9 @@
 			</div>
 			<div class="grow">
 				<p class="font-bold">First Name</p>
-				<InputText v-model="me.first_name" class="mt-2 w-full"/>
+				<InputText v-model="firstName" class="mt-2 w-full"/>
 				<p class="mt-6 font-bold">Last Name</p>
-				<InputText v-model="me.last_name" class="mt-2 w-full"/>
+				<InputText v-model="lastName" class="mt-2 w-full"/>
 				<p class="mt-6 font-bold">Username</p>
 				<div class="relative mt-2">
 					<Button
@@ -23,7 +23,7 @@
 						@click="syncFromGithub(1)"
 					/>
 					<i class="pi pi-lock text-bluegray-500 absolute right-3 top-[10px]"/>
-					<InputText v-model="me.github_username" disabled class="!bg-surface-0 w-full pr-44"/>
+					<InputText v-model="user.github_username" disabled class="!bg-surface-0 w-full pr-44"/>
 				</div>
 			</div>
 		</div>
@@ -33,7 +33,7 @@
 			</div>
 			<div class="grow">
 				<p class="font-bold">Theme</p>
-				<SelectButton v-model="me.appearance" class="mt-2" :options="themeOptions" aria-labelledby="basic" option-value="value">
+				<SelectButton v-model="appearance" class="mt-2" :options="themeOptions" aria-labelledby="basic" option-value="value">
 					<template #option="slotProps">
 						<div class="flex items-center">
 							<i :class="slotProps.option.icon"/>
@@ -49,7 +49,7 @@
 			</div>
 			<div class="grow">
 				<p class="font-bold">Email</p>
-				<InputText v-model="me.email" class="mt-2 w-full"/>
+				<InputText v-model="email" class="mt-2 w-full"/>
 				<p class="mt-6 font-bold">Organizations</p>
 				<div class="relative mt-2">
 					<Button
@@ -66,7 +66,7 @@
 				<p class="mt-6 font-bold">User type</p>
 				<div class="relative mt-2">
 					<i class="pi pi-lock text-bluegray-500 absolute right-3 top-[10px]"/>
-					<InputText v-model="me.user_type" disabled class="!bg-surface-0 w-full pr-44"/>
+					<InputText v-model="user.user_type" disabled class="!bg-surface-0 w-full pr-44"/>
 				</div>
 			</div>
 		</div>
@@ -92,9 +92,13 @@
 	const { $directus } = useNuxtApp();
 	const toast = useToast();
 	const auth = useAuth();
-	const me = computed(() => auth.user);
+	const user = auth.getUser as User;
 
-	const organizationsString = computed(() => me.value.github_organizations.join(', '));
+	const firstName = ref(user.first_name);
+	const lastName = ref(user.last_name);
+	const appearance = ref(user.appearance);
+	const email = ref(user.email);
+	const organizationsString = computed(() => user.github_organizations.join(', '));
 
 	const themeOptions = [
 		{ name: 'Auto', value: null, icon: 'pi pi-cog' },
@@ -110,10 +114,10 @@
 
 		try {
 			await $directus.request(updateMe({
-				first_name: me.value.first_name,
-				last_name: me.value.last_name,
-				appearance: me.value.appearance,
-				email: me.value.email,
+				first_name: firstName.value,
+				last_name: lastName.value,
+				appearance: appearance.value,
+				email: email.value,
 			}));
 
 			await auth.refresh();
@@ -135,19 +139,19 @@
 			loadingIconId.value = id;
 
 			await $directus.request(updateMe({
-				first_name: me.value.first_name,
-				last_name: me.value.last_name,
-				appearance: me.value.appearance,
-				email: me.value.email,
+				first_name: firstName.value,
+				last_name: lastName.value,
+				appearance: appearance.value,
+				email: email.value,
 			}));
 
 			const response = await $directus.request(customEndpoint<{
 				github_username: string;
 				github_organizations: string[];
-			}>({ method: 'POST', path: '/sync-github-data', body: JSON.stringify({ userId: me.value.id }) }));
+			}>({ method: 'POST', path: '/sync-github-data', body: JSON.stringify({ userId: user.id }) }));
 
-			me.value.github_username = response.github_username;
-			me.value.github_organizations = response.github_organizations;
+			user.github_username = response.github_username;
+			user.github_organizations = response.github_organizations;
 
 			await auth.refresh();
 
@@ -164,7 +168,7 @@
 
 	const deleteAccount = async () => {
 		try {
-			await $directus.request(deleteUser(me.value.id!));
+			await $directus.request(deleteUser(user.id!));
 			reloadNuxtApp();
 		} catch (e: any) {
 			const detail = e.errors?.[0]?.message ?? e.errors ?? e.message ?? 'Request failed';

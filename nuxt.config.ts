@@ -19,7 +19,7 @@ export default defineNuxtConfig({
 	},
 	tailwindcss: {
 		config: {
-			darkMode: 'class', // This enables dark mode based on the presence of the "dark" class in the HTML tag
+			darkMode: 'selector',
 			content: [
 				'presets/**/*.{js,vue,ts}',
 			],

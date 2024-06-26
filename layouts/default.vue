@@ -47,7 +47,7 @@
 					<i v-if="newNotifications.length" class="pi pi-circle-fill text-primary absolute right-3 top-1 text-[0.3rem]"/>
 				</Button>
 				<Button class="text-surface-0 text-[1.3rem]" icon="pi pi-bars" text @click="mobileSidebar = true"/>
-				<Sidebar v-model:visible="mobileSidebar" class="bg-surface-100 border-surface-300 border pt-4" :header="user.github_username">
+				<Sidebar v-model:visible="mobileSidebar" class="bg-surface-100 border pt-4" :header="user.github_username">
 					<NuxtLink active-class="active" class="sidebar-link" to="/" @click="mobileSidebar = false"><i class="pi pi-home text-bluegray-400 pl-4 pr-3 text-xl"/>Overview</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/probes" @click="mobileSidebar = false"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="probe"/>Probes</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/credits" @click="mobileSidebar = false"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="coin"/>Credits</NuxtLink>
@@ -64,7 +64,7 @@
 							<span class="m-2">Globalping</span>
 						</NuxtLink>
 					</div>
-					<div class="bg-surface-0 border-surface-300 mt-8 rounded-xl border p-6">
+					<div class="bg-surface-0 mt-8 rounded-xl border p-6">
 						<p class="mb-2 font-bold">Sponsorship</p>
 						<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
 						<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank" rel="noopener">
@@ -87,7 +87,7 @@
 			<NuxtLink active-class="active" class="sidebar-link" to="/probes"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="probe"/>Probes</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/credits"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="coin"/>Credits</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database text-bluegray-400 pl-4 pr-3 text-xl"/>Tokens</NuxtLink>
-			<div class="bg-surface-0 border-surface-300 mt-auto rounded-xl border p-6">
+			<div class="bg-surface-0 mt-auto rounded-xl border p-6">
 				<p class="mb-2 font-bold">Sponsorship</p>
 				<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
 				<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank" rel="noopener">

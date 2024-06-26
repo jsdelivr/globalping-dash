@@ -79,6 +79,7 @@ export default defineNuxtConfig({
 						'header-bg-table-bg': 'var(--header-bg-table-bg)',
 						'main-bg': 'var(--main-bg)',
 
+						'dark-0': 'var(--dark-0)',
 						'dark-300': 'var(--dark-300)',
 						'dark-500': 'var(--dark-500)',
 						'dark-600': 'var(--dark-600)',

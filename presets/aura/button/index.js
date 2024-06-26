@@ -23,7 +23,7 @@ export default {
 			{ 'rounded-none first:rounded-l-md last:rounded-r-md': parent.instance.$name == 'InputGroup' },
 
 			// Link Button
-			{ 'text-bluegray-900 bg-transparent border-transparent': props.link },
+			{ 'text-bluegray-900 dark:text-dark-0 bg-transparent border-transparent': props.link },
 
 			// Plain Button
 			{ 'text-white bg-gray-500 border border-gray-500': props.plain && !props.outlined && !props.text },
@@ -42,7 +42,7 @@ export default {
 
 			// Primary Button
 			{
-				'text-primary-inverse': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
+				'text-primary-inverse dark:text-surface-0': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
 				'bg-primary': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
 				'border border-primary': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
 			},

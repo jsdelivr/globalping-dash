@@ -18,7 +18,7 @@ body {
 }
 
 .dark *, .dark ::before, .dark ::after {
-  @apply dark:border-dark-600;
+  border-color: var(--dark-600);
 }
 
 .filler {
@@ -43,6 +43,10 @@ body {
   height: 100%;
   pointer-events: none;
   background: linear-gradient(to left, white, transparent);
+}
+
+.dark .fade-out::after {
+  background: linear-gradient(to left, var(--dark-800), transparent);
 }
 
 .nuxt-icon svg {

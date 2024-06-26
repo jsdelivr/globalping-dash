@@ -1,8 +1,8 @@
 <template>
 	<div class="grid grid-cols-2 gap-4 p-6">
 		<h1 class="col-span-2 mb-2 text-2xl font-bold">Overview</h1>
-		<div class="rounded-xl border max-xl:col-span-2">
-			<p class="text-bluegray-700 flex border-b px-6 py-3 font-bold">Summary</p>
+		<div class="bg-surface-0 dark:bg-dark-800 rounded-xl border max-xl:col-span-2">
+			<p class="text-bluegray-700 dark:text-dark-0 flex border-b px-6 py-3 font-bold">Summary</p>
 			<div class="p-6">
 				<div class="flex max-sm:flex-wrap">
 					<div class="max-sm:bg-surface-50 flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:p-4">
@@ -42,8 +42,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="rounded-xl border max-xl:col-span-2">
-			<p class="text-bluegray-700 flex items-center border-b px-6 py-3 font-bold">
+		<div class="bg-surface-0 dark:bg-dark-800 rounded-xl border max-xl:col-span-2">
+			<p class="text-bluegray-700 dark:text-dark-0 flex items-center border-b px-6 py-3 font-bold">
 				Credits<i
 					v-tooltip.top="user.github_username"
 					class="pi pi-info-circle ml-2"
@@ -75,8 +75,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-span-2 rounded-xl border">
-			<div class="text-bluegray-700 flex h-10 items-center border-b px-6 font-bold">
+		<div class="bg-surface-0 dark:bg-dark-800 col-span-2 rounded-xl border">
+			<div class="text-bluegray-700 dark:text-dark-0 flex h-10 items-center border-b px-6 font-bold">
 				<span>Probes</span>
 				<NuxtLink class="ml-auto" to="/probes" tabindex="-1">
 					<Button link label="See all" icon-pos="right" icon="pi pi-chevron-right"/>
@@ -108,7 +108,7 @@
 						</div>
 					</div>
 				</div>
-				<div v-if="!adoptedProbes.length" class="bg-surface-50 flex rounded-xl p-6 max-sm:flex-col max-sm:items-center">
+				<div v-if="!adoptedProbes.length" class="bg-surface-50 dark:bg-dark-600 flex rounded-xl p-6 max-sm:flex-col max-sm:items-center">
 					<img class="size-24 max-sm:mb-4" src="~/assets/images/hw-probe.png" alt="Hardware probe">
 					<p class="ml-6 leading-tight">
 						<b>You don't have any probes yet.</b><br><br>

@@ -4,7 +4,7 @@ export default {
 	}),
 	nav: {
 		class: [
-			'bg-surface-50 border-t',
+			'bg-surface-50 dark:bg-dark-600 border-t dark:border-dark-300',
 
 			// Flexbox
 			'flex',

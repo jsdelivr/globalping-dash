@@ -14,7 +14,7 @@ export default {
 			// Color
 			'bg-surface-0 dark:bg-dark-700',
 			'[&:last-child]:border-b',
-			'border-surface-200 dark:border-bluegray-900',
+			'border-surface-200 dark:border-dark-300',
 
 			// Transitions
 			'transform',
@@ -49,11 +49,11 @@ export default {
 			// Colors
 			'text-bluegray-900 dark:text-surface-0/80',
 			'border border-b-0',
-			'border-surface-200 dark:border-bluegray-900',
+			'border-surface-200 dark:border-dark-300',
 		],
 	},
 	title: {
-		class: [ 'font-bold text-lg leading-[normal] text-bluegray-800' ],
+		class: [ 'font-bold text-lg leading-[normal] text-bluegray-800 dark:text-surface-0' ],
 	},
 	icons: {
 		class: [ 'flex items-center' ],
@@ -75,7 +75,7 @@ export default {
 			'rounded-full',
 
 			// Colors
-			'text-surface-500',
+			'text-surface-500 dark:text-surface-300',
 			'bg-transparent',
 
 			// Transitions
@@ -161,7 +161,7 @@ export default {
 			// Colors
 			'text-bluegray-900 dark:text-surface-0/80',
 			'border border-t-0 border-b-0',
-			'border-surface-200 dark:border-bluegray-900',
+			'border-surface-200 dark:border-dark-300',
 
 			// Misc
 			'overflow-y-auto',
@@ -187,7 +187,7 @@ export default {
 			'bg-surface-0 dark:bg-dark-700',
 			'text-bluegray-900 dark:text-surface-0/80',
 			'border border-t-0 border-b-0',
-			'border-surface-200 dark:border-bluegray-900',
+			'border-surface-200 dark:border-dark-300',
 		],
 	},
 	mask: ({ props }) => ({

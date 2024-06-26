@@ -12,7 +12,7 @@
 			</template>
 			<template #separator/>
 			<template #content="{ nextCallback }">
-				<TabView :pt="{ inkbar: {class: 'hidden'}}">
+				<TabView :pt="{ inkbar: {class: 'hidden'}}" class="dark:border-dark-300 border-t">
 					<TabPanel>
 						<template #header>
 							<i class="pi pi-check mr-2"/>I'm already running a probe

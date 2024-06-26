@@ -1,14 +1,23 @@
-html {
-  @apply antialiased;
-  color: var(--bluegray-900);
-}
-
 body, html, #__nuxt, section {
   height: 100%;
 }
 
+html {
+  @apply antialiased;
+  color: var(--bluegray-900);
+  background: var(--surface-50);
+}
+
+html.dark {
+  background: var(--dark-900);
+}
+
 body {
   font-size: 14px;
+}
+
+*, ::before, ::after {
+  @apply dark:border-dark-600 text-surface-0;
 }
 
 .filler {

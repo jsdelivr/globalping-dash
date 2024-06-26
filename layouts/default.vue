@@ -1,7 +1,7 @@
 <template>
 	<section class="grid grid-cols-[256px_auto] grid-rows-[56px_auto] max-lg:grid-cols-1">
 		<Toast/>
-		<header class="text-surface-0 col-span-2 flex items-center bg-[#17233A] px-6 py-3 max-lg:px-3">
+		<header class="text-surface-0 bg-dark-800 col-span-2 flex items-center border-b px-6 py-3 max-lg:px-3">
 			<NuxtLink to="/">
 				<img class="h-6" src="~/assets/images/gp-logo-white.svg" alt="Globalping logo">
 			</NuxtLink>
@@ -82,7 +82,7 @@
 				<p v-else class="w-80 p-4">No notifications</p>
 			</OverlayPanel>
 		</header>
-		<aside class="bg-surface-100 border-surface-300 flex flex-col border p-4 max-lg:hidden">
+		<aside class="bg-surface-100 dark:bg-dark-700 flex flex-col border-r p-4 max-lg:hidden">
 			<NuxtLink active-class="active" class="sidebar-link" to="/"><i class="pi pi-home text-bluegray-400 pl-4 pr-3 text-xl"/>Overview</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/probes"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="probe"/>Probes</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/credits"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="coin"/>Credits</NuxtLink>
@@ -194,10 +194,19 @@
 		box-sizing: border-box;
 	}
 
+	.dark .sidebar-link {
+		color: var(--surface-0);
+	}
+
 	.sidebar-link.active {
 		background: var(--surface-0);
 		font-weight: 600;
 		border: 1px solid var(--surface-300);
+	}
+
+	.dark .sidebar-link.active {
+		background: var(--dark-500);
+		border-color: var(--dark-300);
 	}
 
 	.sidebar-link.active .pi {
@@ -218,5 +227,10 @@
 	.sidebar-link:hover {
 		background: var(--surface-0);
 		border: 1px solid var(--surface-300);
+	}
+
+	.dark .sidebar-link:hover {
+		background: var(--dark-500);
+		border-color: var(--dark-300);
 	}
 </style>

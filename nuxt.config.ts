@@ -71,9 +71,26 @@ export default defineNuxtConfig({
 						'bluegray-800': 'var(--bluegray-800)',
 						'bluegray-900': 'var(--bluegray-900)',
 						'bluegray-950': 'var(--bluegray-950)',
+
+						'sidebar-border': 'var(--sidebar-border)',
+						'table-border': 'var(--table-border)',
+						'sidebar-item': 'var(--sidebar-item)',
+						'sidebar-bg': 'var(--sidebar-bg)',
+						'header-bg-table-bg': 'var(--header-bg-table-bg)',
+						'main-bg': 'var(--main-bg)',
+
+						'dark-300': 'var(--dark-300)',
+						'dark-500': 'var(--dark-500)',
+						'dark-600': 'var(--dark-600)',
+						'dark-700': 'var(--dark-700)',
+						'dark-800': 'var(--dark-800)',
+						'dark-900': 'var(--dark-900)',
 					},
 					borderColor: {
 						DEFAULT: 'var(--surface-300)',
+						dark: {
+							DEFAULT: 'var(--dark-600)',
+						},
 					},
 					fontSize: {
 						'2xs': [ '0.7rem', '0.85rem' ],

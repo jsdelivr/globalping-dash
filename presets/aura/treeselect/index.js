@@ -11,7 +11,7 @@ export default {
 			// Color and Background
 			{ 'bg-surface-0 dark:bg-surface-950': !props.disabled },
 			'border',
-			{ 'border-surface-300 dark:border-surface-700': !props.invalid },
+			{ 'border-surface-300 dark:border-dark-300': !props.invalid },
 
 			// Invalid State
 			'invalid:focus:ring-red-200',
@@ -72,11 +72,11 @@ export default {
 	panel: {
 		class: [
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-white/80',
 
 			// Shape
-			'border border-surface-300 dark:border-surface-700',
+			'border border-surface-300 dark:border-dark-300',
 			'rounded-md',
 			'shadow-md',
 		],
@@ -101,7 +101,7 @@ export default {
 				'border-none',
 
 				// Color
-				'bg-surface-0 dark:bg-surface-900',
+				'bg-surface-0 dark:bg-dark-700',
 				'text-surface-700 dark:text-white/80',
 			],
 		},
@@ -214,7 +214,7 @@ export default {
 
 					// Colors
 					{
-						'border-surface-300 dark:border-surface-700': !context.checked && !props.invalid,
+						'border-surface-300 dark:border-dark-300': !context.checked && !props.invalid,
 						'bg-surface-0 dark:bg-surface-950': !context.checked && !props.invalid && !props.disabled,
 						'border-primary bg-primary': context.checked,
 					},
@@ -253,7 +253,7 @@ export default {
 					'opacity-0',
 					'rounded-md',
 					'outline-none',
-					'border border-surface-300 dark:border-surface-700',
+					'border border-surface-300 dark:border-dark-300',
 
 					// Misc
 					'appearance-none',
@@ -326,7 +326,7 @@ export default {
 				'text-surface-800 dark:text-white/80',
 				'placeholder:text-surface-400 dark:placeholder:text-surface-500',
 				{ 'bg-surface-0 dark:bg-surface-950': !props.disabled },
-				{ 'border-surface-300 dark:border-surface-700': !props.invalid },
+				{ 'border-surface-300 dark:border-dark-300': !props.invalid },
 
 				// Invalid State
 				'invalid:focus:ring-red-200',

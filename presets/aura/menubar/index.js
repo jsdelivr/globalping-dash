@@ -14,8 +14,8 @@ export default {
 			'rounded-md',
 
 			// Color
-			'bg-surface-0 dark:bg-surface-900',
-			'border border-surface-200 dark:border-surface-700',
+			'bg-surface-0 dark:bg-dark-700',
+			'border border-surface-200 dark:border-dark-300',
 		],
 	},
 	menu: ({ props }) => ({
@@ -45,7 +45,7 @@ export default {
 			'border-0',
 
 			// Color
-			'bg-surface-0 dark:bg-surface-900 sm:bg-transparent',
+			'bg-surface-0 dark:bg-dark-700 sm:bg-transparent',
 
 			// Misc
 			'outline-none',
@@ -128,7 +128,7 @@ export default {
 
 			// Shape
 			'shadow-none sm:shadow-md',
-			'border border-surface-200 dark:border-surface-700',
+			'border border-surface-200 dark:border-dark-300',
 
 			// Position
 			'static sm:absolute',
@@ -136,7 +136,7 @@ export default {
 			{ 'sm:absolute sm:left-full sm:top-0': props.level > 1 },
 
 			// Color
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 		],
 	}),
 	separator: {

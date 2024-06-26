@@ -50,8 +50,8 @@ export default {
 			'p-4',
 
 			// Color
-			'bg-surface-0 dark:bg-surface-900',
-			'border-surface-200 dark:border-surface-700',
+			'bg-surface-0 dark:bg-dark-700',
+			'border-surface-200 dark:border-dark-300',
 			'text-surface-700 dark:text-white/80',
 		],
 	}),
@@ -66,8 +66,8 @@ export default {
 			'p-4',
 
 			// Color
-			'bg-surface-0 dark:bg-surface-900',
-			'border-surface-200 dark:border-surface-700',
+			'bg-surface-0 dark:bg-dark-700',
+			'border-surface-200 dark:border-dark-300',
 			'text-surface-700 dark:text-white/80',
 		],
 	},
@@ -117,7 +117,7 @@ export default {
 			// Color
 			'text-surface-700 dark:text-white/80',
 			{ 'bg-primary-highlight text-primary-highlight-inverse': context.selected },
-			{ 'bg-surface-0 text-surface-600 dark:bg-surface-900': !context.selected },
+			{ 'bg-surface-0 text-surface-600 dark:bg-dark-700': !context.selected },
 
 			// Hover & Flexbox
 			{
@@ -152,8 +152,8 @@ export default {
 			context?.size === 'small' ? 'py-[0.375rem] px-2' : context?.size === 'large' ? 'py-[0.9375rem] px-5' : 'py-3 px-4',
 
 			// Color
-			(props.sortable === '' || props.sortable) && context.sorted ? 'bg-primary-highlight text-primary-highlight-inverse' : 'bg-surface-0 text-surface-700 dark:text-white/80 dark:bg-surface-900',
-			'border-surface-200 dark:border-surface-700',
+			(props.sortable === '' || props.sortable) && context.sorted ? 'bg-primary-highlight text-primary-highlight-inverse' : 'bg-surface-0 text-surface-700 dark:text-white/80 dark:bg-dark-700',
+			'border-surface-200 dark:border-dark-300',
 
 			// States
 			{ 'hover:bg-surface-100 dark:hover:bg-surface-80/50': (props.sortable === '' || props.sortable) && !context?.sorted },
@@ -192,8 +192,8 @@ export default {
 				context?.size === 'small' ? 'py-[0.375rem] px-2' : context?.size === 'large' ? 'py-[0.9375rem] px-5' : 'py-3 px-4',
 
 				// Color
-				(props.sortable === '' || props.sortable) && context.sorted ? 'bg-primary-highlight text-primary-highlight-inverse' : 'bg-surface-0 text-surface-700 dark:text-white/80 dark:bg-surface-900',
-				'border-surface-200 dark:border-surface-700',
+				(props.sortable === '' || props.sortable) && context.sorted ? 'bg-primary-highlight text-primary-highlight-inverse' : 'bg-surface-0 text-surface-700 dark:text-white/80 dark:bg-dark-700',
+				'border-surface-200 dark:border-dark-300',
 
 				// States
 				{ 'hover:bg-surface-100 dark:hover:bg-surface-80/50': (props.sortable === '' || props.sortable) && !context?.sorted },
@@ -227,7 +227,7 @@ export default {
 
 				// Shape
 				'border-0 border-b border-solid',
-				'border-surface-200 dark:border-surface-700',
+				'border-surface-200 dark:border-dark-300',
 				{
 					'border-x-0 border-l-0': !context.showGridlines,
 				},
@@ -356,7 +356,7 @@ export default {
 
 					// Colors
 					{
-						'border-surface-300 dark:border-surface-700': !context.checked && !props.invalid,
+						'border-surface-300 dark:border-dark-300': !context.checked && !props.invalid,
 						'bg-surface-0  dark:bg-surface-950': !context.checked && !props.invalid && !props.disabled,
 						'border-primary bg-primary': context.checked,
 					},
@@ -400,7 +400,7 @@ export default {
 					'opacity-0',
 					'rounded-md',
 					'outline-none',
-					'border-1 border-surface-200 dark:border-surface-700',
+					'border-1 border-surface-200 dark:border-dark-300',
 
 					// Misc
 					'appearance-none',

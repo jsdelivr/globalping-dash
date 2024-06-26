@@ -9,7 +9,7 @@ export default {
 			// Size
 			{ 'h-full': props.scrollable && props.scrollHeight === 'flex' },
 
-			'border border-surface-300 rounded-2xl overflow-hidden bg-surface-0 dark:bg-surface-900 min-h-[110px]',
+			'border border-surface-300 rounded-2xl overflow-hidden bg-surface-0 dark:bg-dark-700 min-h-[110px]',
 		],
 	}),
 	loadingoverlay: {
@@ -26,7 +26,7 @@ export default {
 			'w-full h-full',
 
 			// Color
-			'bg-surface-100/40 dark:bg-surface-900/40',
+			'bg-surface-100/40 dark:bg-dark-700/40',
 
 			// Transition
 			'transition duration-200',
@@ -56,8 +56,8 @@ export default {
 			'px-4 py-3',
 
 			// Color
-			'bg-surface-0 dark:bg-surface-900',
-			'border-surface-300 dark:border-surface-700',
+			'bg-surface-0 dark:bg-dark-700',
+			'border-surface-300 dark:border-dark-300',
 			'text-bluegray-700 dark:text-white/80',
 		],
 	}),
@@ -67,7 +67,7 @@ export default {
 	thead: ({ context }) => ({
 		class: [
 			{
-				'bg-surface-0 dark:bg-surface-900 top-0 z-40 sticky': context.scrollable,
+				'bg-surface-0 dark:bg-dark-700 top-0 z-40 sticky': context.scrollable,
 			},
 		],
 	}),
@@ -76,7 +76,7 @@ export default {
 			{
 				'sticky z-20': instance.frozenRow && context.scrollable,
 			},
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 		],
 	}),
 	tfoot: ({ context }) => ({
@@ -97,8 +97,8 @@ export default {
 			'mx-4 px-2 pb-6',
 
 			// Color
-			'bg-surface-0 dark:bg-surface-900',
-			'border-surface-300 dark:border-surface-700',
+			'bg-surface-0 dark:bg-dark-700',
+			'border-surface-300 dark:border-dark-300',
 			'text-surface-700 dark:text-white/80',
 		],
 	},
@@ -124,8 +124,8 @@ export default {
 				context?.size === 'small' ? 'py-[0.375rem] px-2' : context?.size === 'large' ? 'py-[0.9375rem] px-5' : 'pt-1 pb-2 px-4',
 
 				// Color
-				(props.sortable === '' || props.sortable) && context.sorted ? 'bg-primary-highlight text-primary-highlight-inverse' : 'bg-surface-0 dark:text-white/80 dark:bg-surface-900',
-				'border-surface-300 dark:border-surface-700 ',
+				(props.sortable === '' || props.sortable) && context.sorted ? 'bg-primary-highlight text-primary-highlight-inverse' : 'bg-surface-0 dark:text-white/80 dark:bg-dark-700',
+				'border-surface-300 dark:border-dark-300 ',
 
 				// States
 				{ 'hover:bg-surface-100 dark:hover:bg-surface-800/50': (props.sortable === '' || props.sortable) && !context?.sorted },
@@ -161,7 +161,7 @@ export default {
 
 				// Shape
 				{ 'first:border-l border-r border-b': context?.showGridlines },
-				{ 'bg-surface-0 dark:bg-surface-900': parent.instance.frozenRow || props.frozen || props.frozen === '' },
+				{ 'bg-surface-0 dark:bg-dark-700': parent.instance.frozenRow || props.frozen || props.frozen === '' },
 
 				// Spacing
 				{ 'py-[0.375rem] px-2': context?.size === 'small' && !state.d_editing },
@@ -170,7 +170,7 @@ export default {
 				{ 'py-[0.6rem] px-2': state.d_editing },
 
 				// Color
-				'border-surface-300 dark:border-surface-700',
+				'border-surface-300 dark:border-dark-300',
 			],
 		}),
 		footercell: ({ context }) => ({
@@ -189,9 +189,9 @@ export default {
 				context?.size === 'small' ? 'p-2' : context?.size === 'large' ? 'p-5' : 'p-4',
 
 				// Color
-				'border-surface-300 dark:border-surface-700',
+				'border-surface-300 dark:border-dark-300',
 				'text-surface-700 dark:text-white/80',
-				'bg-surface-0 dark:bg-surface-900',
+				'bg-surface-0 dark:bg-dark-700',
 			],
 		}),
 		sorticon: ({ context }) => ({
@@ -232,9 +232,9 @@ export default {
 				'min-w-[12.5rem]',
 
 				// Color
-				'bg-surface-0 dark:bg-surface-900',
+				'bg-surface-0 dark:bg-dark-700',
 				'text-surface-800 dark:text-white/80',
-				'dark:border-surface-700',
+				'dark:border-dark-300',
 			],
 		},
 		filtermatchmodedropdown: {
@@ -252,8 +252,8 @@ export default {
 					'rounded-md',
 
 					// Color and Background
-					'bg-surface-0 dark:bg-surface-900',
-					'border border-surface-300 dark:border-surface-700',
+					'bg-surface-0 dark:bg-dark-700',
+					'border border-surface-300 dark:border-dark-300',
 					'text-surface-800 dark:text-white/80',
 					'placeholder:text-surface-400 dark:placeholder:text-surface-500',
 
@@ -293,7 +293,7 @@ export default {
 
 				// Color
 				{ 'text-surface-700 dark:text-white/80': !context?.highlighted },
-				{ 'bg-surface-0 dark:bg-surface-900 text-surface-700 dark:text-white/80': !context?.highlighted },
+				{ 'bg-surface-0 dark:bg-dark-700 text-surface-700 dark:text-white/80': !context?.highlighted },
 				{ 'bg-primary-highlight text-primary-highlight-inverse': context?.highlighted },
 
 				// States
@@ -334,7 +334,7 @@ export default {
 
 					// Color and Background
 					'bg-surface-0 dark:bg-surface-950',
-					'border border-surface-300 dark:border-surface-700',
+					'border border-surface-300 dark:border-dark-300',
 
 					// Transitions
 					'transition-all',
@@ -407,11 +407,11 @@ export default {
 			panel: {
 				class: [
 					// Colors
-					'bg-surface-0 dark:bg-surface-900',
+					'bg-surface-0 dark:bg-dark-700',
 					'text-surface-700 dark:text-white/80',
 
 					// Shape
-					'border border-surface-300 dark:border-surface-700',
+					'border border-surface-300 dark:border-dark-300',
 					'rounded-md',
 					'shadow-md',
 				],
@@ -600,7 +600,7 @@ export default {
 
 				// Color
 				{ 'bg-primary-highlight text-primary-highliht-inverse': context.active },
-				'dark:text-white/70 dark:hover:text-white/80 dark:bg-surface-900',
+				'dark:text-white/70 dark:hover:text-white/80 dark:bg-dark-700',
 
 				// States
 				'hover:text-surface-700 hover:bg-surface-300/20',
@@ -818,7 +818,7 @@ export default {
 
 					{
 						'text-surface-700 dark:text-white/80': props.value !== props.modelValue && props.value !== undefined,
-						'border-surface-300 dark:border-surface-700': props.value !== props.modelValue && props.value !== undefined && !props.invalid,
+						'border-surface-300 dark:border-dark-300': props.value !== props.modelValue && props.value !== undefined && !props.invalid,
 						'border-primary': props.value == props.modelValue && props.value !== undefined && !props.disabled,
 					},
 					{
@@ -826,7 +826,7 @@ export default {
 						'peer-hover:border-primary-hover': !props.disabled && props.value == props.modelValue && props.value !== undefined,
 						'peer-hover:[&>*:first-child]:bg-primary-600 dark:peer-hover:[&>*:first-child]:bg-primary-300': !props.disabled && props.value == props.modelValue && props.value !== undefined,
 						'peer-focus-visible:ring-1 peer-focus-visible:ring-primary-500 dark:peer-focus-visible:ring-primary-400': !props.disabled,
-						'bg-surface-200 [&>*:first-child]:bg-surface-600 dark:bg-surface-700 dark:[&>*:first-child]:bg-surface-400 border-surface-300 dark:border-surface-700 select-none pointer-events-none cursor-default': props.disabled,
+						'bg-surface-200 [&>*:first-child]:bg-surface-600 dark:bg-surface-700 dark:[&>*:first-child]:bg-surface-400 border-surface-300 dark:border-dark-300 select-none pointer-events-none cursor-default': props.disabled,
 					},
 				],
 			}),
@@ -851,7 +851,7 @@ export default {
 					'opacity-0',
 					'rounded-md',
 					'outline-none',
-					'border-1 border-surface-300 dark:border-surface-700',
+					'border-1 border-surface-300 dark:border-dark-300',
 
 					// Misc
 					'appearance-none',
@@ -870,7 +870,7 @@ export default {
 
 					// Conditions
 					{
-						'bg-surface-0 dark:bg-surface-900 backface-hidden invisible scale-[0.1]': !props.modelValue,
+						'bg-surface-0 dark:bg-dark-700 backface-hidden invisible scale-[0.1]': !props.modelValue,
 						'bg-primary transform visible translate-z-0 scale-[1.1]': props.modelValue,
 					},
 
@@ -914,7 +914,7 @@ export default {
 
 					// Colors
 					{
-						'border-surface-300 dark:border-surface-700': !context.checked && !props.invalid,
+						'border-surface-300 dark:border-dark-300': !context.checked && !props.invalid,
 						'bg-surface-0 dark:bg-surface-950': !context.checked && !props.invalid && !props.disabled,
 						'border-primary bg-primary': context.checked,
 					},
@@ -958,7 +958,7 @@ export default {
 					'opacity-0',
 					'rounded',
 					'outline-none',
-					'border border-surface-300 dark:border-surface-700',
+					'border border-surface-300 dark:border-dark-300',
 
 					// Misc
 					'appearance-none',
@@ -1015,7 +1015,7 @@ export default {
 
 					// Colors
 					{
-						'border-surface-300 dark:border-surface-700': !context.checked && !props.invalid,
+						'border-surface-300 dark:border-dark-300': !context.checked && !props.invalid,
 						'bg-surface-0 dark:bg-surface-950': !context.checked && !props.invalid && !props.disabled,
 						'border-primary bg-primary': context.checked,
 					},
@@ -1059,7 +1059,7 @@ export default {
 					'opacity-0',
 					'rounded',
 					'outline-none',
-					'border border-surface-300 dark:border-surface-700',
+					'border border-surface-300 dark:border-dark-300',
 
 					// Misc
 					'appearance-none',
@@ -1098,8 +1098,8 @@ export default {
 				'dark:text-white/80',
 				{ 'bg-surface-50 align-top': expanded },
 				{ 'bg-primary-highlight text-primary-highlight-inverse': context.selected },
-				{ 'bg-surface-0 dark:bg-surface-900': !context.selected },
-				{ 'font-bold bg-surface-0 dark:bg-surface-900 z-20': props.frozenRow },
+				{ 'bg-surface-0 dark:bg-dark-700': !context.selected },
+				{ 'font-bold bg-surface-0 dark:bg-dark-700 z-20': props.frozenRow },
 				{ 'odd:bg-surface-0 odd:text-surface-600 dark:odd:bg-surface-900 even:bg-surface-50 even:text-surface-600 dark:even:bg-surface-800/50': context.stripedRows },
 
 				// Shape
@@ -1118,13 +1118,13 @@ export default {
 		};
 	},
 	rowexpansion: {
-		class: 'bg-surface-0 dark:bg-surface-900 dark:text-white/80',
+		class: 'bg-surface-0 dark:bg-dark-700 dark:text-white/80',
 	},
 	rowgroupheader: {
-		class: [ 'sticky z-20', 'bg-surface-0 text-surface-600 dark:text-white/70', 'dark:bg-surface-900' ],
+		class: [ 'sticky z-20', 'bg-surface-0 text-surface-600 dark:text-white/70', 'dark:bg-dark-700' ],
 	},
 	rowgroupfooter: {
-		class: [ 'sticky z-20', 'bg-surface-0 text-surface-600 dark:text-white/70', 'dark:bg-surface-900' ],
+		class: [ 'sticky z-20', 'bg-surface-0 text-surface-600 dark:text-white/70', 'dark:bg-dark-700' ],
 	},
 	rowgrouptoggler: {
 		class: [

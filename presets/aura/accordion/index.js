@@ -1,7 +1,7 @@
 export default {
 	accordiontab: {
 		root: {
-			class: [ 'mb-0', 'border-b border-surface-200 dark:border-surface-700' ],
+			class: [ 'mb-0', 'border-b border-surface-200 dark:border-dark-300' ],
 		},
 		header: ({ props }) => ({
 			class: [
@@ -31,7 +31,7 @@ export default {
 				'border-0',
 
 				// Color
-				'bg-surface-0 dark:bg-surface-900',
+				'bg-surface-0 dark:bg-dark-700',
 				'text-bluegray-600 dark:text-surface-0/80',
 
 				// Transition
@@ -60,7 +60,7 @@ export default {
 				'border-0 rounded-none',
 
 				// Color
-				'bg-surface-0 dark:bg-surface-900',
+				'bg-surface-0 dark:bg-dark-700',
 				'text-bluegray-600 dark:text-surface-0/70',
 			],
 		},

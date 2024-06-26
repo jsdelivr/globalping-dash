@@ -8,7 +8,7 @@ export default {
 			'p-4',
 
 			// Color
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 
 			// Misc
 			'overflow-x-auto',

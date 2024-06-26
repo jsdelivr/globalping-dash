@@ -11,7 +11,7 @@ export default {
 			'mt-3 absolute left-0 top-0',
 
 			// Color
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-surface-0/80',
 
 			// Before: Arrow
@@ -20,7 +20,7 @@ export default {
 		],
 	},
 	content: {
-		class: [ 'p-4 items-center flex', 'rounded-t-lg', 'border-x border-t last:border-b border-surface-200 dark:border-surface-700' ],
+		class: [ 'p-4 items-center flex', 'rounded-t-lg', 'border-x border-t last:border-b border-surface-200 dark:border-dark-300' ],
 	},
 	icon: {
 		class: 'text-2xl mr-4',
@@ -42,9 +42,9 @@ export default {
 			'rounded-b-lg',
 
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-surface-0/80',
-			'border-x border-b border-surface-200 dark:border-surface-700',
+			'border-x border-b border-surface-200 dark:border-dark-300',
 		],
 	},
 	rejectbutton: {

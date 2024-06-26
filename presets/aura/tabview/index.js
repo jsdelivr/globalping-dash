@@ -32,7 +32,7 @@ export default {
 			'rounded-none',
 
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-surface-0/80',
 			'shadow-sm',
 		],
@@ -53,7 +53,7 @@ export default {
 
 			// Colors
 			'text-surface-700 dark:text-surface-0/80',
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'shadow-sm',
 		],
 	},
@@ -67,8 +67,8 @@ export default {
 			'p-0 m-0',
 
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
-			'border-b dark:border-surface-700',
+			'bg-surface-0 dark:bg-dark-700',
+			'border-b dark:border-dark-300',
 			'text-surface-900 dark:text-surface-0/80',
 		],
 	},
@@ -106,11 +106,11 @@ export default {
 
 				// Colors and Conditions
 				{
-					'dark:border-surface-700': parent.state.d_activeIndex !== context.index,
-					'bg-surface-0 dark:bg-surface-900': parent.state.d_activeIndex !== context.index,
+					'dark:border-dark-300': parent.state.d_activeIndex !== context.index,
+					'bg-surface-0 dark:bg-dark-700': parent.state.d_activeIndex !== context.index,
 					'text-surface-700 dark:text-surface-0/80': parent.state.d_activeIndex !== context.index,
 
-					'bg-surface-0 dark:bg-surface-900': parent.state.d_activeIndex === context.index,
+					'bg-surface-0 dark:bg-dark-700': parent.state.d_activeIndex === context.index,
 					'border-primary': parent.state.d_activeIndex === context.index,
 					'text-primary': parent.state.d_activeIndex === context.index,
 				},
@@ -149,7 +149,7 @@ export default {
 			'border-br-md border-bl-md',
 
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-900 dark:text-surface-0/80',
 		],
 	},

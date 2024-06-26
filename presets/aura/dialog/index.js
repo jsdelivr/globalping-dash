@@ -12,7 +12,7 @@ export default {
 			'm-0',
 
 			// Color
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'[&:last-child]:border-b',
 			'border-surface-200 dark:border-bluegray-900',
 
@@ -184,7 +184,7 @@ export default {
 			'rounded-b-lg',
 
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-bluegray-900 dark:text-surface-0/80',
 			'border border-t-0 border-b-0',
 			'border-surface-200 dark:border-bluegray-900',

@@ -10,9 +10,9 @@ export default {
 			'p-1',
 
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-white/80',
-			'border border-surface-200 dark:border-surface-700',
+			'border border-surface-200 dark:border-dark-300',
 		],
 	},
 	menu: {
@@ -101,7 +101,7 @@ export default {
 			// Shape
 			'shadow-md',
 			'rounded-md',
-			'dark:border dark:border-surface-700',
+			'dark:border dark:border-dark-300',
 
 			// Position
 			'static sm:absolute',
@@ -109,7 +109,7 @@ export default {
 			{ 'sm:absolute sm:left-full sm:top-0': props.level > 1 },
 
 			// Color
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 		],
 	}),
 	submenuicon: {

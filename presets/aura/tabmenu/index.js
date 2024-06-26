@@ -12,8 +12,8 @@ export default {
 			'p-0 m-0',
 
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
-			'border-b-2 border-surface-200 dark:border-surface-700',
+			'bg-surface-0 dark:bg-dark-700',
+			'border-b-2 border-surface-200 dark:border-dark-300',
 			'text-surface-900 dark:text-surface-0/80',
 		],
 	},
@@ -40,11 +40,11 @@ export default {
 
 			// Colors and Conditions
 			{
-				'border-surface-200 dark:border-surface-700': state.d_activeIndex !== context.index,
-				'bg-surface-0 dark:bg-surface-900': state.d_activeIndex !== context.index,
+				'border-surface-200 dark:border-dark-300': state.d_activeIndex !== context.index,
+				'bg-surface-0 dark:bg-dark-700': state.d_activeIndex !== context.index,
 				'text-surface-700 dark:text-surface-0/80': state.d_activeIndex !== context.index,
 
-				'bg-surface-0 dark:bg-surface-900': state.d_activeIndex === context.index,
+				'bg-surface-0 dark:bg-dark-700': state.d_activeIndex === context.index,
 				'border-primary': state.d_activeIndex === context.index,
 				'text-primary': state.d_activeIndex === context.index,
 			},

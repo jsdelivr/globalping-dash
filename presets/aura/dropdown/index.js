@@ -14,7 +14,7 @@ export default {
 			{ 'bg-surface-0 dark:bg-surface-950': !props.disabled },
 
 			'border',
-			{ 'dark:border-surface-700': parent.instance.$name != 'InputGroup' },
+			{ 'dark:border-dark-300': parent.instance.$name != 'InputGroup' },
 			{ 'dark:border-surface-600': parent.instance.$name == 'InputGroup' },
 			{ 'border-surface-300 dark:border-surface-600': !props.invalid },
 
@@ -98,11 +98,11 @@ export default {
 	panel: {
 		class: [
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-white/80',
 
 			// Shape
-			'border border-surface-300 dark:border-surface-700',
+			'border border-surface-300 dark:border-dark-300',
 			'rounded-md',
 			'shadow-md',
 		],
@@ -195,8 +195,8 @@ export default {
 
 			// Color
 			'text-surface-700 dark:text-white/80',
-			'bg-surface-0 dark:bg-surface-900',
-			'border-surface-300 dark:border-surface-700',
+			'bg-surface-0 dark:bg-dark-700',
+			'border-surface-300 dark:border-dark-300',
 		],
 	},
 	filtercontainer: {
@@ -215,7 +215,7 @@ export default {
 			// Color
 			'text-surface-700 dark:text-white/80',
 			'bg-surface-0 dark:bg-surface-950',
-			'border-surface-200 dark:border-surface-700',
+			'border-surface-200 dark:border-dark-300',
 
 			// Shape
 			'border',

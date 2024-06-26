@@ -9,7 +9,7 @@ export default {
 
 			// Color
 			'bg-surface-0 dark:bg-surface-950 text-surface-700 dark:text-surface-0',
-			'border border-surface-200 dark:border-surface-700',
+			'border border-surface-200 dark:border-dark-300',
 
 			// Sizing & Overflow
 			'h-72 overflow-auto',

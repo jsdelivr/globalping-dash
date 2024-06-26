@@ -24,8 +24,8 @@ export default {
 			'rounded-md',
 
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
-			'border border-surface-300 dark:border-surface-700',
+			'bg-surface-0 dark:bg-dark-700',
+			'border border-surface-300 dark:border-dark-300',
 
 			// States
 			'hover:border-surface-400 dark:hover:border-surface-600',
@@ -50,7 +50,7 @@ export default {
 			'shadow-md border',
 
 			// Colors
-			'bg-surface-800 dark:bg-surface-900 border-surface-600 dark:border-surface-700',
+			'bg-surface-800 dark:bg-dark-700 border-surface-600 dark:border-dark-300',
 		],
 	}),
 	selector: {

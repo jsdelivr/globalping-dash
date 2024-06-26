@@ -11,7 +11,7 @@ export default {
 			'border-0 rounded-md',
 
 			// Color
-			// 'bg-surface-0 dark:bg-surface-900',
+			// 'bg-surface-0 dark:bg-dark-700',
 			// 'text-surface-500 dark:text-white/60',
 		],
 	},
@@ -187,7 +187,7 @@ export default {
 
 				// Color and Background
 				'bg-surface-0 dark:bg-surface-950',
-				'border border-surface-300 dark:border-surface-700',
+				'border border-surface-300 dark:border-dark-300',
 
 				// Transitions
 				'transition-all',
@@ -260,11 +260,11 @@ export default {
 		panel: {
 			class: [
 				// Colors
-				'bg-surface-0 dark:bg-surface-900',
+				'bg-surface-0 dark:bg-dark-700',
 				'text-surface-700 dark:text-white/80',
 
 				// Shape
-				'border border-surface-300 dark:border-surface-700',
+				'border border-surface-300 dark:border-dark-300',
 				'rounded-md',
 				'shadow-md',
 			],
@@ -341,7 +341,7 @@ export default {
 					'text-surface-600 dark:text-surface-200',
 					'placeholder:text-surface-400 dark:placeholder:text-surface-500',
 					'bg-surface-0 dark:bg-surface-950',
-					'border border-surface-300 dark:border-surface-700',
+					'border border-surface-300 dark:border-dark-300',
 
 					// Sizing and Spacing
 					'w-[1%] max-w-[3rem]',
@@ -384,7 +384,7 @@ export default {
 
 				// Color and Background
 				'bg-surface-0 dark:bg-surface-950',
-				'border border-surface-300 dark:border-surface-700',
+				'border border-surface-300 dark:border-dark-300',
 
 				// Transitions
 				'transition-all',
@@ -457,11 +457,11 @@ export default {
 		panel: {
 			class: [
 				// Colors
-				'bg-surface-0 dark:bg-surface-900',
+				'bg-surface-0 dark:bg-dark-700',
 				'text-surface-700 dark:text-white/80',
 
 				// Shape
-				'border border-surface-300 dark:border-surface-700',
+				'border border-surface-300 dark:border-dark-300',
 				'rounded-md',
 				'shadow-md',
 			],

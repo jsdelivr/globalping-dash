@@ -4,10 +4,10 @@ export default {
 			'rounded-md',
 
 			// Colors
-			{ 'bg-surface-0 dark:bg-surface-900': !props.disabled },
+			{ 'bg-surface-0 dark:bg-dark-700': !props.disabled },
 			'text-surface-700 dark:text-white/80',
 			'border',
-			{ 'border-surface-300 dark:border-surface-700': !props.invalid },
+			{ 'border-surface-300 dark:border-dark-300': !props.invalid },
 
 			// Disabled State
 			{ 'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default': props.disabled },
@@ -101,8 +101,8 @@ export default {
 
 			// Color
 			'text-surface-700 dark:text-white/80',
-			'bg-surface-0 dark:bg-surface-900',
-			'border-surface-300 dark:border-surface-700',
+			'bg-surface-0 dark:bg-dark-700',
+			'border-surface-300 dark:border-dark-300',
 		],
 	},
 	filtercontainer: {
@@ -121,7 +121,7 @@ export default {
 			// Color
 			'text-surface-700 dark:text-white/80',
 			'bg-surface-0 dark:bg-surface-950',
-			'border-surface-200 dark:border-surface-700',
+			'border-surface-200 dark:border-dark-300',
 
 			// Shape
 			'border',

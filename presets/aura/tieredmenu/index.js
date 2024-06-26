@@ -9,8 +9,8 @@ export default {
 			// 'p-1',
 
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
-			'border border-surface-200 dark:border-surface-700',
+			'bg-surface-0 dark:bg-dark-700',
+			'border border-surface-200 dark:border-dark-300',
 		],
 	},
 	menu: {
@@ -88,14 +88,14 @@ export default {
 
 			// Shape
 			'shadow-none sm:shadow-md',
-			'border border-surface-200 dark:border-surface-700',
+			'border border-surface-200 dark:border-dark-300',
 
 			// Position
 			'static sm:absolute',
 			'z-10',
 
 			// Color
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 		],
 	},
 	separator: {

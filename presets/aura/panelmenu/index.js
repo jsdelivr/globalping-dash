@@ -1,6 +1,6 @@
 export default {
 	panel: {
-		class: 'p-1 overflow-hidden mb-3 border border-surface-200 dark:border-surface-700 rounded-md',
+		class: 'p-1 overflow-hidden mb-3 border border-surface-200 dark:border-dark-300 rounded-md',
 	},
 	header: {
 		class: [ 'rounded-[4px]', 'outline-none' ],
@@ -11,7 +11,7 @@ export default {
 			'rounded-[4px]',
 
 			// Color
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-600 dark:text-surface-0/80',
 			{ 'text-surface-900': context.active },
 
@@ -58,7 +58,7 @@ export default {
 
 			// Color
 			'text-surface-700 dark:text-white/80',
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 		],
 	},
 	menu: {

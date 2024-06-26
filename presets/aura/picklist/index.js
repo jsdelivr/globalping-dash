@@ -203,8 +203,8 @@ export default {
 			'rounded-md',
 
 			// Color
-			'bg-surface-0 dark:bg-surface-900',
-			'border border-surface-200 dark:border-surface-700',
+			'bg-surface-0 dark:bg-dark-700',
+			'border border-surface-200 dark:border-dark-300',
 			'outline-none',
 		],
 	},
@@ -220,7 +220,7 @@ export default {
 
 			// Color
 			'text-surface-700 dark:text-white/80',
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 		],
 	},
 	sourcelist: {
@@ -237,7 +237,7 @@ export default {
 
 			// Color
 			'text-surface-700 dark:text-white/80',
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 
 			// Focus & Outline
 			'outline-none',
@@ -262,7 +262,7 @@ export default {
 			'transition duration-200',
 
 			// Color
-			{ 'text-surface-700 dark:text-white/80 bg-surface-0 dark:bg-surface-900': !context.active },
+			{ 'text-surface-700 dark:text-white/80 bg-surface-0 dark:bg-dark-700': !context.active },
 			{ 'text-primary-highlight-inverse bg-primary-highlight': context.active },
 
 			// State
@@ -662,8 +662,8 @@ export default {
 			'rounded-md',
 
 			// Color
-			'bg-surface-0 dark:bg-surface-900',
-			'border border-surface-200 dark:border-surface-700',
+			'bg-surface-0 dark:bg-dark-700',
+			'border border-surface-200 dark:border-dark-300',
 			'outline-none',
 		],
 	},
@@ -679,7 +679,7 @@ export default {
 
 			// Color
 			'text-surface-700 dark:text-white/80',
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 		],
 	},
 	targetlist: {
@@ -696,7 +696,7 @@ export default {
 
 			// Color
 			'text-surface-700 dark:text-white/80',
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 
 			// Focus & Outline
 			'outline-none',

@@ -111,11 +111,11 @@ export default {
 	panel: {
 		class: [
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-white/80',
 
 			// Shape
-			'border border-surface-300 dark:border-surface-700',
+			'border border-surface-300 dark:border-dark-300',
 			'rounded-md',
 			'shadow-md',
 		],
@@ -136,8 +136,8 @@ export default {
 
 			// Color
 			'text-surface-700 dark:text-white/80',
-			'bg-surface-0 dark:bg-surface-900',
-			'border-surface-300 dark:border-surface-700',
+			'bg-surface-0 dark:bg-dark-700',
+			'border-surface-300 dark:border-dark-300',
 		],
 	},
 	headerCheckboxContainer: {
@@ -198,7 +198,7 @@ export default {
 
 				// Colors
 				{
-					'border-surface-300 dark:border-surface-700': !context.checked && !props.invalid,
+					'border-surface-300 dark:border-dark-300': !context.checked && !props.invalid,
 					'bg-surface-0 dark:bg-surface-950': !context.checked && !props.invalid && !props.disabled,
 					'border-primary bg-primary': context.checked,
 				},
@@ -242,7 +242,7 @@ export default {
 				'opacity-0',
 				'rounded',
 				'outline-none',
-				'border border-surface-300 dark:border-surface-700',
+				'border border-surface-300 dark:border-dark-300',
 
 				// Misc
 				'appearance-none',
@@ -302,7 +302,7 @@ export default {
 
 				// Colors
 				{
-					'border-surface-300 dark:border-surface-700': !context.checked && !props.invalid,
+					'border-surface-300 dark:border-dark-300': !context.checked && !props.invalid,
 					'bg-surface-0  dark:bg-surface-950': !context.checked && !props.invalid && !props.disabled,
 					'border-primary bg-primary': context.checked,
 				},
@@ -346,7 +346,7 @@ export default {
 				'opacity-0',
 				'rounded',
 				'outline-none',
-				'border border-surface-300 dark:border-surface-700',
+				'border border-surface-300 dark:border-dark-300',
 
 				// Misc
 				'appearance-none',
@@ -482,7 +482,7 @@ export default {
 			// Color
 			'text-surface-700 dark:text-white/80',
 			'bg-surface-0 dark:bg-surface-950',
-			'border-surface-200 dark:border-surface-700',
+			'border-surface-200 dark:border-dark-300',
 
 			// Shape
 			'border',

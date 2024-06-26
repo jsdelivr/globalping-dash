@@ -14,7 +14,7 @@ export default {
 			'px-4 py-3',
 
 			// Color
-			props.modelValue === 'list' ? 'bg-primary border-primary text-primary-inverse' : 'bg-surface-0 dark:bg-surface-900 border-surface-200 dark:border-surface-700 text-surface-700 dark:text-white/80',
+			props.modelValue === 'list' ? 'bg-primary border-primary text-primary-inverse' : 'bg-surface-0 dark:bg-dark-700 border-surface-200 dark:border-dark-300 text-surface-700 dark:text-white/80',
 
 			// States
 			'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400',
@@ -42,7 +42,7 @@ export default {
 			'px-4 py-3',
 
 			// Color
-			props.modelValue === 'grid' ? 'bg-primary border-primary text-primary-inverse' : 'bg-surface-0 dark:bg-surface-900 border-surface-200 dark:border-surface-700 text-surface-700 dark:text-white/80',
+			props.modelValue === 'grid' ? 'bg-primary border-primary text-primary-inverse' : 'bg-surface-0 dark:bg-dark-700 border-surface-200 dark:border-dark-300 text-surface-700 dark:text-white/80',
 
 			// States
 			'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400',

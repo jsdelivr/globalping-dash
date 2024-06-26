@@ -10,7 +10,7 @@ export default {
 
 			// Colors
 			'bg-surface-0',
-			'dark:bg-surface-900',
+			'dark:bg-dark-700',
 			'text-surface-700',
 			'dark:text-white/80',
 
@@ -22,7 +22,7 @@ export default {
 			'border',
 			'border-solid',
 			'border-surface-200',
-			'dark:border-surface-700',
+			'dark:border-dark-300',
 			'border-b-0',
 
 			// Shape
@@ -85,7 +85,7 @@ export default {
 
 			// Colors
 			'bg-surface-0',
-			'dark:bg-surface-900',
+			'dark:bg-dark-700',
 			'text-surface-700',
 			'dark:text-white/80',
 
@@ -95,7 +95,7 @@ export default {
 			// Borders
 			'border border-t-0',
 			'border-surface-200',
-			'dark:border-surface-700',
+			'dark:border-dark-300',
 
 			// Shape
 			'rounded-b-lg',
@@ -116,7 +116,7 @@ export default {
 			// Borders
 			'border',
 			'border-surface-200',
-			'dark:border-surface-700',
+			'dark:border-dark-300',
 			'gap-2',
 
 			// Shape

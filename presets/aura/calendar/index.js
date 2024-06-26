@@ -102,8 +102,8 @@ export default {
 			},
 
 			// Colors
-			'bg-[#F9FAFC] dark:bg-surface-900',
-			'border-surface-200 dark:border-surface-700',
+			'bg-[#F9FAFC] dark:bg-dark-700',
+			'border-surface-200 dark:border-dark-300',
 
 			// misc
 			{ 'overflow-x-auto': props.inline },
@@ -130,8 +130,8 @@ export default {
 
 			// Colors
 			'dark:text-white/80',
-			'dark:bg-surface-900',
-			'border-surface-200 dark:border-surface-700',
+			'dark:bg-dark-700',
+			'border-surface-200 dark:border-dark-300',
 		],
 	},
 	previousbutton: {
@@ -602,7 +602,7 @@ export default {
 			'pt-2',
 
 			// Shape
-			'border-t border-surface-200 dark:border-surface-700',
+			'border-t border-surface-200 dark:border-dark-300',
 		],
 	},
 	todaybutton: {

@@ -80,7 +80,7 @@ export default {
 				'justify-center',
 
 				// Colors
-				'border-solid border-2 border-surface-200 dark:border-surface-700',
+				'border-solid border-2 border-surface-200 dark:border-dark-300',
 
 				// Colors (Conditional)
 				context.active ? 'text-primary' : 'text-surface-900 dark:text-surface-0', // Adjust colors as needed
@@ -138,7 +138,7 @@ export default {
 			],
 		}),
 		transition: {
-			class: [ 'flex flex-1', 'bg-surface-0 dark:bg-surface-900', 'text-surface-900 dark:text-surface-0' ],
+			class: [ 'flex flex-1', 'bg-surface-0 dark:bg-dark-700', 'text-surface-900 dark:text-surface-0' ],
 			enterFromClass: 'max-h-0',
 			enterActiveClass: 'overflow-hidden transition-[max-height] duration-1000 ease-[cubic-bezier(0.42,0,0.58,1)]',
 			enterToClass: 'max-h-[1000px]',
@@ -153,7 +153,7 @@ export default {
 	panelcontainer: {
 		class: [
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-900 dark:text-surface-0',
 		],
 	},

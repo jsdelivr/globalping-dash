@@ -13,7 +13,7 @@ export default {
 			{ 'bg-surface-0 dark:bg-surface-950': !context.disabled },
 
 			'border',
-			{ 'border-surface-300 dark:border-surface-700': !props.invalid },
+			{ 'border-surface-300 dark:border-dark-300': !props.invalid },
 
 			// Invalid State
 			'invalid:focus:ring-red-200',

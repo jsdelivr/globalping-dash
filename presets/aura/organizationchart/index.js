@@ -27,11 +27,11 @@ export default {
 			// Shape
 			'border',
 			'rounded-md',
-			'border-surface-200 dark:border-surface-700',
+			'border-surface-200 dark:border-dark-300',
 			// Color
 			{
 				'text-surface-600 dark:text-white/80': !context?.selected,
-				'bg-surface-0 dark:bg-surface-900': !context?.selected,
+				'bg-surface-0 dark:bg-dark-700': !context?.selected,
 				'text-primary-highlight-inverse': context?.selected,
 				'bg-primary-highlight': context?.selected,
 			},
@@ -79,7 +79,7 @@ export default {
 			{ 'border-t': context.lineTop },
 
 			// Color
-			'border-surface-200 dark:border-surface-700',
+			'border-surface-200 dark:border-dark-300',
 		],
 	}),
 	lineright: ({ context }) => ({
@@ -94,7 +94,7 @@ export default {
 			'rounded-none',
 
 			// Color
-			{ 'border-t border-surface-200 dark:border-surface-700': context.lineTop },
+			{ 'border-t border-surface-200 dark:border-dark-300': context.lineTop },
 		],
 	}),
 	nodecell: {
@@ -114,7 +114,7 @@ export default {
 
 			// Shape
 			'rounded-full',
-			'border border-surface-200 dark:border-surface-700',
+			'border border-surface-200 dark:border-dark-300',
 
 			// Color
 			'bg-inherit text-inherit',

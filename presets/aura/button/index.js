@@ -120,13 +120,13 @@ export default {
 			// Contrast Button
 			{
 				'text-white dark:text-bluegray-900': props.severity === 'contrast' && !props.text && !props.outlined && !props.plain,
-				'bg-bluegray-900 dark:bg-bluegray-0': props.severity === 'contrast' && !props.text && !props.outlined && !props.plain,
-				'border border-bluegray-900 dark:border-bluegray-0': props.severity === 'contrast' && !props.text && !props.outlined && !props.plain,
+				'bg-bluegray-900 dark:bg-surface-0': props.severity === 'contrast' && !props.text && !props.outlined && !props.plain,
+				'border border-bluegray-900 dark:border-surface-0': props.severity === 'contrast' && !props.text && !props.outlined && !props.plain,
 			},
 			// Contrast Text Button
-			{ 'text-bluegray-900 dark:text-bluegray-0': props.text && props.severity === 'contrast' && !props.plain },
+			{ 'text-bluegray-900 dark:text-surface-0': props.text && props.severity === 'contrast' && !props.plain },
 			// Contrast Outlined Button
-			{ 'text-bluegray-900 dark:text-bluegray-0 border border-bluegray-900 dark:border-bluegray-0': props.outlined && props.severity === 'contrast' && !props.plain },
+			{ 'text-bluegray-900 dark:text-surface-0 border border-bluegray-900 dark:border-surface-0': props.outlined && props.severity === 'contrast' && !props.plain },
 
 			// --- Severity Button States ---
 			'focus:outline-none focus:outline-offset-0 focus:ring-1',

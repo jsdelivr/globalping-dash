@@ -17,8 +17,8 @@ body {
   font-size: 14px;
 }
 
-.dark *, .dark ::before, .dark ::after {
-  border-color: var(--dark-600);
+*, ::before, ::after {
+  @apply dark:border-dark-600;
 }
 
 .filler {

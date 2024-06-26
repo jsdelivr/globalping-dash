@@ -21,8 +21,8 @@
 					<i v-if="newNotifications.length" class="pi pi-circle-fill text-primary absolute right-3 top-1 text-[0.3rem]"/>
 				</Button>
 				<Button class="text-surface-0 flex items-center" text rounded @click="toggleProfile">
-					<i class="pi pi-user rounded-full border-[1.5px] p-2" style="font-size: 1.1rem"/>
-					<p class="m-2">{{ user.github_username }}</p>
+					<i class="pi pi-user border-surface-0 rounded-full border-[1.5px] p-2" style="font-size: 1.1rem"/>
+					<p class="m-2 font-semibold">{{ user.github_username }}</p>
 					<i class="pi pi-chevron-down" style="font-size: 0.7rem"/>
 				</Button>
 				<TieredMenu ref="profilePanel" :model="items" popup>
@@ -87,7 +87,7 @@
 			<NuxtLink active-class="active" class="sidebar-link" to="/probes"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="probe"/>Probes</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/credits"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="coin"/>Credits</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database text-bluegray-400 pl-4 pr-3 text-xl"/>Tokens</NuxtLink>
-			<div class="bg-surface-0 mt-auto rounded-xl border p-6">
+			<div class="bg-surface-0 dark:bg-dark-500 dark:border-dark-300 mt-auto rounded-xl border p-6">
 				<p class="mb-2 font-bold">Sponsorship</p>
 				<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
 				<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank" rel="noopener">

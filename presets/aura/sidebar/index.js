@@ -43,7 +43,7 @@ export default {
 
 			// Colors
 			// 'bg-surface-0 dark:bg-dark-700',
-			// 'text-surface-700 dark:text-surface-0/80',
+			// 'text-surface-700 dark:text-surface-0',
 		],
 	},
 	title: {

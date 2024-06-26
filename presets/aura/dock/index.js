@@ -26,7 +26,7 @@ export default {
 			'rounded-md',
 
 			// Color
-			'bg-surface-0/10 dark:bg-dark-700/20 border border-surface-0/20',
+			'bg-surface-0 dark:bg-dark-700/20 border border-surface-0',
 			'backdrop-blur-sm',
 
 			// Spacing

@@ -32,7 +32,7 @@ export default {
 
 				// Color
 				'bg-surface-0 dark:bg-dark-700',
-				'text-bluegray-600 dark:text-surface-0/80',
+				'text-bluegray-600 dark:text-surface-0',
 
 				// Transition
 				'transition duration-200 ease-in-out',
@@ -61,7 +61,7 @@ export default {
 
 				// Color
 				'bg-surface-0 dark:bg-dark-700',
-				'text-bluegray-600 dark:text-surface-0/70',
+				'text-bluegray-600 dark:text-surface-0',
 			],
 		},
 		transition: {

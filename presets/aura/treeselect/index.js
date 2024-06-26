@@ -272,7 +272,7 @@ export default {
 					// Colors
 					{
 						'text-white dark:text-surface-950': !instance.partialChecked,
-						'text-surface-700 dark:text-surface-0/80': instance.partialChecked,
+						'text-surface-700 dark:text-surface-0': instance.partialChecked,
 					},
 
 					// Transitions
@@ -346,7 +346,7 @@ export default {
 			],
 		}),
 		loadingicon: {
-			class: [ 'text-surface-500 dark:text-surface-0/70', 'absolute top-[50%] right-[50%] -mt-2 -mr-2 animate-spin' ],
+			class: [ 'text-surface-500 dark:text-surface-0', 'absolute top-[50%] right-[50%] -mt-2 -mr-2 animate-spin' ],
 		},
 		searchicon: {
 			class: [

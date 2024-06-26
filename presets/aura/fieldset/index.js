@@ -10,7 +10,7 @@ export default {
 			// Color
 			'border border-surface-200 dark:border-dark-300',
 			'bg-surface-0 dark:bg-dark-700',
-			'text-surface-700 dark:text-surface-0/80',
+			'text-surface-700 dark:text-surface-0',
 		],
 	},
 	legend: ({ props }) => ({
@@ -26,7 +26,7 @@ export default {
 			'rounded-md',
 
 			// Color
-			'text-surface-700 dark:text-surface-0/80',
+			'text-surface-700 dark:text-surface-0',
 			'bg-surface-0 dark:bg-dark-700',
 
 			// Transition

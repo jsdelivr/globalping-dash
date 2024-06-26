@@ -41,7 +41,7 @@ export default {
 			'mb-0',
 
 			// Color
-			'text-surface-600 dark:text-surface-0/60',
+			'text-surface-600 dark:text-surface-0',
 		],
 	},
 	content: {

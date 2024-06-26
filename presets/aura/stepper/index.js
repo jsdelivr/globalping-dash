@@ -114,7 +114,7 @@ export default {
 				'ml-2',
 
 				// Text
-				context.active ? 'text-primary' : 'text-surface-700 dark:text-surface-0/80',
+				context.active ? 'text-primary' : 'text-surface-700 dark:text-surface-0',
 				'font-medium',
 
 				// Transitions

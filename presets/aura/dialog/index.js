@@ -47,7 +47,7 @@ export default {
 			'rounded-tr-lg',
 
 			// Colors
-			'text-bluegray-900 dark:text-surface-0/80',
+			'text-bluegray-900 dark:text-surface-0',
 			'border border-b-0',
 			'border-surface-200 dark:border-dark-300',
 		],
@@ -159,7 +159,7 @@ export default {
 			},
 
 			// Colors
-			'text-bluegray-900 dark:text-surface-0/80',
+			'text-bluegray-900 dark:text-surface-0',
 			'border border-t-0 border-b-0',
 			'border-surface-200 dark:border-dark-300',
 
@@ -185,7 +185,7 @@ export default {
 
 			// Colors
 			'bg-surface-0 dark:bg-dark-700',
-			'text-bluegray-900 dark:text-surface-0/80',
+			'text-bluegray-900 dark:text-surface-0',
 			'border border-t-0 border-b-0',
 			'border-surface-200 dark:border-dark-300',
 		],

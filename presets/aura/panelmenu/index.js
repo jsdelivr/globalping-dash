@@ -12,7 +12,7 @@ export default {
 
 			// Color
 			'bg-surface-0 dark:bg-dark-700',
-			'text-surface-600 dark:text-surface-0/80',
+			'text-surface-600 dark:text-surface-0',
 			{ 'text-surface-900': context.active },
 
 			// States
@@ -101,7 +101,7 @@ export default {
 			// States
 			'hover:bg-surface-100 dark:hover:bg-[rgba(255,255,255,0.03)] hover:text-surface-700 dark:hover:text-white/80',
 			{
-				'bg-surface-200 text-surface-700 dark:text-white/80 dark:bg-surface-0/10': context.focused,
+				'bg-surface-200 text-surface-700 dark:text-white/80 dark:bg-surface-0': context.focused,
 			},
 
 			// Misc

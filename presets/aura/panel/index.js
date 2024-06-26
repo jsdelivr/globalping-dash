@@ -15,7 +15,7 @@ export default {
 			'flex items-center justify-between',
 
 			// Colors
-			'text-surface-700 dark:text-surface-0/80',
+			'text-surface-700 dark:text-surface-0',
 			'bg-transparent',
 
 			// Shape
@@ -44,7 +44,7 @@ export default {
 
 			// Color
 			'bg-transparent',
-			'text-surface-600 dark:text-surface-0/80',
+			'text-surface-600 dark:text-surface-0',
 
 			// States
 			'hover:text-surface-800 dark:hover:text-surface-0',
@@ -71,7 +71,7 @@ export default {
 			'border-0 border-t-0 last:rounded-br-md last:rounded-bl-md',
 
 			// Color
-			'text-surface-700 dark:text-surface-0/80',
+			'text-surface-700 dark:text-surface-0',
 		],
 	},
 	footer: {
@@ -83,7 +83,7 @@ export default {
 			'border-0 border-t-0 rounded-br-lg rounded-bl-lg',
 
 			// Color
-			'text-surface-700 dark:text-surface-0/80',
+			'text-surface-700 dark:text-surface-0',
 		],
 	},
 	transition: {

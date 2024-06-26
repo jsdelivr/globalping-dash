@@ -14,7 +14,7 @@ export default {
 			// Colors
 			'bg-surface-0 dark:bg-dark-700',
 			'border-b-2 border-surface-200 dark:border-dark-300',
-			'text-surface-900 dark:text-surface-0/80',
+			'text-surface-900 dark:text-surface-0',
 		],
 	},
 	menuitem: {
@@ -42,7 +42,7 @@ export default {
 			{
 				'border-surface-200 dark:border-dark-300': state.d_activeIndex !== context.index,
 				'bg-surface-0 dark:bg-dark-700': state.d_activeIndex !== context.index,
-				'text-surface-700 dark:text-surface-0/80': state.d_activeIndex !== context.index,
+				'text-surface-700 dark:text-surface-0': state.d_activeIndex !== context.index,
 
 				'bg-surface-0 dark:bg-dark-700': state.d_activeIndex === context.index,
 				'border-primary': state.d_activeIndex === context.index,

@@ -33,7 +33,7 @@ export default {
 
 			// Colors
 			'bg-surface-0 dark:bg-dark-700',
-			'text-surface-700 dark:text-surface-0/80',
+			'text-surface-700 dark:text-surface-0',
 			'shadow-sm',
 		],
 	},
@@ -52,7 +52,7 @@ export default {
 			'rounded-none',
 
 			// Colors
-			'text-surface-700 dark:text-surface-0/80',
+			'text-surface-700 dark:text-surface-0',
 			'bg-surface-0 dark:bg-dark-700',
 			'shadow-sm',
 		],
@@ -69,7 +69,7 @@ export default {
 			// Colors
 			'bg-surface-0 dark:bg-dark-700',
 			'border-b dark:border-dark-300',
-			'text-surface-900 dark:text-surface-0/80',
+			'text-surface-900 dark:text-surface-0',
 		],
 	},
 	tabpanel: {
@@ -108,7 +108,7 @@ export default {
 				{
 					'dark:border-dark-300': parent.state.d_activeIndex !== context.index,
 					'bg-surface-0 dark:bg-dark-700': parent.state.d_activeIndex !== context.index,
-					'text-surface-700 dark:text-surface-0/80': parent.state.d_activeIndex !== context.index,
+					'text-surface-700 dark:text-surface-0': parent.state.d_activeIndex !== context.index,
 
 					'bg-surface-0 dark:bg-dark-700': parent.state.d_activeIndex === context.index,
 					'border-primary': parent.state.d_activeIndex === context.index,
@@ -150,7 +150,7 @@ export default {
 
 			// Colors
 			'bg-surface-0 dark:bg-dark-700',
-			'text-surface-900 dark:text-surface-0/80',
+			'text-surface-900 dark:text-surface-0',
 		],
 	},
 };

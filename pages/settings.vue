@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-surface-50 flex min-h-full flex-col p-6">
+	<div class="flex min-h-full flex-col p-6">
 		<div>
 			<h1 class="col-span-2 text-2xl font-bold">Settings</h1>
 		</div>

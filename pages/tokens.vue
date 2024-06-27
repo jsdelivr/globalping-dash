@@ -15,7 +15,7 @@
 				data-key="id"
 				:total-records="tokensCount"
 				:loading="loading"
-				:row-class="() => ''"
+				:row-class="() => '!bg-surface-0 dark:!bg-dark-800 align-middle'"
 				class="pb-3"
 			>
 				<Column header="Name" field="name" header-class="pl-1 pt-3"/>
@@ -49,7 +49,7 @@
 					</template>
 				</Column>
 				<template #expansion="">
-					<div class="bg-surface-50 flex rounded-xl p-4">
+					<div class="bg-surface-50 dark:bg-dark-600 flex rounded-xl p-4">
 						<div><i class="pi pi-info-circle mr-3 text-xl"/></div>
 						<div>
 							<p class="font-bold">Don't forget to copy your new personal access token.</p>
@@ -79,8 +79,8 @@
 				@page="onPage($event)"
 			/>
 		</div>
-		<div v-else class="bg-surface-0 mt-6 rounded-xl border px-4 py-3">
-			<div class="bg-surface-50 rounded-xl p-6 text-center">
+		<div v-else class="bg-surface-0 dark:bg-dark-800 mt-6 rounded-xl border px-4 py-3">
+			<div class="bg-surface-50 dark:bg-dark-600 rounded-xl p-6 text-center">
 				<p class="font-semibold">No data to show</p>
 				<p class="mt-4">Adopt a probe or become a sponsor to track your credit usage</p>
 			</div>

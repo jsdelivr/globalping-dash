@@ -65,7 +65,7 @@ export default {
 				'text-primary',
 
 				// States
-				'hover:bg-primary-300/20',
+				'hover:bg-primary-300',
 				'focus:outline-none focus:outline-offset-0 focus:ring',
 				'focus:ring-primary-500 dark:focus:ring-primary-400',
 			],

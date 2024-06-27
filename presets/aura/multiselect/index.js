@@ -393,7 +393,7 @@ export default {
 
 			// States
 			'hover:text-surface-700 dark:hover:text-white/80',
-			'hover:bg-surface-100 dark:hover:bg-surface-800/80',
+			'hover:bg-surface-100 dark:hover:bg-surface-800',
 			'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-inset',
 			'focus:ring-primary-500 dark:focus:ring-primary-400',
 
@@ -433,7 +433,7 @@ export default {
 			// Colors
 			{
 				'text-surface-700 dark:text-white/80': !context.focused && !context.selected,
-				'bg-surface-200 dark:bg-surface-600/60': context.focused && !context.selected,
+				'bg-surface-200 dark:bg-surface-600': context.focused && !context.selected,
 				'text-surface-700 dark:text-white/80': context.focused && !context.selected,
 
 				'text-primary-highlight-inverse': context.selected,

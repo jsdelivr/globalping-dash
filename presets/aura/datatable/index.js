@@ -26,7 +26,7 @@ export default {
 			'w-full h-full',
 
 			// Color
-			'bg-surface-100/40 dark:bg-dark-700/40',
+			'bg-surface-100 dark:bg-dark-700',
 
 			// Transition
 			'transition duration-200',
@@ -128,7 +128,7 @@ export default {
 				'border-surface-300 dark:border-dark-300 ',
 
 				// States
-				{ 'hover:bg-surface-100 dark:hover:bg-surface-800/50': (props.sortable === '' || props.sortable) && !context?.sorted },
+				{ 'hover:bg-surface-100 dark:hover:bg-surface-800': (props.sortable === '' || props.sortable) && !context?.sorted },
 				'focus-visible:outline-none focus-visible:outline-offset-0 focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400',
 
 				// Transition
@@ -436,7 +436,7 @@ export default {
 					// Color
 					{
 						'text-surface-700 dark:text-white/80': !context.focused && !context.selected,
-						'bg-surface-200 dark:bg-surface-600/60': context.focused && !context.selected,
+						'bg-surface-200 dark:bg-surface-600': context.focused && !context.selected,
 						'text-surface-700 dark:text-white/80': context.focused && !context.selected,
 
 						'text-primary-highlight-inverse': context.selected,
@@ -475,7 +475,7 @@ export default {
 
 					'bg-transparent border-transparent',
 					'text-primary',
-					'hover:bg-primary-300/20',
+					'hover:bg-primary-300',
 
 					// Transitions
 					'transition duration-200 ease-in-out',
@@ -547,7 +547,7 @@ export default {
 					'rounded-md',
 
 					'text-primary-500 border border-primary',
-					'hover:bg-primary-300/20',
+					'hover:bg-primary-300',
 
 					// Transitions
 					'transition duration-200 ease-in-out',
@@ -603,7 +603,7 @@ export default {
 				'dark:text-white/70 dark:hover:text-white/80 dark:bg-dark-700',
 
 				// States
-				'hover:text-surface-700 hover:bg-surface-300/20',
+				'hover:text-surface-700 hover:bg-surface-300',
 				'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400',
 
 				// Transition
@@ -711,7 +711,7 @@ export default {
 
 				// States
 				'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400',
-				'hover:text-surface-700 hover:bg-surface-50 dark:hover:bg-surface-800/50',
+				'hover:text-surface-700 hover:bg-surface-50 dark:hover:bg-surface-800',
 
 				// Transition
 				'transition duration-200',
@@ -741,7 +741,7 @@ export default {
 
 				// States
 				'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400',
-				'hover:text-surface-700 hover:bg-surface-300/20',
+				'hover:text-surface-700 hover:bg-surface-300',
 
 				// Transition
 				'transition duration-200',
@@ -771,7 +771,7 @@ export default {
 
 				// States
 				'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400',
-				'hover:text-surface-700 hover:bg-surface-300/20',
+				'hover:text-surface-700 hover:bg-surface-300',
 
 				// Transition
 				'transition duration-200',
@@ -1100,14 +1100,14 @@ export default {
 				{ 'bg-primary-highlight text-primary-highlight-inverse': context.selected },
 				{ 'bg-surface-0 dark:bg-dark-700': !context.selected },
 				{ 'font-bold bg-surface-0 dark:bg-dark-700 z-20': props.frozenRow },
-				{ 'odd:bg-surface-0 odd:text-surface-600 dark:odd:bg-surface-900 even:bg-surface-50 even:text-surface-600 dark:even:bg-surface-800/50': context.stripedRows },
+				{ 'odd:bg-surface-0 odd:text-surface-600 dark:odd:bg-surface-900 even:bg-surface-50 even:text-surface-600 dark:even:bg-surface-800': context.stripedRows },
 
 				// Shape
 				'border-b last:border-b-0',
 
 				// State
 				{ 'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 ring-inset dark:focus:ring-primary-400': context.selectable },
-				{ 'hover:bg-surface-300/20 dark:hover:bg-surface-800/50 hover:text-surface-600': props.selectionMode && !context.selected },
+				{ 'hover:bg-surface-300 dark:hover:bg-surface-800 hover:text-surface-600': props.selectionMode && !context.selected },
 
 				// Transition
 				{ 'transition duration-200': (props.selectionMode && !context.selected) || props.rowHover },

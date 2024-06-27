@@ -10,7 +10,7 @@ export default {
 			{
 				'bg-blue-100/70 dark:bg-blue-500/20': props.severity == 'info',
 				'bg-green-100/70 dark:bg-green-500/20': props.severity == 'success',
-				'bg-surface-100/70 dark:bg-surface-500/20': props.severity == 'secondary',
+				'bg-surface-100 dark:bg-surface-500': props.severity == 'secondary',
 				'bg-orange-100/70 dark:bg-orange-500/20': props.severity == 'warn',
 				'bg-red-100/70 dark:bg-red-500/20': props.severity == 'error',
 				'bg-surface-950 dark:bg-surface-0': props.severity == 'contrast',
@@ -18,7 +18,7 @@ export default {
 			{
 				'border-blue-200 dark:border-blue-500/20': props.severity == 'info',
 				'border-green-200 dark:border-green-500/20': props.severity == 'success',
-				'border-surface-200 dark:border-surface-500/20': props.severity == 'secondary',
+				'border-surface-200 dark:border-surface-500': props.severity == 'secondary',
 				'border-orange-200 dark:border-orange-500/20': props.severity == 'warn',
 				'border-red-200 dark:border-red-500/20': props.severity == 'error',
 				'border-surface-950 dark:border-surface-0': props.severity == 'contrast',

@@ -8,7 +8,7 @@ export default {
 			'[&>*:first-child]:top-1/2',
 			'[&>*:first-child]:-mt-2',
 			'[&>*:first-child]:leading-none',
-			'[&>*:first-child]:text-surface-900/60 dark:[&>*:first-child]:text-white/60',
+			'[&>*:first-child]:text-surface-900 dark:[&>*:first-child]:text-white/60',
 			{
 				'[&>*:first-child]:right-3': props.iconPosition === 'right',
 				'[&>*:first-child]:left-3': props.iconPosition === 'left',

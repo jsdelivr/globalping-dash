@@ -18,7 +18,7 @@ export default {
 
 			// States
 			'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400',
-			props.modelValue === 'list' ? 'hover:bg-primary-hover' : 'hover:bg-surface-50 dark:hover:bg-surface-800/80',
+			props.modelValue === 'list' ? 'hover:bg-primary-hover' : 'hover:bg-surface-50 dark:hover:bg-surface-800',
 
 			// Transition
 			'transition duration-200',
@@ -46,7 +46,7 @@ export default {
 
 			// States
 			'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400',
-			props.modelValue === 'grid' ? 'hover:bg-primary-hover' : 'hover:bg-surface-50 dark:hover:bg-surface-800/80',
+			props.modelValue === 'grid' ? 'hover:bg-primary-hover' : 'hover:bg-surface-50 dark:hover:bg-surface-800',
 
 			// Transition
 			'transition duration-200',

@@ -21,7 +21,7 @@ export default {
 			'w-full h-full',
 
 			// Color
-			'bg-surface-100/40 dark:bg-surface-800/40',
+			'bg-surface-100 dark:bg-surface-800',
 
 			// Transition
 			'transition duration-200',
@@ -121,7 +121,7 @@ export default {
 
 			// Hover & Flexbox
 			{
-				'hover:bg-surface-100 dark:bg-surface-800/50': context.selectable && !context.selected,
+				'hover:bg-surface-100 dark:bg-surface-800': context.selectable && !context.selected,
 			},
 			'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 ring-inset dark:focus:ring-primary-400',
 
@@ -267,7 +267,7 @@ export default {
 
 				// States
 				'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400',
-				'hover:text-surface-700 hover:bg-surface-50 dark:hover:bg-surface-800/50',
+				'hover:text-surface-700 hover:bg-surface-50 dark:hover:bg-surface-800',
 
 				// Transition
 				'transition duration-200',

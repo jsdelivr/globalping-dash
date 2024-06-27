@@ -26,7 +26,7 @@ export default {
 			{
 				'border-blue-200 dark:border-blue-500/20': props.message.severity == 'info',
 				'border-green-200 dark:border-green-500/20': props.message.severity == 'success',
-				'border-surface-300 dark:border-surface-500/20': props.message.severity == 'secondary',
+				'border-surface-300 dark:border-surface-500': props.message.severity == 'secondary',
 				'border-orange-200 dark:border-orange-500/20': props.message.severity == 'warn',
 				'border-red-200 dark:border-red-500/20': props.message.severity == 'error',
 				'border-surface-950 dark:border-surface-0': props.message.severity == 'contrast',

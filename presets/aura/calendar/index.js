@@ -158,7 +158,7 @@ export default {
 
 			// States
 			'hover:text-surface-700 dark:hover:text-white/80',
-			'hover:bg-surface-100 dark:hover:bg-surface-500/10  ',
+			'hover:bg-surface-100 dark:hover:bg-surface-500  ',
 			'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10',
 
 			// Misc
@@ -250,7 +250,7 @@ export default {
 
 			// States
 			'hover:text-surface-700 dark:hover:text-white/80',
-			'hover:bg-surface-100 dark:hover:bg-surface-500/10  ',
+			'hover:bg-surface-100 dark:hover:bg-surface-500  ',
 			'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10',
 
 			// Misc
@@ -317,7 +317,7 @@ export default {
 			// States
 			'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10',
 			{
-				'hover:bg-surface-100 dark:hover:bg-surface-500/10': !context.selected && !context.disabled,
+				'hover:bg-surface-100 dark:hover:bg-surface-500': !context.selected && !context.disabled,
 				'hover:bg-primary-highlight-hover': context.selected && !context.disabled,
 			},
 			{
@@ -348,7 +348,7 @@ export default {
 			// States
 			'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10',
 			{
-				'hover:bg-surface-100 dark:hover:bg-surface-500/10': !context.selected && !context.disabled,
+				'hover:bg-surface-100 dark:hover:bg-surface-500': !context.selected && !context.disabled,
 			},
 			{
 				'text-bluegray-300 opacity-60 cursor-default': context.disabled,
@@ -529,7 +529,7 @@ export default {
 
 			// States
 			'hover:text-surface-700 dark:hover:text-white/80',
-			'hover:bg-surface-100 dark:hover:bg-surface-500/10  ',
+			'hover:bg-surface-100 dark:hover:bg-surface-500  ',
 			'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10',
 
 			// Misc
@@ -560,7 +560,7 @@ export default {
 
 			// States
 			'hover:text-surface-700 dark:hover:text-white/80',
-			'hover:bg-surface-100 dark:hover:bg-surface-500/10  ',
+			'hover:bg-surface-100 dark:hover:bg-surface-500  ',
 			'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10',
 
 			// Misc
@@ -626,7 +626,7 @@ export default {
 
 				// States
 				'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10',
-				'hover:bg-primary-300/20',
+				'hover:bg-primary-300',
 
 				// Misc
 				'cursor-pointer',
@@ -654,7 +654,7 @@ export default {
 
 				// States
 				'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10',
-				'hover:bg-primary-300/20',
+				'hover:bg-primary-300',
 
 				// Misc
 				'cursor-pointer',

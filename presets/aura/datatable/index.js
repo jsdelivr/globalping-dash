@@ -1096,7 +1096,7 @@ export default {
 			class: [
 			// Color
 				'dark:text-surface-0',
-				{ 'bg-surface-50 dark:bg-dark-650 align-top !cursor-auto': expanded },
+				{ 'bg-surface-50 dark:!bg-dark-650 align-top !cursor-auto': expanded },
 				{ 'bg-primary-highlight text-primary-highlight-inverse': context.selected },
 				{ 'bg-surface-0 dark:bg-dark-700': !context.selected },
 				{ 'font-bold bg-surface-0 dark:bg-dark-700 z-20': props.frozenRow },

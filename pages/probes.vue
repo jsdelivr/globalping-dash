@@ -158,9 +158,16 @@
 										</div>
 									</div>
 									<div class="mt-6 flex">
-										<Button label="Add tag" icon="pi pi-plus" severity="secondary" @click="addTag"/>
-										<Button label="Save" icon="pi pi-check" severity="secondary" class="ml-auto" @click="saveTags(slotProps.data.id)"/>
-										<Button label="Cancel" severity="secondary" class="bg-surface-300 ml-1" @click="cancelTags"/>
+										<Button label="Add tag" icon="pi pi-plus" severity="secondary" outlined @click="addTag"/>
+										<Button
+											label="Save"
+											icon="pi pi-check"
+											severity="secondary"
+											outlined
+											class="bg-surface-200 ml-auto"
+											@click="saveTags(slotProps.data.id)"
+										/>
+										<Button label="Cancel" severity="secondary" outlined class="ml-1" @click="cancelTags"/>
 									</div>
 									<p class="text-bluegray-400 text-2xs mt-3">
 										Public tags of the probe. They can be used as location filters for a measurement. Format is <code class="font-bold">u-${prefix}-${value}</code> where prefix is user/organization github login, and value is your custom string.
@@ -174,7 +181,14 @@
 									<div>
 										<Tag v-for="tag in slotProps.data.tags" :key="tag" class="my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
 									</div>
-									<Button class="mt-3" label="Edit tags" icon="pi pi-pencil" severity="secondary" @click="editTags(slotProps.data.tags)"/>
+									<Button
+										class="mt-3"
+										label="Edit tags"
+										icon="pi pi-pencil"
+										severity="secondary"
+										outlined
+										@click="editTags(slotProps.data.tags)"
+									/>
 									<p class="text-bluegray-400 text-2xs mt-3">Public tags of the probe. They can be used as location filters for a measurement.</p>
 								</div>
 							</div>

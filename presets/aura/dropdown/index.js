@@ -11,12 +11,12 @@ export default {
 			{ 'first:ml-0 ml-[-1px]': parent.instance.$name == 'InputGroup' && !props.showButtons },
 
 			// Color and Background
-			{ 'bg-surface-0 dark:bg-surface-950': !props.disabled },
+			{ 'bg-surface-0 dark:bg-dark-900': !props.disabled },
 
 			'border',
 			{ 'dark:border-dark-300': parent.instance.$name != 'InputGroup' },
 			{ 'dark:border-surface-600': parent.instance.$name == 'InputGroup' },
-			{ 'border-surface-300 dark:border-surface-600': !props.invalid },
+			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
 
 			// Invalid State
 			'invalid:focus:ring-red-200',
@@ -49,7 +49,7 @@ export default {
 			// Color and Background
 			'bg-transparent',
 			'border-0',
-			{ 'text-surface-800 dark:text-white/80': props.modelValue != undefined, 'text-surface-400 dark:text-surface-500': props.modelValue == undefined },
+			{ 'text-surface-800 dark:text-surface-0': props.modelValue != undefined, 'text-surface-400 dark:text-surface-500': props.modelValue == undefined },
 			'placeholder:text-surface-400 dark:placeholder:text-surface-500',
 
 			// Sizing and Spacing
@@ -86,7 +86,7 @@ export default {
 
 			// Color and Background
 			'bg-transparent',
-			'text-surface-500',
+			'dark:text-surface-0',
 
 			// Size
 			'w-8',
@@ -135,18 +135,11 @@ export default {
 
 			// Colors
 			{
-				'text-surface-700 dark:text-white/80': !context.focused && !context.selected,
-				'bg-surface-200 dark:bg-surface-600': context.focused && !context.selected,
-				'text-surface-700 dark:text-white/80': context.focused && !context.selected,
-
-				'text-primary-highlight-inverse': context.selected,
-				'bg-primary-highlight': context.selected,
+				'text-surface-900 dark:text-surface-0': context.selected,
 			},
 
 			// States
-			{ 'hover:bg-surface-100 dark:hover:bg-[rgba(255,255,255,0.03)]': !context.focused && !context.selected },
-			{ 'hover:bg-primary-highlight-hover': context.selected },
-			{ 'hover:text-surface-700 hover:bg-surface-100 dark:hover:text-white dark:hover:bg-[rgba(255,255,255,0.03)]': context.focused && !context.selected },
+			'hover:bg-surface-100 dark:hover:bg-dark-600',
 
 			// Transition
 			'transition-shadow duration-200',
@@ -214,7 +207,7 @@ export default {
 
 			// Color
 			'text-surface-700 dark:text-white/80',
-			'bg-surface-0 dark:bg-surface-950',
+			'bg-surface-0 dark:bg-dark-900',
 			'border-surface-200 dark:border-dark-300',
 
 			// Shape

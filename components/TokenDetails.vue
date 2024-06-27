@@ -1,5 +1,5 @@
 <template>
-	<div class="text-bluegray-700 border-t px-5 py-7">
+	<div class="text-bluegray-700 dark:text-surface-0 border-t px-5 py-7">
 		<p>Token name<i class="text-primary align-text-bottom">*</i></p>
 		<InputText
 			v-model="name"

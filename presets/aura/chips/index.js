@@ -30,7 +30,7 @@ export default {
 			// Color
 			'text-surface-700 dark:text-white/80',
 			'placeholder:text-surface-400 dark:placeholder:text-surface-500',
-			{ 'bg-surface-0 dark:bg-surface-950': !props.disabled },
+			{ 'bg-surface-0 dark:bg-dark-900': !props.disabled },
 			'border',
 			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
 
@@ -59,7 +59,7 @@ export default {
 	input: {
 		class: [
 			// Font
-			'text-base leading-[normal]',
+			'leading-[normal]',
 
 			// Size
 			'w-full',
@@ -89,7 +89,7 @@ export default {
 			'rounded',
 
 			// Colors
-			'dark:bg-surface-700',
+			'dark:bg-dark-500',
 			'border',
 			'text-bluegray-900 dark:text-white',
 

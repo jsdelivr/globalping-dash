@@ -85,6 +85,7 @@ export default defineNuxtConfig({
 						'dark-600': 'var(--dark-600)',
 						'dark-650': 'var(--dark-650)',
 						'dark-700': 'var(--dark-700)',
+						'dark-750': 'var(--dark-750)',
 						'dark-800': 'var(--dark-800)',
 						'dark-900': 'var(--dark-900)',
 					},

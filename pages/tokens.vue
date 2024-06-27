@@ -15,7 +15,7 @@
 				data-key="id"
 				:total-records="tokensCount"
 				:loading="loading"
-				:row-class="() => '!bg-surface-0 align-middle'"
+				:row-class="() => ''"
 				class="pb-3"
 			>
 				<Column header="Name" field="name" header-class="pl-1 pt-3"/>

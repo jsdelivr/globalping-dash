@@ -9,7 +9,7 @@ export default {
 
 			// Shape
 			{ 'first:rounded-l-md rounded-none last:rounded-r-md': parent.instance.$name == 'InputGroup' && !props.showButtons },
-			{ 'border-0 border-y border-l last:border-r border-surface-300 dark:border-dark-300': parent.instance.$name == 'InputGroup' && !props.showButtons },
+			{ 'border-0 border-y border-l last:border-r border-surface-300 dark:border-dark-600': parent.instance.$name == 'InputGroup' && !props.showButtons },
 			{ 'first:ml-0 -ml-px': parent.instance.$name == 'InputGroup' && !props.showButtons },
 
 			// Sizing
@@ -44,7 +44,7 @@ export default {
 				'placeholder:text-surface-400 dark:placeholder:text-surface-500',
 				{ 'bg-surface-0 dark:bg-surface-950': !context.disabled },
 				'border',
-				{ 'border-surface-300 dark:border-dark-300': !parent.props.invalid },
+				{ 'border-surface-300 dark:border-dark-600': !parent.props.invalid },
 
 				// Invalid State
 				'invalid:focus:ring-red-200',
@@ -93,7 +93,7 @@ export default {
 				'text-surface-800 dark:text-surface-0',
 				'bg-transparent',
 				{ 'dark:bg-dark-700': parent.props.showButtons && parent.props.buttonLayout !== 'stacked' },
-				'border border-surface-300 dark:border-dark-300',
+				'border border-surface-300 dark:border-dark-600',
 				{ 'border-0': parent.props.showButtons && parent.props.buttonLayout == 'stacked' },
 				{ 'border-l-0': parent.props.showButtons && parent.props.buttonLayout !== 'stacked' && parent.props.buttonLayout == 'horizontal' },
 				{ 'border-b-0': parent.props.showButtons && parent.props.buttonLayout !== 'stacked' && parent.props.buttonLayout == 'vertical' },
@@ -141,7 +141,7 @@ export default {
 				'text-surface-800 dark:text-surface-0',
 				'bg-transparent',
 				{ 'dark:bg-dark-700': parent.props.showButtons && parent.props.buttonLayout !== 'stacked' },
-				'border border-surface-300 dark:border-dark-300',
+				'border border-surface-300 dark:border-dark-600',
 				{ 'border-0': parent.props.showButtons && parent.props.buttonLayout == 'stacked' },
 				{ 'border-r-0': parent.props.showButtons && parent.props.buttonLayout !== 'stacked' && parent.props.buttonLayout == 'horizontal' },
 				{ 'border-t-0': parent.props.showButtons && parent.props.buttonLayout !== 'stacked' && parent.props.buttonLayout == 'vertical' },

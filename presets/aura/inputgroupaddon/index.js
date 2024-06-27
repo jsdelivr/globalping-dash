@@ -22,7 +22,7 @@ export default {
 			// Color
 			'bg-transparent dark:bg-dark-700',
 			'text-surface-800 dark:text-white/80',
-			'border-surface-300 dark:border-dark-300',
+			'border-surface-300 dark:border-dark-600',
 		],
 	},
 };

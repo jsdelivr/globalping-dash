@@ -33,7 +33,7 @@ export default {
 
 			// Colors
 			{
-				'border-surface-300 dark:border-dark-300': !context.checked && !props.invalid,
+				'border-surface-300 dark:border-dark-600': !context.checked && !props.invalid,
 				'bg-surface-0 dark:bg-dark-700': !context.active && !props.invalid && !props.disabled,
 				'border-primary bg-primary': context.active,
 			},
@@ -77,7 +77,7 @@ export default {
 			'opacity-0',
 			'rounded',
 			'outline-none',
-			'border border-surface-300 dark:border-dark-300',
+			'border border-surface-300 dark:border-dark-600',
 
 			// Misc
 			'appearance-none',

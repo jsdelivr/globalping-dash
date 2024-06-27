@@ -25,7 +25,7 @@ export default {
 
 			// Colors
 			'bg-surface-0 dark:bg-dark-700',
-			'border border-surface-300 dark:border-dark-300',
+			'border border-surface-300 dark:border-dark-600',
 
 			// States
 			'hover:border-surface-400 dark:hover:border-surface-600',

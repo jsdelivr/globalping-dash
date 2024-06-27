@@ -57,7 +57,7 @@ export default {
 
 			// Color
 			'bg-surface-0 dark:bg-dark-700',
-			'border-surface-300 dark:border-dark-300',
+			'border-surface-300 dark:border-dark-600',
 			'text-bluegray-700 dark:text-white/80',
 		],
 	}),
@@ -98,7 +98,7 @@ export default {
 
 			// Color
 			'bg-surface-0 dark:bg-dark-700',
-			'border-surface-300 dark:border-dark-300',
+			'border-surface-300 dark:border-dark-600',
 			'text-surface-700 dark:text-white/80',
 		],
 	},
@@ -125,7 +125,7 @@ export default {
 
 				// Color
 				(props.sortable === '' || props.sortable) && context.sorted ? 'bg-primary-highlight text-primary-highlight-inverse' : 'bg-surface-0 dark:text-white/80 dark:bg-dark-700',
-				'border-surface-300 dark:border-dark-300 ',
+				'border-surface-300 dark:border-dark-600 ',
 
 				// States
 				{ 'hover:bg-surface-100 dark:hover:bg-surface-800': (props.sortable === '' || props.sortable) && !context?.sorted },
@@ -170,7 +170,7 @@ export default {
 				{ 'py-[0.6rem] px-2': state.d_editing },
 
 				// Color
-				'border-surface-300 dark:border-dark-300',
+				'border-surface-300 dark:border-dark-600',
 			],
 		}),
 		footercell: ({ context }) => ({
@@ -189,7 +189,7 @@ export default {
 				context?.size === 'small' ? 'p-2' : context?.size === 'large' ? 'p-5' : 'p-4',
 
 				// Color
-				'border-surface-300 dark:border-dark-300',
+				'border-surface-300 dark:border-dark-600',
 				'text-surface-700 dark:text-white/80',
 				'bg-surface-0 dark:bg-dark-700',
 			],
@@ -253,7 +253,7 @@ export default {
 
 					// Color and Background
 					'bg-surface-0 dark:bg-dark-700',
-					'border border-surface-300 dark:border-dark-300',
+					'border border-surface-300 dark:border-dark-600',
 					'text-surface-800 dark:text-white/80',
 					'placeholder:text-surface-400 dark:placeholder:text-surface-500',
 
@@ -334,7 +334,7 @@ export default {
 
 					// Color and Background
 					'bg-surface-0 dark:bg-surface-950',
-					'border border-surface-300 dark:border-dark-300',
+					'border border-surface-300 dark:border-dark-600',
 
 					// Transitions
 					'transition-all',
@@ -411,7 +411,7 @@ export default {
 					'text-surface-700 dark:text-white/80',
 
 					// Shape
-					'border border-surface-300 dark:border-dark-300',
+					'border border-surface-300 dark:border-dark-600',
 					'rounded-md',
 					'shadow-md',
 				],
@@ -818,7 +818,7 @@ export default {
 
 					{
 						'text-surface-700 dark:text-white/80': props.value !== props.modelValue && props.value !== undefined,
-						'border-surface-300 dark:border-dark-300': props.value !== props.modelValue && props.value !== undefined && !props.invalid,
+						'border-surface-300 dark:border-dark-600': props.value !== props.modelValue && props.value !== undefined && !props.invalid,
 						'border-primary': props.value == props.modelValue && props.value !== undefined && !props.disabled,
 					},
 					{
@@ -826,7 +826,7 @@ export default {
 						'peer-hover:border-primary-hover': !props.disabled && props.value == props.modelValue && props.value !== undefined,
 						'peer-hover:[&>*:first-child]:bg-primary-600 dark:peer-hover:[&>*:first-child]:bg-primary-300': !props.disabled && props.value == props.modelValue && props.value !== undefined,
 						'peer-focus-visible:ring-1 peer-focus-visible:ring-primary-500 dark:peer-focus-visible:ring-primary-400': !props.disabled,
-						'bg-surface-200 [&>*:first-child]:bg-surface-600 dark:bg-surface-700 dark:[&>*:first-child]:bg-surface-400 border-surface-300 dark:border-dark-300 select-none pointer-events-none cursor-default': props.disabled,
+						'bg-surface-200 [&>*:first-child]:bg-surface-600 dark:bg-surface-700 dark:[&>*:first-child]:bg-surface-400 border-surface-300 dark:border-dark-600 select-none pointer-events-none cursor-default': props.disabled,
 					},
 				],
 			}),
@@ -851,7 +851,7 @@ export default {
 					'opacity-0',
 					'rounded-md',
 					'outline-none',
-					'border-1 border-surface-300 dark:border-dark-300',
+					'border-1 border-surface-300 dark:border-dark-600',
 
 					// Misc
 					'appearance-none',
@@ -914,7 +914,7 @@ export default {
 
 					// Colors
 					{
-						'border-surface-300 dark:border-dark-300': !context.checked && !props.invalid,
+						'border-surface-300 dark:border-dark-600': !context.checked && !props.invalid,
 						'bg-surface-0 dark:bg-surface-950': !context.checked && !props.invalid && !props.disabled,
 						'border-primary bg-primary': context.checked,
 					},
@@ -958,7 +958,7 @@ export default {
 					'opacity-0',
 					'rounded',
 					'outline-none',
-					'border border-surface-300 dark:border-dark-300',
+					'border border-surface-300 dark:border-dark-600',
 
 					// Misc
 					'appearance-none',
@@ -1015,7 +1015,7 @@ export default {
 
 					// Colors
 					{
-						'border-surface-300 dark:border-dark-300': !context.checked && !props.invalid,
+						'border-surface-300 dark:border-dark-600': !context.checked && !props.invalid,
 						'bg-surface-0 dark:bg-surface-950': !context.checked && !props.invalid && !props.disabled,
 						'border-primary bg-primary': context.checked,
 					},
@@ -1059,7 +1059,7 @@ export default {
 					'opacity-0',
 					'rounded',
 					'outline-none',
-					'border border-surface-300 dark:border-dark-300',
+					'border border-surface-300 dark:border-dark-600',
 
 					// Misc
 					'appearance-none',

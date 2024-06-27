@@ -25,7 +25,7 @@ export default {
 			'placeholder:text-bluegray-400 dark:placeholder:text-surface-500',
 			{ 'text-surface-800 dark:text-surface-0 bg-surface-0 dark:bg-dark-900': !context.disabled },
 			'border',
-			{ 'border-surface-300 dark:border-dark-300': !props.invalid },
+			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
 
 			// Invalid State
 			'invalid:focus:ring-red-200',

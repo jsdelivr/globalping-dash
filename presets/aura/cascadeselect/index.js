@@ -92,7 +92,7 @@ export default {
 			'text-surface-700 dark:text-white/80',
 
 			// Shape
-			'border border-surface-300 dark:border-dark-300',
+			'border border-surface-300 dark:border-dark-600',
 			'rounded-md',
 			'shadow-md',
 		],

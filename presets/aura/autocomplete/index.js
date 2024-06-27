@@ -42,7 +42,7 @@ export default {
 			'placeholder:text-surface-400 dark:placeholder:text-surface-500',
 			{ 'bg-surface-0 dark:bg-surface-950': !props.disabled },
 			'border',
-			{ 'border-surface-300 dark:border-dark-300': !props.invalid },
+			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
 
 			// Invalid State
 			'invalid:focus:ring-red-200',
@@ -85,7 +85,7 @@ export default {
 			'border',
 			{
 				'bg-surface-0 dark:bg-surface-950': !props.multiple,
-				' border-surface-300 dark:border-dark-300': !props.multiple && !props.invalid,
+				' border-surface-300 dark:border-dark-600': !props.multiple && !props.invalid,
 				'border-0 bg-transparent': props.multiple,
 			},
 
@@ -170,7 +170,7 @@ export default {
 			'text-surface-700 dark:text-white/80',
 
 			// Shape
-			'border border-surface-300 dark:border-dark-300',
+			'border border-surface-300 dark:border-dark-600',
 			'rounded-md',
 			'shadow-md',
 

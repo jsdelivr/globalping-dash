@@ -62,7 +62,7 @@
 										@click="editName(slotProps.data.name)"
 									/>
 								</p>
-								<p class="text-bluegray-900 col-start-2 col-end-3 row-start-2 row-end-3">{{ slotProps.data.ip }}</p>
+								<p class="text-bluegray-900 dark:text-bluegray-400 col-start-2 col-end-3 row-start-2 row-end-3">{{ slotProps.data.ip }}</p>
 							</div>
 							<div class="mb-6 mt-24 w-[200%] pl-16 pr-2">
 								<p class="border-b pb-2 font-bold">Probe details</p>
@@ -85,7 +85,7 @@
 							:ip="slotProps.data.ip"
 							:status="slotProps.data.status"
 							:hardware-device="!!slotProps.data.hardwareDevice"
-							ip-css="text-bluegray-900"
+							ip-css="text-bluegray-900 dark:text-bluegray-400"
 							class="px-2 py-3"
 						/>
 					</template>
@@ -148,10 +148,10 @@
 								<div v-if="isEditingTags">
 									<div>
 										<div v-for="(tag, index) in tags" :key="index" class="mb-2 flex items-center" :class="{ 'mb-5': !isTagValid(tag.value) }">
-											<Dropdown v-model="tag.uPrefix" class="w-40" :options="uPrefixes"/>
+											<Dropdown v-model="tag.uPrefix" class="grow" :options="uPrefixes"/>
 											<span class="mx-2">-</span>
-											<span>
-												<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-[115px]"/>
+											<span class="grow">
+												<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full"/>
 												<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
 											</span>
 											<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900 dark:text-surface-0" @click="removeTag(index)"/>
@@ -246,9 +246,9 @@
 				@page="onPage($event)"
 			/>
 		</div>
-		<div v-else class="bg-surface-0 flex grow flex-col overflow-hidden rounded-xl border">
-			<p class="text-bluegray-700 flex border-b px-6 py-3 font-bold">List of probes</p>
-			<div class="bg-surface-50 m-6 flex grow flex-col items-center justify-center rounded-xl text-center">
+		<div v-else class="bg-surface-0 dark:bg-dark-800 flex grow flex-col overflow-hidden rounded-xl border">
+			<p class="text-bluegray-700 dark:text-dark-0 flex border-b px-6 py-3 font-bold">List of probes</p>
+			<div class="bg-surface-50 dark:bg-dark-600 m-6 flex grow flex-col items-center justify-center rounded-xl text-center">
 				<img class="mx-auto w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
 				<p class="mt-6 leading-tight">
 					<b>You don't have any probes yet.</b><br><br>

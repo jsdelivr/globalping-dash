@@ -23,7 +23,7 @@ export default {
 		],
 	},
 	menuitem: {
-		class: 'text-bluegray-700 dark:text-white/80 relative my-[2px] [&:first-child]:mt-0 [&:last-child]:mb-0',
+		class: 'text-bluegray-700 dark:text-white relative my-[2px] [&:first-child]:mt-0 [&:last-child]:mb-0',
 	},
 	content: ({ context }) => ({
 		class: [

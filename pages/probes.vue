@@ -154,7 +154,7 @@
 												<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-[115px]"/>
 												<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
 											</span>
-											<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900" @click="removeTag(index)"/>
+											<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900 dark:text-surface-0" @click="removeTag(index)"/>
 										</div>
 									</div>
 									<div class="mt-6 flex">

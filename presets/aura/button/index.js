@@ -145,13 +145,13 @@ export default {
 			// { 'focus:ring-primary': props.severity === null },
 			{ 'focus:ring-0': props.severity === null },
 			// Text & Outlined Button
-			{ 'hover:bg-primary-300': (props.text || props.outlined) && props.severity === null && !props.plain },
+			// { 'hover:bg-primary-300': (props.text || props.outlined) && props.severity === null && !props.plain },
 
 			// Secondary
 			{ 'hover:bg-surface-200 dark:hover:bg-bluegray-600 hover:border-surface-200 dark:hover:border-bluegray-600': props.severity === 'secondary' && !props.text && !props.outlined && !props.plain },
 			{ 'focus:ring-bluegray-500 dark:focus:ring-bluegray-400': props.severity === 'secondary' },
 			// Text & Outlined Button
-			{ 'hover:bg-bluegray-300': (props.text || props.outlined) && props.severity === 'secondary' && !props.plain },
+			// { 'hover:bg-bluegray-300': (props.text || props.outlined) && props.severity === 'secondary' && !props.plain },
 
 			// Success
 			{ 'hover:bg-green-600 dark:hover:bg-green-300 hover:border-green-600 dark:hover:border-green-300': props.severity === 'success' && !props.text && !props.outlined && !props.plain },

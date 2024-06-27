@@ -76,7 +76,7 @@ export default {
 			{
 				'sticky z-20': instance.frozenRow && context.scrollable,
 			},
-			'bg-surface-0 dark:bg-dark-700',
+			'bg-surface-0 dark:bg-dark-700 focus:outline-none',
 		],
 	}),
 	tfoot: ({ context }) => ({
@@ -1095,7 +1095,7 @@ export default {
 		return {
 			class: [
 			// Color
-				'dark:text-surface-0',
+				'dark:text-surface-0 focus:outline-none',
 				{ 'bg-surface-50 dark:!bg-dark-650 align-top !cursor-auto': expanded },
 				{ 'bg-primary-highlight text-primary-highlight-inverse': context.selected },
 				{ 'bg-surface-0 dark:bg-dark-700': !context.selected },

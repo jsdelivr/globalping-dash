@@ -18,7 +18,7 @@
 				:total-records="probesCount"
 				:loading="loading"
 				table-class="table-fixed"
-				:row-class="() => 'cursor-pointer hover:bg-surface-50'"
+				:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-650'"
 				@row-click="toggleRow"
 			>
 				<template #header>
@@ -30,7 +30,7 @@
 							<div class="mx-2 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 pt-3">
 								<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'probe' : 'docker'" border :status="slotProps.data.status"/>
 								<div v-if="isEditingName" v-focustrap class="-mt-0.5 flex items-center border-b">
-									<InputText v-model="name" class="w-full rounded-none border-0 bg-transparent !px-0 !py-1 font-bold" autofocus @keyup.enter="saveName(slotProps.data.id)"/>
+									<InputText v-model="name" class="w-full rounded-none border-0 !bg-transparent !px-0 !py-1 font-bold" autofocus @keyup.enter="saveName(slotProps.data.id)"/>
 									<Button
 										icon="pi pi-check"
 										class="text-surface-900 h-6 w-4"
@@ -96,7 +96,7 @@
 							<div class="mb-1 flex items-center">
 								<CountryFlag :country="slotProps.data.country" size="small" class="px-6"/>
 								<div v-if="isEditingCity" v-focustrap class="-mt-0.5 ml-2 flex w-full items-center border-b">
-									<InputText v-model="city" class="w-full rounded-none border-0 bg-transparent !px-0 !py-1 font-bold" autofocus @keyup.enter="saveCity(slotProps.data.id)"/>
+									<InputText v-model="city" class="w-full rounded-none border-0 !bg-transparent !px-0 !py-1 font-bold" autofocus @keyup.enter="saveCity(slotProps.data.id)"/>
 									<Button
 										icon="pi pi-check"
 										class="text-surface-900 h-6 w-4"

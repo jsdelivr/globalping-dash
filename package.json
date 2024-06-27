@@ -22,7 +22,7 @@
 		"nuxt-icons": "^3.2.1",
 		"pinia": "^2.1.7",
 		"primeicons": "^7.0.0",
-		"primevue": "3.49.1",
+		"primevue": "3.52.0",
 		"vue": "^3.4.21",
 		"vue-country-flag-next": "^2.3.2",
 		"vue-router": "^4.3.0"

@@ -39,8 +39,8 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
       primevue:
-        specifier: 3.49.1
-        version: 3.49.1(vue@3.4.23(typescript@5.4.5))
+        specifier: 3.52.0
+        version: 3.52.0(vue@3.4.23(typescript@5.4.5))
       vue:
         specifier: ^3.4.21
         version: 3.4.23(typescript@5.4.5)
@@ -3600,6 +3600,11 @@ packages:
 
   primevue@3.49.1:
     resolution: {integrity: sha512-OmUTqbKbPB63Zqf7uA49cipDi+Qh+/13AYJPwgvsVsI4QmAKIkeibBwkOgj1CNIFlopfF79YmyBshFUAPqlw9A==}
+    peerDependencies:
+      vue: ^3.0.0
+
+  primevue@3.52.0:
+    resolution: {integrity: sha512-HLOVP5YI0ArFKUhIyfZsWmTNMaBYNCBWC/3DYvdd/Po4LY5/WXf7yIYvArE2q/3OuwSXJXvjlR8UNQeJYRSQog==}
     peerDependencies:
       vue: ^3.0.0
 
@@ -8822,6 +8827,10 @@ snapshots:
   primeicons@7.0.0: {}
 
   primevue@3.49.1(vue@3.4.23(typescript@5.4.5)):
+    dependencies:
+      vue: 3.4.23(typescript@5.4.5)
+
+  primevue@3.52.0(vue@3.4.23(typescript@5.4.5)):
     dependencies:
       vue: 3.4.23(typescript@5.4.5)
 

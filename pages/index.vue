@@ -24,7 +24,7 @@
 						<div
 							v-for="(count, name) in cities"
 							:key="name"
-							class="border-surface-300 ml-3 rounded-full border px-3 py-2"
+							class="dark:border-dark-600 ml-3 rounded-full border px-3 py-2"
 						>
 							{{ name }} <span class="text-bluegray-500">{{ count }}</span>
 						</div>
@@ -181,7 +181,7 @@
 .probe + .probe {
 	margin-left: 24px;
 	padding-left: 24px;
-	border-left: 1px solid var(--surface-300);
+	border-left-width: 1px;
 }
 
 @media (max-width: 640px) {
@@ -209,6 +209,10 @@
 		height: 100%;
 		pointer-events: none;
 		background: linear-gradient(to left, white, transparent);
+	}
+
+	.dark .probes-wrapper::after {
+		background: linear-gradient(to left, var(--dark-800), transparent);
 	}
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-surface-50 flex min-h-full flex-col p-6" :class="{'min-w-[1024px]': probes?.length}">
+	<div class="flex min-h-full flex-col p-6" :class="{'min-w-[1024px]': probes?.length}">
 		<div class="mb-6 flex">
 			<h1 class="col-span-2 text-2xl font-bold">Probes</h1>
 			<Button class="ml-auto" @click="adoptProbeDialog = true">
@@ -65,7 +65,7 @@
 								<p class="text-bluegray-900 col-start-2 col-end-3 row-start-2 row-end-3">{{ slotProps.data.ip }}</p>
 							</div>
 							<div class="mb-6 mt-24 w-[200%] pl-16 pr-2">
-								<p class="border-surface-300 border-b pb-2 font-bold">Probe details</p>
+								<p class="border-b pb-2 font-bold">Probe details</p>
 								<div id="gp-map" class="mt-3 h-32 rounded-md"/>
 								<p class="mt-3">
 									Type:
@@ -179,7 +179,7 @@
 								</div>
 							</div>
 							<div class="mt-6 w-[145%] px-2">
-								<p class="border-surface-300 border-b pb-2 font-bold">Tests (last 24h)</p>
+								<p class="border-b pb-2 font-bold">Tests (last 24h)</p>
 								<div class="pb-4 pt-8 text-center">
 									<i class="pi pi-chart-bar text-primary py-4 text-lg"/>
 									<p class="font-bold">Tests data coming soon.</p>

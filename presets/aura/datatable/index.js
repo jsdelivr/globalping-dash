@@ -9,7 +9,7 @@ export default {
 			// Size
 			{ 'h-full': props.scrollable && props.scrollHeight === 'flex' },
 
-			'border border-surface-300 rounded-2xl overflow-hidden bg-surface-0 dark:bg-dark-700 min-h-[110px]',
+			'border rounded-2xl overflow-hidden bg-surface-0 dark:bg-dark-700 min-h-[110px]',
 		],
 	}),
 	loadingoverlay: {

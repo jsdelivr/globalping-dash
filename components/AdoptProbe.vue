@@ -83,11 +83,11 @@
 					<p class="mb-4 mt-2 text-lg font-bold">Verify</p>
 					<p>Adoption code sent to <span class="font-semibold">your probe with IP address {{ ip }}</span>.</p>
 					<div class="mt-6">
-						<Button severity="secondary" class="mb-2 mr-2 !rounded-xl !border-0" :class="{'text-primary bg-[#FCF0EE] font-semibold': probeType === 'docker'}" @click="toggleProbeType">
+						<Button severity="secondary" class="mb-2 mr-2 !rounded-xl !border-0" :class="{'!text-primary !bg-[#FCF0EE] font-semibold dark:!bg-red-500/30': probeType === 'docker'}" @click="toggleProbeType">
 							<nuxt-icon class="mr-2 text-inherit" name="docker"/>
 							For Docker probes
 						</Button>
-						<Button severity="secondary" class="mb-2 mr-2 !rounded-xl !border-0" :class="{'text-primary bg-[#FCF0EE] font-semibold': probeType === 'hardware'}" @click="toggleProbeType">
+						<Button severity="secondary" class="mb-2 mr-2 !rounded-xl !border-0" :class="{'!text-primary !bg-[#FCF0EE] font-semibold dark:!bg-red-500/30': probeType === 'hardware'}" @click="toggleProbeType">
 							<nuxt-icon class="mr-2 text-inherit" name="probe"/>
 							For hardware probes
 						</Button>
@@ -95,7 +95,7 @@
 					<p class="mt-4">Now you need to check the probe's log output to find the verification code. If you're running it inside a Docker container then you can quickly find it by running this command:</p>
 					<CodeBlock class="mt-3" :commands="probeType === 'docker' ? [['docker logs -f --tail 25 globalping-probe']] : [['ssh logs@IP-ADDRESS']]"/>
 					<p class="mt-3">Find the code in the logs and input it here to verify ownership.</p>
-					<div class="bg-surface-50 mt-6 rounded-xl py-10 text-center">
+					<div class="bg-surface-50 dark:bg-dark-600 mt-6 rounded-xl py-10 text-center">
 						<InputOtp
 							v-model="code"
 							integer-only
@@ -113,13 +113,13 @@
 					</div>
 				</div>
 				<div v-else class="px-5 py-7">
-					<div class="bg-green-50 p-6">
+					<div class="rounded-xl bg-green-400/10 p-6">
 						<p class="flex items-center justify-center text-center text-lg font-bold">
 							<i class="pi pi-verified mr-2 text-green-600"/>
 							Congratulations!
 						</p>
 						<p class="mt-4 text-center">You are now the owner of the following probe:</p>
-						<div v-if="probe" class="bg-surface-0 mt-4 rounded-xl border p-3 text-center">
+						<div v-if="probe" class="bg-surface-0 dark:bg-dark-800 dark:border-dark-300 mt-4 rounded-xl border p-3 text-center">
 							<p class="font-bold">{{ probe.city }}</p>
 							<p class="flex items-center justify-center">
 								<CountryFlag :country="probe.country" size="small"/>

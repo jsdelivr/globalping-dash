@@ -5,8 +5,8 @@
 			<div
 				class="bg-surface-0 dark:bg-dark-600 dark:border-dark-300 dark:text-dark-0 flex size-8 items-center justify-center rounded-full border p-4 text-base"
 				:class="{
-					'!bg-primary text-surface-0 border-primary': active && !isSuccess,
-					'border-primary text-primary': highlighted || isSuccess,
+					'!bg-primary text-surface-0 !border-primary': active && !isSuccess,
+					'!border-primary !text-primary': highlighted || isSuccess,
 				}"
 			>
 				{{ buttonText }}

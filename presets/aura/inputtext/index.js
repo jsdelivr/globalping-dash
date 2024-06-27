@@ -23,7 +23,7 @@ export default {
 
 			// Colors
 			'placeholder:text-bluegray-400 dark:placeholder:text-surface-500',
-			{ 'text-surface-800 dark:text-white/80 bg-surface-0 dark:bg-surface-950': !context.disabled },
+			{ 'text-surface-800 dark:text-surface-0 bg-surface-0 dark:bg-dark-900': !context.disabled },
 			'border',
 			{ 'border-surface-300 dark:border-dark-300': !props.invalid },
 

@@ -16,14 +16,13 @@
 			@click="togglePlatform"
 		/>
 	</div>
-	<div class="relative mt-4 rounded-xl border p-4 pr-0">
+	<div class="dark:bg-dark-900 relative mt-4 rounded-xl border p-4 pr-0">
 		<pre v-if="(size === 'compact')" class="no-scrollbar overflow-scroll"><code class="mr-16">{{ commands[platform][size] }}</code></pre>
 		<div v-if="size === 'expanded'" class="no-scrollbar overflow-scroll">
 			<pre v-for="line in commands[platform][size]" :key="line.toString()"><code>{{ line[0] }}</code><code class="text-bluegray-300 mr-16">{{ line[1] }}</code></pre>
 		</div>
 		<div class="!absolute right-2 top-2">
 			<Button
-				class="!bg-surface-0"
 				icon="pi pi-copy"
 				severity="secondary"
 				outlined

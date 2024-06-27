@@ -36,7 +36,7 @@ export default {
 			{ 'bg-transparent border-transparent': props.text && !props.plain },
 
 			// Outlined Button
-			{ 'bg-transparent border': props.outlined && !props.plain },
+			{ border: props.outlined && !props.plain },
 
 			// --- Severity Buttons ---
 
@@ -60,7 +60,7 @@ export default {
 			// Secondary Text Button
 			{ 'text-bluegray-500 dark:text-bluegray-300': props.text && props.severity === 'secondary' && !props.plain },
 			// Secondary Outlined Button
-			{ 'text-bluegray-900 dark:text-bluegray-300 border hover:bg-bluegray-50': props.outlined && props.severity === 'secondary' && !props.plain },
+			{ 'bg-surface-0 dark:bg-dark-900 dark:hover:bg-dark-700 text-bluegray-900 dark:text-bluegray-300 border hover:bg-bluegray-50': props.outlined && props.severity === 'secondary' && !props.plain },
 
 			// Success Button
 			{

@@ -1,11 +1,10 @@
 <template>
-	<div class="relative rounded-xl border p-4 pr-0 bg-surface-0">
+	<div class="bg-surface-0 dark:bg-dark-900 relative rounded-xl border p-4 pr-0">
 		<div class="no-scrollbar overflow-scroll">
 			<pre v-for="line in commands" :key="line.toString()"><code>{{ line[0] }}</code><code class="text-bluegray-300 mr-16">{{ line[1] }}</code></pre>
 		</div>
 		<div class="!absolute right-2 top-2">
 			<Button
-				class="!bg-surface-0"
 				icon="pi pi-copy"
 				severity="secondary"
 				outlined

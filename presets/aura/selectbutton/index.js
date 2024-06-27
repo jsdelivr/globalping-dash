@@ -23,10 +23,10 @@ export default {
 			// '[&>*]:z-10',
 
 			// Color
-			'dark:bg-surface-950 border border-r-0 last:border-r',
+			'border border-r-0 last:border-r',
 			{
-				'bg-surface-200 text-bluegray-500 dark:text-white/60 before:bg-transparent': !context.active,
-				'text-primary bg-surface-0 dark:text-white/80 before:bg-surface-0 dark:before:bg-surface-800': context.active,
+				'bg-surface-200 text-bluegray-500 dark:text-surface-0 dark:bg-dark-700 before:bg-transparent': !context.active,
+				'text-primary bg-surface-0 before:bg-surface-0 dark:bg-surface-950 dark:before:bg-surface-950': context.active,
 			},
 
 			// Invalid State

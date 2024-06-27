@@ -3,7 +3,7 @@
 		<div>
 			<h1 class="col-span-2 text-2xl font-bold">Settings</h1>
 		</div>
-		<div class="bg-surface-0 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
+		<div class="bg-surface-0 dark:bg-dark-800 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Account details</h5>
 			</div>
@@ -19,15 +19,15 @@
 						text
 						label="Sync from GitHub"
 						:icon="{'pi pi-sync': true, 'pi-spin': loadingIconId === 1}"
-						class="!bg-surface-0 !absolute right-8 top-[5px] h-6 !px-1"
+						class="!absolute right-8 top-[5px] h-6 bg-transparent !px-1 hover:bg-transparent"
 						@click="syncFromGithub(1)"
 					/>
 					<i class="pi pi-lock text-bluegray-500 absolute right-3 top-[10px]"/>
-					<InputText v-model="user.github_username" disabled class="!bg-surface-0 w-full pr-44"/>
+					<InputText v-model="user.github_username" disabled class="w-full bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 			</div>
 		</div>
-		<div class="bg-surface-0 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
+		<div class="bg-surface-0 dark:bg-dark-800 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Interface</h5>
 			</div>
@@ -43,7 +43,7 @@
 				</SelectButton>
 			</div>
 		</div>
-		<div class="bg-surface-0 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
+		<div class="bg-surface-0 dark:bg-dark-800 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Other</h5>
 			</div>
@@ -57,31 +57,53 @@
 						text
 						label="Sync from GitHub"
 						:icon="{'pi pi-sync': true, 'pi-spin': loadingIconId === 2}"
-						class="!bg-surface-0 !absolute right-8 top-[5px] h-6 !px-1"
+						class="!absolute right-8 top-[5px] h-6 bg-transparent !px-1 hover:bg-transparent"
 						@click="syncFromGithub(2)"
 					/>
 					<i class="pi pi-lock text-bluegray-500 absolute right-3 top-[10px]"/>
-					<InputText v-model="organizationsString" disabled class="!bg-surface-0 w-full pr-44"/>
+					<InputText v-model="organizationsString" disabled class="w-full bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 				<p class="mt-6 font-bold">User type</p>
 				<div class="relative mt-2">
 					<i class="pi pi-lock text-bluegray-500 absolute right-3 top-[10px]"/>
-					<InputText v-model="user.user_type" disabled class="!bg-surface-0 w-full pr-44"/>
+					<InputText v-model="user.user_type" disabled class="w-full bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 			</div>
 		</div>
-		<div class="bg-surface-0 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
+		<div class="bg-surface-0 dark:bg-dark-800 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Data removal</h5>
 			</div>
 			<div class="grow">
 				<p class="mb-2 font-bold max-sm:hidden">Delete account</p>
-				<Button severity="secondary" outlined label="Delete account" @click="deleteAccount"/>
+				<Button severity="secondary" outlined label="Delete account" @click="deleteDialog = true"/>
 			</div>
 		</div>
 		<div class="mt-6 text-right">
 			<Button label="Apply settings" :loading="saveLoading" @click="save"/>
 		</div>
+		<Dialog
+			v-model:visible="deleteDialog"
+			class="min-w-[700px] max-md:min-w-[95%]"
+			modal
+			dismissable-mask
+			:draggable="false"
+			header="Delete account"
+		>
+			<div class="flex items-center">
+				<div>
+					<i class="pi pi-exclamation-triangle text-primary text-xl"/>
+				</div>
+				<div class="ml-3">
+					<p>You're about to delete your Globalping account.</p>
+					<p>Are you sure you? All your data will be lost.</p>
+				</div>
+			</div>
+			<div class="mt-7 text-right">
+				<Button class="mr-2" label="Cancel" severity="contrast" text @click="deleteDialog = false"/>
+				<Button label="Delete token" severity="danger" @click="deleteAccount"/>
+			</div>
+		</Dialog>
 	</div>
 </template>
 
@@ -166,6 +188,7 @@
 
 	// DELETE ACCOUNT
 
+	const deleteDialog = ref(false);
 	const deleteAccount = async () => {
 		try {
 			await $directus.request(deleteUser(user.id!));

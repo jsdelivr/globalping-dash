@@ -76,7 +76,7 @@
 			<OverlayPanel ref="notificationsPanel">
 				<Accordion v-if="reverseNotifications.length" class="box-border w-80" expand-icon="pi pi-chevron-right">
 					<AccordionTab v-for="notification in reverseNotifications" :key="notification.id" :header="notification.subject">
-						<span v-if="notification.message" class="notification" v-html="md.render(notification.message)"/>
+						<span v-if="notification.message" class="notification" v-html="DOMPurify.sanitize(md.render(notification.message))"/>
 					</AccordionTab>
 				</Accordion>
 				<p v-else class="w-80 p-4">No notifications</p>
@@ -106,6 +106,7 @@
 	import capitalize from 'lodash/capitalize';
 	import { readNotifications, updateNotifications } from '@directus/sdk';
 	import markdownit from 'markdown-it';
+	import DOMPurify from 'dompurify';
 
 	const { $directus } = useNuxtApp();
 

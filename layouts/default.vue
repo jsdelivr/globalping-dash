@@ -55,16 +55,16 @@
 					<NuxtLink active-class="active" class="sidebar-link" to="/settings" @click="mobileSidebar = false"><i class="pi pi-cog text-bluegray-400 pl-4 pr-3 text-xl"/>Settings</NuxtLink>
 					<button active-class="active" class="sidebar-link" @click="auth.logout"><i class="pi pi-power-off text-bluegray-400 pl-4 pr-3 text-xl"/>Log out</button>
 					<div class="flex flex-col border-t">
-						<NuxtLink class="text-bluegray-600 ml-6 mt-4 no-underline hover:underline" to="https://www.jsdelivr.com/" target="_blank">
+						<NuxtLink class="text-bluegray-600 dark:text-bluegray-100 ml-6 mt-4 no-underline hover:underline" to="https://www.jsdelivr.com/" target="_blank">
 							<i class="pi pi-external-link text-bluegray-300"/>
 							<span class="m-2">jsDelivr</span>
 						</NuxtLink>
-						<NuxtLink class="text-bluegray-600 ml-6 mt-4 no-underline hover:underline" to="https://www.jsdelivr.com/globalping" target="_blank">
+						<NuxtLink class="text-bluegray-600 dark:text-bluegray-100 ml-6 mt-4 no-underline hover:underline" to="https://www.jsdelivr.com/globalping" target="_blank">
 							<i class="pi pi-external-link text-bluegray-300"/>
 							<span class="m-2">Globalping</span>
 						</NuxtLink>
 					</div>
-					<div class="bg-surface-0 mt-8 rounded-xl border p-6">
+					<div class="bg-surface-0 dark:bg-dark-500 dark:border-dark-300 mt-8 rounded-xl border p-6">
 						<p class="mb-2 font-bold">Sponsorship</p>
 						<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
 						<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank" rel="noopener">

@@ -5,7 +5,7 @@
 			<p class="text-bluegray-700 dark:text-dark-0 flex border-b px-6 py-3 font-bold">Summary</p>
 			<div class="p-6">
 				<div class="flex max-sm:flex-wrap">
-					<div class="max-sm:bg-surface-50 flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:p-4">
+					<div class="max-sm:bg-surface-50 max-sm:dark:bg-dark-700 flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:p-4">
 						<BigIcon name="gp" border/>
 						<div><span class="mx-2 text-3xl font-bold">{{ adoptedProbes.length }}</span>Probes</div>
 					</div>
@@ -51,11 +51,11 @@
 			</p>
 			<div class="p-6">
 				<div class="flex max-sm:flex-wrap">
-					<div class="max-sm:bg-surface-50 flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:p-4">
+					<div class="max-sm:bg-surface-50 max-sm:dark:bg-dark-700 flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:p-4">
 						<BigIcon name="coin" border/>
 						<div><span class="mx-2 text-3xl font-bold">{{ total }}</span>Total</div>
 					</div>
-					<div class="ml-auto flex items-center rounded-md border px-4 max-sm:ml-0 max-sm:mt-3">
+					<div class="ml-auto flex items-center rounded-md border px-4 py-2 max-sm:ml-0 max-sm:mt-3">
 						<span class="p-button-label mr-2 font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500': !perDay }">+{{ perDay }}</span>
 						<span>Per day</span>
 					</div>
@@ -191,7 +191,7 @@
 		border-left: 0;
 		margin-top: 24px;
 		padding-top: 24px;
-		border-top: 1px solid var(--surface-300);
+		@apply border-t;
 	}
 }
 

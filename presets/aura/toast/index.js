@@ -17,7 +17,7 @@ export default {
 			// Colors
 			{
 				'bg-blue-50/90 dark:bg-blue-500/20': props.message.severity == 'info',
-				'bg-green-50/90 dark:bg-green-500/20': props.message.severity == 'success',
+				'bg-primary-50 dark:bg-green-500/20': props.message.severity == 'success',
 				'bg-surface-50 dark:bg-surface-800': props.message.severity == 'secondary',
 				'bg-orange-50/90 dark:bg-orange-500/20': props.message.severity == 'warn',
 				'bg-red-50/90 dark:bg-red-500/20': props.message.severity == 'error',
@@ -25,7 +25,7 @@ export default {
 			},
 			{
 				'border-blue-200 dark:border-blue-500/20': props.message.severity == 'info',
-				'border-green-200 dark:border-green-500/20': props.message.severity == 'success',
+				'border-primary-100 dark:border-green-500/20': props.message.severity == 'success',
 				'border-surface-300 dark:border-surface-500': props.message.severity == 'secondary',
 				'border-orange-200 dark:border-orange-500/20': props.message.severity == 'warn',
 				'border-red-200 dark:border-red-500/20': props.message.severity == 'error',
@@ -33,7 +33,7 @@ export default {
 			},
 			{
 				'text-blue-700 dark:text-blue-300': props.message.severity == 'info',
-				'text-green-700 dark:text-green-300': props.message.severity == 'success',
+				'text-primary-700 dark:text-green-300': props.message.severity == 'success',
 				'text-surface-900 dark:text-surface-300': props.message.severity == 'secondary',
 				'text-orange-700 dark:text-orange-300': props.message.severity == 'warn',
 				'text-red-500 dark:text-red-300': props.message.severity == 'error',

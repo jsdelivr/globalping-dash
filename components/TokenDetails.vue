@@ -70,7 +70,7 @@
 			A list of origins which are allowed to use the token. If empty - any origin is valid. Examples of valid origins: "www.jsdelivr.com", "www.jsdelivr.com:10000".
 		</p>
 		<div v-if="token" class="mt-7 text-right">
-			<Button class="mr-2" label="Cancel" severity="contrast" text @click="$emit('cancel')"/>
+			<Button class="mr-2" label="Cancel" severity="secondary" text @click="$emit('cancel')"/>
 			<Button
 				class="mr-2"
 				severity="info"
@@ -81,7 +81,7 @@
 			<Button label="Save" :loading="updateTokenLoading" @click="updateToken"/>
 		</div>
 		<div v-else class="mt-7 text-right">
-			<Button class="mr-2" label="Cancel" severity="contrast" text @click="$emit('cancel')"/>
+			<Button class="mr-2" label="Cancel" severity="secondary" text @click="$emit('cancel')"/>
 			<Button label="Generate token" :loading="generateTokenLoading" @click="generateToken"/>
 		</div>
 	</div>

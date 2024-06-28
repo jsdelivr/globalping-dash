@@ -120,7 +120,7 @@
 				</div>
 			</div>
 			<div class="mt-7 text-right">
-				<Button class="mr-2" label="Cancel" severity="contrast" text @click="deleteDialog = false"/>
+				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
 				<Button label="Delete token" severity="danger" @click="deleteToken"/>
 			</div>
 		</Dialog>
@@ -142,7 +142,7 @@
 				</div>
 			</div>
 			<div class="mt-7 text-right">
-				<Button class="mr-2" label="Cancel" severity="contrast" text @click="regenerateDialog = false"/>
+				<Button class="mr-2" label="Cancel" severity="secondary" text @click="regenerateDialog = false"/>
 				<Button label="Regenerate" @click="regenerateToken"/>
 			</div>
 		</Dialog>

@@ -58,7 +58,7 @@ export default {
 				'border border-surface-100 dark:border-bluegray-700': props.severity === 'secondary' && !props.text && !props.outlined && !props.plain,
 			},
 			// Secondary Text Button
-			{ 'text-bluegray-500 dark:text-bluegray-300': props.text && props.severity === 'secondary' && !props.plain },
+			{ 'text-bluegray-900 dark:text-white': props.text && props.severity === 'secondary' && !props.plain },
 			// Secondary Outlined Button
 			{ 'bg-surface-0 dark:bg-dark-900 dark:hover:bg-dark-750 text-bluegray-900 dark:text-surface-0 border hover:bg-bluegray-50': props.outlined && props.severity === 'secondary' && !props.plain },
 

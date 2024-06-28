@@ -30,7 +30,7 @@
 					</TabPanel>
 				</TabView>
 				<div class="p-5 pt-2 text-right">
-					<Button class="mr-2" label="Cancel" severity="contrast" text @click="$emit('cancel')"/>
+					<Button class="mr-2" label="Cancel" severity="secondary" text @click="$emit('cancel')"/>
 					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="nextCallback"/>
 				</div>
 			</template>
@@ -61,7 +61,7 @@
 					/>
 					<p v-if="!isIpValid" class="absolute pl-1 text-red-500">{{ invalidIpMessage }}</p>
 					<div class="mt-6 text-right">
-						<Button class="mr-2" label="Back" severity="contrast" text @click="prevCallback"/>
+						<Button class="mr-2" label="Back" severity="secondary" text @click="prevCallback"/>
 						<Button label="Send code to probe" :loading="sendAdoptionCodeLoading" @click="sendAdoptionCode(nextCallback)"/>
 					</div>
 				</div>
@@ -105,10 +105,10 @@
 							@keydown="handleKeydown"
 						/>
 						<p v-if="!isCodeValid" class="mt-3 text-red-500">{{ invalidCodeMessage }}</p>
-						<Button class="mt-3" label="Resend code" severity="contrast" text @click="resendCode"/>
+						<Button class="mt-3" label="Resend code" severity="secondary" text @click="resendCode"/>
 					</div>
 					<div class="mt-6 text-right">
-						<Button class="mr-2" label="Back" severity="contrast" text @click="prevCallback"/>
+						<Button class="mr-2" label="Back" severity="secondary" text @click="prevCallback"/>
 						<Button label="Verify the code" :loading="verifyCodeLoading" @click="verifyCode"/>
 					</div>
 				</div>

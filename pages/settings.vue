@@ -100,7 +100,7 @@
 				</div>
 			</div>
 			<div class="mt-7 text-right">
-				<Button class="mr-2" label="Cancel" severity="contrast" text @click="deleteDialog = false"/>
+				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
 				<Button label="Delete token" severity="danger" @click="deleteAccount"/>
 			</div>
 		</Dialog>

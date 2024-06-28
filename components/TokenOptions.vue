@@ -3,6 +3,7 @@
 		<Button
 			icon="pi pi-ellipsis-h"
 			text
+			severity="secondary"
 			aria-label="Options"
 			aria-haspopup="true"
 			aria-controls="overlay_tmenu"

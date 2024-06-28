@@ -144,7 +144,7 @@
 
 			await auth.refresh();
 
-			toast.add({ severity: 'success', summary: 'Saved', detail: 'All settings saved' });
+			toast.add({ severity: 'success', summary: 'Saved', detail: 'All settings saved', life: 4000 });
 		} catch (e: any) {
 			const detail = e.errors?.[0]?.message ?? e.errors ?? e.message ?? 'Request failed';
 			toast.add({ severity: 'error', summary: 'Regeneration failed', detail, life: 20000 });

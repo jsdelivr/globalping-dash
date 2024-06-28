@@ -9,7 +9,7 @@ export default {
 			// Sizes & Spacing
 			'leading-[normal]',
 			{
-				'px-4 py-2': props.size === null,
+				'px-4 py-[9px]': props.size === null,
 				'text-sm py-1.5 px-3': props.size === 'small',
 				'text-xl py-3 px-4': props.size === 'large',
 			},

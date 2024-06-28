@@ -2,7 +2,6 @@
 	<div>
 		<Button
 			icon="pi pi-ellipsis-h"
-			severity="contrast"
 			text
 			aria-label="Options"
 			aria-haspopup="true"

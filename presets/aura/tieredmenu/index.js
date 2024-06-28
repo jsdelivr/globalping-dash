@@ -2,7 +2,7 @@ export default {
 	root: {
 		class: [
 			// Shape
-			'rounded-md',
+			'rounded-md shadow-lg',
 
 			// Size
 			'min-w-[12rem]',

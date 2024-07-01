@@ -15,6 +15,7 @@ declare global {
 
   type Credits = {
     amount: number;
+    user_id: string;
   };
 
   type CreditsAddition = {

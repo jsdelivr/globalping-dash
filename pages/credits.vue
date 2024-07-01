@@ -83,68 +83,77 @@
 	const lazyParams = ref<Partial<DataTablePageEvent>>({});
 
 	const { data: creditsStats } = await useLazyAsyncData('credits-stats', async () => {
-		console.log('user.id', user.id);
-		const [ credits, additions, deductions ] = await Promise.all([
-			$directus.request<[{amount: number}]>(readItems('gp_credits', {
-				filter: { user_id: { _eq: user.id } },
-			})),
-			$directus.request<[{sum: {amount: number}}]>(aggregate('gp_credits_additions', {
-				aggregate: { sum: 'amount' },
-				query: { filter: {
-					github_id: { _eq: user.external_identifier || 'admin' },
-					// @ts-ignore
-					date_created: { _gte: '$NOW(-30 day)' },
-				} },
-			})),
-			$directus.request<[{sum: {amount: number}}]>(aggregate('gp_credits_deductions', {
-				aggregate: { sum: 'amount' },
-				query: { filter: {
-					user_id: { _eq: user.id },
-					// @ts-ignore
-					date: { _gte: '$NOW(-30 day)' },
-				} },
-			})),
-		]);
+		try {
+			const [ credits, additions, deductions ] = await Promise.all([
+				$directus.request<[{amount: number}]>(readItems('gp_credits', {
+					filter: { user_id: { _eq: user.id } },
+				})),
+				$directus.request<[{sum: {amount: number}}]>(aggregate('gp_credits_additions', {
+					aggregate: { sum: 'amount' },
+					query: { filter: {
+						github_id: { _eq: user.external_identifier || 'admin' },
+						// @ts-ignore
+						date_created: { _gte: '$NOW(-30 day)' },
+					} },
+				})),
+				$directus.request<[{sum: {amount: number}}]>(aggregate('gp_credits_deductions', {
+					aggregate: { sum: 'amount' },
+					query: { filter: {
+						user_id: { _eq: user.id },
+						// @ts-ignore
+						date: { _gte: '$NOW(-30 day)' },
+					} },
+				})),
+			]);
 
-		return {
-			credits: credits[0]?.amount || 0,
-			additions: additions[0]?.sum.amount || 0,
-			deductions: deductions[0]?.sum.amount || 0,
-		};
+			return {
+				credits: credits[0]?.amount || 0,
+				additions: additions[0]?.sum.amount || 0,
+				deductions: deductions[0]?.sum.amount || 0,
+			};
+		} catch (e: any) {
+			errorHandler(e);
+			throw e;
+		}
 	}, { default: () => ({ credits: 0, additions: 0, deductions: 0 }) });
 
 	const loadLazyData = async (event?: PageState) => {
 		loading.value = true;
 		lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
 
-		const [
-			{ amountBeforeChanges, changes },
-			[{ count: additionsCount }],
-			[{ count: deductionsCount }],
-		] = await Promise.all([
-			$directus.request<{amountBeforeChanges: number, changes: CreditsChange[]}>(customEndpoint({ method: 'GET', path: '/credits-timeline', params: {
-				offset: lazyParams.value.first,
-				limit: 5,
-			} })),
-			$directus.request<[{count: number}]>(aggregate('gp_credits_additions', {
-				aggregate: { count: '*' },
-				query: { filter: { github_id: { _eq: user.external_identifier || 'admin' } } },
-			})),
-			$directus.request<[{count: number}]>(aggregate('gp_credits_deductions', {
-				aggregate: { count: '*' },
-				query: { filter: { user_id: { _eq: user.id } } },
-			})),
-		]);
+		try {
+			const [
+				{ amountBeforeChanges, changes },
+				[{ count: additionsCount }],
+				[{ count: deductionsCount }],
+			] = await Promise.all([
+				$directus.request<{amountBeforeChanges: number, changes: CreditsChange[]}>(customEndpoint({ method: 'GET', path: '/credits-timeline', params: {
+					offset: lazyParams.value.first,
+					limit: 5,
+				} })),
+				$directus.request<[{count: number}]>(aggregate('gp_credits_additions', {
+					aggregate: { count: '*' },
+					query: { filter: { github_id: { _eq: user.external_identifier || 'admin' } } },
+				})),
+				$directus.request<[{count: number}]>(aggregate('gp_credits_deductions', {
+					aggregate: { count: '*' },
+					query: { filter: { user_id: { _eq: user.id } } },
+				})),
+			]);
 
-		creditsChanges.value = [
-			...changes.map(addition => ({
-				...addition,
-				date_created: addition.date_created.split('T')[0],
-			})),
-		];
+			creditsChanges.value = [
+				...changes.map(addition => ({
+					...addition,
+					date_created: addition.date_created.split('T')[0],
+				})),
+			];
 
-		startAmount.value = amountBeforeChanges;
-		creditsChangesCount.value = additionsCount + deductionsCount;
+			startAmount.value = amountBeforeChanges;
+			creditsChangesCount.value = additionsCount + deductionsCount;
+		} catch (e) {
+			errorHandler(e);
+		}
+
 		loading.value = false;
 	};
 

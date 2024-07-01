@@ -331,41 +331,46 @@
 		loading.value = true;
 		lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
 
-		const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
-			$directus.request(readItems('gp_adopted_probes', {
-				filter: { userId: { _eq: user.id } },
-				offset: lazyParams.value.first,
-				limit: 5,
-			})),
-			$directus.request<[{count: number}]>(aggregate('gp_adopted_probes', {
-				query: { filter: { userId: { _eq: user.id } } },
-				aggregate: { count: '*' },
-			})),
-			$directus.request(readItems('gp_credits_additions', {
-				filter: {
-					github_id: { _eq: user.external_identifier || 'admin' },
-					// @ts-ignore
-					date_created: { _gte: '$NOW(-1 month)' },
-				},
-			})),
-		]);
+		try {
+			const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
+				$directus.request(readItems('gp_adopted_probes', {
+					filter: { userId: { _eq: user.id } },
+					offset: lazyParams.value.first,
+					limit: 5,
+				})),
+				$directus.request<[{count: number}]>(aggregate('gp_adopted_probes', {
+					query: { filter: { userId: { _eq: user.id } } },
+					aggregate: { count: '*' },
+				})),
+				$directus.request(readItems('gp_credits_additions', {
+					filter: {
+						github_id: { _eq: user.external_identifier || 'admin' },
+						// @ts-ignore
+						date_created: { _gte: '$NOW(-1 month)' },
+					},
+				})),
+			]);
 
-		const creditsByProbeId: Record<number, number> = {};
+			const creditsByProbeId: Record<number, number> = {};
 
-		for (const addition of creditsAdditions) {
-			const { adopted_probe: adoptedProbe, amount } = addition;
+			for (const addition of creditsAdditions) {
+				const { adopted_probe: adoptedProbe, amount } = addition;
 
-			if (!adoptedProbe) {
-				continue;
+				if (!adoptedProbe) {
+					continue;
+				}
+
+				totalCredits.value += amount;
+				creditsByProbeId[adoptedProbe] = creditsByProbeId[adoptedProbe] ? creditsByProbeId[adoptedProbe] + amount : amount;
 			}
 
-			totalCredits.value += amount;
-			creditsByProbeId[adoptedProbe] = creditsByProbeId[adoptedProbe] ? creditsByProbeId[adoptedProbe] + amount : amount;
+			credits.value = creditsByProbeId;
+			probes.value = adoptedProbes;
+			probesCount.value = count;
+		} catch (e) {
+			errorHandler(e);
 		}
 
-		credits.value = creditsByProbeId;
-		probes.value = adoptedProbes;
-		probesCount.value = count;
 		loading.value = false;
 	};
 

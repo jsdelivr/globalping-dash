@@ -143,10 +143,16 @@
 
 	// SUMMARY
 
-	const { data: adoptedProbes } = await useLazyAsyncData('gp_adopted_probes', () => {
-		return $directus.request(readItems('gp_adopted_probes', {
-			filter: { userId: { _eq: user.id } },
-		}));
+	const { data: adoptedProbes } = await useLazyAsyncData('gp_adopted_probes', async () => {
+		try {
+			const result = await $directus.request(readItems('gp_adopted_probes', {
+				filter: { userId: { _eq: user.id } },
+			}));
+			return result;
+		} catch (e: any) {
+			errorHandler(e);
+			throw e;
+		}
 	}, { default: () => [] });
 
 	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status === 'ready'));
@@ -158,10 +164,16 @@
 	const auth = useAuth();
 	const user = auth.getUser;
 
-	const { data: credits } = await useLazyAsyncData('gp_credits', () => {
-		return $directus.request(readItems('gp_credits', {
-			filter: { user_id: { _eq: user.id } },
-		}));
+	const { data: credits } = await useLazyAsyncData('gp_credits', async () => {
+		try {
+			const result = $directus.request(readItems('gp_credits', {
+				filter: { user_id: { _eq: user.id } },
+			}));
+			return result;
+		} catch (e: any) {
+			errorHandler(e);
+			throw e;
+		}
 	}, { default: () => [] });
 	const total = computed(() => {
 		const creditsObj = credits.value?.find(({ user_id }) => user_id === user.id);
@@ -169,14 +181,20 @@
 	});
 
 	const { data: creditsAdditions } = await useLazyAsyncData('gp_credits_additions_last_day', () => {
-		return $directus.request(readItems('gp_credits_additions', {
-			filter: {
-				github_id: { _eq: user.external_identifier || 'admin' },
-				// @ts-ignore
-				date_created: { _gte: '$NOW(-1 day)' },
-				adopted_probe: { _nnull: true },
-			},
-		}));
+		try {
+			const result = $directus.request(readItems('gp_credits_additions', {
+				filter: {
+					github_id: { _eq: user.external_identifier || 'admin' },
+					// @ts-ignore
+					date_created: { _gte: '$NOW(-1 day)' },
+					adopted_probe: { _nnull: true },
+				},
+			}));
+			return result;
+		} catch (e: any) {
+			errorHandler(e);
+			throw e;
+		}
 	}, { default: () => [] });
 	const perDay = computed(() => creditsAdditions.value.reduce((sum, { amount }) => sum += amount, 0));
 

@@ -83,10 +83,11 @@
 	const lazyParams = ref<Partial<DataTablePageEvent>>({});
 
 	const { data: creditsStats } = await useLazyAsyncData('credits-stats', async () => {
+		console.log('user.id', user.id);
 		const [ credits, additions, deductions ] = await Promise.all([
 			$directus.request<[{amount: number}]>(readItems('gp_credits', {
 				// @ts-ignore
-				query: { filter: { user_id: user.id } },
+				filter: { user_id: user.id },
 			})),
 			$directus.request<[{sum: {amount: number}}]>(aggregate('gp_credits_additions', {
 				aggregate: { sum: 'amount' },

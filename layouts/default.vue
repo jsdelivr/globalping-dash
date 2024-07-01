@@ -22,7 +22,7 @@
 				</Button>
 				<Button class="text-surface-0 flex items-center" text rounded @click="toggleProfile">
 					<i class="pi pi-user border-surface-0 rounded-full border-[1.5px] p-2" style="font-size: 1.1rem"/>
-					<p class="m-2 font-semibold">{{ user.github_username }}</p>
+					<p class="m-2 font-semibold">{{ user.github_username || `${user.first_name} ${user.last_name}` }}</p>
 					<i class="pi pi-chevron-down" style="font-size: 0.7rem"/>
 				</Button>
 				<TieredMenu ref="profilePanel" :model="items" popup>

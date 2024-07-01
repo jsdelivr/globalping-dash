@@ -155,7 +155,6 @@
 	import { useAuth } from '~/store/auth';
 
 	const { $directus } = useNuxtApp();
-	const toast = useToast();
 	const auth = useAuth();
 	const user = auth.getUser as User;
 
@@ -273,8 +272,7 @@
 			tokenToRegenerate.value = null;
 			regenerateDialog.value = false;
 		} catch (e: any) {
-			const detail = e.errors ?? 'Request failed';
-			toast.add({ severity: 'error', summary: 'Regeneration failed', detail, life: 20000 });
+			errorHandler(e);
 		}
 	};
 
@@ -303,8 +301,7 @@
 			tokenToDelete.value = null;
 			deleteDialog.value = false;
 		} catch (e: any) {
-			const detail = e.errors ?? 'Request failed';
-			toast.add({ severity: 'error', summary: 'Deletion failed', detail, life: 20000 });
+			errorHandler(e);
 		}
 	};
 </script>

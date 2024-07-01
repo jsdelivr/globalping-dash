@@ -146,8 +146,7 @@
 
 			toast.add({ severity: 'success', summary: 'Saved', detail: 'All settings saved', life: 4000 });
 		} catch (e: any) {
-			const detail = e.errors?.[0]?.message ?? e.errors ?? e.message ?? 'Request failed';
-			toast.add({ severity: 'error', summary: 'Regeneration failed', detail, life: 20000 });
+			errorHandler(e);
 		}
 
 		saveLoading.value = false;
@@ -179,8 +178,7 @@
 
 			toast.add({ severity: 'success', summary: 'Synced', detail: 'GitHub data synced', life: 4000 });
 		} catch (e: any) {
-			const detail = e.errors?.[0]?.message ?? e.errors ?? e.message ?? 'Request failed';
-			toast.add({ severity: 'error', summary: 'Sync failed', detail, life: 20000 });
+			errorHandler(e);
 		}
 
 		loadingIconId.value = null;
@@ -194,8 +192,7 @@
 			await $directus.request(deleteUser(user.id!));
 			reloadNuxtApp();
 		} catch (e: any) {
-			const detail = e.errors?.[0]?.message ?? e.errors ?? e.message ?? 'Request failed';
-			toast.add({ severity: 'error', summary: 'Sync failed', detail, life: 20000 });
+			errorHandler(e);
 		}
 	};
 </script>

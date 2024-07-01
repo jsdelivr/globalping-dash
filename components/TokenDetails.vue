@@ -100,7 +100,6 @@
 	const emit = defineEmits([ 'generate', 'cancel', 'save', 'regenerate' ]);
 
 	const { $directus } = useNuxtApp();
-	const toast = useToast();
 
 	// NAME
 
@@ -182,8 +181,7 @@
 
 			emit('generate', response.id, token);
 		} catch (e: any) {
-			const detail = e.errors?.[0]?.message ?? e.errors ?? e.message ?? 'Request failed';
-			toast.add({ severity: 'error', summary: 'Creation failed', detail, life: 20000 });
+			errorHandler(e);
 		}
 	};
 
@@ -205,8 +203,7 @@
 
 			emit('save');
 		} catch (e: any) {
-			const detail = e.errors ?? 'Request failed';
-			toast.add({ severity: 'error', summary: 'Edit failed', detail, life: 20000 });
+			errorHandler(e);
 		}
 	};
 
@@ -231,8 +228,7 @@
 
 			emit('regenerate', response.id, token);
 		} catch (e: any) {
-			const detail = e.errors?.[0]?.message ?? e.errors ?? e.message ?? 'Request failed';
-			toast.add({ severity: 'error', summary: 'Regeneration failed', detail, life: 20000 });
+			errorHandler(e);
 		}
 	};
 </script>

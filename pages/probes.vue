@@ -226,14 +226,24 @@
 					</template>
 				</Column>
 				<template v-if="!loading" #footer>
-					<Button
-						class="mt-2"
-						severity="secondary"
-						outlined
-						label="Start a probe"
-						icon="pi pi-question-circle"
-						@click="startProbeDialog = true"
-					/>
+					<div class="flex items-center">
+						<div class="w-[75%]">
+							<Button
+								class="mt-2"
+								severity="secondary"
+								outlined
+								label="Start a probe"
+								icon="pi pi-question-circle"
+								@click="startProbeDialog = true"
+							/>
+						</div>
+						<div class="w-[10%] pt-4">Total</div>
+						<div class="pt-4">
+							<Tag class="flex items-center !text-sm" severity="success" value="Success">
+								<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ totalCredits }}
+							</Tag>
+						</div>
+					</div>
 				</template>
 			</DataTable>
 			<Paginator
@@ -316,6 +326,7 @@
 	const lazyParams = ref<Partial<DataTablePageEvent>>({});
 	const expandedRow = ref<number>(0);
 	const expandedRows = computed(() => ({ [expandedRow.value]: true }));
+	const totalCredits = ref(0);
 
 	const loadLazyData = async (event?: PageState) => {
 		loading.value = true;
@@ -335,11 +346,18 @@
 			})),
 		]);
 
-		const creditsByProbeId = creditsAdditions.reduce((result, { adopted_probe: adoptedProbe, amount }) => {
-			const key = adoptedProbe ? adoptedProbe : 'no-probe';
-			result[key] = result[key] ? result[key] + amount : amount;
-			return result;
-		}, {} as Record<string, number>);
+		const creditsByProbeId: Record<number, number> = {};
+
+		for (const addition of creditsAdditions) {
+			const { adopted_probe: adoptedProbe, amount } = addition;
+
+			if (!adoptedProbe) {
+				continue;
+			}
+
+			totalCredits.value += amount;
+			creditsByProbeId[adoptedProbe] = creditsByProbeId[adoptedProbe] ? creditsByProbeId[adoptedProbe] + amount : amount;
+		}
 
 		credits.value = creditsByProbeId;
 		probes.value = adoptedProbes;

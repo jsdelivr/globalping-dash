@@ -99,7 +99,7 @@ export default {
 			// Color
 			'bg-surface-0 dark:bg-dark-800',
 			'border-surface-300 dark:border-dark-600',
-			'text-surface-700 dark:text-surface-0',
+			'dark:text-surface-0',
 		],
 	},
 	column: {

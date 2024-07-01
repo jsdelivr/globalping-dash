@@ -23,11 +23,13 @@ declare global {
     comment: string;
     date_created: string;
     adopted_probe: number | null;
+    github_id: string;
   };
 
   type CreditsDeduction = {
     amount: number;
     date: string;
+    user_id: string;
   };
 
   type CreditsChange = {

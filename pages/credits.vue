@@ -86,23 +86,20 @@
 		console.log('user.id', user.id);
 		const [ credits, additions, deductions ] = await Promise.all([
 			$directus.request<[{amount: number}]>(readItems('gp_credits', {
-				// @ts-ignore
-				filter: { user_id: user.id },
+				filter: { user_id: { _eq: user.id } },
 			})),
 			$directus.request<[{sum: {amount: number}}]>(aggregate('gp_credits_additions', {
 				aggregate: { sum: 'amount' },
-				// @ts-ignore
 				query: { filter: {
-					github_id: user.external_identifier || 'admin',
+					github_id: { _eq: user.external_identifier || 'admin' },
 					// @ts-ignore
 					date_created: { _gte: '$NOW(-30 day)' },
 				} },
 			})),
 			$directus.request<[{sum: {amount: number}}]>(aggregate('gp_credits_deductions', {
 				aggregate: { sum: 'amount' },
-				// @ts-ignore
 				query: { filter: {
-					user_id: user.id,
+					user_id: { _eq: user.id },
 					// @ts-ignore
 					date: { _gte: '$NOW(-30 day)' },
 				} },
@@ -131,13 +128,11 @@
 			} })),
 			$directus.request<[{count: number}]>(aggregate('gp_credits_additions', {
 				aggregate: { count: '*' },
-				// @ts-ignore
-				query: { filter: { github_id: user.external_identifier || 'admin' } },
+				query: { filter: { github_id: { _eq: user.external_identifier || 'admin' } } },
 			})),
 			$directus.request<[{count: number}]>(aggregate('gp_credits_deductions', {
 				aggregate: { count: '*' },
-				// @ts-ignore
-				query: { filter: { user_id: user.id } },
+				query: { filter: { user_id: { _eq: user.id } } },
 			})),
 		]);
 

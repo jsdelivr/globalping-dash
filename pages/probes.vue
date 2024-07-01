@@ -258,7 +258,7 @@
 		</div>
 		<div v-else class="bg-surface-0 dark:bg-dark-800 flex grow flex-col overflow-hidden rounded-xl border">
 			<p class="text-bluegray-700 dark:text-dark-0 flex border-b px-6 py-3 font-bold">List of probes</p>
-			<div class="bg-surface-50 dark:bg-dark-600 m-6 flex grow flex-col items-center justify-center rounded-xl text-center">
+			<div class="bg-surface-50 dark:bg-dark-600 m-6 flex grow flex-col items-center justify-center rounded-xl p-6 text-center">
 				<img class="mx-auto w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
 				<p class="mt-6 leading-tight">
 					<b>You don't have any probes yet.</b><br><br>
@@ -334,12 +334,17 @@
 
 		const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
 			$directus.request(readItems('gp_adopted_probes', {
+				filter: { userId: { _eq: user.id } },
 				offset: lazyParams.value.first,
 				limit: 5,
 			})),
-			$directus.request<[{count: number}]>(aggregate('gp_adopted_probes', { aggregate: { count: '*' } })),
+			$directus.request<[{count: number}]>(aggregate('gp_adopted_probes', {
+				query: { filter: { userId: { _eq: user.id } } },
+				aggregate: { count: '*' },
+			})),
 			$directus.request(readItems('gp_credits_additions', {
 				filter: {
+					github_id: { _eq: user.external_identifier || 'admin' },
 					// @ts-ignore
 					date_created: { _gte: '$NOW(-1 month)' },
 				},

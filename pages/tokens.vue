@@ -152,9 +152,12 @@
 <script setup lang="ts">
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
 	import type { PageState } from 'primevue/paginator';
+	import { useAuth } from '~/store/auth';
 
 	const { $directus } = useNuxtApp();
 	const toast = useToast();
+	const auth = useAuth();
+	const user = auth.getUser as User;
 
 	const loading = ref(false);
 	const tokensCount = ref(0);
@@ -166,6 +169,7 @@
 
 		const [ gpTokens, [{ count }] ] = await Promise.all([
 			$directus.request(readItems('gp_tokens', {
+				filter: { user_created: { _eq: user.id } },
 				offset: first.value,
 				limit: 5,
 				sort: '-date_created',

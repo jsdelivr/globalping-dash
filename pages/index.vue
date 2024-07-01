@@ -144,7 +144,9 @@
 	// SUMMARY
 
 	const { data: adoptedProbes } = await useLazyAsyncData('gp_adopted_probes', () => {
-		return $directus.request(readItems('gp_adopted_probes'));
+		return $directus.request(readItems('gp_adopted_probes', {
+			filter: { userId: { _eq: user.id } },
+		}));
 	}, { default: () => [] });
 
 	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status === 'ready'));
@@ -157,7 +159,9 @@
 	const user = auth.getUser;
 
 	const { data: credits } = await useLazyAsyncData('gp_credits', () => {
-		return $directus.request(readItems('gp_credits'));
+		return $directus.request(readItems('gp_credits', {
+			filter: { user_id: { _eq: user.id } },
+		}));
 	}, { default: () => [] });
 	const total = computed(() => {
 		const creditsObj = credits.value?.find(({ user_id }) => user_id === user.id);
@@ -167,6 +171,7 @@
 	const { data: creditsAdditions } = await useLazyAsyncData('gp_credits_additions_last_day', () => {
 		return $directus.request(readItems('gp_credits_additions', {
 			filter: {
+				github_id: { _eq: user.external_identifier || 'admin' },
 				// @ts-ignore
 				date_created: { _gte: '$NOW(-1 day)' },
 				adopted_probe: { _nnull: true },

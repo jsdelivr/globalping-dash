@@ -167,18 +167,23 @@
 	const loadLazyData = async () => {
 		loading.value = true;
 
-		const [ gpTokens, [{ count }] ] = await Promise.all([
-			$directus.request(readItems('gp_tokens', {
-				filter: { user_created: { _eq: user.id } },
-				offset: first.value,
-				limit: 5,
-				sort: '-date_created',
-			})),
-			$directus.request<[{count: number}]>(aggregate('gp_tokens', { aggregate: { count: '*' } })),
-		]);
+		try {
+			const [ gpTokens, [{ count }] ] = await Promise.all([
+				$directus.request(readItems('gp_tokens', {
+					filter: { user_created: { _eq: user.id } },
+					offset: first.value,
+					limit: 5,
+					sort: '-date_created',
+				})),
+				$directus.request<[{count: number}]>(aggregate('gp_tokens', { aggregate: { count: '*' } })),
+			]);
 
-		tokens.value = gpTokens;
-		tokensCount.value = count;
+			tokens.value = gpTokens;
+			tokensCount.value = count;
+		} catch (e: any) {
+			errorHandler(e);
+		}
+
 		loading.value = false;
 	};
 

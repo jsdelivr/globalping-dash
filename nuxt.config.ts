@@ -12,7 +12,7 @@ export default defineNuxtConfig({
 		},
 	},
 	ssr: false,
-	devtools: { enabled: true },
+	devtools: { enabled: false },
 	devServer: { port: 13010 },
 	modules: [ '@nuxtjs/tailwindcss', 'nuxt-primevue', '@pinia/nuxt', 'nuxt-icons' ],
 	css: [ 'primeicons/primeicons.css', '~/assets/css/base.css', '~/assets/css/global.css' ],

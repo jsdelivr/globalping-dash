@@ -179,7 +179,7 @@
 								</div>
 								<div v-else>
 									<div>
-										<Tag v-for="tag in slotProps.data.tags" :key="tag" class="my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
+										<Tag v-for="tag in slotProps.data.tags" :key="tag" class="bg-surface-0 dark:bg-dark-800 my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
 									</div>
 									<Button
 										class="mt-3"
@@ -302,15 +302,12 @@
 	import type { PageState } from 'primevue/paginator';
 	import memoize from 'lodash/memoize';
 
-	useHead({
-		title: 'Probes -',
-	});
-
 	const config = useRuntimeConfig();
 
 	useHead({
+		title: 'Probes -',
 		script: [{
-			src: `https://maps.googleapis.com/maps/api/js?key=${config.public.GOOGLE_MAPS_KEY}`,
+			src: `https://maps.googleapis.com/maps/api/js?key=${config.public.GOOGLE_MAPS_KEY}&loading=async`,
 			async: true,
 			defer: true,
 		}],

@@ -7,3 +7,4 @@ config/local*
 .vscode/
 .nuxt/
 .output/
+dist

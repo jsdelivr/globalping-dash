@@ -44,8 +44,9 @@ export const useAuth = defineStore('auth', {
 
 	actions: {
 		async login () {
+			const config = useRuntimeConfig();
 			const redirect = `${window.location.origin}${'/'}`;
-			await navigateTo(`http://localhost:18055/auth/login/github?redirect=${encodeURIComponent(redirect)}`, { external: true });
+			await navigateTo(`${config.public.directusUrl}/auth/login/github?redirect=${encodeURIComponent(redirect)}`, { external: true });
 		},
 		async logout () {
 			const { $directus } = useNuxtApp();

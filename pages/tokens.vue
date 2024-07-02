@@ -11,7 +11,7 @@
 				:value="tokens"
 				lazy
 				:first="first"
-				:rows="5"
+				:rows="itemsPerPage"
 				data-key="id"
 				:total-records="tokensCount"
 				:loading="loading"
@@ -73,7 +73,7 @@
 				v-if="tokens.length !== tokensCount"
 				class="mt-9"
 				:first="first"
-				:rows="5"
+				:rows="itemsPerPage"
 				:total-records="tokensCount"
 				template="PrevPageLink PageLinks NextPageLink"
 				@page="onPage($event)"
@@ -158,10 +158,12 @@
 		title: 'Tokens -',
 	});
 
+	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
-	const user = auth.getUser as User;
 
+	const user = auth.getUser as User;
+	const itemsPerPage = config.public.itemsPerTablePage;
 	const loading = ref(false);
 	const tokensCount = ref(0);
 	const tokens = ref<Token[]>([]);
@@ -175,7 +177,7 @@
 				$directus.request(readItems('gp_tokens', {
 					filter: { user_created: { _eq: user.id } },
 					offset: first.value,
-					limit: 5,
+					limit: itemsPerPage,
 					sort: '-date_created',
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_tokens', { aggregate: { count: '*' } })),
@@ -297,7 +299,7 @@
 
 			// Go to prev page if that is last item.
 			if (tokens.value.length === 1) {
-				const newFirst = first.value - 5;
+				const newFirst = first.value - itemsPerPage;
 				first.value = newFirst >= 0 ? newFirst : 0;
 			}
 

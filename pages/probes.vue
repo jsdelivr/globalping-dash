@@ -13,7 +13,7 @@
 				:value="probes"
 				lazy
 				:first="first"
-				:rows="5"
+				:rows="itemsPerPage"
 				data-key="id"
 				:total-records="probesCount"
 				:loading="loading"
@@ -202,7 +202,7 @@
 							</div>
 						</div>
 						<div v-else class="px-2 py-4">
-							<Tag v-for="tag in slotProps.data.tags" :key="tag" class="my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
+							<Tag v-for="tag in slotProps.data.tags" :key="tag" class="bg-surface-0 dark:bg-dark-800 my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
 						</div>
 					</template>
 				</Column>
@@ -250,7 +250,7 @@
 				v-if="probes.length !== probesCount"
 				class="mt-9"
 				:first="first"
-				:rows="5"
+				:rows="itemsPerPage"
 				:total-records="probesCount"
 				template="PrevPageLink PageLinks NextPageLink"
 				@page="onPage($event)"
@@ -307,7 +307,7 @@
 	useHead({
 		title: 'Probes -',
 		script: [{
-			src: `https://maps.googleapis.com/maps/api/js?key=${config.public.GOOGLE_MAPS_KEY}&loading=async`,
+			src: `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsKey}&loading=async`,
 			async: true,
 			defer: true,
 		}],
@@ -315,9 +315,9 @@
 
 	const { $directus } = useNuxtApp();
 
+	const itemsPerPage = config.public.itemsPerTablePage;
 	const startProbeDialog = ref(false);
 	const adoptProbeDialog = ref(false);
-
 	const loading = ref(false);
 	const probesCount = ref(0);
 	const probes = ref<Probe[]>([]);
@@ -337,7 +337,7 @@
 				$directus.request(readItems('gp_adopted_probes', {
 					filter: { userId: { _eq: user.id } },
 					offset: lazyParams.value.first,
-					limit: 5,
+					limit: itemsPerPage,
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_adopted_probes', {
 					query: { filter: { userId: { _eq: user.id } } },
@@ -380,7 +380,7 @@
 
 		lazyParams.value = {
 			first: 0,
-			rows: 5,
+			rows: itemsPerPage,
 		};
 
 		loadLazyData();

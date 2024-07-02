@@ -28,7 +28,7 @@
 				:value="creditsChanges"
 				lazy
 				:first="first"
-				:rows="5"
+				:rows="itemsPerPage"
 				data-key="id"
 				:total-records="creditsChangesCount"
 				:loading="loading"
@@ -50,7 +50,7 @@
 				v-if="creditsChanges.length !== creditsChangesCount"
 				class="mt-9"
 				:first="first"
-				:rows="5"
+				:rows="itemsPerPage"
 				:total-records="creditsChangesCount"
 				template="PrevPageLink PageLinks NextPageLink"
 				@page="onPage($event)"
@@ -75,10 +75,12 @@
 		title: 'Credits -',
 	});
 
+	const config = useRuntimeConfig();
 	const auth = useAuth();
 	const user = auth.getUser as User;
 	const { $directus } = useNuxtApp();
 
+	const itemsPerPage = config.public.itemsPerTablePage;
 	const loading = ref(false);
 	const creditsChangesCount = ref(0);
 	const creditsChanges = ref<CreditsChange[]>([]);
@@ -133,7 +135,7 @@
 			] = await Promise.all([
 				$directus.request<{amountBeforeChanges: number, changes: CreditsChange[]}>(customEndpoint({ method: 'GET', path: '/credits-timeline', params: {
 					offset: lazyParams.value.first,
-					limit: 5,
+					limit: itemsPerPage,
 				} })),
 				$directus.request<[{count: number}]>(aggregate('gp_credits_additions', {
 					aggregate: { count: '*' },
@@ -166,7 +168,7 @@
 
 		lazyParams.value = {
 			first: 0,
-			rows: 5,
+			rows: itemsPerPage,
 		};
 
 		loadLazyData();

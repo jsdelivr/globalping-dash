@@ -3,7 +3,8 @@ import path from 'path';
 export default defineNuxtConfig({
 	runtimeConfig: {
 		public: {
-			GOOGLE_MAPS_KEY: process.env.GOOGLE_MAPS_KEY,
+			googleMapsKey: process.env.GOOGLE_MAPS_KEY,
+			itemsPerTablePage: 10,
 		},
 	},
 	app: {
@@ -106,5 +107,13 @@ export default defineNuxtConfig({
 				},
 			},
 		},
+	},
+	$development: {
+		runtimeConfig: {
+			public: {
+				directusUrl: 'http://localhost:18055',
+			},
+		},
+		devtools: { enabled: true },
 	},
 });

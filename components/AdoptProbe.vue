@@ -98,7 +98,6 @@
 					<div class="bg-surface-50 dark:bg-dark-600 mt-6 rounded-xl py-10 text-center">
 						<InputOtp
 							v-model="code"
-							integer-only
 							:length="6"
 							:invalid="!isCodeValid"
 							@update:model-value="resetIsCodeValid"

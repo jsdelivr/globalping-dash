@@ -71,6 +71,10 @@
 	import type { DataTablePageEvent } from 'primevue/datatable';
 	import type { PageState } from 'primevue/paginator';
 
+	useHead({
+		title: 'Credits -',
+	});
+
 	const auth = useAuth();
 	const user = auth.getUser as User;
 	const { $directus } = useNuxtApp();

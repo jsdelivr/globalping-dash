@@ -139,6 +139,10 @@
 	import isEmpty from 'lodash/isEmpty';
 	import CountryFlag from 'vue-country-flag-next';
 
+	useHead({
+		title: 'Overview -',
+	});
+
 	const { $directus } = useNuxtApp();
 
 	// SUMMARY

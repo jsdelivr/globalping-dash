@@ -302,6 +302,10 @@
 	import type { PageState } from 'primevue/paginator';
 	import memoize from 'lodash/memoize';
 
+	useHead({
+		title: 'Probes -',
+	});
+
 	const config = useRuntimeConfig();
 
 	useHead({

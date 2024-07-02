@@ -154,6 +154,10 @@
 	import type { PageState } from 'primevue/paginator';
 	import { useAuth } from '~/store/auth';
 
+	useHead({
+		title: 'Tokens -',
+	});
+
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
 	const user = auth.getUser as User;

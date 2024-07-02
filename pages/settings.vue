@@ -111,6 +111,10 @@
 	import { customEndpoint, deleteUser, updateMe } from '@directus/sdk';
 	import { useAuth } from '~/store/auth';
 
+	useHead({
+		title: 'Settings -',
+	});
+
 	const { $directus } = useNuxtApp();
 	const toast = useToast();
 	const auth = useAuth();

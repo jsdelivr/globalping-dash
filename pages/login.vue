@@ -30,5 +30,9 @@
 		layout: false,
 	});
 
+	useHead({
+		title: 'Log In -',
+	});
+
 	const auth = useAuth();
 </script>

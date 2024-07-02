@@ -6,6 +6,11 @@ export default defineNuxtConfig({
 			GOOGLE_MAPS_KEY: process.env.GOOGLE_MAPS_KEY,
 		},
 	},
+	app: {
+		head: {
+			titleTemplate: '%s GP Dashboard',
+		},
+	},
 	ssr: false,
 	devtools: { enabled: true },
 	devServer: { port: 13010 },

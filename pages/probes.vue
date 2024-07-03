@@ -202,7 +202,9 @@
 							</div>
 						</div>
 						<div v-else class="px-2 py-4">
-							<Tag v-for="tag in slotProps.data.tags" :key="tag" class="bg-surface-0 dark:bg-dark-800 my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
+							<Tag v-if="slotProps.data.tags[0]" :key="slotProps.data.tags[0]" class="bg-surface-0 dark:bg-dark-800 my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${slotProps.data.tags[0].prefix}-${slotProps.data.tags[0].value}`"/>
+							<Tag v-if="slotProps.data.tags[1]" :key="slotProps.data.tags[1]" class="bg-surface-0 dark:bg-dark-800 my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${slotProps.data.tags[1].prefix}-${slotProps.data.tags[1].value}`"/>
+							<Tag v-if="slotProps.data.tags.length > 2" key="other" class="bg-surface-0 dark:bg-dark-800 my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`+${slotProps.data.tags.length - 2}`"/>
 						</div>
 					</template>
 				</Column>

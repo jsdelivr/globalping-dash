@@ -25,6 +25,7 @@
 			<Button
 				icon="pi pi-copy"
 				severity="secondary"
+				aria-label="Copy"
 				outlined
 				@click="copyCommand"
 			/>
@@ -39,7 +40,7 @@
 			size="small"
 			outlined
 			severity="secondary"
-			aria-label="Expand"
+			aria-label="Toggle expand"
 			@click="toggleSize"
 		>
 			<i class="pi text-xs" :class="{'pi-chevron-down': size === 'compact', 'pi-chevron-up': size === 'expanded'}"/>

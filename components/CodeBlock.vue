@@ -8,6 +8,7 @@
 				icon="pi pi-copy"
 				severity="secondary"
 				outlined
+				aria-label="Copy"
 				@click="copyCommand"
 			/>
 			<div v-if="copyTooltip" class="bg-bluegray-700 text-surface-0 absolute left-1/2 top-[-40px] -translate-x-1/2 rounded-md p-2">

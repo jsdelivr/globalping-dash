@@ -1,7 +1,8 @@
 <template>
 	<div class="text-bluegray-700 dark:text-surface-0 border-t px-5 py-7">
-		<p>Token name<i class="text-primary align-text-bottom">*</i></p>
+		<label for="tokenName">Token name<i class="text-primary align-text-bottom">*</i></label>
 		<InputText
+			id="tokenName"
 			v-model="name"
 			class="mt-2 w-full"
 			:invalid="isNameInvalid"
@@ -64,8 +65,8 @@
 			</OverlayPanel>
 		</div>
 		<div class="text-xs">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
-		<p class="mt-6">Origins</p>
-		<Chips v-model="origins" separator="," remove-token-icon="pi pi-times"/>
+		<label for="origins" class="mt-6 block">Origins</label>
+		<Chips id="origins" v-model="origins" class="mt-2" separator="," remove-token-icon="pi pi-times"/>
 		<p class="mt-1 text-xs">
 			A list of origins which are allowed to use the token. If empty - any origin is valid. Examples of valid origins: "www.jsdelivr.com", "www.jsdelivr.com:10000".
 		</p>

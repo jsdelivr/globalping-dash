@@ -217,7 +217,13 @@
 				</Column>
 				<Column expander class="w-[3%]" body-class="!p-0">
 					<template #body="slotProps">
-						<div v-if="expandedRow === slotProps.data.id" class="cursor-pointer px-2 py-5" @click.stop="expandedRow = 0">
+						<div
+							v-if="expandedRow === slotProps.data.id"
+							class="cursor-pointer px-2 py-5"
+							tabindex="0"
+							@click.stop="expandedRow = 0"
+							@keydown.stop="onKeyDown"
+						>
 							<i class="pi pi-chevron-down"/>
 						</div>
 						<div v-else class="px-2 py-4">
@@ -489,6 +495,14 @@
 	const cancelTags = () => {
 		tags.value = [];
 		isEditingTags.value = false;
+	};
+
+	// OPEN/CLOSE DETAILS
+
+	const onKeyDown = async (event: KeyboardEvent) => {
+		if (event.key === 'Enter' || event.key === ' ') {
+			expandedRow.value = 0;
+		}
 	};
 
 	// UTILS

@@ -12,7 +12,7 @@ export const validateIp = (ip: string) => {
 		}
 
 		return true;
-	} else if (parts.length === 8) {
+	} else if (parts.length >= 3) {
 		// Check IPv6 parts
 		for (const part of parts) {
 			if (part !== '' && !/^[0-9a-fA-F]{1,4}$/.test(part)) {

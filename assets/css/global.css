@@ -74,5 +74,4 @@ input[disabled], textarea[disabled], select[disabled='disabled'] {
    opacity: 1;
    -webkit-opacity: 1;
    color: var(--text-bluegray-500);
-   background: white;
 }

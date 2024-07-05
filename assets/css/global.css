@@ -67,3 +67,12 @@ body {
 #gp-map .gm-style-iw-chr {
 	display: none !important;
 }
+
+/* Fix disabled text color on mobile */
+input[disabled], textarea[disabled], select[disabled='disabled'] {
+   -webkit-text-fill-color: var(--text-bluegray-500);
+   opacity: 1;
+   -webkit-opacity: 1;
+   color: var(--text-bluegray-500);
+   background: white;
+}

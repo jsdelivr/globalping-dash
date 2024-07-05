@@ -150,10 +150,10 @@
 	// STEP 1
 
 	const setUpCommands = [
-		[ 'docker pull ghcr.io/jsdelivr/globalping-probe' ],
+		[ 'docker pull globalping/globalping-probe' ],
 		[ 'docker stop globalping-probe' ],
 		[ 'docker rm globalping-probe' ],
-		[ 'docker run -d --log-driver local --network host --restart=always --name globalping-probe ghcr.io/jsdelivr/globalping-probe' ],
+		[ 'docker run -d --log-driver local --network host --restart=always --name globalping-probe globalping/globalping-probe' ],
 	];
 
 	// STEP 2

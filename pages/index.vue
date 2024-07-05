@@ -22,11 +22,11 @@
 					<div class="fade-out flex grow items-center overflow-hidden max-sm:basis-full">
 						<div>Locations: </div>
 						<div
-							v-for="(count, name) in cities"
-							:key="name"
+							v-for="({ city, count }) in cities"
+							:key="city"
 							class="dark:border-dark-600 ml-3 rounded-full border px-3 py-2"
 						>
-							{{ name }} <span class="text-bluegray-500">{{ count }}</span>
+							{{ city }} <span class="text-bluegray-500">{{ count }}</span>
 						</div>
 						<div v-if="isEmpty(cities)" class="ml-2">No locations to show</div>
 					</div>
@@ -161,7 +161,9 @@
 
 	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status === 'ready'));
 	const offlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status !== 'ready'));
-	const cities = computed(() => countBy(adoptedProbes.value, 'city'));
+	const cities = computed(() => Object.entries(countBy(adoptedProbes.value, 'city'))
+		.map(([city, count]) => ({ city, count }))
+		.sort((obj1, obj2) => obj2.count - obj1.count));
 
 	// CREDITS
 

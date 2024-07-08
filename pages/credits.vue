@@ -117,8 +117,8 @@
 				additions: additions[0]?.sum.amount || 0,
 				deductions: deductions[0]?.sum.amount || 0,
 			};
-		} catch (e: any) {
-			errorHandler(e);
+		} catch (e) {
+			sendToast(e);
 			throw e;
 		}
 	}, { default: () => ({ credits: 0, additions: 0, deductions: 0 }) });
@@ -157,7 +157,7 @@
 			startAmount.value = amountBeforeChanges;
 			creditsChangesCount.value = additionsCount + deductionsCount;
 		} catch (e) {
-			errorHandler(e);
+			sendToast(e);
 		}
 
 		loading.value = false;

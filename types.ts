@@ -93,4 +93,14 @@ declare global {
     user_created: string;
     user_updated: string | null;
   };
+
+  type DashboardError = {
+    response?: {
+      statusText: string;
+    }
+    errors?: [{
+      message: string;
+    }];
+    message?: string;
+  };
 }

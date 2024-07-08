@@ -153,8 +153,8 @@
 				filter: { userId: { _eq: user.id } },
 			}));
 			return result;
-		} catch (e: any) {
-			errorHandler(e);
+		} catch (e) {
+			sendToast(e);
 			throw e;
 		}
 	}, { default: () => [] });
@@ -176,8 +176,8 @@
 				filter: { user_id: { _eq: user.id } },
 			}));
 			return result;
-		} catch (e: any) {
-			errorHandler(e);
+		} catch (e) {
+			sendToast(e);
 			throw e;
 		}
 	}, { default: () => [] });
@@ -197,8 +197,8 @@
 				},
 			}));
 			return result;
-		} catch (e: any) {
-			errorHandler(e);
+		} catch (e) {
+			sendToast(e);
 			throw e;
 		}
 	}, { default: () => [] });

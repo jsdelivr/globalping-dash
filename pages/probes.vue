@@ -235,7 +235,7 @@
 				</Column>
 				<template v-if="!loading" #footer>
 					<div class="flex items-center">
-						<div class="w-[75%]">
+						<div class="w-3/4">
 							<Button
 								class="mt-2"
 								severity="secondary"
@@ -377,7 +377,7 @@
 			probes.value = adoptedProbes;
 			probesCount.value = count;
 		} catch (e) {
-			errorHandler(e);
+			sendToast(e);
 		}
 
 		loading.value = false;
@@ -513,8 +513,8 @@
 		try {
 			const updatedProbe = await $directus.request(updateItem('gp_adopted_probes', id, newData));
 			probes.value = [ ...probes.value.map(probe => probe.id === updatedProbe.id ? updatedProbe : probe) ];
-		} catch (e: any) {
-			errorHandler(e);
+		} catch (e) {
+			sendToast(e);
 		}
 	};
 </script>

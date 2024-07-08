@@ -155,8 +155,8 @@
 			await auth.refresh();
 
 			toast.add({ severity: 'success', summary: 'Saved', detail: 'All settings saved', life: 4000 });
-		} catch (e: any) {
-			errorHandler(e);
+		} catch (e) {
+			sendToast(e);
 		}
 
 		saveLoading.value = false;
@@ -187,8 +187,8 @@
 			await auth.refresh();
 
 			toast.add({ severity: 'success', summary: 'Synced', detail: 'GitHub data synced', life: 4000 });
-		} catch (e: any) {
-			errorHandler(e);
+		} catch (e) {
+			sendToast(e);
 		}
 
 		loadingIconId.value = null;
@@ -201,8 +201,8 @@
 		try {
 			await $directus.request(deleteUser(user.id!));
 			reloadNuxtApp();
-		} catch (e: any) {
-			errorHandler(e);
+		} catch (e) {
+			sendToast(e);
 		}
 	};
 </script>

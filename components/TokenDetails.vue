@@ -188,8 +188,8 @@
 			}));
 
 			emit('generate', response.id, token);
-		} catch (e: any) {
-			errorHandler(e);
+		} catch (e) {
+			sendToast(e);
 		}
 	};
 
@@ -210,8 +210,8 @@
 			}));
 
 			emit('save');
-		} catch (e: any) {
-			errorHandler(e);
+		} catch (e) {
+			sendToast(e);
 		}
 	};
 
@@ -235,8 +235,8 @@
 			}));
 
 			emit('regenerate', response.id, token);
-		} catch (e: any) {
-			errorHandler(e);
+		} catch (e) {
+			sendToast(e);
 		}
 	};
 </script>

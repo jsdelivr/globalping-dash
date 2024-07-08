@@ -185,8 +185,8 @@
 
 			tokens.value = gpTokens;
 			tokensCount.value = count;
-		} catch (e: any) {
-			errorHandler(e);
+		} catch (e) {
+			sendToast(e);
 		}
 
 		loading.value = false;
@@ -277,8 +277,8 @@
 			expandedRows.value = { [id]: true };
 			tokenToRegenerate.value = null;
 			regenerateDialog.value = false;
-		} catch (e: any) {
-			errorHandler(e);
+		} catch (e) {
+			sendToast(e);
 		}
 	};
 
@@ -306,8 +306,8 @@
 			await loadLazyData();
 			tokenToDelete.value = null;
 			deleteDialog.value = false;
-		} catch (e: any) {
-			errorHandler(e);
+		} catch (e) {
+			sendToast(e);
 		}
 	};
 </script>

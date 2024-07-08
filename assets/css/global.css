@@ -53,13 +53,13 @@ body {
   margin-bottom: 0 !important;
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
 }
 
 /* Hide GoogleMaps InfoWindow close btn */
@@ -70,7 +70,7 @@ body {
 /* Fix disabled text color on mobile */
 input[disabled], textarea[disabled], select[disabled='disabled'] {
    -webkit-text-fill-color: var(--text-bluegray-500);
-   opacity: 1;
    -webkit-opacity: 1;
+   opacity: 1;
    color: var(--text-bluegray-500);
 }

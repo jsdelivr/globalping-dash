@@ -10,6 +10,9 @@ export default defineNuxtConfig({
 	app: {
 		head: {
 			titleTemplate: '%s GP Dashboard',
+			htmlAttrs: {
+				lang: 'en',
+			},
 		},
 	},
 	ssr: false,

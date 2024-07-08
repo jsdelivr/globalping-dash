@@ -158,7 +158,14 @@
 										</div>
 									</div>
 									<div class="mt-6 flex">
-										<Button label="Add tag" icon="pi pi-plus" severity="secondary" outlined @click="addTag"/>
+										<Button
+											label="Add tag"
+											icon="pi pi-plus"
+											severity="secondary"
+											class="dark:!bg-dark-800"
+											outlined
+											@click="addTag"
+										/>
 										<Button
 											label="Save"
 											icon="pi pi-check"
@@ -167,7 +174,7 @@
 											class="bg-surface-200 ml-auto"
 											@click="saveTags(slotProps.data.id)"
 										/>
-										<Button label="Cancel" severity="secondary" outlined class="ml-1" @click="cancelTags"/>
+										<Button label="Cancel" severity="secondary" outlined class="dark:!bg-dark-800 ml-1" @click="cancelTags"/>
 									</div>
 									<p class="text-bluegray-400 text-2xs mt-3">
 										Public tags of the probe. They can be used as location filters for a measurement. Format is <code class="font-bold">u-${prefix}-${value}</code> where prefix is user/organization github login, and value is your custom string.

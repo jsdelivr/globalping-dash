@@ -167,8 +167,8 @@
 
 <style>
 	.notification p {
-			margin-bottom: 18px;
-		}
+		margin-bottom: 18px;
+	}
 
 	.notification p:last-child {
 		margin-bottom: 0;

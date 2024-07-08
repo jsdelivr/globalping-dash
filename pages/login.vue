@@ -7,9 +7,9 @@
 						<source
 							srcset="~/assets/images/gp-logo-white.svg"
 							media="(prefers-color-scheme: dark)"
-						/>
+						>
 						<img class="h-9 w-44" src="~/assets/images/gp-logo.svg" alt="Globalping logo">
-				</picture>
+					</picture>
 				</NuxtLink>
 				<NuxtLink to="https://www.jsdelivr.com/" class="text-bluegray-200 m-2 text-xs no-underline hover:underline">by jsDelivr</NuxtLink>
 			</div>
@@ -25,7 +25,7 @@
 			/>
 			<p class="text-bluegray-500 mt-auto">Not authenticated</p>
 		</div>
-		<div class="m-2 rounded-xl bg-[url('~/assets/images/login-bg.svg')] dark:bg-[url('~/assets/images/login-bg-dark.svg')] bg-cover max-md:hidden"/>
+		<div class="m-2 rounded-xl bg-[url('~/assets/images/login-bg.svg')] bg-cover max-md:hidden dark:bg-[url('~/assets/images/login-bg-dark.svg')]"/>
 	</section>
 </template>
 

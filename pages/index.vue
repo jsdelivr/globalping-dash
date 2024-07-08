@@ -162,7 +162,7 @@
 	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status === 'ready'));
 	const offlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status !== 'ready'));
 	const cities = computed(() => Object.entries(countBy(adoptedProbes.value, 'city'))
-		.map(([city, count]) => ({ city, count }))
+		.map(([ city, count ]) => ({ city, count }))
 		.sort((obj1, obj2) => obj2.count - obj1.count));
 
 	// CREDITS

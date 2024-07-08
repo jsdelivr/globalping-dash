@@ -66,7 +66,14 @@
 		</div>
 		<div class="text-xs">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
 		<label for="origins" class="mt-6 block">Origins</label>
-		<Chips id="origins" v-model="origins" class="mt-2" separator="," remove-token-icon="pi pi-times" addOnBlur/>
+		<Chips
+			id="origins"
+			v-model="origins"
+			class="mt-2"
+			separator=","
+			remove-token-icon="pi pi-times"
+			add-on-blur
+		/>
 		<p class="mt-1 text-xs">
 			A list of origins which are allowed to use the token. If empty - any origin is valid. Examples of valid origins: "www.jsdelivr.com", "www.jsdelivr.com:10000".
 		</p>

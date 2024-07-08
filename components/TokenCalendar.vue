@@ -14,7 +14,7 @@
 <script setup lang="ts">
 	defineProps({
 		value: {
-			type: [Date, null, undefined],
+			type: [ Date, null, undefined ],
 			default: null,
 		},
 	});

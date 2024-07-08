@@ -62,9 +62,9 @@
   --primary-highlight-hover-opacity: 0.2;
 }
 .dark {
-  --primary: var(--primary-400);
+  --primary: var(--primary-500);
   --primary-inverse: var(--surface-900);
-  --primary-hover: var(--primary-300);
+  --primary-hover: var(--primary-400);
   --primary-active-color: var(--primary-300);
 
   --primary-highlight-opacity: 0.2;

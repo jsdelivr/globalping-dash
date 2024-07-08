@@ -26,7 +26,7 @@
 							:key="city"
 							class="dark:border-dark-600 ml-3 rounded-full border px-3 py-2"
 						>
-							{{ city }} <span class="text-bluegray-500">{{ count }}</span>
+							{{ city }}<span class="text-bluegray-500 dark:text-bluegray-400 ml-1.5">{{ count }}</span>
 						</div>
 						<div v-if="isEmpty(cities)" class="ml-2">No locations to show</div>
 					</div>
@@ -56,7 +56,7 @@
 						<div><span class="mx-2 text-3xl font-bold">{{ total }}</span>Total</div>
 					</div>
 					<div class="ml-auto flex items-center rounded-md border px-4 py-2 max-sm:ml-0 max-sm:mt-3">
-						<span class="p-button-label mr-2 font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500': !perDay }">+{{ perDay }}</span>
+						<span class="p-button-label mr-2 font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500 dark:text-bluegray-400': !perDay }">+{{ perDay }}</span>
 						<span>Per day</span>
 					</div>
 				</div>

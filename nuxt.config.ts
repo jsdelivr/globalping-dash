@@ -24,7 +24,7 @@ export default defineNuxtConfig({
 		options: {
 			unstyled: true,
 		},
-		importPT: { from: path.resolve(__dirname, './presets/aura/') },
+		importPT: { from: path.posix.join(__dirname.replaceAll('\\', '/'), './presets/aura/') },
 	},
 	tailwindcss: {
 		config: {

@@ -37,7 +37,7 @@
 						@click="adoptProbeDialog = true"
 					>
 						<nuxt-icon class="pi mr-2 mt-[2px]" name="capture"/>
-						<span class="font-bold">{{ adoptedProbes.length ? "Adopt probe" : "Adopt first probe" }}</span>
+						<span class="font-bold">{{ adoptedProbes.length ? "Adopt probe" : "Adopt your first probe" }}</span>
 					</Button>
 				</div>
 			</div>
@@ -47,7 +47,7 @@
 				Credits<i
 					v-tooltip.top="user.github_username"
 					class="pi pi-info-circle ml-2"
-				/>
+				/><!-- TODO: really username -->
 			</p>
 			<div class="p-6">
 				<div class="flex max-sm:flex-wrap">
@@ -61,7 +61,7 @@
 					</div>
 				</div>
 				<div class="mt-6 flex items-center text-nowrap">
-					<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1">
+					<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank">
 						<Button
 							:severity="perDay ? 'secondary' : undefined"
 							:outlined="perDay ? true : false"
@@ -85,6 +85,8 @@
 			<div class="p-6">
 				<div v-if="adoptedProbes.length" class="probes-wrapper flex overflow-hidden max-sm:flex-col">
 					<div v-for="probe in adoptedProbes" :key="probe.id" class="probe box-content min-w-60 py-2">
+						<!-- TODO: clicking the name here should bring me to /probes, with the correct probe expanded and scrolled down to (if needed) -->
+						<!-- TODO: a somewhat related bonus to the above - it would be nice if expanding probe details at /probes resulted in URL change  -->
 						<ProbeHeader
 							class="mb-6"
 							:name="probe.name || probe.city"
@@ -112,8 +114,8 @@
 					<img class="size-24 max-sm:mb-4" src="~/assets/images/hw-probe.png" alt="Hardware probe">
 					<p class="ml-6 leading-tight">
 						<b>You don't have any probes yet.</b><br><br>
-						Get started by going to <NuxtLink class="text-primary font-semibold hover:underline" to="/probes">Probes</NuxtLink> page to create a container probe.<br>
-						Or <NuxtLink class="text-primary font-semibold hover:underline" to="https://github.com/sponsors/jsdelivr" target="_blank" rel="noopener">become a sponsor</NuxtLink> and get a free hardware ARM based device that is plug-and-play.
+						Get started by going to the <NuxtLink class="text-primary font-semibold hover:underline" to="/probes">Probes</NuxtLink> page to create a container probe.<br>
+						<NuxtLink class="text-primary font-semibold hover:underline" to="https://github.com/sponsors/jsdelivr" target="_blank" rel="noopener">Become a sponsor</NuxtLink> and get a free plug-and-play hardware device.
 					</p>
 				</div>
 			</div>
@@ -182,6 +184,7 @@
 			throw e;
 		}
 	}, { default: () => [] });
+
 	const total = computed(() => {
 		const creditsObj = credits.value?.find(({ user_id }) => user_id === user.id);
 		return creditsObj ? creditsObj.amount.toLocaleString() : 0;
@@ -203,6 +206,7 @@
 			throw e;
 		}
 	}, { default: () => [] });
+
 	const perDay = computed(() => creditsAdditions.value.reduce((sum, { amount }) => sum += amount, 0));
 
 	// ADOPT PROBE DIALOG

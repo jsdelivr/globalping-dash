@@ -133,11 +133,12 @@
 </template>
 
 <script setup lang="ts">
-	import { useAuth } from '~/store/auth';
 	import { readItems } from '@directus/sdk';
 	import countBy from 'lodash/countBy';
 	import isEmpty from 'lodash/isEmpty';
 	import CountryFlag from 'vue-country-flag-next';
+	import { useAuth } from '~/store/auth';
+	import { sendToast } from '~/utils/send-toast';
 
 	useHead({
 		title: 'Overview -',

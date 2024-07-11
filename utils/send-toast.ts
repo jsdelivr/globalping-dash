@@ -1,3 +1,5 @@
+import { useToastService } from '~/composables/useToastService';
+
 export const sendToast = (error: unknown) => {
 	const toastService = useToastService();
 	const e = error as DashboardError;

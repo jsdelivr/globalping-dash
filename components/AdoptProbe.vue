@@ -139,6 +139,7 @@
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
 	import CountryFlag from 'vue-country-flag-next';
+	import { validateIp } from '~/utils/validate-ip';
 
 	const { $directus } = useNuxtApp();
 	const toast = useToast();

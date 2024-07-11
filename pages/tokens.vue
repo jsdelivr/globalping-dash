@@ -153,6 +153,7 @@
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
 	import type { PageState } from 'primevue/paginator';
 	import { useAuth } from '~/store/auth';
+	import { sendToast } from '~/utils/send-toast';
 
 	useHead({
 		title: 'Tokens -',

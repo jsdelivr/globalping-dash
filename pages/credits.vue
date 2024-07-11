@@ -66,10 +66,11 @@
 </template>
 
 <script setup lang="ts">
-	import { useAuth } from '~/store/auth';
 	import { aggregate, customEndpoint, readItems } from '@directus/sdk';
-	import type { DataTablePageEvent } from 'primevue/datatable';
 	import type { PageState } from 'primevue/paginator';
+	import type { DataTablePageEvent } from 'primevue/datatable';
+	import { useAuth } from '~/store/auth';
+	import { sendToast } from '~/utils/send-toast';
 
 	useHead({
 		title: 'Credits -',

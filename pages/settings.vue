@@ -116,6 +116,7 @@
 <script setup lang="ts">
 	import { customEndpoint, deleteUser, updateMe } from '@directus/sdk';
 	import { useAuth } from '~/store/auth';
+	import { sendToast } from '~/utils/send-toast';
 
 	useHead({
 		title: 'Settings -',

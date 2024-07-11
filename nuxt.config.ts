@@ -15,6 +15,9 @@ export default defineNuxtConfig({
 			},
 		},
 	},
+	imports: {
+		scan: false,
+	},
 	ssr: false,
 	devtools: { enabled: false },
 	devServer: { port: 13010 },

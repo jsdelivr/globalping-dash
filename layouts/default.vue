@@ -102,11 +102,11 @@
 </template>
 
 <script lang="ts" setup>
-	import { useAuth } from '~/store/auth';
 	import capitalize from 'lodash/capitalize';
 	import { readNotifications, updateNotifications } from '@directus/sdk';
 	import markdownit from 'markdown-it';
 	import DOMPurify from 'dompurify';
+	import { useAuth } from '~/store/auth';
 
 	const { $directus } = useNuxtApp();
 

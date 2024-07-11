@@ -7,19 +7,7 @@ export const formatDate = (date: string | Date | null) => {
 		date = new Date(date);
 	}
 
-	let day: number | string = date.getDate();
-	let month: number | string = date.getMonth() + 1;
-	const year = date.getFullYear();
-
-	if (day < 10) {
-		day = '0' + day;
-	}
-
-	if (month < 10) {
-		month = '0' + month;
-	}
-
-	return `${day}.${month}.${year}`;
+	return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
 };
 
 /**
@@ -55,6 +43,6 @@ export function getRelativeTimeString (date: Date | string) {
 	const divisor = unitIndex ? cutoffs[unitIndex - 1] : 1;
 
 	// Intl.RelativeTimeFormat do its magic
-	const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+	const rtf = new Intl.RelativeTimeFormat('en-US', { numeric: 'auto' });
 	return rtf.format(Math.floor(deltaSeconds / divisor), units[unitIndex]);
 }

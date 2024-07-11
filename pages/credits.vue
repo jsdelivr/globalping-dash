@@ -67,8 +67,8 @@
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, readItems } from '@directus/sdk';
-	import type { PageState } from 'primevue/paginator';
 	import type { DataTablePageEvent } from 'primevue/datatable';
+	import type { PageState } from 'primevue/paginator';
 	import { useAuth } from '~/store/auth';
 	import { sendToast } from '~/utils/send-toast';
 

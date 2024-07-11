@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia';
 import { readMe } from '@directus/sdk';
+import { defineStore } from 'pinia';
 
 interface AuthState {
 	isLoggedIn: boolean,

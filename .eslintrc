@@ -25,7 +25,10 @@
 					"group": "external",
 					"position": "before"
 				}
-			]
+			],
+			"alphabetize": {
+				"order": "asc"
+			}
 		}]
 	},
 	"overrides": [

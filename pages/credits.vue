@@ -9,14 +9,15 @@
 		<div class="mt-2 flex">
 			<div class="mr-20">
 				<p>Total credits</p>
+				<!-- TODO: locate functions should consistently use en-US everywhere -->
 				<p class="text-lg font-bold">{{ creditsStats.credits.toLocaleString() }}</p>
 			</div>
 			<div class="mr-20">
-				<p>Generated last 30 days</p>
+				<p>Generated past 30 days</p>
 				<p class="text-lg font-bold">{{ creditsStats.additions.toLocaleString() }}</p>
 			</div>
 			<div>
-				<p>Spent last 30 days</p>
+				<p>Spent past 30 days</p>
 				<p class="text-lg font-bold">{{ creditsStats.deductions.toLocaleString() }}</p>
 			</div>
 		</div>
@@ -33,7 +34,7 @@
 				:total-records="creditsChangesCount"
 				:loading="loading"
 			>
-				<Column header="Time" field="date_created" header-class="pl-1 pt-3"/>
+				<Column header="Date" field="date_created" header-class="pl-1 pt-3"/>
 				<Column header="Comment" field="comment" header-class="pl-1 pt-3"/>
 				<Column header="Amount" field="amount" header-class="pl-1 pt-3">
 					<template #body="slotProps">
@@ -103,6 +104,8 @@
 						date_created: { _gte: '$NOW(-30 day)' },
 					} },
 				})),
+				// TODO: for deductions let's show comment "Measurements run on this day."
+				// TODO: let's also drop the "For (the)" prefix from other messages (server side) => "Adopted probe ...", "$10 sponsorship"
 				$directus.request<[{sum: {amount: number}}]>(aggregate('gp_credits_deductions', {
 					aggregate: { sum: 'amount' },
 					query: { filter: {

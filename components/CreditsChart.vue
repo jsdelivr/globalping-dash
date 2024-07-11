@@ -1,6 +1,7 @@
 
 <template>
 	<Chart type="line" :data="chartData" :options="chartOptions" class="h-30rem"/>
+	<!-- TODO: tooltip needs styling closer to the design -->
 </template>
 
 <script setup lang="ts">

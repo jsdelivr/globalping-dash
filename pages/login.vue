@@ -29,7 +29,7 @@
 	</section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 	import { useAuth } from '~/store/auth';
 
 	definePageMeta({

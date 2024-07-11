@@ -2,17 +2,17 @@ import { defineStore } from 'pinia';
 import { readMe } from '@directus/sdk';
 
 interface AuthState {
-  isLoggedIn: boolean,
+	isLoggedIn: boolean,
 	expiresAt: number,
-  user: {
-    id: string,
-    first_name: string | null,
-    last_name: string | null,
+	user: {
+		id: string,
+		first_name: string | null,
+		last_name: string | null,
 		github_username: string,
 		github_organizations: string[],
-    email: string | null,
-    last_page: string | null,
-    external_identifier: string | null,
+		email: string | null,
+		last_page: string | null,
+		external_identifier: string | null,
 		appearance: 'light' | 'dark' | null,
 		user_type: 'member' | 'sponsor' | 'special',
 	}

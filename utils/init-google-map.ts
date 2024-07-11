@@ -77,23 +77,23 @@ function createMapMarker (probe: Probe) {
 	// create svg to use as a Marker icon
 	const svgFillColor = DEFAULT_MARKER_COLOR;
 	const svg = window.btoa(`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g filter="url(#filter0_d_6106_3045)">
-    <circle cx="12" cy="10" r="6" fill="${svgFillColor}"/>
-    <circle cx="12" cy="10" r="7" stroke="white" stroke-width="2"/>
-    </g>
-    <defs>
-    <filter id="filter0_d_6106_3045" x="0" y="0" width="24" height="24" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
-    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-    <feOffset dy="2"/>
-    <feGaussianBlur stdDeviation="2"/>
-    <feComposite in2="hardAlpha" operator="out"/>
-    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
-    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_6106_3045"/>
-    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_6106_3045" result="shape"/>
-    </filter>
-    </defs>
-    </svg>`);
+		<g filter="url(#filter0_d_6106_3045)">
+		<circle cx="12" cy="10" r="6" fill="${svgFillColor}"/>
+		<circle cx="12" cy="10" r="7" stroke="white" stroke-width="2"/>
+		</g>
+		<defs>
+		<filter id="filter0_d_6106_3045" x="0" y="0" width="24" height="24" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+		<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+		<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+		<feOffset dy="2"/>
+		<feGaussianBlur stdDeviation="2"/>
+		<feComposite in2="hardAlpha" operator="out"/>
+		<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
+		<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_6106_3045"/>
+		<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_6106_3045" result="shape"/>
+		</filter>
+		</defs>
+		</svg>`);
 
 
 	// create an Info Window

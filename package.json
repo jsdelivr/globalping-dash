@@ -36,6 +36,8 @@
 		"@types/markdown-it": "^14.1.1",
 		"eslint": "^8.57.0",
 		"eslint-plugin-tailwindcss": "^3.15.2",
-		"nuxt-primevue": "^0.3.1"
+		"nuxt-primevue": "^0.3.1",
+		"typescript": "^5.5.3",
+		"vue-tsc": "^2.0.26"
 	}
 }

@@ -119,4 +119,7 @@ export default defineNuxtConfig({
 		},
 		devtools: { enabled: true },
 	},
+	typescript: {
+		typeCheck: 'build',
+	},
 });

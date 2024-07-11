@@ -13,12 +13,14 @@
 			<template #separator/>
 			<template #content="{ nextCallback }">
 				<TabView :pt="{ inkbar: {class: 'hidden'}}" class="dark:border-dark-300 border-t">
+					<!-- TODO: try using a fixed modal size so that it doesn't change when switching between the tabs -->
+					<!-- TODO: also must not change when going through steps 1-2-3, or maybe the change can at least be animated -->
 					<TabPanel>
 						<template #header>
 							<i class="pi pi-check mr-2"/>I'm already running a probe
 						</template>
 						<p class="mb-4 mt-2 text-lg font-bold">Set up your probe</p>
-						<p>First, update your container by running following commands:</p>
+						<p>First, update your container by running the following commands:</p>
 						<CodeBlock :commands="setUpCommands" class="mt-4"/>
 					</TabPanel>
 					<TabPanel>

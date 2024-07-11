@@ -211,41 +211,42 @@
 </script>
 
 <style scoped>
-.probe + .probe {
-	margin-left: 24px;
-	padding-left: 24px;
-	border-left-width: 1px;
-}
-
-@media (max-width: 640px) {
 	.probe + .probe {
-		margin-left: 0;
-		padding-left: 0;
-		border-left: 0;
-		margin-top: 24px;
-		padding-top: 24px;
-		@apply border-t;
-	}
-}
-
-@screen sm {
-	.probes-wrapper {
-		position: relative;
+		margin-left: 24px;
+		padding-left: 24px;
+		border-left-width: 1px;
 	}
 
-	.probes-wrapper::after {
-		content: '';
-		position: absolute;
-		bottom: 0;
-		right: 0;
-		width: 60px;
-		height: 100%;
-		pointer-events: none;
-		background: linear-gradient(to left, white, transparent);
+	@media (max-width: 640px) {
+		.probe + .probe {
+			margin-left: 0;
+			padding-left: 0;
+			border-left: 0;
+			margin-top: 24px;
+			padding-top: 24px;
+
+			@apply border-t;
+		}
 	}
 
-	.dark .probes-wrapper::after {
-		background: linear-gradient(to left, var(--dark-800), transparent);
+	@screen sm {
+		.probes-wrapper {
+			position: relative;
+		}
+
+		.probes-wrapper:after {
+			content: "";
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			width: 60px;
+			height: 100%;
+			pointer-events: none;
+			background: linear-gradient(to left, #fff, transparent);
+		}
+
+		.dark .probes-wrapper:after {
+			background: linear-gradient(to left, var(--dark-800), transparent);
+		}
 	}
-}
 </style>

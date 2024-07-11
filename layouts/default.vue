@@ -21,9 +21,9 @@
 					<i v-if="newNotifications.length" class="pi pi-circle-fill text-primary absolute right-3 top-1 text-[0.3rem]"/>
 				</Button>
 				<Button class="text-surface-0 flex items-center" text rounded aria-label="Profile" @click="toggleProfile">
-					<i class="pi pi-user border-surface-0 rounded-full border-[1.5px] p-2" style="font-size: 1.1rem"/>
+					<i class="pi pi-user border-surface-0 rounded-full border-[1.5px] p-2" style="font-size: 1.1rem;"/>
 					<p class="m-2 font-semibold">{{ user.github_username || `${user.first_name} ${user.last_name}` }}</p>
-					<i class="pi pi-chevron-down" style="font-size: 0.7rem"/>
+					<i class="pi pi-chevron-down" style="font-size: .7rem;"/>
 				</Button>
 				<TieredMenu ref="profilePanel" :model="items" popup>
 					<template #item="{ item, props, hasSubmenu }">
@@ -211,11 +211,11 @@
 	}
 
 	.sidebar-link.active .pi {
-		color: var(--surface-90)
+		color: var(--surface-90);
 	}
 
-	.sidebar-link.active::before {
-		content: '';
+	.sidebar-link.active:before {
+		content: "";
 		background: var(--primary);
 		border-radius: 5px;
 		position: absolute;

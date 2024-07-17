@@ -29,7 +29,9 @@
 				/>
 			</div>
 
-			<NuxtLink to="https://globalping.io/" class="text-bluegray-400 hover:underline" target="_blank">Learn more about Globaling <i class="pi pi-external-link text-2xs"/></NuxtLink>
+			<NuxtLink to="https://globalping.io/" class="text-bluegray-400 hover:underline" target="_blank">
+				Learn more about Globalping <i class="pi pi-external-link text-2xs"/>
+			</NuxtLink>
 		</div>
 
 		<div class="rounded-xl bg-[url('~/assets/images/login-bg.svg')] bg-cover max-md:hidden dark:bg-[url('~/assets/images/login-bg-dark.svg')]"/>

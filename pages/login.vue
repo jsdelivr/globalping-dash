@@ -1,6 +1,6 @@
 <template>
-	<section class="grid grid-cols-[420px_auto] max-md:grid-cols-1">
-		<div class="flex flex-col p-12">
+	<section class="grid grid-cols-[480px_auto] max-md:grid-cols-1">
+		<div class="flex flex-col px-20 py-12" style="box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); z-index: 2;">
 			<div class="mb-auto flex flex-col">
 				<div class="flex items-center">
 					<picture class="inline-flex">
@@ -17,7 +17,7 @@
 			</div>
 
 			<div class="mb-auto">
-				<h2 class="text-3xl font-bold">Sign in</h2>
+				<h2 class="text-4xl font-bold">Sign in</h2>
 				<Divider class="h-2 before:border-t-2"/>
 				<Button
 					class="h-12 w-full bg-black !text-left"
@@ -32,7 +32,7 @@
 			<NuxtLink to="https://globalping.io/" class="text-bluegray-400 hover:underline" target="_blank">Learn more about Globaling <i class="pi pi-external-link text-2xs"/></NuxtLink>
 		</div>
 
-		<div class="m-2 rounded-xl bg-[url('~/assets/images/login-bg.svg')] bg-cover max-md:hidden dark:bg-[url('~/assets/images/login-bg-dark.svg')]"/>
+		<div class="rounded-xl bg-[url('~/assets/images/login-bg.svg')] bg-cover max-md:hidden dark:bg-[url('~/assets/images/login-bg-dark.svg')]"/>
 	</section>
 </template>
 

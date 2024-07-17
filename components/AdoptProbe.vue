@@ -25,7 +25,7 @@
 					</TabPanel>
 					<TabPanel>
 						<template #header>
-							<i class="pi pi-times mr-2"/>I'm not running a probe
+							<i class="pi pi-times mr-2"/>I'm not running a probe yet
 						</template>
 						<p class="mb-4 mt-2 text-lg font-bold">Join the network</p>
 						<StartProbe/>

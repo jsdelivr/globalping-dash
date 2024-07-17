@@ -44,7 +44,7 @@
 	});
 
 	useHead({
-		title: 'Log In -',
+		title: 'Sign In -',
 	});
 
 	const auth = useAuth();

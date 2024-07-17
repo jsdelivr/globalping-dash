@@ -22,7 +22,7 @@ import datatable from './datatable';
 // import dataviewlayoutoptions from './dataviewlayoutoptions';
 // import deferred from './deferred';
 import dialog from './dialog';
-// import divider from './divider';
+import divider from './divider';
 // import dock from './dock';
 import dropdown from './dropdown';
 // import fieldset from './fieldset';
@@ -152,7 +152,7 @@ export default {
 	// fieldset,
 	// card,
 	tabview,
-	// divider,
+	divider,
 	toolbar,
 	// scrollpanel,
 	// splitter,

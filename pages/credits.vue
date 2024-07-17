@@ -9,7 +9,7 @@
 		<div class="mt-2 flex">
 			<div class="mr-20">
 				<p>Total credits</p>
-				<!-- TODO: locate functions should consistently use en-US everywhere -->
+				<!-- TODO: P3: locate functions should consistently use en-US everywhere -->
 				<p class="text-lg font-bold">{{ creditsStats.credits.toLocaleString() }}</p>
 			</div>
 			<div class="mr-20">
@@ -104,8 +104,8 @@
 						date_created: { _gte: '$NOW(-30 day)' },
 					} },
 				})),
-				// TODO: for deductions let's show comment "Measurements run on this day."
-				// TODO: let's also drop the "For (the)" prefix from other messages (server side) => "Adopted probe ...", "$10 sponsorship"
+				// TODO: P2: for deductions let's show comment "Measurements run on this day."
+				// TODO: P2: let's also drop the "For (the)" prefix from other messages (server side) => "Adopted probe ...", "$10 sponsorship"
 				$directus.request<[{sum: {amount: number}}]>(aggregate('gp_credits_deductions', {
 					aggregate: { sum: 'amount' },
 					query: { filter: {

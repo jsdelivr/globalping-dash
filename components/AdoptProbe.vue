@@ -13,8 +13,8 @@
 			<template #separator/>
 			<template #content="{ nextCallback }">
 				<TabView :pt="{ inkbar: {class: 'hidden'}}" class="dark:border-dark-300 border-t">
-					<!-- TODO: try using a fixed modal size so that it doesn't change when switching between the tabs -->
-					<!-- TODO: also must not change when going through steps 1-2-3, or maybe the change can at least be animated -->
+					<!-- TODO: P1: try using a fixed modal size so that it doesn't change when switching between the tabs -->
+					<!-- TODO: P1: also must not change when going through steps 1-2-3, or maybe the change can at least be animated -->
 					<TabPanel>
 						<template #header>
 							<i class="pi pi-check mr-2"/>I'm already running a probe

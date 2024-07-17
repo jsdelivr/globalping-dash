@@ -1,7 +1,7 @@
 <template>
 	<div class="flex min-h-full flex-col p-6">
 		<div>
-			<!-- TODO: this and most likely other elements should use custom classes, e.g. page-title -->
+			<!-- TODO: P3: this and most likely other elements should use custom classes, e.g. page-title -->
 			<!-- https://tailwindcss.com/docs/adding-custom-styles#adding-component-classes -->
 			<h1 class="col-span-2 text-2xl font-bold">Settings</h1>
 		</div>
@@ -34,7 +34,7 @@
 				<h5 class="text-lg font-bold">Interface</h5>
 			</div>
 			<div class="grow">
-				<!-- TODO: can we automatically "preview" the theme when I click a button here without saving? the setting should revert when I leave the page/reload -->
+				<!-- TODO: P3: can we automatically "preview" the theme when I click a button here without saving? the setting should revert when I leave the page/reload -->
 				<p class="font-bold">Theme</p>
 				<SelectButton
 					v-model="appearance"
@@ -59,7 +59,7 @@
 			<div class="grow">
 				<label for="email" class="block font-bold">Email</label>
 				<InputText id="email" v-model="email" class="mt-2 w-full"/>
-				<!-- TODO: let's use a "tag-like" design here, like we have for token origins -->
+				<!-- TODO: P2: let's use a "tag-like" design here, like we have for token origins -->
 				<!-- should also resolve issues with overflows by breaking it up into several lines when there are many values -->
 				<label for="organizations" class="mt-6 block font-bold">Organizations</label>
 				<div class="relative mt-2">

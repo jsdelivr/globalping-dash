@@ -47,7 +47,7 @@
 				Credits<i
 					v-tooltip.top="user.github_username"
 					class="pi pi-info-circle ml-2"
-				/><!-- TODO: really username -->
+				/><!-- TODO: P2: really username? -->
 			</p>
 			<div class="p-6">
 				<div class="flex max-sm:flex-wrap">
@@ -85,8 +85,8 @@
 			<div class="p-6">
 				<div v-if="adoptedProbes.length" class="probes-wrapper flex overflow-hidden max-sm:flex-col">
 					<div v-for="probe in adoptedProbes" :key="probe.id" class="probe box-content min-w-60 py-2">
-						<!-- TODO: clicking the name here should bring me to /probes, with the correct probe expanded and scrolled down to (if needed) -->
-						<!-- TODO: a somewhat related bonus to the above - it would be nice if expanding probe details at /probes resulted in URL change  -->
+						<!-- TODO: P1: clicking the name here should bring me to /probes, with the correct probe expanded and scrolled down to (if needed) -->
+						<!-- TODO: P2: a somewhat related bonus to the above - it would be nice if expanding probe details at /probes resulted in URL change  -->
 						<ProbeHeader
 							class="mb-6"
 							:name="probe.name || probe.city"

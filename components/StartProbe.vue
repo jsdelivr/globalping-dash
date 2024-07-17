@@ -17,8 +17,8 @@
 		/>
 	</div>
 	<div class="dark:bg-dark-900 relative mt-4 rounded-xl border p-4 pr-0">
-		<!-- TODO: the expand effect and the modal resize must be animated (and probably it'll have to be just downwards, not in both directions) -->
-		<!-- TODO: related ^ all the modals may work better if they are closer to the top, not fully vertically centered -->
+		<!-- TODO: P1: the expand effect and the modal resize must be animated (and probably it'll have to be just downwards, not in both directions) -->
+		<!-- TODO: P1: related ^ all the modals may work better if they are closer to the top, not fully vertically centered -->
 		<pre v-if="(size === 'compact')" class="no-scrollbar overflow-scroll"><code class="mr-16">{{ commands[platform][size] }}</code></pre>
 		<div v-if="size === 'expanded'" class="no-scrollbar overflow-scroll">
 			<pre v-for="line in commands[platform][size]" :key="line.toString()"><code>{{ line[0] }}</code><code class="text-bluegray-300 mr-16">{{ line[1] }}</code></pre>

@@ -1,17 +1,19 @@
 import path from 'path';
 
 export default defineNuxtConfig({
+	compatibilityDate: '2024-07-01',
 	runtimeConfig: {
 		public: {
+			directusUrl: process.env.DIRECTUS_URL,
 			googleMapsKey: process.env.GOOGLE_MAPS_KEY,
 			itemsPerTablePage: 10,
 		},
 	},
 	app: {
 		head: {
-			titleTemplate: '%s GP Dashboard',
+			titleTemplate: '%s Globalping Dashboard',
 			htmlAttrs: {
-				lang: 'en',
+				lang: 'en-us',
 			},
 		},
 	},
@@ -117,12 +119,9 @@ export default defineNuxtConfig({
 	$development: {
 		runtimeConfig: {
 			public: {
-				directusUrl: 'http://localhost:18055',
+				directusUrl: process.env.DIRECTUS_URL || 'http://localhost:18055',
 			},
 		},
 		devtools: { enabled: true },
-	},
-	typescript: {
-		typeCheck: 'build',
 	},
 });

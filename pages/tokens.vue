@@ -4,7 +4,10 @@
 			<h1 class="col-span-2 text-2xl font-bold">Tokens</h1>
 			<Button class="ml-auto" label="Generate new token" @click="openTokenDetails('generate')"/>
 		</div>
-		<p class="xl:w-1/2">Generate a token and add it to your Globalping requests to upper your hourly measurements limit. After the limit is exhausted, you can proceed with measurements by spending the earned credits.</p>
+		<p class="xl:w-1/2">
+			Generate a token and use it in your API requests to get a higher hourly measurements limit.
+			After reaching the hourly limit, you can keep running measurements by spending the earned credits.
+		</p>
 		<div v-if="tokens.length || loading" class="mt-6">
 			<DataTable
 				v-model:expandedRows="expandedRows"
@@ -52,8 +55,8 @@
 					<div class="bg-surface-50 dark:bg-dark-600 flex rounded-xl p-4">
 						<div><i class="pi pi-info-circle mr-3 text-xl"/></div>
 						<div>
-							<p class="font-bold">Don't forget to copy your new personal access token.</p>
-							<p class="mt-2">This secret won't be shown again for your security.</p>
+							<p class="font-bold">Don't forget to copy your new access token.</p>
+							<p class="mt-2">You won’t be able to see it again.</p>
 							<CodeBlock class="mt-2" :commands="[[generatedToken!.value]]"/>
 						</div>
 						<div class="ml-auto">

@@ -115,7 +115,7 @@
 					<i class="pi pi-exclamation-triangle text-primary text-xl"/>
 				</div>
 				<div class="ml-3">
-					<p>You're about to delete token <span class="font-bold">{{ tokenToDelete!.name }}</span>.</p>
+					<p>You are about to delete token <span class="font-bold">{{ tokenToDelete!.name }}</span>.</p>
 					<p>Are you sure you want to delete this token? You will not be able to undo this action.</p>
 				</div>
 			</div>
@@ -137,7 +137,7 @@
 					<i class="pi pi-exclamation-triangle text-primary text-xl"/>
 				</div>
 				<div class="ml-3">
-					<p>You're about to regenerate token <span class="font-bold">{{ tokenToRegenerate!.name }}</span>.</p>
+					<p>You are about to regenerate token <span class="font-bold">{{ tokenToRegenerate!.name }}</span>.</p>
 					<p>Are you sure you want to regenerate this token? The previous value will stop working immediately.</p>
 				</div>
 			</div>

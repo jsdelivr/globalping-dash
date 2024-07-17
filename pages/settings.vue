@@ -1,6 +1,8 @@
 <template>
 	<div class="flex min-h-full flex-col p-6">
 		<div>
+			<!-- TODO: this and most likely other elements should use custom classes, e.g. page-title -->
+			<!-- https://tailwindcss.com/docs/adding-custom-styles#adding-component-classes -->
 			<h1 class="col-span-2 text-2xl font-bold">Settings</h1>
 		</div>
 		<div class="bg-surface-0 dark:bg-dark-800 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
@@ -32,6 +34,7 @@
 				<h5 class="text-lg font-bold">Interface</h5>
 			</div>
 			<div class="grow">
+				<!-- TODO: can we automatically "preview" the theme when I click a button here without saving? the setting should revert when I leave the page/reload -->
 				<p class="font-bold">Theme</p>
 				<SelectButton
 					v-model="appearance"
@@ -56,6 +59,8 @@
 			<div class="grow">
 				<label for="email" class="block font-bold">Email</label>
 				<InputText id="email" v-model="email" class="mt-2 w-full"/>
+				<!-- TODO: let's use a "tag-like" design here, like we have for token origins -->
+				<!-- should also resolve issues with overflows by breaking it up into several lines when there are many values -->
 				<label for="organizations" class="mt-6 block font-bold">Organizations</label>
 				<div class="relative mt-2">
 					<Button
@@ -101,13 +106,13 @@
 					<i class="pi pi-exclamation-triangle text-primary text-xl"/>
 				</div>
 				<div class="ml-3">
-					<p>You're about to delete your Globalping account.</p>
-					<p>Are you sure you? All your data will be lost.</p>
+					<p>You are about to delete your Globalping account.</p>
+					<p>Are you sure? All your data will be lost.</p>
 				</div>
 			</div>
 			<div class="mt-7 text-right">
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
-				<Button label="Delete token" severity="danger" @click="deleteAccount"/>
+				<Button label="Delete account" severity="danger" @click="deleteAccount"/>
 			</div>
 		</Dialog>
 	</div>

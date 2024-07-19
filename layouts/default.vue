@@ -1,11 +1,13 @@
 <template>
 	<section class="grid grid-cols-[256px_auto] grid-rows-[56px_auto] max-lg:grid-cols-1">
 		<Toast class="max-[440px]:left-5 max-[440px]:w-auto"/>
+
 		<header class="text-surface-0 bg-dark-800 col-span-2 flex items-center border-b px-6 py-3 max-lg:px-3">
 			<NuxtLink to="/">
 				<img class="h-6" src="~/assets/images/gp-logo-white.svg" alt="Globalping logo">
 			</NuxtLink>
 			<NuxtLink to="https://www.jsdelivr.com/" class="text-bluegray-600 m-2 mr-auto text-xs no-underline hover:underline">by jsDelivr</NuxtLink>
+
 			<div class="flex items-center max-lg:hidden">
 				<NuxtLink class="text-surface-0 ml-6 no-underline hover:underline" to="https://www.jsdelivr.com/" target="_blank">
 					<i class="pi pi-external-link text-bluegray-300"/>
@@ -41,6 +43,7 @@
 					</template>
 				</TieredMenu>
 			</div>
+			
 			<div class="hidden max-lg:flex">
 				<Button class="text-surface-0 relative mr-4" text aria-label="Notifications" @click="toggleNotifications">
 					<i class="pi pi-bell text-[1.3rem]"/>
@@ -83,6 +86,7 @@
 				<p v-else class="w-80 p-4">No notifications</p>
 			</OverlayPanel>
 		</header>
+
 		<aside class="bg-surface-100 dark:bg-dark-700 flex flex-col border-r p-4 max-lg:hidden">
 			<NuxtLink active-class="active" class="sidebar-link" to="/"><i class="pi pi-home text-bluegray-400 pl-4 pr-3 text-xl"/>Overview</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/probes"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="probe"/>Probes</NuxtLink>

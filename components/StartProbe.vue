@@ -48,7 +48,7 @@
 			<i class="pi text-xs" :class="{'pi-chevron-down': size === 'compact', 'pi-chevron-up': size === 'expanded'}"/>
 		</Button>
 	</div>
-	<p class="mt-4">Once you connect you will become part of the global community that powers the Globalping Platform. The container will work on both x86 and ARM architectures.</p>
+	<p class="mt-4">Once you connect, you will become part of the global community that powers the Globalping Platform. The container works on both x86 and ARM architectures.</p>
 </template>
 
 <script setup lang="ts">

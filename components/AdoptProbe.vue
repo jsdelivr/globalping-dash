@@ -52,7 +52,7 @@
 				<div class="p-5">
 					<p class="mb-4 mt-2 text-lg font-bold">Send adoption code</p>
 					<p>Enter your probe's public IP address and we will send it a verification code.</p>
-					<p class="font-semibold">Your probe will have the same IP as the network it's connected to.</p>
+					<p class="font-semibold">Your probe will have the same IP address as the network it's connected to.</p>
 					<InputText
 						v-model="ip"
 						placeholder="Enter IP address of your probe"
@@ -61,7 +61,9 @@
 						@keyup.enter="sendAdoptionCode(nextCallback)"
 						@update:model-value="resetIsIpValid"
 					/>
-					<p v-if="!isIpValid" class="absolute pl-1 text-red-500">{{ invalidIpMessage }}</p>
+					<!-- TODO: P1: invalid state has both red and green (focus) outline; should be just red -->
+					<!-- TODO: P1: can't be absolute - breaks on mobile (when scrollable) - check also other places when absolute is used-->
+					<p v-if="!isIpValid" class="absolute text-red-500">{{ invalidIpMessage }}</p>
 					<div class="mt-6 text-right">
 						<Button class="mr-2" label="Back" severity="secondary" text @click="prevCallback"/>
 						<Button label="Send code to probe" :loading="sendAdoptionCodeLoading" @click="sendAdoptionCode(nextCallback)"/>

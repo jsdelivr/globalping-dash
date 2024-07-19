@@ -1,4 +1,5 @@
 <template>
+	<!-- TODO: P1: @MartinKolarik - review including all texts after the design update. -->
 	<div class="flex min-h-full flex-col p-6" :class="{'min-w-[1024px]': probes?.length}">
 		<div class="mb-6 flex">
 			<h1 class="col-span-2 text-2xl font-bold">Probes</h1>

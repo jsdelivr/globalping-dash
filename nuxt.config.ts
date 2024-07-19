@@ -134,6 +134,10 @@ export default defineNuxtConfig({
 			},
 		},
 	},
+	typescript: {
+		// TODO: P2: fix and uncomment.
+		// typeCheck: 'build',
+	},
 	$development: {
 		runtimeConfig: {
 			public: {

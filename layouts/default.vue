@@ -43,7 +43,7 @@
 					</template>
 				</TieredMenu>
 			</div>
-			
+
 			<div class="hidden max-lg:flex">
 				<Button class="text-surface-0 relative mr-4" text aria-label="Notifications" @click="toggleNotifications">
 					<i class="pi pi-bell text-[1.3rem]"/>

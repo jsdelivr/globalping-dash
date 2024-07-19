@@ -93,6 +93,7 @@
 		<div class="mt-6 text-right">
 			<Button label="Apply settings" :loading="saveLoading" @click="save"/>
 		</div>
+		<!-- TODO: P3: we have many of these in the same style, might be worth to wrap in our own component (possibly same applies to other components). -->
 		<Dialog
 			v-model:visible="deleteDialog"
 			class="min-w-[700px] max-md:min-w-[95%]"

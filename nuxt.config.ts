@@ -23,13 +23,27 @@ export default defineNuxtConfig({
 	ssr: false,
 	devtools: { enabled: false },
 	devServer: { port: 13010 },
-	modules: [ '@nuxtjs/tailwindcss', 'nuxt-primevue', '@pinia/nuxt', 'nuxt-icons' ],
+	modules: [
+		'@nuxtjs/google-fonts',
+		'@nuxtjs/tailwindcss',
+		'nuxt-primevue',
+		'@pinia/nuxt',
+		'nuxt-icons',
+	],
 	css: [ 'primeicons/primeicons.css', '~/assets/css/base.css', '~/assets/css/global.css' ],
 	primevue: {
 		options: {
 			unstyled: true,
 		},
 		importPT: { from: path.posix.join(__dirname.replaceAll('\\', '/'), './presets/aura/') },
+	},
+	googleFonts: {
+		subsets: [
+			'latin',
+		],
+		families: {
+			Inter: true,
+		},
 	},
 	tailwindcss: {
 		config: {
@@ -108,6 +122,10 @@ export default defineNuxtConfig({
 						dark: {
 							DEFAULT: 'var(--dark-600)',
 						},
+					},
+					fontFamily: {
+						// Inter + the tailwind defaults
+						sans: [ 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"' ],
 					},
 					fontSize: {
 						'2xs': [ '0.7rem', '0.85rem' ],

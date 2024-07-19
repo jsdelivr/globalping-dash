@@ -1,6 +1,6 @@
 <template>
 	<section class="grid grid-cols-[480px_auto] max-md:grid-cols-1">
-		<div class="flex flex-col px-20 py-12" style="box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); z-index: 2;">
+		<div class="flex flex-col px-20 py-12" style="box-shadow: 0 20px 25px -5px rgba(0 0 0 / 0.1), 0 8px 10px -6px rgba(0 0 0 / 0.1); z-index: 2;">
 			<div class="mb-auto flex flex-col">
 				<div class="flex items-center">
 					<picture class="inline-flex">

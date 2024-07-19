@@ -1,7 +1,6 @@
 
 <template>
 	<Chart type="line" :data="chartData" :options="chartOptions" class="h-30rem"/>
-	<!-- TODO: P1: tooltip needs styling closer to the design -->
 </template>
 
 <script setup lang="ts">
@@ -118,19 +117,22 @@
 				callbacks: {
 					title: () => null,
 					label: () => null,
-					afterBody: (ctx: any) => `Total credits: ${changes.value[ctx[0].dataIndex].total}
-Generated: ${changes.value[ctx[0].dataIndex].generated}
-Spent: ${changes.value[ctx[0].dataIndex].spent}`,
+					afterBody: (ctx: any) => `Total credits: ${changes.value[ctx[0].dataIndex].total.toLocaleString()}
+Generated: ${changes.value[ctx[0].dataIndex].generated.toLocaleString()}
+Spent: ${changes.value[ctx[0].dataIndex].spent.toLocaleString()}`,
 				},
+				bodyFont: {
+					weight: 400,
+					size: 12,
+				},
+				padding: 10,
+				backgroundColor: '#4b5563',
 			},
 		},
 		scales: {
 			x: {
 				ticks: {
 					color: bluegray400,
-					font: {
-						weight: 'bold',
-					},
 				},
 				grid: {
 					color: surface300,

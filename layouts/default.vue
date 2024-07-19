@@ -76,6 +76,7 @@
 			<OverlayPanel ref="notificationsPanel">
 				<Accordion v-if="reverseNotifications.length" class="box-border w-80" expand-icon="pi pi-chevron-right">
 					<AccordionTab v-for="notification in reverseNotifications" :key="notification.id" :header="notification.subject">
+						<!-- TODO: P2: return the notifications from the server in a safe HTML format; DOMPurify + MD shouldn't be loaded on the client if we can avoid it (too much bloat for no good reason) -->
 						<span v-if="notification.message" class="notification" v-html="DOMPurify.sanitize(md.render(notification.message))"/>
 					</AccordionTab>
 				</Accordion>
@@ -103,6 +104,7 @@
 
 <script lang="ts" setup>
 	import { readNotifications, updateNotifications } from '@directus/sdk';
+	import { defaults } from 'chart.js';
 	import DOMPurify from 'dompurify';
 	import capitalize from 'lodash/capitalize';
 	import markdownit from 'markdown-it';
@@ -163,6 +165,15 @@
 
 	const mobileSidebar = ref(false);
 
+	const documentStyle = getComputedStyle(document.documentElement);
+
+	// DEFAULT CHART STYLES
+	defaults.font = {
+		family: documentStyle.getPropertyValue('font-family'),
+		weight: 500,
+		size: 10.5,
+	};
+	// DEFAULT CHART STYLES END
 </script>
 
 <style>

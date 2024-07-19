@@ -1,0 +1,76 @@
+body, html, #__nuxt, section {
+	height: 100%;
+}
+
+html {
+	@apply antialiased;
+	color: var(--bluegray-900);
+	background: var(--surface-50);
+}
+
+html.dark {
+	background: var(--dark-900);
+	color: var(--surface-0);
+}
+
+body {
+	font-size: 14px;
+}
+
+*, ::before, ::after {
+	@apply dark:border-dark-600;
+}
+
+.filler {
+	flex-grow: 1;
+}
+
+.flag.small-flag {
+	transform: scale(0.35) !important;
+	border-radius: 5px;
+}
+
+.fade-out {
+	position: relative;
+}
+
+.fade-out::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 60px;
+	height: 100%;
+	pointer-events: none;
+	background: linear-gradient(to left, white, transparent);
+}
+
+.dark .fade-out::after {
+	background: linear-gradient(to left, var(--dark-800), transparent);
+}
+
+.nuxt-icon svg {
+	margin-bottom: 0 !important;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+
+.no-scrollbar {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+/* Hide GoogleMaps InfoWindow close btn */
+#gp-map .gm-style-iw-chr {
+	display: none !important;
+}
+
+/* Fix disabled text color on mobile */
+input[disabled], textarea[disabled], select[disabled='disabled'] {
+	-webkit-text-fill-color: var(--text-bluegray-500);
+	-webkit-opacity: 1;
+	opacity: 1;
+	color: var(--text-bluegray-500);
+}

@@ -1,10 +1,35 @@
 {
 	"extends": [
-		"@nuxt/eslint-config",
-		"@martin-kolarik/eslint-config/typescript"
+		"plugin:tailwindcss/recommended",
+		"@martin-kolarik/eslint-config/typescript",
+		"@nuxt/eslint-config"
 	],
 	"parserOptions": {
 		"ecmaVersion": 2020
+	},
+	"ignorePatterns": [
+		"presets/**",
+		".nuxt/**",
+		".output/**",
+		"dist/**"
+	],
+	"plugins": [
+		"import"
+	],
+	"rules": {
+		"import/order": ["error", {
+			"distinctGroup": false,
+			"pathGroups": [
+				{
+					"pattern": "#**",
+					"group": "external",
+					"position": "before"
+				}
+			],
+			"alphabetize": {
+				"order": "asc"
+			}
+		}]
 	},
 	"overrides": [
 		{
@@ -45,8 +70,17 @@
 						"max": 1
 					}
 				}],
-				"vue/singleline-html-element-content-newline": "off"
+				"vue/singleline-html-element-content-newline": "off",
+				"tailwindcss/no-custom-classname": "off"
 			}
+		},
+		{
+			"files": [
+				"*.json"
+			],
+			"extends": [
+				"@martin-kolarik/eslint-config/typescript"
+			]
 		},
 		{
 			"files": [
@@ -62,7 +96,21 @@
 				"**"
 			],
 			"rules": {
-				"jsonc/no-comments": "off"
+				"jsonc/no-comments": "off",
+				"n/no-missing-import": "off",
+				"camelcase": "off",
+				"@typescript-eslint/no-unused-vars": [
+					"warn",
+					{
+						"args": "all",
+						"argsIgnorePattern": "^_",
+						"caughtErrors": "all",
+						"caughtErrorsIgnorePattern": "^_",
+						"destructuredArrayIgnorePattern": "^_",
+						"varsIgnorePattern": "^_",
+						"ignoreRestSiblings": true
+					}
+				]
 			}
 		},
 		{

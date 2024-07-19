@@ -1,0 +1,23 @@
+{
+	"customSyntax": "postcss-html",
+	"extends": [
+		"@martin-kolarik/stylelint-config",
+		"stylelint-config-tailwindcss"
+	],
+	"ignoreFiles": [],
+	"plugins": [],
+	"rules": {},
+	"overrides": [
+		{
+			"files": [
+				"**/*.vue"
+			],
+			"rules": {
+				"indentation": [
+					"tab",
+					{ "baseIndentLevel": 1 }
+				]
+			}
+		}
+	]
+}

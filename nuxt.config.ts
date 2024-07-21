@@ -1,4 +1,4 @@
-import path from 'path';
+import Aura from '@primevue/themes/aura';
 
 export default defineNuxtConfig({
 	compatibilityDate: '2024-07-01',
@@ -26,16 +26,17 @@ export default defineNuxtConfig({
 	modules: [
 		'@nuxtjs/google-fonts',
 		'@nuxtjs/tailwindcss',
-		'nuxt-primevue',
+		'@primevue/nuxt-module',
 		'@pinia/nuxt',
 		'nuxt-icons',
 	],
 	css: [ 'primeicons/primeicons.css', '~/assets/css/base.css', '~/assets/css/global.css' ],
 	primevue: {
 		options: {
-			unstyled: true,
+			theme: {
+				preset: Aura,
+			},
 		},
-		importPT: { from: path.posix.join(__dirname.replaceAll('\\', '/'), './presets/aura/') },
 	},
 	googleFonts: {
 		subsets: [

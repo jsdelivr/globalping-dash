@@ -44,10 +44,8 @@
 					option-value="value"
 				>
 					<template #option="slotProps">
-						<div class="flex items-center">
-							<i :class="slotProps.option.icon"/>
-							<span class="ml-1.5 font-bold">{{ slotProps.option.name }}</span>
-						</div>
+						<i :class="slotProps.option.icon"/>
+						<span>{{ slotProps.option.name }}</span>
 					</template>
 				</SelectButton>
 			</div>

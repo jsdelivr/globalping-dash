@@ -36,7 +36,7 @@
 						:outlined="adoptedProbes.length ? true : false"
 						@click="adoptProbeDialog = true"
 					>
-						<nuxt-icon class="pi mr-2 mt-[2px]" name="capture"/>
+						<nuxt-icon class="pi" name="capture"/>
 						<span class="font-bold">{{ adoptedProbes.length ? "Adopt probe" : "Adopt your first probe" }}</span>
 					</Button>
 				</div>

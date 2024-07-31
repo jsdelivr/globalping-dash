@@ -4,7 +4,7 @@
 		<div class="mb-6 flex">
 			<h1 class="col-span-2 text-2xl font-bold">Probes</h1>
 			<Button class="ml-auto" @click="adoptProbeDialog = true">
-				<nuxt-icon class="pi mr-2 mt-[2px]" name="capture"/>
+				<nuxt-icon class="pi" name="capture"/>
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
 		</div>
@@ -149,7 +149,7 @@
 								<div v-if="isEditingTags">
 									<div>
 										<div v-for="(tag, index) in tags" :key="index" class="mb-2 flex items-center" :class="{ 'mb-5': !isTagValid(tag.value) }">
-											<Dropdown v-model="tag.uPrefix" class="grow" :options="uPrefixes"/>
+											<Select v-model="tag.uPrefix" class="grow" :options="uPrefixes" :scroll-height="'200px'"/>
 											<span class="mx-2">-</span>
 											<span class="grow">
 												<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full"/>

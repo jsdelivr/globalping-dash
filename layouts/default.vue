@@ -18,13 +18,13 @@
 					<span class="m-2">Globalping</span>
 				</NuxtLink>
 				<p class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(user.user_type) }}</span></p>
-				<Button class="text-surface-0 relative mr-8" text rounded aria-label="Notifications" @click="toggleNotifications">
+				<Button class="text-surface-0 relative mr-8 hover:bg-transparent" text rounded aria-label="Notifications" @click="toggleNotifications">
 					<i class="pi pi-bell text-[1.3rem]"/>
 					<i v-if="newNotifications.length" class="pi pi-circle-fill text-primary absolute right-3 top-1 text-[0.3rem]"/>
 				</Button>
-				<Button class="text-surface-0 flex items-center" text rounded aria-label="Profile" @click="toggleProfile">
-					<i class="pi pi-user border-surface-0 rounded-full border-[1.5px] p-2" style="font-size: 1.1rem;"/>
-					<p class="m-2 font-semibold">{{ user.github_username || `${user.first_name} ${user.last_name}` }}</p>
+				<Button class="text-surface-0 flex items-center hover:bg-transparent !px-2" text rounded aria-label="Profile" @click="toggleProfile">
+					<i class="pi pi-user border-surface-0 rounded-full border-1.5 p-2" style="font-size: 1.1rem;"/>
+					<p class="font-semibold">{{ user.github_username || `${user.first_name} ${user.last_name}` }}</p>
 					<i class="pi pi-chevron-down" style="font-size: .7rem;"/>
 				</Button>
 				<TieredMenu ref="profilePanel" :model="items" popup>
@@ -45,18 +45,25 @@
 			</div>
 
 			<div class="hidden max-lg:flex">
-				<Button class="text-surface-0 relative mr-4" text aria-label="Notifications" @click="toggleNotifications">
+				<Button class="text-surface-0 relative mr-4 hover:bg-transparent" text aria-label="Notifications" @click="toggleNotifications">
 					<i class="pi pi-bell text-[1.3rem]"/>
 					<i v-if="newNotifications.length" class="pi pi-circle-fill text-primary absolute right-3 top-1 text-[0.3rem]"/>
 				</Button>
-				<Button class="text-surface-0 text-[1.3rem]" icon="pi pi-bars" aria-label="Menu" text @click="mobileSidebar = true"/>
-				<Sidebar v-model:visible="mobileSidebar" class="bg-surface-100 border pt-4" :header="user.github_username">
-					<NuxtLink active-class="active" class="sidebar-link" to="/" @click="mobileSidebar = false"><i class="pi pi-home text-bluegray-400 pl-4 pr-3 text-xl"/>Overview</NuxtLink>
-					<NuxtLink active-class="active" class="sidebar-link" to="/probes" @click="mobileSidebar = false"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="probe"/>Probes</NuxtLink>
-					<NuxtLink active-class="active" class="sidebar-link" to="/credits" @click="mobileSidebar = false"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="coin"/>Credits</NuxtLink>
-					<NuxtLink active-class="active" class="sidebar-link" to="/tokens" @click="mobileSidebar = false"><i class="pi pi-database text-bluegray-400 pl-4 pr-3 text-xl"/>Tokens</NuxtLink>
-					<NuxtLink active-class="active" class="sidebar-link" to="/settings" @click="mobileSidebar = false"><i class="pi pi-cog text-bluegray-400 pl-4 pr-3 text-xl"/>Settings</NuxtLink>
-					<button active-class="active" class="sidebar-link" @click="auth.logout"><i class="pi pi-power-off text-bluegray-400 pl-4 pr-3 text-xl"/>Sign out</button>
+				<Button class="text-surface-0 text-[1.5rem] hover:bg-transparent" icon="pi pi-bars" aria-label="Menu" text @click="mobileSidebar = true"/>
+				<Drawer v-model:visible="mobileSidebar" class="bg-surface-100 border pt-4">
+					<template #header>
+						<div class="font-semibold text-lg" data-pc-section="title">
+							<i class="pi pi-user border-main-900 rounded-full border-1.5 p-2 mr-2" style="font-size: 1.1rem;"/>
+							<span class="font-semibold">{{ user.github_username || `${user.first_name} ${user.last_name}` }}</span>
+						</div>
+					</template>
+
+					<NuxtLink active-class="active" class="sidebar-link" to="/" @click="mobileSidebar = false"><i class="pi pi-home text-bluegray-400 pl-4 pr-3 text-lg"/>Overview</NuxtLink>
+					<NuxtLink active-class="active" class="sidebar-link" to="/probes" @click="mobileSidebar = false"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-lg" name="probe"/>Probes</NuxtLink>
+					<NuxtLink active-class="active" class="sidebar-link" to="/credits" @click="mobileSidebar = false"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-lg" name="coin"/>Credits</NuxtLink>
+					<NuxtLink active-class="active" class="sidebar-link" to="/tokens" @click="mobileSidebar = false"><i class="pi pi-database text-bluegray-400 pl-4 pr-3 text-lg"/>Tokens</NuxtLink>
+					<NuxtLink active-class="active" class="sidebar-link" to="/settings" @click="mobileSidebar = false"><i class="pi pi-cog text-bluegray-400 pl-4 pr-3 text-lg"/>Settings</NuxtLink>
+					<button active-class="active" class="sidebar-link" @click="auth.logout"><i class="pi pi-power-off text-bluegray-400 pl-4 pr-3 text-lg"/>Sign out</button>
 					<div class="flex flex-col border-t">
 						<NuxtLink class="text-bluegray-600 dark:text-bluegray-100 ml-6 mt-4 no-underline hover:underline" to="https://www.jsdelivr.com/" target="_blank">
 							<i class="pi pi-external-link text-bluegray-300"/>
@@ -67,32 +74,35 @@
 							<span class="m-2">Globalping</span>
 						</NuxtLink>
 					</div>
-					<div class="bg-surface-0 dark:bg-dark-500 dark:border-dark-300 mt-8 rounded-xl border p-6">
+					<div class="bg-surface-0 dark:bg-dark-500 dark:border-dark-400 mt-8 rounded-xl border p-6">
 						<p class="mb-2 font-bold">Sponsorship</p>
 						<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
 						<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank" rel="noopener">
 							<Button label="Become a Sponsor" severity="contrast"/>
 						</NuxtLink>
 					</div>
-				</Sidebar>
+				</Drawer>
 			</div>
-			<OverlayPanel ref="notificationsPanel">
+			<Popover ref="notificationsPanel">
 				<Accordion v-if="reverseNotifications.length" class="box-border w-80" expand-icon="pi pi-chevron-right">
-					<AccordionTab v-for="notification in reverseNotifications" :key="notification.id" :header="notification.subject">
-						<!-- TODO: P2: return the notifications from the server in a safe HTML format; DOMPurify + MD shouldn't be loaded on the client if we can avoid it (too much bloat for no good reason) -->
-						<span v-if="notification.message" class="notification" v-html="DOMPurify.sanitize(md.render(notification.message))"/>
-					</AccordionTab>
+					<AccordionPanel v-for="notification in reverseNotifications" :key="notification.id" :value="notification.id">
+						<AccordionHeader>{{ notification.subject }}</AccordionHeader>
+						<AccordionContent>
+							<!-- TODO: P2: return the notifications from the server in a safe HTML format; DOMPurify + MD shouldn't be loaded on the client if we can avoid it (too much bloat for no good reason) -->
+							<span v-if="notification.message" class="notification" v-html="DOMPurify.sanitize(md.render(notification.message))"/>
+						</AccordionContent>
+					</AccordionPanel>
 				</Accordion>
 				<p v-else class="w-80 p-4">No notifications</p>
-			</OverlayPanel>
+			</Popover>
 		</header>
 
 		<aside class="bg-surface-100 dark:bg-dark-700 flex flex-col border-r p-4 max-lg:hidden">
-			<NuxtLink active-class="active" class="sidebar-link" to="/"><i class="pi pi-home text-bluegray-400 pl-4 pr-3 text-xl"/>Overview</NuxtLink>
-			<NuxtLink active-class="active" class="sidebar-link" to="/probes"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="probe"/>Probes</NuxtLink>
-			<NuxtLink active-class="active" class="sidebar-link" to="/credits"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-xl" name="coin"/>Credits</NuxtLink>
-			<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database text-bluegray-400 pl-4 pr-3 text-xl"/>Tokens</NuxtLink>
-			<div class="bg-surface-0 dark:bg-dark-500 dark:border-dark-300 mt-auto rounded-xl border p-6">
+			<NuxtLink active-class="active" class="sidebar-link" to="/"><i class="pi pi-home text-bluegray-400 pl-4 pr-3 text-lg"/>Overview</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar-link" to="/probes"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-lg" name="probe"/>Probes</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar-link" to="/credits"><nuxt-icon class="pi text-bluegray-400 pl-4 pr-3 text-lg" name="coin"/>Credits</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database text-bluegray-400 pl-4 pr-3 text-lg"/>Tokens</NuxtLink>
+			<div class="bg-surface-0 dark:bg-dark-500 dark:border-dark-400 mt-auto rounded-xl border p-6">
 				<p class="mb-2 font-bold">Sponsorship</p>
 				<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
 				<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank" rel="noopener">
@@ -190,7 +200,7 @@
 	}
 
 	.notification a {
-		color: var(--primary);
+		color: var(--p-primary-color);
 		font-weight: 600;
 	}
 </style>
@@ -211,27 +221,27 @@
 	}
 
 	.dark .sidebar-link {
-		color: var(--surface-0);
+		color: var(--p-surface-0);
 	}
 
 	.sidebar-link.active {
-		background: var(--surface-0);
+		background: var(--p-surface-0);
 		font-weight: 600;
-		border: 1px solid var(--surface-300);
+		border: 1px solid var(--p-surface-300);
 	}
 
 	.dark .sidebar-link.active {
 		background: var(--dark-500);
-		border-color: var(--dark-300);
+		border-color: var(--dark-400);
 	}
 
 	.sidebar-link.active .pi {
-		color: var(--surface-90);
+		color: var(--main-900);
 	}
 
 	.sidebar-link.active:before {
 		content: "";
-		background: var(--primary);
+		background: var(--p-primary-color);
 		border-radius: 5px;
 		position: absolute;
 		left: 5px;
@@ -241,12 +251,12 @@
 	}
 
 	.sidebar-link:hover {
-		background: var(--surface-0);
-		border: 1px solid var(--surface-300);
+		background: var(--p-surface-0);
+		border: 1px solid var(--p-surface-300);
 	}
 
 	.dark .sidebar-link:hover {
 		background: var(--dark-500);
-		border-color: var(--dark-300);
+		border-color: var(--dark-400);
 	}
 </style>

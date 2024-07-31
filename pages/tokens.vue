@@ -18,31 +18,29 @@
 				data-key="id"
 				:total-records="tokensCount"
 				:loading="loading"
-				:row-class="() => '!bg-surface-0 dark:!bg-dark-800 align-middle'"
-				class="pb-3"
 			>
-				<Column header="Name" field="name" header-class="pl-1 pt-3"/>
-				<Column header="Origins" header-class="pl-1 pt-3">
+				<Column header="Name" field="name"/>
+				<Column header="Origins">
 					<template #body="slotProps">
 						<Tag v-for="(origin, index) in slotProps.data.origins" :key="index" class="my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="origin"/>
 					</template>
 				</Column>
-				<Column header="Created" header-class="pl-1 pt-3">
+				<Column header="Created">
 					<template #body="slotProps">
 						{{ getRelativeTimeString(slotProps.data.date_created) || 'Never' }}
 					</template>
 				</Column>
-				<Column header="Last used" header-class="pl-1 pt-3">
+				<Column header="Last used">
 					<template #body="slotProps">
 						{{ getRelativeTimeString(slotProps.data.date_last_used) || 'Never' }}
 					</template>
 				</Column>
-				<Column header="Expires" header-class="pl-1 pt-3">
+				<Column header="Expires">
 					<template #body="slotProps">
 						{{ formatDate(slotProps.data.expire) || 'Never' }}
 					</template>
 				</Column>
-				<Column :row-editor="true" header-class="pl-1 pt-3" body-class="!py-2">
+				<Column :row-editor="true" body-class="!py-2">
 					<template #body="slotProps">
 						<TokenOptions
 							@edit="openTokenDetails('edit', slotProps.data.id)"
@@ -52,7 +50,7 @@
 					</template>
 				</Column>
 				<template #expansion="">
-					<div class="bg-surface-50 dark:bg-dark-600 flex rounded-xl p-4">
+					<div class="flex rounded-xl bg-surface-50 p-4 dark:bg-dark-600">
 						<div><i class="pi pi-info-circle mr-3 text-xl"/></div>
 						<div>
 							<p class="font-bold">Don't forget to copy your new access token.</p>
@@ -82,8 +80,8 @@
 				@page="onPage($event)"
 			/>
 		</div>
-		<div v-else class="bg-surface-0 dark:bg-dark-800 mt-6 rounded-xl border px-4 py-3">
-			<div class="bg-surface-50 dark:bg-dark-600 rounded-xl p-6 text-center">
+		<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
+			<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
 				<p class="font-semibold">No data to show</p>
 				<p class="mt-4">Adopt a probe or become a sponsor to track your credit usage</p>
 			</div>
@@ -115,7 +113,7 @@
 		>
 			<div class="flex items-center">
 				<div>
-					<i class="pi pi-exclamation-triangle text-primary text-xl"/>
+					<i class="pi pi-exclamation-triangle text-xl text-primary"/>
 				</div>
 				<div class="ml-3">
 					<p>You are about to delete token <span class="font-bold">{{ tokenToDelete!.name }}</span>.</p>
@@ -137,7 +135,7 @@
 		>
 			<div class="flex items-center">
 				<div>
-					<i class="pi pi-exclamation-triangle text-primary text-xl"/>
+					<i class="pi pi-exclamation-triangle text-xl text-primary"/>
 				</div>
 				<div class="ml-3">
 					<p>You are about to regenerate token <span class="font-bold">{{ tokenToRegenerate!.name }}</span>.</p>

@@ -1,90 +1,66 @@
 export default {
-	root: {
+	root: ({ props, context, parent }) => ({
 		class: [
 			'relative',
 
 			// Alignment
-			'inline-flex',
-			'align-bottom',
+			'flex items-center justify-center',
+			'py-2.5 px-4',
+			'leading-[normal]',
+			'rounded-md border',
 
-			// Misc
-			'cursor-pointer',
-			'select-none',
-		],
-	},
-	box: ({ props }) => ({
-		class: [
-			'relative',
+			...parent.attrs.severity === 'primary'
+				? [
+					// Color
+					'border-r-0 last:border-r dark:border-dark-400',
+					{
+						'text-main-900': !context.active,
+						'text-white bg-primary dark:bg-primary border-primary dark:border-primary': context.active,
+					},
 
-			// Alignments
-			'items-center inline-flex flex-1 text-center align-bottom justify-center',
+					// States
+					{
+						'hover:bg-surface-50 dark:hover:bg-dark-900': !props.disabled && !props.modelValue,
+						'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400': !props.disabled,
+					},
+				] : [
+					// Color
+					'bg-surface-100 dark:bg-dark-950',
+					{
+						'text-surface-600 dark:text-bluegray-200 before:bg-transparent': !context.active,
+						'text-surface-800 dark:text-bluegray-50 before:bg-surface-0 dark:before:bg-dark-800': context.active,
+					},
 
-			// Sizes & Spacing
-			'px-4 py-2 leading-none',
+					// States
+					{
+						'hover:text-surface-800 dark:hover:text-bluegray-50': !props.disabled && !props.modelValue,
+						'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400': !props.disabled,
+					},
+				],
 
-			// Shapes
-			'rounded-md',
-			'border',
-			{ 'border-transparent': !props.invalid },
-
-			// Colors
-			'bg-surface-100 dark:bg-surface-950',
+			// Invalid State
 			{
-				'text-surface-600 dark:text-white/60 before:bg-transparent': !props.modelValue,
-				'text-surface-800 dark:text-white/80 before:bg-surface-0 dark:before:bg-surface-800': props.modelValue,
+				'border-red-500 dark:border-red-400': props.invalid,
+				'border-surface-100 dark:border-dark-950': !props.invalid && parent.attrs.severity !== 'primary',
 			},
 
 			// Before
-			'before:absolute before:left-1 before:top-1 before:w-[calc(100%-0.5rem)] before:h-[calc(100%-0.5rem)] before:rounded-[4px] before:z-0',
-
-			// Invalid State
-			{ 'border-red-500 dark:border-red-400': props.invalid },
-
-			// States
-			{
-				'peer-hover:text-surface-800 dark:peer-hover:text-white/80': !props.disabled && !props.modelValue,
-				'peer-focus-visible:ring-1 peer-focus-visible:ring-primary-500 dark:peer-focus-visible:ring-primary-400': !props.disabled,
-			},
+			{ 'before:absolute before:left-1 before:top-1 before:w-[calc(100%-8px)] before:h-[calc(100%-8px)] before:rounded-[4px] before:z-0': parent.attrs.severity !== 'primary' },
 
 			// Transitions
 			'transition-all duration-200',
 
 			// Misc
 			{ 'cursor-pointer': !props.disabled, 'opacity-60 select-none pointer-events-none cursor-default': props.disabled },
+			'font-bold',
 		],
 	}),
-	label: {
-		class: 'font-medium leading-[normal] text-center w-full z-10 relative',
-	},
-	input: {
+	content: 'relative items-center inline-flex justify-center gap-2',
+	label: ({ }) => ({
 		class: [
-			'peer',
-
-			// Size
-			'w-full ',
-			'h-full',
-
-			// Position
-			'absolute',
-			'top-0 left-0',
-			'z-20',
-
-			// Spacing
-			'p-0',
-			'm-0',
-
-			// Shape
-			'opacity-0',
-			'rounded-md',
-			'outline-none',
-			'border border-surface-200 dark:border-dark-300',
-
-			// Misc
-			'appearance-none',
-			'cursor-pointer',
+			'leading-[normal] text-center w-full z-10 relative',
+			'font-bold',
 		],
-	},
-	icon: {
-		class: [ 'relative z-10', 'mr-2' ],
-	},
+	}),
+	icon: 'relative z-10 mr-2',
 };

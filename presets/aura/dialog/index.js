@@ -14,7 +14,7 @@ export default {
 			// Color
 			'bg-surface-0 dark:bg-dark-700',
 			'[&:last-child]:border-b',
-			'border-surface-200 dark:border-dark-300',
+			'border-surface-200 dark:border-dark-400',
 
 			// Transitions
 			'transform',
@@ -39,110 +39,23 @@ export default {
 			'shrink-0',
 
 			// Spacing
-			'py-6',
-			'px-5',
+			'p-6',
 
 			// Shape
 			'rounded-tl-lg',
 			'rounded-tr-lg',
 
 			// Colors
-			'text-bluegray-900 dark:text-surface-0',
+			'text-main-900',
 			'border border-b-0',
-			'border-surface-200 dark:border-dark-300',
+			'border-surface-200 dark:border-dark-400',
 		],
 	},
 	title: {
 		class: [ 'font-bold text-lg leading-[normal] text-bluegray-800 dark:text-surface-0' ],
 	},
-	icons: {
+	headerActions: {
 		class: [ 'flex items-center' ],
-	},
-	closeButton: {
-		class: [
-			'relative',
-
-			// Flexbox and Alignment
-			'flex items-center justify-center',
-
-			// Size and Spacing
-			'mr-2',
-			'last:mr-0',
-			'w-7 h-7',
-
-			// Shape
-			'border-0',
-			'rounded-full',
-
-			// Colors
-			'text-surface-500 dark:text-surface-300',
-			'bg-transparent',
-
-			// Transitions
-			'transition duration-200 ease-in-out',
-
-			// States
-			'hover:text-bluegray-900 dark:hover:text-white/80',
-			'hover:bg-surface-100 dark:hover:bg-[rgba(255,255,255,0.03)]',
-			'focus:outline-none focus:outline-offset-0 focus:ring-1',
-			'focus:ring-primary-500 dark:focus:ring-primary-400',
-
-			// Misc
-			'overflow-hidden',
-		],
-	},
-	maximizablebutton: {
-		class: [
-			'relative',
-
-			// Flexbox and Alignment
-			'flex items-center justify-center',
-
-			// Size and Spacing
-			'mr-2',
-			'last:mr-0',
-			'w-7 h-7',
-
-			// Shape
-			'border-0',
-			'rounded-full',
-
-			// Colors
-			'text-surface-500',
-			'bg-transparent',
-
-			// Transitions
-			'transition duration-200 ease-in-out',
-
-			// States
-			'hover:text-bluegray-900 dark:hover:text-white/80',
-			'hover:bg-surface-100 dark:hover:bg-[rgba(255,255,255,0.03)]',
-			'focus:outline-none focus:outline-offset-0 focus:ring-1',
-			'focus:ring-primary-500 dark:focus:ring-primary-400',
-
-			// Misc
-			'overflow-hidden',
-		],
-	},
-	closeButtonIcon: {
-		class: [
-			// Display
-			'inline-block',
-
-			// Size
-			'w-4',
-			'h-4',
-		],
-	},
-	maximizableicon: {
-		class: [
-			// Display
-			'inline-block',
-
-			// Size
-			'w-4',
-			'h-4',
-		],
 	},
 	content: ({ state, instance }) => ({
 		class: [
@@ -159,9 +72,9 @@ export default {
 			},
 
 			// Colors
-			'text-bluegray-900 dark:text-surface-0',
+			'text-main-900',
 			'border border-t-0 border-b-0',
-			'border-surface-200 dark:border-dark-300',
+			'border-surface-200 dark:border-dark-400',
 
 			// Misc
 			'overflow-y-auto',
@@ -185,9 +98,9 @@ export default {
 
 			// Colors
 			'bg-surface-0 dark:bg-dark-700',
-			'text-bluegray-900 dark:text-surface-0',
+			'test-main-900',
 			'border border-t-0 border-b-0',
-			'border-surface-200 dark:border-dark-300',
+			'border-surface-200 dark:border-dark-400',
 		],
 	},
 	mask: ({ props }) => ({
@@ -195,7 +108,7 @@ export default {
 			// Transitions
 			'transition-all',
 			'duration-300',
-			{ 'p-5': !props.position == 'full' },
+			{ 'p-5': !props.position === 'full' },
 
 			// Background and Effects
 			{ 'has-[.mask-active]:bg-transparent bg-black/40': props.modal },

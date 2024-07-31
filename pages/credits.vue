@@ -34,9 +34,9 @@
 				:total-records="creditsChangesCount"
 				:loading="loading"
 			>
-				<Column header="Date" field="date_created" header-class="pl-1 pt-3"/>
-				<Column header="Comment" field="comment" header-class="pl-1 pt-3"/>
-				<Column header="Amount" field="amount" header-class="pl-1 pt-3">
+				<Column header="Date" field="date_created"/>
+				<Column header="Comment" field="comment"/>
+				<Column header="Amount" field="amount">
 					<template #body="slotProps">
 						<Tag v-if="slotProps.data.type === 'addition'" class="flex items-center !text-sm" severity="success">
 							<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ slotProps.data.amount || 0 }}
@@ -57,8 +57,8 @@
 				@page="onPage($event)"
 			/>
 		</div>
-		<div v-else class="bg-surface-0 dark:bg-dark-800 mt-6 rounded-xl border px-4 py-3">
-			<div class="bg-surface-50 dark:bg-dark-600 rounded-xl p-6 text-center">
+		<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
+			<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
 				<p class="font-semibold">No data to show</p>
 				<p class="mt-4">Adopt a probe or become a sponsor to track your credit usage</p>
 			</div>

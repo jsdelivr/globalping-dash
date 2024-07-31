@@ -1,0 +1,14 @@
+@layer tailwind-base {
+	@tailwind base;
+
+	*, ::before, ::after {
+		@apply dark:border-dark-600;
+	}
+}
+
+@layer tailwind-components {
+	@tailwind components;
+}
+
+@tailwind utilities;
+@tailwind variants;

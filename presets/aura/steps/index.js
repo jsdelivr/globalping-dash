@@ -17,7 +17,7 @@ export default {
 			// Before
 			'before:border-t-2',
 			'before:border-surface-200',
-			'before:dark:border-dark-300',
+			'before:dark:border-surface-700',
 			'before:w-full',
 			'[&:first-child]:before:w-[calc(50%+1rem)]',
 			'[&:last-child]:before:w-1/2',
@@ -72,8 +72,8 @@ export default {
 			'font-medium',
 
 			// Colors
-			'bg-surface-0 dark:bg-surface-800',
-			'border-surface-100 dark:border-dark-300',
+			'bg-surface-0 dark:bg-dark-800',
+			'border-surface-100 dark:border-surface-700',
 			{
 				'text-surface-400 dark:text-white/60': !context.active,
 				'text-primary': context.active,

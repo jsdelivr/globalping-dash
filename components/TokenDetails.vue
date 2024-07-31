@@ -1,6 +1,6 @@
 <template>
-	<div class="text-bluegray-700 dark:text-surface-0 border-t px-5 py-7">
-		<label for="tokenName">Token name<i class="text-primary align-text-bottom">*</i></label>
+	<div class="border-t px-5 py-7 text-bluegray-700 dark:text-surface-0">
+		<label for="tokenName">Token name<i class="align-text-bottom text-primary">*</i></label>
 		<InputText
 			id="tokenName"
 			v-model="name"

@@ -50,7 +50,7 @@
 					</template>
 				</Column>
 				<template #expansion="">
-					<div class="bg-surface-50 dark:bg-dark-600 flex rounded-xl p-4">
+					<div class="flex rounded-xl bg-surface-50 p-4 dark:bg-dark-600">
 						<div><i class="pi pi-info-circle mr-3 text-xl"/></div>
 						<div>
 							<p class="font-bold">Don't forget to copy your new access token.</p>
@@ -80,8 +80,8 @@
 				@page="onPage($event)"
 			/>
 		</div>
-		<div v-else class="bg-surface-0 dark:bg-dark-800 mt-6 rounded-xl border px-4 py-3">
-			<div class="bg-surface-50 dark:bg-dark-600 rounded-xl p-6 text-center">
+		<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
+			<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
 				<p class="font-semibold">No data to show</p>
 				<p class="mt-4">Adopt a probe or become a sponsor to track your credit usage</p>
 			</div>
@@ -113,7 +113,7 @@
 		>
 			<div class="flex items-center">
 				<div>
-					<i class="pi pi-exclamation-triangle text-primary text-xl"/>
+					<i class="pi pi-exclamation-triangle text-xl text-primary"/>
 				</div>
 				<div class="ml-3">
 					<p>You are about to delete token <span class="font-bold">{{ tokenToDelete!.name }}</span>.</p>
@@ -135,7 +135,7 @@
 		>
 			<div class="flex items-center">
 				<div>
-					<i class="pi pi-exclamation-triangle text-primary text-xl"/>
+					<i class="pi pi-exclamation-triangle text-xl text-primary"/>
 				</div>
 				<div class="ml-3">
 					<p>You are about to regenerate token <span class="font-bold">{{ tokenToRegenerate!.name }}</span>.</p>

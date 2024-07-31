@@ -5,7 +5,7 @@
 			<!-- https://tailwindcss.com/docs/adding-custom-styles#adding-component-classes -->
 			<h1 class="col-span-2 text-2xl font-bold">Settings</h1>
 		</div>
-		<div class="bg-surface-0 dark:bg-dark-800 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
+		<div class="mt-6 flex rounded-xl border bg-surface-0 p-6 max-sm:flex-col dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Account details</h5>
 			</div>
@@ -24,12 +24,12 @@
 						class="!absolute right-8 top-[5px] h-6 bg-transparent !px-1 hover:bg-transparent"
 						@click="syncFromGithub(1)"
 					/>
-					<i class="pi pi-lock text-bluegray-500 absolute right-3 top-[10px]"/>
+					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
 					<InputText id="username" v-model="user.github_username" disabled class="w-full bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 			</div>
 		</div>
-		<div class="bg-surface-0 dark:bg-dark-800 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
+		<div class="mt-6 flex rounded-xl border bg-surface-0 p-6 max-sm:flex-col dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Interface</h5>
 			</div>
@@ -50,7 +50,7 @@
 				</SelectButton>
 			</div>
 		</div>
-		<div class="bg-surface-0 dark:bg-dark-800 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
+		<div class="mt-6 flex rounded-xl border bg-surface-0 p-6 max-sm:flex-col dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Other</h5>
 			</div>
@@ -69,17 +69,17 @@
 						class="!absolute right-8 top-[5px] h-6 bg-transparent !px-1 hover:bg-transparent"
 						@click="syncFromGithub(2)"
 					/>
-					<i class="pi pi-lock text-bluegray-500 absolute right-3 top-[10px]"/>
+					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
 					<InputText id="organizations" v-model="organizationsString" disabled class="w-full bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 				<label for="userType" class="mt-6 block font-bold">User type</label>
 				<div class="relative mt-2">
-					<i class="pi pi-lock text-bluegray-500 absolute right-3 top-[10px]"/>
+					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
 					<InputText id="userType" v-model="user.user_type" disabled class="w-full bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 			</div>
 		</div>
-		<div class="bg-surface-0 dark:bg-dark-800 mt-6 flex rounded-xl border p-6 max-sm:flex-col">
+		<div class="mt-6 flex rounded-xl border bg-surface-0 p-6 max-sm:flex-col dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Data removal</h5>
 			</div>
@@ -102,7 +102,7 @@
 		>
 			<div class="flex items-center">
 				<div>
-					<i class="pi pi-exclamation-triangle text-primary text-xl"/>
+					<i class="pi pi-exclamation-triangle text-xl text-primary"/>
 				</div>
 				<div class="ml-3">
 					<p>You are about to delete your Globalping account.</p>

@@ -2,7 +2,7 @@ export default {
 	root: ({ props, parent }) => ({
 		class: [
 			'flex',
-			{ 'first:rounded-l-md rounded-none last:rounded-r-md': parent.instance.$name == 'InputGroup' },
+			{ 'first:rounded-l-md rounded-none last:rounded-r-md': parent.instance.$name === 'InputGroup' },
 			{
 				'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default': props.disabled,
 			},
@@ -44,7 +44,7 @@ export default {
 			{ 'outline-none outline-offset-0 z-10 ring-1 ring-primary-500 dark:ring-primary-400': state.focused },
 
 			// Filled State *for FloatLabel
-			{ filled: parent.instance?.$name == 'FloatLabel' && props.modelValue !== null && props.modelValue?.length !== 0 },
+			{ filled: parent.instance?.$name === 'FloatLabel' && props.modelValue !== null && props.modelValue?.length !== 0 },
 
 			// Transition
 			'transition duration-200 ease-in-out',

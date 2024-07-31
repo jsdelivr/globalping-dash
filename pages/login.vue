@@ -1,6 +1,6 @@
 <template>
 	<section class="grid grid-cols-[480px_auto] max-md:grid-cols-1">
-		<div class="flex flex-col px-20 py-12" style="box-shadow: 0 20px 25px -5px rgba(0 0 0 / 0.1), 0 8px 10px -6px rgba(0 0 0 / 0.1); z-index: 2;">
+		<div class="flex flex-col px-20 py-12" style="box-shadow: 0 20px 25px -5px rgba(0 0 0 / .1), 0 8px 10px -6px rgba(0 0 0 / .1); z-index: 2;">
 			<div class="mb-auto flex flex-col">
 				<div class="flex items-center">
 					<picture class="inline-flex">
@@ -8,12 +8,12 @@
 					</picture>
 					<div class="ml-3">
 						<h1 class="text-xl font-bold">Globalping Dashboard</h1>
-						<NuxtLink to="https://www.jsdelivr.com" class="text-bluegray-400 text-s relative top-[-.25rem] hover:underline" target="_blank">
+						<NuxtLink to="https://www.jsdelivr.com" class="text-s relative top-[-.25rem] text-bluegray-400 hover:underline" target="_blank">
 							by jsDelivr <i class="pi pi-external-link text-2xs"/>
 						</NuxtLink>
 					</div>
 				</div>
-				<h2 class="text-bluegray-400 mt-8 text-xl">Manage your probes, credits, and access tokens</h2>
+				<h2 class="mt-8 text-xl text-bluegray-400">Manage your probes, credits, and access tokens</h2>
 			</div>
 
 			<div class="mb-auto">

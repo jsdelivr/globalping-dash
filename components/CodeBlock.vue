@@ -1,7 +1,7 @@
 <template>
-	<div class="bg-surface-0 dark:bg-dark-900 relative rounded-xl border p-4 pr-0">
+	<div class="relative rounded-xl border bg-surface-0 p-4 pr-0 dark:bg-dark-900">
 		<div class="no-scrollbar overflow-scroll">
-			<pre v-for="line in commands" :key="line.toString()"><code>{{ line[0] }}</code><code class="text-bluegray-300 mr-16">{{ line[1] }}</code></pre>
+			<pre v-for="line in commands" :key="line.toString()"><code>{{ line[0] }}</code><code class="mr-16 text-bluegray-300">{{ line[1] }}</code></pre>
 		</div>
 		<div class="!absolute right-2 top-2">
 			<Button
@@ -11,7 +11,7 @@
 				aria-label="Copy"
 				@click="copyCommand"
 			/>
-			<div v-if="copyTooltip" class="bg-bluegray-700 text-surface-0 absolute left-1/2 top-[-40px] -translate-x-1/2 rounded-md p-2">
+			<div v-if="copyTooltip" class="absolute -top-10 left-1/2 -translate-x-1/2 rounded-md bg-bluegray-700 p-2 text-surface-0">
 				Copied!
 			</div>
 		</div>

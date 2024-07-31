@@ -34,7 +34,7 @@
 									<InputText v-model="name" class="w-full rounded-none border-0 !bg-transparent !px-0 !py-1 font-bold" autofocus @keyup.enter="saveName(slotProps.data.id)"/>
 									<Button
 										icon="pi pi-check"
-										class="text-surface-900 h-6 w-4"
+										class="h-6 w-4 text-surface-900"
 										severity="secondary"
 										text
 										aria-label="Save name"
@@ -43,7 +43,7 @@
 									/>
 									<Button
 										icon="pi pi-times"
-										class="text-surface-900 h-6 w-4"
+										class="h-6 w-4 text-surface-900"
 										severity="secondary"
 										text
 										aria-label="Close edit"
@@ -55,7 +55,7 @@
 									{{ slotProps.data.name || slotProps.data.city }}
 									<Button
 										icon="pi pi-pencil"
-										class="text-surface-900 mx-1 w-6 !py-0"
+										class="mx-1 w-6 !py-0 text-surface-900"
 										severity="secondary"
 										text
 										aria-label="Edit name"
@@ -63,7 +63,7 @@
 										@click="editName(slotProps.data.name)"
 									/>
 								</p>
-								<p class="text-bluegray-900 dark:text-bluegray-400 col-start-2 col-end-3 row-start-2 row-end-3">{{ slotProps.data.ip }}</p>
+								<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-bluegray-900 dark:text-bluegray-400">{{ slotProps.data.ip }}</p>
 							</div>
 							<div class="mb-6 mt-24 w-[200%] pl-16 pr-2">
 								<p class="border-b pb-2 font-bold">Probe details</p>
@@ -100,7 +100,7 @@
 									<InputText v-model="city" class="w-full rounded-none border-0 !bg-transparent !px-0 !py-1 font-bold" autofocus @keyup.enter="saveCity(slotProps.data.id)"/>
 									<Button
 										icon="pi pi-check"
-										class="text-surface-900 h-6 w-4"
+										class="h-6 w-4 text-surface-900"
 										severity="secondary"
 										text
 										aria-label="Save city"
@@ -109,7 +109,7 @@
 									/>
 									<Button
 										icon="pi pi-times"
-										class="text-surface-900 h-6 w-4"
+										class="h-6 w-4 text-surface-900"
 										severity="secondary"
 										text
 										aria-label="Close edit"
@@ -121,7 +121,7 @@
 									{{ slotProps.data.city }}, {{ slotProps.data.country }}
 									<Button
 										icon="pi pi-pencil"
-										class="text-surface-900 mx-1 w-6 !py-0"
+										class="mx-1 w-6 !py-0 text-surface-900"
 										severity="secondary"
 										text
 										aria-label="Edit city"
@@ -131,7 +131,7 @@
 								</p>
 							</div>
 							<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
-							<p class="text-bluegray-400 text-2xs mt-3">City where the probe is located. If you know that city is wrong it can be changed here: type in the valid city and click save.</p>
+							<p class="mt-3 text-2xs text-bluegray-400">City where the probe is located. If you know that city is wrong it can be changed here: type in the valid city and click save.</p>
 						</div>
 						<div v-else class="px-2 py-3">
 							<div class="mb-1 flex items-center">
@@ -172,12 +172,12 @@
 											icon="pi pi-check"
 											severity="secondary"
 											outlined
-											class="bg-surface-200 ml-auto"
+											class="ml-auto bg-surface-200"
 											@click="saveTags(slotProps.data.id)"
 										/>
-										<Button label="Cancel" severity="secondary" outlined class="dark:!bg-dark-800 ml-1" @click="cancelTags"/>
+										<Button label="Cancel" severity="secondary" outlined class="ml-1 dark:!bg-dark-800" @click="cancelTags"/>
 									</div>
-									<p class="text-bluegray-400 text-2xs mt-3">
+									<p class="mt-3 text-2xs text-bluegray-400">
 										Public tags of the probe. They can be used as location filters for a measurement. Format is <code class="font-bold">u-${prefix}-${value}</code> where prefix is user/organization github login, and value is your custom string.
 
 										E.g. for user with github username <code class="font-bold">"jimaek"</code>
@@ -187,7 +187,7 @@
 								</div>
 								<div v-else>
 									<div>
-										<Tag v-for="tag in slotProps.data.tags" :key="tag" class="bg-surface-0 dark:bg-dark-800 my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
+										<Tag v-for="tag in slotProps.data.tags" :key="tag" class="my-0.5 mr-1 flex bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`${tag.prefix}-${tag.value}`"/>
 									</div>
 									<Button
 										class="mt-3"
@@ -197,22 +197,22 @@
 										outlined
 										@click="editTags(slotProps.data.tags)"
 									/>
-									<p class="text-bluegray-400 text-2xs mt-3">Public tags of the probe. They can be used as location filters for a measurement.</p>
+									<p class="mt-3 text-2xs text-bluegray-400">Public tags of the probe. They can be used as location filters for a measurement.</p>
 								</div>
 							</div>
 							<div class="mt-6 w-[145%] px-2">
 								<p class="border-b pb-2 font-bold">Tests (last 24h)</p>
 								<div class="pb-4 pt-8 text-center">
-									<i class="pi pi-chart-bar text-primary py-4 text-lg"/>
+									<i class="pi pi-chart-bar py-4 text-lg text-primary"/>
 									<p class="font-bold">Tests data coming soon.</p>
 									<p>Here you will see the probe tests statistics.</p>
 								</div>
 							</div>
 						</div>
 						<div v-else class="px-2 py-4">
-							<Tag v-if="slotProps.data.tags[0]" :key="slotProps.data.tags[0]" class="bg-surface-0 dark:bg-dark-800 my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${slotProps.data.tags[0].prefix}-${slotProps.data.tags[0].value}`"/>
-							<Tag v-if="slotProps.data.tags[1]" :key="slotProps.data.tags[1]" class="bg-surface-0 dark:bg-dark-800 my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`${slotProps.data.tags[1].prefix}-${slotProps.data.tags[1].value}`"/>
-							<Tag v-if="slotProps.data.tags.length > 2" key="other" class="bg-surface-0 dark:bg-dark-800 my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="`+${slotProps.data.tags.length - 2}`"/>
+							<Tag v-if="slotProps.data.tags[0]" :key="slotProps.data.tags[0]" class="my-0.5 mr-1 flex bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`${slotProps.data.tags[0].prefix}-${slotProps.data.tags[0].value}`"/>
+							<Tag v-if="slotProps.data.tags[1]" :key="slotProps.data.tags[1]" class="my-0.5 mr-1 flex bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`${slotProps.data.tags[1].prefix}-${slotProps.data.tags[1].value}`"/>
+							<Tag v-if="slotProps.data.tags.length > 2" key="other" class="my-0.5 mr-1 flex bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`+${slotProps.data.tags.length - 2}`"/>
 						</div>
 					</template>
 				</Column>
@@ -272,15 +272,15 @@
 				@page="onPage($event)"
 			/>
 		</div>
-		<div v-else class="bg-surface-0 dark:bg-dark-800 flex grow flex-col overflow-hidden rounded-xl border">
-			<p class="text-bluegray-700 dark:text-dark-0 flex border-b px-6 py-3 font-bold">List of probes</p>
-			<div class="bg-surface-50 dark:bg-dark-600 m-6 flex grow flex-col items-center justify-center rounded-xl p-6 text-center">
+		<div v-else class="flex grow flex-col overflow-hidden rounded-xl border bg-surface-0 dark:bg-dark-800">
+			<p class="flex border-b px-6 py-3 font-bold text-bluegray-700 dark:text-dark-0">List of probes</p>
+			<div class="m-6 flex grow flex-col items-center justify-center rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
 				<img class="mx-auto w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
 				<p class="mt-6 leading-tight">
 					<b>You don't have any probes yet.</b><br><br>
 					Get started in 30 seconds by running a Docker container with our probe.  It's free and simple.<br>
 					Each probe will generate additional credits for you to use. Nowhere to run the container?<br>
-					<NuxtLink class="text-primary font-semibold hover:underline" to="https://github.com/sponsors/jsdelivr">Become a GitHub Sponsor</NuxtLink> and get a hardware ARM powered probe delivered to you.<br>
+					<NuxtLink class="font-semibold text-primary hover:underline" to="https://github.com/sponsors/jsdelivr">Become a GitHub Sponsor</NuxtLink> and get a hardware ARM powered probe delivered to you.<br>
 					Plug-and-play simplicity guaranteed.
 				</p>
 				<Button class="mt-6" label="Start a probe" @click="startProbeDialog = true"/>

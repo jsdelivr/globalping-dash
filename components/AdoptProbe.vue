@@ -31,7 +31,7 @@
 		</StepList>
 		<StepPanels>
 			<StepPanel v-slot="{ activateCallback }" value="1">
-				<Tabs value="0" :pt="{ inkbar: {class: 'hidden'}}" class="dark:border-dark-400 border-t">
+				<Tabs value="0" :pt="{ inkbar: {class: 'hidden'}}" class="border-t dark:border-dark-400">
 					<!-- TODO: P1: try using a fixed modal size so that it doesn't change when switching between the tabs -->
 					<!-- TODO: P1: also must not change when going through steps 1-2-3, or maybe the change can at least be animated -->
 					<TabList>
@@ -98,7 +98,7 @@
 					<p class="mt-4">Now you need to check the probe's log output to find the verification code. If you're running it inside a Docker container then you can quickly find it by running this command:</p>
 					<CodeBlock class="mt-3" :commands="probeType === 'docker' ? [['docker logs -f --tail 25 globalping-probe']] : [['ssh logs@IP-ADDRESS']]"/>
 					<p class="mt-3">Find the code in the logs and input it here to verify ownership.</p>
-					<div class="bg-surface-50 dark:bg-dark-600 mt-6 rounded-xl py-10 text-center ">
+					<div class="mt-6 rounded-xl bg-surface-50 py-10 text-center dark:bg-dark-600 ">
 						<div class="flex justify-center">
 							<InputOtp
 								v-model="code"
@@ -124,7 +124,7 @@
 							Congratulations!
 						</p>
 						<p class="mt-4 text-center">You are now the owner of the following probe:</p>
-						<div v-if="probe" class="bg-surface-0 dark:bg-dark-800 dark:border-dark-400 mt-4 rounded-xl border p-3 text-center">
+						<div v-if="probe" class="mt-4 rounded-xl border bg-surface-0 p-3 text-center dark:border-dark-400 dark:bg-dark-800">
 							<p class="font-bold">{{ probe.city }}</p>
 							<p class="flex items-center justify-center">
 								<CountryFlag :country="probe.country" size="small"/>

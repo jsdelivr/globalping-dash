@@ -21,11 +21,11 @@ importers:
         specifier: ^0.5.1
         version: 0.5.1(rollup@4.18.1)(typescript@5.5.3)(vue@3.4.33(typescript@5.5.3))
       '@primevue/nuxt-module':
-        specifier: ^4.0.0
-        version: 4.0.0(@babel/parser@7.24.8)(@primeuix/utils@0.0.5)(magicast@0.3.4)(rollup@4.18.1)(vue@3.4.33(typescript@5.5.3))
+        specifier: ^4.0.3
+        version: 4.0.3(@babel/parser@7.24.8)(magicast@0.3.4)(rollup@4.18.1)(vue@3.4.33(typescript@5.5.3))
       '@primevue/themes':
-        specifier: ^4.0.0
-        version: 4.0.0(@primeuix/styled@0.0.5)
+        specifier: ^4.0.3
+        version: 4.0.3
       chart.js:
         specifier: ^4.4.3
         version: 4.4.3
@@ -54,8 +54,14 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
       primevue:
-        specifier: 4.0.0
-        version: 4.0.0(@primeuix/utils@0.0.5)(vue@3.4.33(typescript@5.5.3))
+        specifier: ^4.0.3
+        version: 4.0.3(vue@3.4.33(typescript@5.5.3))
+      tailwindcss:
+        specifier: ^3.4.6
+        version: 3.4.6
+      tailwindcss-primeui:
+        specifier: ^0.3.4
+        version: 0.3.4(tailwindcss@3.4.6)
       vue:
         specifier: ^3.4.33
         version: 3.4.33(typescript@5.5.3)
@@ -1153,34 +1159,31 @@ packages:
     resolution: {integrity: sha512-ntUiUgtRtkF8KuaxHffzhYxQxoXk6LAPHm7CVlFjdqS8Rx8xRkLkZVyo84E+pO2hcNFkOGVP/GxHhQ2s94O8zA==}
     engines: {node: '>=12.11.0'}
 
-  '@primevue/auto-import-resolver@4.0.0':
-    resolution: {integrity: sha512-3bCZzZuM5kiKl7qO5+Q7BuP6xslc9yPfRiUL4k+mLrR2mwUI0rWFLQR4LyhMUVyHJ5izbVoS7kinppGgOuCrMA==}
+  '@primevue/auto-import-resolver@4.0.3':
+    resolution: {integrity: sha512-zwWEeIwgIJcDbW1lz6YIn8du6BY9Q3mSnBRZUYLNWVw3fqlO78vKbOLD3brY8PNVvZMRxT7zWH0c+WtGK8bUtA==}
     engines: {node: '>=12.11.0'}
 
-  '@primevue/core@4.0.0':
-    resolution: {integrity: sha512-M+GF1HYnl/x5J6uevXh1k42J0XnFhp0XHce+cHddWg7v3bVwgsn7LD3AKKcf0A/iQQPXVKX9nY/4/9eFVct67w==}
+  '@primevue/core@4.0.3':
+    resolution: {integrity: sha512-pKdXsYHRMtJfw1tjPJ2u3bC+QLUDIftdHgR7DRfZ4ZV0/9qOGpFZIBYTv3Px+NGQnV+qAyp3Yeh/pS9UO83wHQ==}
     engines: {node: '>=12.11.0'}
     peerDependencies:
-      '@primeuix/utils': ^0.0.5
       vue: ^3.0.0
 
-  '@primevue/icons@4.0.0':
-    resolution: {integrity: sha512-gv9pbj7JjCuW59tW2csIJgg6btTJpkr/mjlfqscEIrYzDGqzCrbfxLur48gA2dyhYsiQPPTbIHFwL944piFgIg==}
+  '@primevue/icons@4.0.3':
+    resolution: {integrity: sha512-eamWkgXhAt/3nC0HJLYmkpXf6DP9QDQ/ecaqT9onNlHXHXL+QDd25OG/wKHPKB94jh3AO/9rD1aMW+YtXtkKbQ==}
     engines: {node: '>=12.11.0'}
 
-  '@primevue/metadata@4.0.0':
-    resolution: {integrity: sha512-RqP27igA5Ky1AcaXHyk6o5hRg+kGxBByl1Q1HxAVae1wOuDl5eP2pxwTWNAs0ELwrQ/urc5ssjaF18S98DAl+w==}
+  '@primevue/metadata@4.0.3':
+    resolution: {integrity: sha512-xL3BlD9Nx5gCCQAHyK2BMujUm34FmBlODuFyevWzEX/lkhzWs7jLVQ5lUpoaiXm+jcdgzq7K0QDA8OxCVITucA==}
     engines: {node: '>=12.11.0'}
 
-  '@primevue/nuxt-module@4.0.0':
-    resolution: {integrity: sha512-9R8rarSY6kxsHVyfo9Pbx3+75mTFyDkYJs5XPDIzZFLXu2ZaodaZvNhwQ8I9ZAYis5UNy4yIjCsWnmXaOSW0+w==}
+  '@primevue/nuxt-module@4.0.3':
+    resolution: {integrity: sha512-6QkWnF6aFxK/HcJQqGaYUaj4VB15aKtZQvXqDW6OeAUDcdEKEhmzijDLv8u56/uHLACZZsOdvUc8Epv1xSPMHw==}
     engines: {node: '>=12.11.0'}
 
-  '@primevue/themes@4.0.0':
-    resolution: {integrity: sha512-y1HKYTuWma3T8NM9xVsLeJJeFWMxLIdJqNvQ+l8CnASgU+GH+KxMXOpPXqTAiJ2zpPmBL5VwpCCJWX93DjjvMQ==}
+  '@primevue/themes@4.0.3':
+    resolution: {integrity: sha512-5Mcb8UES2wg9WtvuK/lKW61xZpkbmRGdxKBh3LfEsxx8pwRmFtRD8XCXUPzaxUv9lwVEW3F/AQ0oAyBbnXptoQ==}
     engines: {node: '>=12.11.0'}
-    peerDependencies:
-      '@primeuix/styled': ^0.0.5
 
   '@rollup/plugin-alias@5.1.0':
     resolution: {integrity: sha512-lpA3RZ9PdIG7qqhEfv79tBffNaoDuukFDrmhLqg9ifv99u/ehn+lOg30x2zmhf8AQqQUZaMk/B9fZraQ6/acDQ==}
@@ -3094,8 +3097,8 @@ packages:
   image-meta@0.2.1:
     resolution: {integrity: sha512-K6acvFaelNxx8wc2VjbIzXKDVB0Khs0QT35U6NkGfTdCmjLNcO2945m7RFNR9/RPVFm48hq7QPzK8uGH18HCGw==}
 
-  immutable@4.3.6:
-    resolution: {integrity: sha512-Ju0+lEMyzMVZarkTn/gqRpdqd5dOPaz1mCZ0SH3JV6iFw81PldE/PEB1hWVEA288HPt4WXW8O7AWxB10M+03QQ==}
+  immutable@4.3.7:
+    resolution: {integrity: sha512-1hqclzwYwjRDFLjcFxOM5AYkkG0rpFPpr1RLPMEuGczoS7YA8gLhy8SWXYRAA/XwfEHpfo3cw5JGioS32fnMRw==}
 
   import-fresh@3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
@@ -4288,8 +4291,8 @@ packages:
   primeicons@7.0.0:
     resolution: {integrity: sha512-jK3Et9UzwzTsd6tzl2RmwrVY/b8raJ3QZLzoDACj+oTJ0oX7L9Hy+XnVwgo4QVKlKpnP/Ur13SXV/pVh4LzaDw==}
 
-  primevue@4.0.0:
-    resolution: {integrity: sha512-2PFmmJqyXpOcKOdF+gbps5fpSXfoXZp2LwX+hya/b5SDseMt3UNboyEgVI6B+DNbJRrib35EbDiMw+7RIANQ1w==}
+  primevue@4.0.3:
+    resolution: {integrity: sha512-f/41JMb7pMP++zKuiymXYmDMk/4oFRlJKXQzgrAy5Q3esU29hS59MBaP2CsHdPoJasQSzVAgOT+36S4/WXLajg==}
     engines: {node: '>=12.11.0'}
 
   process-nextick-args@2.0.1:
@@ -4802,6 +4805,11 @@ packages:
     hasBin: true
     peerDependencies:
       tailwindcss: 1 || 2 || 2.0.1-compat || 3
+
+  tailwindcss-primeui@0.3.4:
+    resolution: {integrity: sha512-5+Qfoe5Kpq2Iwrd6umBUb3rQH6b7+pL4jxJUId0Su5agUM6TwCyH5Pyl9R0y3QQB3IRuTxBNmeS11B41f+30zw==}
+    peerDependencies:
+      tailwindcss: '>=3.1.0'
 
   tailwindcss@3.4.6:
     resolution: {integrity: sha512-1uRHzPB+Vzu57ocybfZ4jh5Q3SdlH7XW23J5sQoM9LhE9eIOlzxer/3XPSsycvih3rboRsvt0QCmzSrqyOYUIA==}
@@ -6692,41 +6700,43 @@ snapshots:
 
   '@primeuix/utils@0.0.5': {}
 
-  '@primevue/auto-import-resolver@4.0.0':
+  '@primevue/auto-import-resolver@4.0.3':
     dependencies:
-      '@primevue/metadata': 4.0.0
+      '@primevue/metadata': 4.0.3
 
-  '@primevue/core@4.0.0(@primeuix/utils@0.0.5)(vue@3.4.33(typescript@5.5.3))':
+  '@primevue/core@4.0.3(vue@3.4.33(typescript@5.5.3))':
     dependencies:
       '@primeuix/styled': 0.0.5
       '@primeuix/utils': 0.0.5
       vue: 3.4.33(typescript@5.5.3)
 
-  '@primevue/icons@4.0.0(@primeuix/utils@0.0.5)(vue@3.4.33(typescript@5.5.3))':
+  '@primevue/icons@4.0.3(vue@3.4.33(typescript@5.5.3))':
     dependencies:
-      '@primevue/core': 4.0.0(@primeuix/utils@0.0.5)(vue@3.4.33(typescript@5.5.3))
+      '@primeuix/utils': 0.0.5
+      '@primevue/core': 4.0.3(vue@3.4.33(typescript@5.5.3))
     transitivePeerDependencies:
-      - '@primeuix/utils'
       - vue
 
-  '@primevue/metadata@4.0.0': {}
+  '@primevue/metadata@4.0.3': {}
 
-  '@primevue/nuxt-module@4.0.0(@babel/parser@7.24.8)(@primeuix/utils@0.0.5)(magicast@0.3.4)(rollup@4.18.1)(vue@3.4.33(typescript@5.5.3))':
+  '@primevue/nuxt-module@4.0.3(@babel/parser@7.24.8)(magicast@0.3.4)(rollup@4.18.1)(vue@3.4.33(typescript@5.5.3))':
     dependencies:
       '@nuxt/kit': 3.12.3(magicast@0.3.4)(rollup@4.18.1)
-      '@primevue/auto-import-resolver': 4.0.0
+      '@primeuix/styled': 0.0.5
+      '@primeuix/utils': 0.0.5
+      '@primevue/auto-import-resolver': 4.0.3
+      '@primevue/metadata': 4.0.3
       pathe: 1.1.2
-      primevue: 4.0.0(@primeuix/utils@0.0.5)(vue@3.4.33(typescript@5.5.3))
+      primevue: 4.0.3(vue@3.4.33(typescript@5.5.3))
       unplugin-vue-components: 0.27.0(@babel/parser@7.24.8)(@nuxt/kit@3.12.3(magicast@0.3.4)(rollup@4.18.1))(rollup@4.18.1)(vue@3.4.33(typescript@5.5.3))
     transitivePeerDependencies:
       - '@babel/parser'
-      - '@primeuix/utils'
       - magicast
       - rollup
       - supports-color
       - vue
 
-  '@primevue/themes@4.0.0(@primeuix/styled@0.0.5)':
+  '@primevue/themes@4.0.3':
     dependencies:
       '@primeuix/styled': 0.0.5
 
@@ -8994,7 +9004,7 @@ snapshots:
 
   image-meta@0.2.1: {}
 
-  immutable@4.3.6:
+  immutable@4.3.7:
     optional: true
 
   import-fresh@3.3.0:
@@ -10132,24 +10142,24 @@ snapshots:
       postcss: 8.4.39
       postcss-safe-parser: 6.0.0(postcss@8.4.39)
 
-  postcss-import@15.1.0(postcss@8.4.38):
+  postcss-import@15.1.0(postcss@8.4.39):
     dependencies:
-      postcss: 8.4.38
+      postcss: 8.4.39
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.8
 
-  postcss-js@4.0.1(postcss@8.4.38):
+  postcss-js@4.0.1(postcss@8.4.39):
     dependencies:
       camelcase-css: 2.0.1
-      postcss: 8.4.38
+      postcss: 8.4.39
 
-  postcss-load-config@4.0.2(postcss@8.4.38):
+  postcss-load-config@4.0.2(postcss@8.4.39):
     dependencies:
       lilconfig: 3.1.2
       yaml: 2.4.5
     optionalDependencies:
-      postcss: 8.4.38
+      postcss: 8.4.39
 
   postcss-media-query-parser@0.2.3: {}
 
@@ -10192,9 +10202,9 @@ snapshots:
       postcss: 8.4.39
       postcss-selector-parser: 6.1.1
 
-  postcss-nested@6.2.0(postcss@8.4.38):
+  postcss-nested@6.2.0(postcss@8.4.39):
     dependencies:
-      postcss: 8.4.38
+      postcss: 8.4.39
       postcss-selector-parser: 6.1.1
 
   postcss-nesting@12.1.5(postcss@8.4.38):
@@ -10313,12 +10323,13 @@ snapshots:
 
   primeicons@7.0.0: {}
 
-  primevue@4.0.0(@primeuix/utils@0.0.5)(vue@3.4.33(typescript@5.5.3)):
+  primevue@4.0.3(vue@3.4.33(typescript@5.5.3)):
     dependencies:
-      '@primevue/core': 4.0.0(@primeuix/utils@0.0.5)(vue@3.4.33(typescript@5.5.3))
-      '@primevue/icons': 4.0.0(@primeuix/utils@0.0.5)(vue@3.4.33(typescript@5.5.3))
+      '@primeuix/styled': 0.0.5
+      '@primeuix/utils': 0.0.5
+      '@primevue/core': 4.0.3(vue@3.4.33(typescript@5.5.3))
+      '@primevue/icons': 4.0.3(vue@3.4.33(typescript@5.5.3))
     transitivePeerDependencies:
-      - '@primeuix/utils'
       - vue
 
   process-nextick-args@2.0.1: {}
@@ -10556,7 +10567,7 @@ snapshots:
   sass@1.77.0:
     dependencies:
       chokidar: 3.6.0
-      immutable: 4.3.6
+      immutable: 4.3.7
       source-map-js: 1.2.0
     optional: true
 
@@ -10939,6 +10950,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  tailwindcss-primeui@0.3.4(tailwindcss@3.4.6):
+    dependencies:
+      tailwindcss: 3.4.6
+
   tailwindcss@3.4.6:
     dependencies:
       '@alloc/quick-lru': 5.2.0
@@ -10955,11 +10970,11 @@ snapshots:
       normalize-path: 3.0.0
       object-hash: 3.0.0
       picocolors: 1.0.1
-      postcss: 8.4.38
-      postcss-import: 15.1.0(postcss@8.4.38)
-      postcss-js: 4.0.1(postcss@8.4.38)
-      postcss-load-config: 4.0.2(postcss@8.4.38)
-      postcss-nested: 6.2.0(postcss@8.4.38)
+      postcss: 8.4.39
+      postcss-import: 15.1.0(postcss@8.4.39)
+      postcss-js: 4.0.1(postcss@8.4.39)
+      postcss-load-config: 4.0.2(postcss@8.4.39)
+      postcss-nested: 6.2.0(postcss@8.4.39)
       postcss-selector-parser: 6.1.1
       resolve: 1.22.8
       sucrase: 3.35.0

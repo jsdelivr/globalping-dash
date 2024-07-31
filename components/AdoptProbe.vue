@@ -1,54 +1,61 @@
 <template>
-	<Stepper v-model:activeStep="activeStep">
-		<StepperPanel>
-			<template #header="{ active, highlighted }">
+	<Stepper v-model:value="activeStep" linear>
+		<StepList>
+			<Step v-slot="{ active, value }" as-child value="1">
 				<StepHeader
-					button-text="1"
+					:button-text="value"
 					header-text="Set up your probe"
 					:active="active"
-					:highlighted="highlighted"
+					:highlighted="Number(activeStep) > 1"
 					:is-success="isSuccess"
 				/>
-			</template>
-			<template #separator/>
-			<template #content="{ nextCallback }">
-				<TabView :pt="{ inkbar: {class: 'hidden'}}" class="dark:border-dark-300 border-t">
-					<!-- TODO: P1: try using a fixed modal size so that it doesn't change when switching between the tabs -->
-					<!-- TODO: P1: also must not change when going through steps 1-2-3, or maybe the change can at least be animated -->
-					<TabPanel>
-						<template #header>
-							<i class="pi pi-check mr-2"/>I'm already running a probe
-						</template>
-						<p class="mb-4 mt-2 text-lg font-bold">Set up your probe</p>
-						<p>First, update your container by running the following commands:</p>
-						<CodeBlock :commands="setUpCommands" class="mt-4"/>
-					</TabPanel>
-					<TabPanel>
-						<template #header>
-							<i class="pi pi-times mr-2"/>I'm not running a probe yet
-						</template>
-						<p class="mb-4 mt-2 text-lg font-bold">Join the network</p>
-						<StartProbe/>
-					</TabPanel>
-				</TabView>
-				<div class="p-5 pt-2 text-right">
-					<Button class="mr-2" label="Cancel" severity="secondary" text @click="$emit('cancel')"/>
-					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="nextCallback"/>
-				</div>
-			</template>
-		</StepperPanel>
-		<StepperPanel>
-			<template #header="{ active, highlighted }">
+			</Step>
+			<Step v-slot="{ active, value }" as-child value="2">
 				<StepHeader
-					button-text="2"
+					:button-text="value"
 					header-text="Send adoption code"
 					:active="active"
-					:highlighted="highlighted"
+					:highlighted="Number(activeStep) > 2"
 					:is-success="isSuccess"
 				/>
-			</template>
-			<template #separator/>
-			<template #content="{ prevCallback, nextCallback }">
+			</Step>
+			<Step v-slot="{ active, value }" as-child value="3">
+				<StepHeader
+					:button-text="value"
+					header-text="Verify"
+					:active="active"
+					:highlighted="Number(activeStep) > 3"
+					:is-success="isSuccess"
+				/>
+			</Step>
+		</StepList>
+		<StepPanels>
+			<StepPanel v-slot="{ activateCallback }" value="1">
+				<Tabs value="0" :pt="{ inkbar: {class: 'hidden'}}" class="dark:border-dark-400 border-t">
+					<!-- TODO: P1: try using a fixed modal size so that it doesn't change when switching between the tabs -->
+					<!-- TODO: P1: also must not change when going through steps 1-2-3, or maybe the change can at least be animated -->
+					<TabList>
+						<Tab value="0" :class="{ grow: true }"><i class="pi pi-check mr-2"/>I'm already running a probe</Tab>
+						<Tab value="1" :class="{ grow: true }"><i class="pi pi-times mr-2"/>I'm not running a probe yet</Tab>
+					</TabList>
+					<TabPanels>
+						<TabPanel value="0">
+							<p class="mb-4 mt-2 text-lg font-bold">Set up your probe</p>
+							<p>First, update your container by running the following commands:</p>
+							<CodeBlock :commands="setUpCommands" class="mt-4"/>
+						</TabPanel>
+						<TabPanel value="1">
+							<p class="mb-4 mt-2 text-lg font-bold">Join the network</p>
+							<StartProbe/>
+						</TabPanel>
+					</TabPanels>
+				</Tabs>
+				<div class="p-5 pt-2 text-right">
+					<Button class="mr-2" label="Cancel" severity="secondary" text @click="$emit('cancel')"/>
+					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="activateCallback('2')"/>
+				</div>
+			</StepPanel>
+			<StepPanel v-slot="{ activateCallback }" value="2">
 				<div class="p-5">
 					<p class="mb-4 mt-2 text-lg font-bold">Send adoption code</p>
 					<p>Enter your probe's public IP address and we will send it a verification code.</p>
@@ -58,60 +65,55 @@
 						placeholder="Enter IP address of your probe"
 						class="mt-6 w-full"
 						:invalid="!isIpValid"
-						@keyup.enter="sendAdoptionCode(nextCallback)"
+						@keyup.enter="sendAdoptionCode(activateCallback)"
 						@update:model-value="resetIsIpValid"
 					/>
 					<!-- TODO: P1: invalid state has both red and green (focus) outline; should be just red -->
 					<!-- TODO: P1: can't be absolute - breaks on mobile (when scrollable) - check also other places when absolute is used-->
 					<p v-if="!isIpValid" class="absolute text-red-500">{{ invalidIpMessage }}</p>
 					<div class="mt-6 text-right">
-						<Button class="mr-2" label="Back" severity="secondary" text @click="prevCallback"/>
-						<Button label="Send code to probe" :loading="sendAdoptionCodeLoading" @click="sendAdoptionCode(nextCallback)"/>
+						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('1')"/>
+						<Button label="Send code to probe" :loading="sendAdoptionCodeLoading" @click="sendAdoptionCode(activateCallback)"/>
 					</div>
 				</div>
-			</template>
-		</StepperPanel>
-		<StepperPanel>
-			<template #header="{ active, highlighted }">
-				<StepHeader
-					button-text="3"
-					header-text="Verify"
-					:active="active"
-					:highlighted="highlighted"
-					:is-success="isSuccess"
-				/>
-			</template>
-			<template #separator/>
-			<template #content="{ prevCallback }">
+			</StepPanel>
+			<StepPanel v-slot="{ activateCallback }" value="3">
 				<div v-if="!isSuccess" class="p-5">
 					<p class="mb-4 mt-2 text-lg font-bold">Verify</p>
 					<p>Adoption code sent to <span class="font-semibold">your probe with IP address {{ ip }}</span>.</p>
-					<div class="mt-6">
-						<Button severity="secondary" class="mb-2 mr-2 !rounded-xl !border-0" :class="{'!text-primary !bg-[#FCF0EE] font-semibold dark:!bg-red-500/30': probeType === 'docker'}" @click="toggleProbeType">
-							<nuxt-icon class="mr-2 text-inherit" name="docker"/>
-							For Docker probes
-						</Button>
-						<Button severity="secondary" class="mb-2 mr-2 !rounded-xl !border-0" :class="{'!text-primary !bg-[#FCF0EE] font-semibold dark:!bg-red-500/30': probeType === 'hardware'}" @click="toggleProbeType">
-							<nuxt-icon class="mr-2 text-inherit" name="probe"/>
-							For hardware probes
-						</Button>
+					<div class="my-4">
+						<SelectButton
+							v-model="probeType"
+							:options="probeTypes"
+							aria-labelledby="basic"
+							option-value="value"
+							severity="primary"
+						>
+							<template #option="slotProps">
+								<nuxt-icon :name="slotProps.option.icon"/>
+								<span class="font-bold">{{ slotProps.option.name }}</span>
+							</template>
+						</SelectButton>
 					</div>
 					<p class="mt-4">Now you need to check the probe's log output to find the verification code. If you're running it inside a Docker container then you can quickly find it by running this command:</p>
 					<CodeBlock class="mt-3" :commands="probeType === 'docker' ? [['docker logs -f --tail 25 globalping-probe']] : [['ssh logs@IP-ADDRESS']]"/>
 					<p class="mt-3">Find the code in the logs and input it here to verify ownership.</p>
-					<div class="bg-surface-50 dark:bg-dark-600 mt-6 rounded-xl py-10 text-center">
-						<InputOtp
-							v-model="code"
-							:length="6"
-							:invalid="!isCodeValid"
-							@update:model-value="resetIsCodeValid"
-							@keydown="handleKeydown"
-						/>
+					<div class="bg-surface-50 dark:bg-dark-600 mt-6 rounded-xl py-10 text-center ">
+						<div class="flex justify-center">
+							<InputOtp
+								v-model="code"
+								:length="6"
+								:invalid="!isCodeValid"
+								integer-only
+								@update:model-value="resetIsCodeValid"
+								@keydown="handleKeydown"
+							/>
+						</div>
 						<p v-if="!isCodeValid" class="mt-3 text-red-500">{{ invalidCodeMessage }}</p>
 						<Button class="mt-3" label="Resend code" severity="secondary" text @click="resendCode"/>
 					</div>
 					<div class="mt-6 text-right">
-						<Button class="mr-2" label="Back" severity="secondary" text @click="prevCallback"/>
+						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('2')"/>
 						<Button label="Verify the code" :loading="verifyCodeLoading" @click="verifyCode"/>
 					</div>
 				</div>
@@ -122,7 +124,7 @@
 							Congratulations!
 						</p>
 						<p class="mt-4 text-center">You are now the owner of the following probe:</p>
-						<div v-if="probe" class="bg-surface-0 dark:bg-dark-800 dark:border-dark-300 mt-4 rounded-xl border p-3 text-center">
+						<div v-if="probe" class="bg-surface-0 dark:bg-dark-800 dark:border-dark-400 mt-4 rounded-xl border p-3 text-center">
 							<p class="font-bold">{{ probe.city }}</p>
 							<p class="flex items-center justify-center">
 								<CountryFlag :country="probe.country" size="small"/>
@@ -135,8 +137,8 @@
 						<Button label="Finish" @click="$emit('cancel')"/>
 					</div>
 				</div>
-			</template>
-		</StepperPanel>
+			</StepPanel>
+		</StepPanels>
 	</Stepper>
 </template>
 
@@ -150,7 +152,7 @@
 
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 
-	const activeStep = ref(0);
+	const activeStep = ref('1');
 
 	// STEP 1
 
@@ -173,7 +175,7 @@
 	};
 
 	const sendAdoptionCodeLoading = ref(false);
-	const sendAdoptionCode = async (nextCallback: Function) => {
+	const sendAdoptionCode = async (activateCallback: Function) => {
 		const isValid = validateIp(ip.value);
 
 		if (!isValid) {
@@ -186,7 +188,7 @@
 
 		try {
 			await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/send-code', body: JSON.stringify({ ip: ip.value }) }));
-			nextCallback();
+			activateCallback('3');
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';
 			isIpValid.value = false;
@@ -204,9 +206,10 @@
 	const invalidCodeMessage = ref('');
 	const probe = ref<Probe | null>(null);
 
-	const toggleProbeType = () => {
-		probeType.value = probeType.value === 'docker' ? 'hardware' : 'docker';
-	};
+	const probeTypes = [
+		{ name: 'Docker probes', value: 'docker', icon: 'docker' },
+		{ name: 'Hardware probes', value: 'hardware', icon: 'probe' },
+	];
 
 	const resetIsCodeValid = () => {
 		isCodeValid.value = true;

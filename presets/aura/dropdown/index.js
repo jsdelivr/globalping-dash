@@ -14,7 +14,7 @@ export default {
 			{ 'bg-surface-0 dark:bg-dark-900': !props.disabled },
 
 			'border',
-			{ 'dark:border-dark-300': parent.instance.$name != 'InputGroup' },
+			{ 'dark:border-dark-400': parent.instance.$name != 'InputGroup' },
 			{ 'dark:border-surface-600': parent.instance.$name == 'InputGroup' },
 			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
 
@@ -208,7 +208,7 @@ export default {
 			// Color
 			'text-surface-700 dark:text-white/80',
 			'bg-surface-0 dark:bg-dark-900',
-			'border-surface-200 dark:border-dark-300',
+			'border-surface-200 dark:border-dark-400',
 
 			// Shape
 			'border',

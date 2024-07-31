@@ -60,19 +60,22 @@
 			>
 				{{ activeExpire.custom ? formatDate(expire) : 'Custom' }} <i class="pi pi-chevron-down ml-2"/>
 			</Button>
-			<OverlayPanel ref="datePanel">
+			<Popover ref="datePanel">
 				<TokenCalendar :value="expire && new Date(expire)" @change="changeDate"/>
-			</OverlayPanel>
+			</Popover>
 		</div>
 		<div class="text-xs">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
 		<label for="origins" class="mt-6 block">Origins</label>
-		<Chips
+		<!-- TODO: P1: finish migrating this -->
+		<AutoComplete
 			id="origins"
 			v-model="origins"
 			class="mt-2"
 			separator=","
 			remove-token-icon="pi pi-times"
 			add-on-blur
+			multiple
+			:typeahead="false"
 		/>
 		<p class="mt-1 text-xs">
 			A list of origins which are allowed to use the token. If empty, any origin is valid.

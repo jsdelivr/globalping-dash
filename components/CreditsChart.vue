@@ -17,10 +17,12 @@
 		},
 	});
 
+	// TODO: P1: we must fill in any missing dates (=where the value didn't change) on the FE otherwise the charts looks broken
+	// TODO: P1: the chart must show data for the past 30 days, regardless of pagination
 	const documentStyle = getComputedStyle(document.documentElement);
 	const bluegray400 = documentStyle.getPropertyValue('--bluegray-400');
-	const surface300 = documentStyle.getPropertyValue('--surface-300');
-	const primary = documentStyle.getPropertyValue('--primary');
+	const surface300 = documentStyle.getPropertyValue('--p-surface-300');
+	const primary = documentStyle.getPropertyValue('--p-primary-color');
 
 	const changes = computed(() => {
 		const changesAsc = [ ...props.creditsChanges ].reverse();

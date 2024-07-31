@@ -1,5 +1,7 @@
-import accordion from './accordion';
-// import autocomplete from './autocomplete';
+import accordioncontent from './accordioncontent';
+import accordionheader from './accordionheader';
+import accordionpanel from './accordionpanel';
+import autocomplete from './autocomplete';
 // import avatar from './avatar';
 // import avatargroup from './avatargroup';
 // import badge from './badge';
@@ -7,24 +9,24 @@ import accordion from './accordion';
 // import blockui from './blockui';
 // import breadcrumb from './breadcrumb';
 import button from './button';
-import calendar from './calendar';
+import buttongroup from './buttongroup';
 // import card from './card';
 // import carousel from './carousel';
 // import cascadeselect from './cascadeselect';
 // import checkbox from './checkbox';
 // import chip from './chip';
-import chips from './chips';
 // import colorpicker from './colorpicker';
+// import confirmdialog from './confirmdialog';
 // import confirmpopup from './confirmpopup';
 // import contextmenu from './contextmenu';
 import datatable from './datatable';
 // import dataview from './dataview';
-// import dataviewlayoutoptions from './dataviewlayoutoptions';
+import datepicker from './datepicker';
 // import deferred from './deferred';
 import dialog from './dialog';
 import divider from './divider';
 // import dock from './dock';
-import dropdown from './dropdown';
+import drawer from './drawer';
 // import fieldset from './fieldset';
 // import fileupload from './fileupload';
 // import floatlabel from './floatlabel';
@@ -32,14 +34,12 @@ import dropdown from './dropdown';
 import global from './global';
 // import iconfield from './iconfield';
 // import image from './image';
-// import inlinemessage from './inlinemessage';
 // import inplace from './inplace';
 // import inputgroup from './inputgroup';
 // import inputgroupaddon from './inputgroupaddon';
 // import inputmask from './inputmask';
 // import inputnumber from './inputnumber';
 import inputotp from './inputotp';
-// import inputswitch from './inputswitch';
 import inputtext from './inputtext';
 // import knob from './knob';
 // import listbox from './listbox';
@@ -51,12 +51,13 @@ import inputtext from './inputtext';
 // import multiselect from './multiselect';
 // import orderlist from './orderlist';
 // import organizationchart from './organizationchart';
-import overlaypanel from './overlaypanel';
+// import overlaybadge from './overlaybadge';
 import paginator from './paginator';
 // import panel from './panel';
 // import panelmenu from './panelmenu';
 // import password from './password';
 // import picklist from './picklist';
+import popover from './popover';
 // import progressbar from './progressbar';
 // import progressspinner from './progressspinner';
 // import radiobutton from './radiobutton';
@@ -64,32 +65,39 @@ import paginator from './paginator';
 // import ripple from './ripple';
 // import scrollpanel from './scrollpanel';
 // import scrolltop from './scrolltop';
+import select from './select';
 import selectbutton from './selectbutton';
-import sidebar from './sidebar';
 // import skeleton from './skeleton';
 // import slider from './slider';
 // import speeddial from './speeddial';
 // import splitbutton from './splitbutton';
 // import splitter from './splitter';
 // import splitterpanel from './splitterpanel';
+import step from './step';
+import stepitem from './stepitem';
+import steplist from './steplist';
+import steppanels from './steppanels';
 import stepper from './stepper';
-// import steps from './steps';
-// import tabmenu from './tabmenu';
-import tabview from './tabview';
+import steps from './steps';
+import tab from './tab';
+import tablist from './tablist';
+import tabmenu from './tabmenu';
+import tabpanel from './tabpanel';
+import tabpanels from './tabpanels';
+import tabs from './tabs';
 import tag from './tag';
 // import terminal from './terminal';
 // import textarea from './textarea';
 import tieredmenu from './tieredmenu';
 // import timeline from './timeline';
 import toast from './toast';
-// import togglebutton from './togglebutton';
+import togglebutton from './togglebutton';
+// import toggleswitch from './toggleswitch';
 // import toolbar from './toolbar';
 import tooltip from './tooltip';
 // import tree from './tree';
 // import treeselect from './treeselect';
 // import treetable from './treetable';
-// import tristatecheckbox from './tristatecheckbox';
-
 
 export default {
 	global,
@@ -100,20 +108,22 @@ export default {
 	},
 
 	// forms
-	// autocomplete,
-	dropdown,
+	autocomplete,
+	select,
+	dropdown: select,
 	// inputnumber,
 	inputtext,
-	calendar,
+	datepicker,
+	calendar: datepicker,
 	// checkbox,
 	// radiobutton,
-	// inputswitch,
+	// toggleswitch,
+	// inputswitch: toggleswitch,
 	selectbutton,
 	// slider,
-	chips,
 	// rating,
 	// multiselect,
-	// togglebutton,
+	togglebutton,
 	// cascadeselect,
 	// listbox,
 	// colorpicker,
@@ -122,7 +132,6 @@ export default {
 	// inputmask,
 	// knob,
 	// treeselect,
-	// tristatecheckbox,
 	// textarea,
 	// password,
 	// iconfield,
@@ -131,6 +140,7 @@ export default {
 
 	// buttons
 	button,
+	buttongroup,
 	// splitbutton,
 	// speeddial,
 
@@ -139,7 +149,6 @@ export default {
 	datatable,
 	// tree,
 	// dataview,
-	// dataviewlayoutoptions,
 	// organizationchart,
 	// orderlist,
 	// picklist,
@@ -147,18 +156,28 @@ export default {
 	// timeline,
 
 	// panels
-	accordion,
+	accordionpanel,
+	accordionheader,
+	accordioncontent,
 	// panel,
 	// fieldset,
 	// card,
-	tabview,
 	divider,
 	toolbar,
 	// scrollpanel,
 	// splitter,
 	// splitterpanel,
 	stepper,
+	steplist,
+	step,
+	stepitem,
+	steppanels,
 	// deferred,
+	tab,
+	tabs,
+	tablist,
+	tabpanels,
+	tabpanel,
 
 	// file
 	// fileupload,
@@ -167,23 +186,23 @@ export default {
 	// contextmenu,
 	// menu,
 	menubar,
-	// steps,
+	steps,
 	tieredmenu,
 	// breadcrumb,
 	// panelmenu,
 	// megamenu,
 	// dock,
-	// tabmenu,
+	tabmenu,
 
 	// overlays
 	dialog,
-	overlaypanel,
-	sidebar,
+	popover,
+	drawer,
 	// confirmpopup,
+	// confirmdialog,
 
 	// messages
 	// message,
-	// inlinemessage,
 	toast,
 
 	// media
@@ -193,6 +212,7 @@ export default {
 
 	// misc
 	// badge,
+	// overlaybadge,
 	// avatar,
 	// avatargroup,
 	tag,

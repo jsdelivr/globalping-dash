@@ -19,9 +19,9 @@ export default {
 			'shadow-lg',
 
 			// Colors
-			'bg-surface-0 dark:bg-dark-700',
+			'bg-surface-0 dark:bg-dark-900',
 			// 'text-surface-700 dark:text-white/80',
-			'dark:border-dark-300',
+			'dark:border-dark-400',
 
 			// Transitions
 			'transition-transform',
@@ -39,11 +39,12 @@ export default {
 
 			// Spacing
 			'p-[1.125rem]',
-			'px-7',
+			'px-9',
 
 			// Colors
-			// 'bg-surface-0 dark:bg-dark-700',
-			// 'text-surface-700 dark:text-surface-0',
+			// 'bg-surface-0 dark:bg-surface-900',
+			// 'text-surface-700 dark:text-surface-0/80',
+			'border-b pb-7 mb-5',
 		],
 	},
 	title: {

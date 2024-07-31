@@ -1,29 +1,26 @@
 <template>
 	<p>To join the Globalping probe network all you have to do is run our container.</p>
 	<div class="mt-4">
-		<Button
-			class="rounded-r-none"
-			label="Docker"
-			:severity="platform === 'docker' ? undefined : 'secondary'"
-			:outlined="platform === 'docker' ? false : true"
-			@click="togglePlatform"
-		/>
-		<Button
-			class="rounded-l-none"
-			label="Podman"
-			:severity="platform === 'podman' ? undefined : 'secondary'"
-			:outlined="platform === 'podman' ? false : true"
-			@click="togglePlatform"
+		<SelectButton
+			v-model="platform"
+			:options="platformOptions"
+			option-label="name"
+			option-value="value"
+			aria-labelledby="basic"
+			severity="primary"
 		/>
 	</div>
 	<div class="dark:bg-dark-900 relative mt-4 rounded-xl border p-4 pr-0">
 		<!-- TODO: P1: the expand effect and the modal resize must be animated (and probably it'll have to be just downwards, not in both directions) -->
 		<!-- TODO: P1: related ^ all the modals may work better if they are closer to the top, not fully vertically centered -->
+
+		<!-- TODO: P3: collapse/expand thing could be a component -->
 		<pre v-if="(size === 'compact')" class="no-scrollbar overflow-scroll"><code class="mr-16">{{ commands[platform][size] }}</code></pre>
 		<div v-if="size === 'expanded'" class="no-scrollbar overflow-scroll">
 			<pre v-for="line in commands[platform][size]" :key="line.toString()"><code>{{ line[0] }}</code><code class="text-bluegray-300 mr-16">{{ line[1] }}</code></pre>
 		</div>
 		<div class="!absolute right-2 top-2">
+			<!-- TODO: P3: copy button could be a component -->
 			<Button
 				icon="pi pi-copy"
 				severity="secondary"
@@ -37,6 +34,7 @@
 		</div>
 	</div>
 	<div class="flex justify-center">
+		<!-- TODO: P2: transition on expand/collapse -->
 		<Button
 			class="size-6 rounded-t-none border-t-0"
 			size="small"
@@ -76,10 +74,14 @@
 		},
 	};
 
+	const platformOptions = [
+		{ name: 'Docker', value: 'docker' },
+		{ name: 'Podman', value: 'podman' },
+	];
+
 	const platform: Ref<'docker' | 'podman'> = ref('docker');
 	const size: Ref<'compact' | 'expanded'> = ref('compact');
 
-	const togglePlatform = () => platform.value = platform.value === 'docker' ? 'podman' : 'docker';
 	const toggleSize = () => size.value = size.value === 'compact' ? 'expanded' : 'compact';
 
 	const copyTooltip = ref(false);

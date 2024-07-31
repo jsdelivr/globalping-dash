@@ -4,21 +4,16 @@ body, html, #__nuxt, section {
 
 html {
 	@apply antialiased;
-	color: var(--bluegray-900);
-	background: var(--surface-50);
+	color: var(--main-900);
+	background: var(--p-surface-50);
 }
 
 html.dark {
 	background: var(--dark-900);
-	color: var(--surface-0);
 }
 
-body {
+html {
 	font-size: 14px;
-}
-
-*, ::before, ::after {
-	@apply dark:border-dark-600;
 }
 
 .filler {

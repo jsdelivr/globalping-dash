@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<Calendar
+		<DatePicker
 			:min-date="new Date()"
 			:model-value="value"
 			inline
-			previous-icon="pi pi-arrow-left"
+			prev-icon="pi pi-arrow-left"
 			next-icon="pi pi-arrow-right"
 			@update:model-value="(date: Date) => emit('change', date)"
 		/>

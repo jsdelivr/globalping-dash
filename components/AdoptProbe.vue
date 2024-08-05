@@ -151,19 +151,27 @@
 
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 
+	let prevStep = '0';
 	const activeStep = ref('0');
+
+	watchEffect(() => { prevStep = activeStep.value; });
 
 	// ANIMATE STEP HEIGHT CHANGE
 
 	const onChangeStep = (i: string | number) => {
 		const newIndex = Number(i);
-		const currentIndex = 0;
+		const currentIndex = Number(prevStep);
 		const wrapper = document.querySelector('#ap-step-panels')!;
 		const children = wrapper.children;
 		const currentChildHeight = children[currentIndex].scrollHeight;
 		wrapper.style.height = currentChildHeight + 'px';
 
 		requestAnimationFrame(() => {
+			wrapper.addEventListener('transitionend', () => {
+				// remove "height" from the wrapper's inline styles, so it can return to its initial value
+				wrapper.style.height = null;
+			}, { once: true });
+
 			const newChildHeight = children[newIndex].scrollHeight;
 			wrapper.style.height = newChildHeight + 'px';
 		});
@@ -172,17 +180,25 @@
 	// STEP 1
 
 	const tabPanels = ref(null);
+	let prevTab = '0';
 	const activeTab = ref('0');
+
+	watchEffect(() => { prevTab = activeTab.value; });
 
 	const onChangeTab = (i: string | number) => {
 		const newIndex = Number(i);
-		const currentIndex = i === 0 ? 1 : 0;
+		const currentIndex = Number(prevTab);
 		const wrapper = document.querySelector('#ap-tab-panels')!;
 		const children = wrapper.children;
 		const currentChildHeight = children[currentIndex].scrollHeight;
 		wrapper.style.height = currentChildHeight + 'px';
 
 		requestAnimationFrame(() => {
+			wrapper.addEventListener('transitionend', () => {
+				// remove "height" from the wrapper's inline styles, so it can return to its initial value
+				wrapper.style.height = null;
+			}, { once: true });
+
 			const newChildHeight = children[newIndex].scrollHeight;
 			wrapper.style.height = newChildHeight + 'px';
 		});

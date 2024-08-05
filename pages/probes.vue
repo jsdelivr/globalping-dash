@@ -298,7 +298,7 @@
 		</Dialog>
 		<Dialog
 			v-model:visible="adoptProbeDialog"
-			class="min-w-[700px] max-md:min-w-[95%]"
+			class="max-h-[95vh] min-w-[700px] max-md:min-w-[95%]"
 			modal
 			dismissable-mask
 			:draggable="false"

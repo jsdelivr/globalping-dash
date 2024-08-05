@@ -1,10 +1,19 @@
 <template>
-	<Stepper v-model:value="activeStep" linear>
+	<Stepper v-model:value="activeStep" linear @update:value="onChangeStep">
 		<StepList>
-			<Step v-slot="{ active, value }" as-child value="1">
+			<Step v-slot="{ active, value }" as-child value="0">
 				<StepHeader
 					:button-text="value"
 					header-text="Set up your probe"
+					:active="active"
+					:highlighted="Number(activeStep) > 0"
+					:is-success="isSuccess"
+				/>
+			</Step>
+			<Step v-slot="{ active, value }" as-child value="1">
+				<StepHeader
+					:button-text="value"
+					header-text="Send adoption code"
 					:active="active"
 					:highlighted="Number(activeStep) > 1"
 					:is-success="isSuccess"
@@ -13,25 +22,16 @@
 			<Step v-slot="{ active, value }" as-child value="2">
 				<StepHeader
 					:button-text="value"
-					header-text="Send adoption code"
+					header-text="Verify"
 					:active="active"
 					:highlighted="Number(activeStep) > 2"
 					:is-success="isSuccess"
 				/>
 			</Step>
-			<Step v-slot="{ active, value }" as-child value="3">
-				<StepHeader
-					:button-text="value"
-					header-text="Verify"
-					:active="active"
-					:highlighted="Number(activeStep) > 3"
-					:is-success="isSuccess"
-				/>
-			</Step>
 		</StepList>
-		<StepPanels>
-			<StepPanel v-slot="{ activateCallback }" value="1">
-				<Tabs v-model:value="activeTab" :pt="{ inkbar: {class: 'hidden'}}" class="border-t dark:border-dark-400" @update:value="onChange">
+		<StepPanels id="ap-step-panels" class="box-content overflow-hidden transition-[height] duration-500">
+			<StepPanel v-slot="{ activateCallback }" value="0">
+				<Tabs v-model:value="activeTab" :pt="{ inkbar: {class: 'hidden'}}" class="border-t dark:border-dark-400" @update:value="onChangeTab">
 					<!-- TODO: P1: also must not change when going through steps 1-2-3, or maybe the change can at least be animated -->
 					<TabList>
 						<Tab value="0" :class="{ grow: true }"><i class="pi pi-check mr-2"/>I'm already running a probe</Tab>
@@ -51,10 +51,10 @@
 				</Tabs>
 				<div class="p-5 pt-2 text-right">
 					<Button class="mr-2" label="Cancel" severity="secondary" text @click="$emit('cancel')"/>
-					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="activateCallback('2')"/>
+					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="activateCallback('1')"/>
 				</div>
 			</StepPanel>
-			<StepPanel v-slot="{ activateCallback }" value="2">
+			<StepPanel v-slot="{ activateCallback }" value="1">
 				<div class="p-5">
 					<p class="mb-4 mt-2 text-lg font-bold">Send adoption code</p>
 					<p>Enter your probe's public IP address and we will send it a verification code.</p>
@@ -71,12 +71,12 @@
 					<!-- TODO: P1: can't be absolute - breaks on mobile (when scrollable) - check also other places when absolute is used-->
 					<p v-if="!isIpValid" class="absolute text-red-500">{{ invalidIpMessage }}</p>
 					<div class="mt-6 text-right">
-						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('1')"/>
+						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('0')"/>
 						<Button label="Send code to probe" :loading="sendAdoptionCodeLoading" @click="sendAdoptionCode(activateCallback)"/>
 					</div>
 				</div>
 			</StepPanel>
-			<StepPanel v-slot="{ activateCallback }" value="3">
+			<StepPanel v-slot="{ activateCallback }" value="2">
 				<div v-if="!isSuccess" class="p-5">
 					<p class="mb-4 mt-2 text-lg font-bold">Verify</p>
 					<p>Adoption code sent to <span class="font-semibold">your probe with IP address {{ ip }}</span>.</p>
@@ -112,7 +112,7 @@
 						<Button class="mt-3" label="Resend code" severity="secondary" text @click="resendCode"/>
 					</div>
 					<div class="mt-6 text-right">
-						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('2')"/>
+						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('1')"/>
 						<Button label="Verify the code" :loading="verifyCodeLoading" @click="verifyCode"/>
 					</div>
 				</div>
@@ -151,14 +151,30 @@
 
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 
-	const activeStep = ref('1');
+	const activeStep = ref('0');
+
+	// ANIMATE STEP HEIGHT CHANGE
+
+	const onChangeStep = (i: string | number) => {
+		const newIndex = Number(i);
+		const currentIndex = 0;
+		const wrapper = document.querySelector('#ap-step-panels')!;
+		const children = wrapper.children;
+		const currentChildHeight = children[currentIndex].scrollHeight;
+		wrapper.style.height = currentChildHeight + 'px';
+
+		requestAnimationFrame(() => {
+			const newChildHeight = children[newIndex].scrollHeight;
+			wrapper.style.height = newChildHeight + 'px';
+		});
+	};
 
 	// STEP 1
 
 	const tabPanels = ref(null);
 	const activeTab = ref('0');
 
-	const onChange = (i: string | number) => {
+	const onChangeTab = (i: string | number) => {
 		const newIndex = Number(i);
 		const currentIndex = i === 0 ? 1 : 0;
 		const wrapper = document.querySelector('#ap-tab-panels')!;
@@ -204,7 +220,7 @@
 
 		try {
 			await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/send-code', body: JSON.stringify({ ip: ip.value }) }));
-			activateCallback('3');
+			activateCallback('2');
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';
 			isIpValid.value = false;

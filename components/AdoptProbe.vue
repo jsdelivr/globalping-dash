@@ -37,7 +37,7 @@
 						<Tab value="0" :class="{ grow: true }"><i class="pi pi-check mr-2"/>I'm already running a probe</Tab>
 						<Tab value="1" :class="{ grow: true }"><i class="pi pi-times mr-2"/>I'm not running a probe yet</Tab>
 					</TabList>
-					<TabPanels id="ap-tab-panels" ref="tabPanels" class="box-content overflow-hidden transition-[height] duration-500">
+					<TabPanels id="ap-tab-panels" class="box-content overflow-hidden transition-[height] duration-500">
 						<TabPanel value="0" class="overflow-auto">
 							<p class="mb-4 mt-2 text-lg font-bold">Set up your probe</p>
 							<p>First, update your container by running the following commands:</p>
@@ -116,7 +116,7 @@
 						<Button label="Verify the code" :loading="verifyCodeLoading" @click="verifyCode"/>
 					</div>
 				</div>
-				<div v-else class="px-5 py-7">
+				<div v-else class="p-5">
 					<div class="rounded-xl bg-green-400/10 p-6">
 						<p class="flex items-center justify-center text-center text-lg font-bold">
 							<i class="pi pi-verified mr-2 text-green-600"/>
@@ -144,6 +144,7 @@
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
 	import CountryFlag from 'vue-country-flag-next';
+	import { smoothResize } from '~/utils/smooth-resize';
 	import { validateIp } from '~/utils/validate-ip';
 
 	const { $directus } = useNuxtApp();
@@ -156,52 +157,25 @@
 
 	watchEffect(() => { prevStep = activeStep.value; });
 
-	// ANIMATE STEP HEIGHT CHANGE
-
 	const onChangeStep = (i: string | number) => {
-		const newIndex = Number(i);
-		const currentIndex = Number(prevStep);
 		const wrapper = document.querySelector('#ap-step-panels')!;
-		const children = wrapper.children;
-		const currentChildHeight = children[currentIndex].scrollHeight;
-		wrapper.style.height = currentChildHeight + 'px';
-
-		requestAnimationFrame(() => {
-			wrapper.addEventListener('transitionend', () => {
-				// remove "height" from the wrapper's inline styles, so it can return to its initial value
-				wrapper.style.height = null;
-			}, { once: true });
-
-			const newChildHeight = children[newIndex].scrollHeight;
-			wrapper.style.height = newChildHeight + 'px';
-		});
+		const currentChild = wrapper.children[Number(prevStep)];
+		const newChild = wrapper.children[Number(i)];
+		smoothResize(wrapper, currentChild, newChild);
 	};
 
 	// STEP 1
 
-	const tabPanels = ref(null);
 	let prevTab = '0';
 	const activeTab = ref('0');
 
 	watchEffect(() => { prevTab = activeTab.value; });
 
-	const onChangeTab = (i: string | number) => {
-		const newIndex = Number(i);
-		const currentIndex = Number(prevTab);
+	const onChangeTab = function (i: string | number) {
 		const wrapper = document.querySelector('#ap-tab-panels')!;
-		const children = wrapper.children;
-		const currentChildHeight = children[currentIndex].scrollHeight;
-		wrapper.style.height = currentChildHeight + 'px';
-
-		requestAnimationFrame(() => {
-			wrapper.addEventListener('transitionend', () => {
-				// remove "height" from the wrapper's inline styles, so it can return to its initial value
-				wrapper.style.height = null;
-			}, { once: true });
-
-			const newChildHeight = children[newIndex].scrollHeight;
-			wrapper.style.height = newChildHeight + 'px';
-		});
+		const currentChild = wrapper.children[Number(prevTab)];
+		const newChild = wrapper.children[Number(i)];
+		smoothResize(wrapper, currentChild, newChild);
 	};
 
 	const setUpCommands = [
@@ -287,6 +261,11 @@
 			const response = await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/verify-code', body: JSON.stringify({ code: code.value.substring(0, 6) }) })) as Probe;
 			probe.value = response;
 			isSuccess.value = true;
+
+			const wrapper = document.querySelector('#ap-step-panels')!;
+			const currentChild = wrapper.children[Number(activeStep.value)];
+			smoothResize(wrapper, currentChild, currentChild);
+
 			emit('adopted');
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';

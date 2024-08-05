@@ -31,20 +31,19 @@
 		</StepList>
 		<StepPanels>
 			<StepPanel v-slot="{ activateCallback }" value="1">
-				<Tabs value="0" :pt="{ inkbar: {class: 'hidden'}}" class="border-t dark:border-dark-400">
-					<!-- TODO: P1: try using a fixed modal size so that it doesn't change when switching between the tabs -->
+				<Tabs v-model:value="activeTab" :pt="{ inkbar: {class: 'hidden'}}" class="border-t dark:border-dark-400" @update:value="onChange">
 					<!-- TODO: P1: also must not change when going through steps 1-2-3, or maybe the change can at least be animated -->
 					<TabList>
 						<Tab value="0" :class="{ grow: true }"><i class="pi pi-check mr-2"/>I'm already running a probe</Tab>
 						<Tab value="1" :class="{ grow: true }"><i class="pi pi-times mr-2"/>I'm not running a probe yet</Tab>
 					</TabList>
-					<TabPanels>
-						<TabPanel value="0">
+					<TabPanels id="ap-tab-panels" ref="tabPanels" class="box-content overflow-hidden transition-[height] duration-500">
+						<TabPanel value="0" class="overflow-auto">
 							<p class="mb-4 mt-2 text-lg font-bold">Set up your probe</p>
 							<p>First, update your container by running the following commands:</p>
 							<CodeBlock :commands="setUpCommands" class="mt-4"/>
 						</TabPanel>
-						<TabPanel value="1">
+						<TabPanel value="1" class="overflow-auto">
 							<p class="mb-4 mt-2 text-lg font-bold">Join the network</p>
 							<StartProbe/>
 						</TabPanel>
@@ -155,6 +154,23 @@
 	const activeStep = ref('1');
 
 	// STEP 1
+
+	const tabPanels = ref(null);
+	const activeTab = ref('0');
+
+	const onChange = (i: string | number) => {
+		const newIndex = Number(i);
+		const currentIndex = i === 0 ? 1 : 0;
+		const wrapper = document.querySelector('#ap-tab-panels')!;
+		const children = wrapper.children;
+		const currentChildHeight = children[currentIndex].scrollHeight;
+		wrapper.style.height = currentChildHeight + 'px';
+
+		requestAnimationFrame(() => {
+			const newChildHeight = children[newIndex].scrollHeight;
+			wrapper.style.height = newChildHeight + 'px';
+		});
+	};
 
 	const setUpCommands = [
 		[ 'docker pull globalping/globalping-probe' ],

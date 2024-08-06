@@ -187,7 +187,7 @@
 
 	const total = computed(() => {
 		const creditsObj = credits.value?.find(({ user_id }) => user_id === user.id);
-		return creditsObj ? creditsObj.amount.toLocaleString() : 0;
+		return creditsObj ? creditsObj.amount.toLocaleString('en-US') : 0;
 	});
 
 	const { data: creditsAdditions } = await useLazyAsyncData('gp_credits_additions_last_day', () => {

@@ -32,7 +32,6 @@
 		<StepPanels id="ap-step-panels" class="box-content overflow-hidden transition-[height] duration-500">
 			<StepPanel v-slot="{ activateCallback }" value="0">
 				<Tabs v-model:value="activeTab" :pt="{ inkbar: {class: 'hidden'}}" class="border-t dark:border-dark-400" @update:value="onChangeTab">
-					<!-- TODO: P1: also must not change when going through steps 1-2-3, or maybe the change can at least be animated -->
 					<TabList>
 						<Tab value="0" :class="{ grow: true }"><i class="pi pi-check mr-2"/>I'm already running a probe</Tab>
 						<Tab value="1" :class="{ grow: true }"><i class="pi pi-times mr-2"/>I'm not running a probe yet</Tab>
@@ -67,7 +66,6 @@
 						@keyup.enter="sendAdoptionCode(activateCallback)"
 						@update:model-value="resetIsIpValid"
 					/>
-					<!-- TODO: P1: invalid state has both red and green (focus) outline; should be just red -->
 					<!-- TODO: P1: can't be absolute - breaks on mobile (when scrollable) - check also other places when absolute is used-->
 					<p v-if="!isIpValid" class="absolute text-red-500">{{ invalidIpMessage }}</p>
 					<div class="mt-6 text-right">

@@ -151,7 +151,7 @@
 										<div v-for="(tag, index) in tags" :key="index" class="mb-2 flex items-center" :class="{ 'mb-5': !isTagValid(tag.value) }">
 											<Select v-model="tag.uPrefix" class="grow" :options="uPrefixes" :scroll-height="'200px'"/>
 											<span class="mx-2">-</span>
-											<span class="grow">
+											<span class="relative grow">
 												<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full"/>
 												<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
 											</span>

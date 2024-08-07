@@ -58,16 +58,17 @@
 					<p class="mb-4 mt-2 text-lg font-bold">Send adoption code</p>
 					<p>Enter your probe's public IP address and we will send it a verification code.</p>
 					<p class="font-semibold">Your probe will have the same IP address as the network it's connected to.</p>
-					<InputText
-						v-model="ip"
-						placeholder="Enter IP address of your probe"
-						class="mt-6 w-full"
-						:invalid="!isIpValid"
-						@keyup.enter="sendAdoptionCode(activateCallback)"
-						@update:model-value="resetIsIpValid"
-					/>
-					<!-- TODO: P1: can't be absolute - breaks on mobile (when scrollable) - check also other places when absolute is used-->
-					<p v-if="!isIpValid" class="absolute text-red-500">{{ invalidIpMessage }}</p>
+					<div class="relative">
+						<InputText
+							v-model="ip"
+							placeholder="Enter IP address of your probe"
+							class="mt-6 w-full"
+							:invalid="!isIpValid"
+							@keyup.enter="sendAdoptionCode(activateCallback)"
+							@update:model-value="resetIsIpValid"
+						/>
+						<p v-if="!isIpValid" class="absolute text-red-500">{{ invalidIpMessage }}</p>
+					</div>
 					<div class="mt-6 text-right">
 						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('0')"/>
 						<Button label="Send code to probe" :loading="sendAdoptionCodeLoading" @click="sendAdoptionCode(activateCallback)"/>

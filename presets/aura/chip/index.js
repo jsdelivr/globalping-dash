@@ -5,14 +5,14 @@ export default {
 			'inline-flex items-center',
 
 			// Spacing
-			'px-3 py-1 gap-2',
+			'px-1 py-0.5 gap-2',
 
 			// Shape
-			'rounded-[16px]',
+			'rounded-md',
 
 			// Colors
 			'text-surface-700 dark:text-white',
-			'bg-surface-100 dark:bg-surface-700',
+			'border',
 		],
 	},
 	label: {
@@ -31,7 +31,7 @@ export default {
 			'rounded-md leading-6',
 
 			// Size
-			'w-4 h-4',
+			'w-4 h-3',
 
 			// Transition
 			'transition duration-200 ease-in-out',

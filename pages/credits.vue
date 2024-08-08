@@ -101,7 +101,6 @@
 						date_created: { _gte: '$NOW(-30 day)' },
 					},
 				})),
-				// TODO: P2: for deductions let's show comment "Measurements run on this day."
 				// TODO: P2: let's also drop the "For (the)" prefix from other messages (server side) => "Adopted probe ...", "$10 sponsorship"
 				$directus.request<CreditsDeduction[]>(readItems('gp_credits_deductions', {
 					filter: {
@@ -146,10 +145,13 @@
 				})),
 			]);
 
+			console.log('changes', changes);
+
 			creditsChanges.value = [
-				...changes.map(addition => ({
-					...addition,
-					date_created: addition.date_created.split('T')[0],
+				...changes.map(change => ({
+					...change,
+					comment: !change.comment && change.type === 'deduction' ? 'Measurements run on this day.' : change.comment,
+					date_created: change.date_created.split('T')[0],
 				})),
 			];
 

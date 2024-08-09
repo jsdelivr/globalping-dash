@@ -66,16 +66,15 @@
 		</div>
 		<div class="text-xs">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
 		<label for="origins" class="mt-6 block">Origins</label>
-		<!-- TODO: P1: finish migrating this -->
 		<AutoComplete
 			id="origins"
 			v-model="origins"
 			class="mt-2"
-			separator=","
+			input-class="h-[22px]"
 			remove-token-icon="pi pi-times"
-			add-on-blur
 			multiple
 			:typeahead="false"
+			@update:model-value="updateOrigins"
 		/>
 		<p class="mt-1 text-xs">
 			A list of origins which are allowed to use the token. If empty, any origin is valid.
@@ -171,6 +170,9 @@
 	// ORIGINS
 
 	const origins = ref<string[]>(props.token?.origins ? [ ...props.token.origins ] : []);
+	const updateOrigins = (value: string[]) => {
+		origins.value = value.filter(v => !!v);
+	};
 
 	// ACTIONS
 

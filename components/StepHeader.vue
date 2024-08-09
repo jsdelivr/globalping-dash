@@ -9,7 +9,7 @@
 					'!border-primary !text-primary': highlighted || isSuccess,
 				}"
 			>
-				{{ buttonText }}
+				{{ Number(buttonText) + 1 }}
 			</div>
 			<div class="h-px w-full bg-surface-300 dark:bg-dark-400" :class="{'!bg-primary': highlighted || isSuccess}"/>
 		</div>

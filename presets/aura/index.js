@@ -1,3 +1,4 @@
+import accordion from './accordion';
 import accordioncontent from './accordioncontent';
 import accordionheader from './accordionheader';
 import accordionpanel from './accordionpanel';
@@ -14,7 +15,7 @@ import buttongroup from './buttongroup';
 // import carousel from './carousel';
 // import cascadeselect from './cascadeselect';
 // import checkbox from './checkbox';
-// import chip from './chip';
+import chip from './chip';
 // import colorpicker from './colorpicker';
 // import confirmdialog from './confirmdialog';
 // import confirmpopup from './confirmpopup';
@@ -85,6 +86,7 @@ import tabmenu from './tabmenu';
 import tabpanel from './tabpanel';
 import tabpanels from './tabpanels';
 import tabs from './tabs';
+import tabview from './tabview';
 import tag from './tag';
 // import terminal from './terminal';
 // import textarea from './textarea';
@@ -156,12 +158,14 @@ export default {
 	// timeline,
 
 	// panels
+	accordion,
 	accordionpanel,
 	accordionheader,
 	accordioncontent,
 	// panel,
 	// fieldset,
 	// card,
+	tabview,
 	divider,
 	toolbar,
 	// scrollpanel,
@@ -197,7 +201,9 @@ export default {
 	// overlays
 	dialog,
 	popover,
+	sidebar: popover,
 	drawer,
+	overlaypanel: drawer,
 	// confirmpopup,
 	// confirmdialog,
 
@@ -216,7 +222,7 @@ export default {
 	// avatar,
 	// avatargroup,
 	tag,
-	// chip,
+	chip,
 	// progressbar,
 	// skeleton,
 	// scrolltop,

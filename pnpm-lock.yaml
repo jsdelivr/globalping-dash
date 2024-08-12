@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@primevue/nuxt-module@4.0.4':
+    hash: wiemqw53ii2cuxy56mkzosavte
+    path: patches/@primevue__nuxt-module@4.0.4.patch
+
 importers:
 
   .:
@@ -22,7 +27,7 @@ importers:
         version: 0.5.3(rollup@4.18.1)(typescript@5.5.4)(vue@3.4.37(typescript@5.5.4))
       '@primevue/nuxt-module':
         specifier: ^4.0.4
-        version: 4.0.4(@babel/parser@7.25.3)(magicast@0.3.4)(rollup@4.18.1)(vue@3.4.37(typescript@5.5.4))
+        version: 4.0.4(patch_hash=wiemqw53ii2cuxy56mkzosavte)(@babel/parser@7.25.3)(magicast@0.3.4)(rollup@4.18.1)(vue@3.4.37(typescript@5.5.4))
       '@primevue/themes':
         specifier: ^4.0.4
         version: 4.0.4
@@ -6761,7 +6766,7 @@ snapshots:
 
   '@primevue/metadata@4.0.4': {}
 
-  '@primevue/nuxt-module@4.0.4(@babel/parser@7.25.3)(magicast@0.3.4)(rollup@4.18.1)(vue@3.4.37(typescript@5.5.4))':
+  '@primevue/nuxt-module@4.0.4(patch_hash=wiemqw53ii2cuxy56mkzosavte)(@babel/parser@7.25.3)(magicast@0.3.4)(rollup@4.18.1)(vue@3.4.37(typescript@5.5.4))':
     dependencies:
       '@nuxt/kit': 3.12.3(magicast@0.3.4)(rollup@4.18.1)
       '@primeuix/styled': 0.0.5

@@ -52,5 +52,10 @@
 		"stylelint-config-tailwindcss": "^0.0.7",
 		"typescript": "^5.5.4",
 		"vue-tsc": "^2.0.29"
+	},
+	"pnpm": {
+		"patchedDependencies": {
+			"@primevue/nuxt-module@4.0.4": "patches/@primevue__nuxt-module@4.0.4.patch"
+		}
 	}
 }

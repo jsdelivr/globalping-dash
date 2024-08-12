@@ -19,6 +19,7 @@ export default defineNuxtConfig({
 		scan: false,
 	},
 	ssr: false,
+	sourcemap: true,
 	devtools: { enabled: false },
 	devServer: { port: 13010 },
 	modules: [
@@ -43,9 +44,7 @@ export default defineNuxtConfig({
 			Inter: true,
 		},
 	},
-	tailwindcss: {
-
-	},
+	tailwindcss: {},
 	typescript: {
 		// TODO: P2: fix and uncomment.
 		// typeCheck: 'build',

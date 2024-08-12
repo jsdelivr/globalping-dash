@@ -150,6 +150,7 @@
 
 	// SUMMARY
 
+	// TODO: @MartinKolarik - handle loading states everywhere
 	const { data: adoptedProbes } = await useLazyAsyncData('gp_adopted_probes', async () => {
 		try {
 			const result = await $directus.request(readItems('gp_adopted_probes', {

@@ -1,4 +1,4 @@
-@layer tailwind-base, primevue, global, tailwind-utilities;
+@layer tailwind-base, tailwind-utilities;
 
 :root {
   --p-primary-50: #f3fdfb;
@@ -74,8 +74,6 @@
   --p-text-hover-color: var(--p-surface-800);
   --p-text-muted-color: var(--p-surface-500);
   --p-text-hover-muted-color: var(--p-surface-600);
-
-  --p-icon-size: inherit;
 }
 
 .dark {

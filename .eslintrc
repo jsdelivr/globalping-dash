@@ -155,18 +155,6 @@
 					}
 				]
 			}
-		},
-		{
-			"files": [
-				"presets/**"
-			],
-			"rules": {
-				"eqeqeq": "off",
-				"import/order": "off",
-				"no-unused-vars": "off",
-				"@typescript-eslint/no-unused-vars": "off",
-				"no-dupe-keys": "off"
-			}
 		}
 	]
 }

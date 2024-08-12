@@ -70,6 +70,7 @@
 	import type { DataTablePageEvent } from 'primevue/datatable';
 	import type { PageState } from 'primevue/paginator';
 	import { useAuth } from '~/store/auth';
+	import { formatDateForTable } from '~/utils/date-formatters';
 	import { sendToast } from '~/utils/send-toast';
 
 	useHead({
@@ -145,13 +146,11 @@
 				})),
 			]);
 
-			console.log('changes', changes);
-
 			creditsChanges.value = [
 				...changes.map(change => ({
 					...change,
 					comment: !change.comment && change.type === 'deduction' ? 'Measurements run on this day.' : change.comment,
-					date_created: change.date_created.split('T')[0],
+					date_created: formatDateForTable(change.date_created),
 				})),
 			];
 

@@ -4,6 +4,7 @@
 
 <script setup lang="ts">
 	import Chart from 'primevue/chart';
+	import { formatDate } from '~/utils/date-formatters';
 
 	const props = defineProps({
 		start: {
@@ -27,16 +28,10 @@
 
 	const changes = computed(() => {
 		const dayToAddition = new Map(props.additions.map((addition) => {
-			const dateString = new Date(addition.date_created).toISOString().split('T')[0];
-			const [ _year, month, day ] = dateString.split('-');
-			const label = `${day}/${month}`;
-			return [ label, addition ];
+			return [ formatDate(addition.date_created, 'short'), addition ];
 		}));
 		const dayToDeduction = new Map(props.deductions.map((deduction) => {
-			const dateString = new Date(deduction.date).toISOString().split('T')[0];
-			const [ _year, month, day ] = dateString.split('-');
-			const label = `${day}/${month}`;
-			return [ label, deduction ];
+			return [ formatDate(deduction.date, 'short'), deduction ];
 		}));
 		const last30Days = getLast30Days();
 
@@ -75,9 +70,7 @@
 
 		for (let i = 0; i < 30; i++) {
 			currentDay.setDate(currentDay.getDate() - 1);
-			const dateString = currentDay.toISOString().split('T')[0];
-			const [ _year, month, day ] = dateString.split('-');
-			days.push(`${day}/${month}`);
+			days.push(formatDate(currentDay, 'short'));
 		}
 
 		return days.reverse();

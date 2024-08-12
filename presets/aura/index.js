@@ -201,9 +201,9 @@ export default {
 	// overlays
 	dialog,
 	popover,
-	sidebar: popover,
+	// sidebar: popover,
 	drawer,
-	overlaypanel: drawer,
+	// overlaypanel: drawer,
 	// confirmpopup,
 	// confirmdialog,
 

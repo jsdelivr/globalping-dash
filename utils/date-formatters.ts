@@ -1,13 +1,29 @@
-export const formatDate = (date: string | Date | null) => {
+export const formatDate = (date: string | Date | null, format: 'long' | 'short' = 'long') => {
 	if (!date) {
-		return null;
+		return '';
 	}
 
 	if (typeof date === 'string') {
 		date = new Date(date);
 	}
 
+	if (format === 'short') {
+		return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+	}
+
 	return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+};
+
+export const formatDateForTable = (date: string | Date | null) => {
+	if (!date) {
+		return '';
+	}
+
+	if (typeof date === 'object') {
+		date = date.toISOString();
+	}
+
+	return date.split('T')[0];
 };
 
 /**
@@ -17,7 +33,7 @@ export const formatDate = (date: string | Date | null) => {
  */
 export function getRelativeTimeString (date: Date | string) {
 	if (!date) {
-		return null;
+		return '';
 	}
 
 	if (typeof date === 'string') {

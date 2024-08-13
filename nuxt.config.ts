@@ -41,7 +41,7 @@ export default defineNuxtConfig({
 			'latin',
 		],
 		families: {
-			Inter: true,
+			Inter: [ 400, 700 ],
 		},
 	},
 	tailwindcss: {},

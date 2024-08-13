@@ -1,10 +1,19 @@
 <template>
-	<Stepper v-model:value="activeStep" linear>
+	<Stepper v-model:value="activeStep" linear @update:value="onChangeStep">
 		<StepList>
-			<Step v-slot="{ active, value }" as-child value="1">
+			<Step v-slot="{ active, value }" as-child value="0">
 				<StepHeader
 					:button-text="value"
 					header-text="Set up your probe"
+					:active="active"
+					:highlighted="Number(activeStep) > 0"
+					:is-success="isSuccess"
+				/>
+			</Step>
+			<Step v-slot="{ active, value }" as-child value="1">
+				<StepHeader
+					:button-text="value"
+					header-text="Send adoption code"
 					:active="active"
 					:highlighted="Number(activeStep) > 1"
 					:is-success="isSuccess"
@@ -13,38 +22,27 @@
 			<Step v-slot="{ active, value }" as-child value="2">
 				<StepHeader
 					:button-text="value"
-					header-text="Send adoption code"
+					header-text="Verify"
 					:active="active"
 					:highlighted="Number(activeStep) > 2"
 					:is-success="isSuccess"
 				/>
 			</Step>
-			<Step v-slot="{ active, value }" as-child value="3">
-				<StepHeader
-					:button-text="value"
-					header-text="Verify"
-					:active="active"
-					:highlighted="Number(activeStep) > 3"
-					:is-success="isSuccess"
-				/>
-			</Step>
 		</StepList>
-		<StepPanels>
-			<StepPanel v-slot="{ activateCallback }" value="1">
-				<Tabs value="0" :pt="{ inkbar: {class: 'hidden'}}" class="border-t dark:border-dark-400">
-					<!-- TODO: P1: try using a fixed modal size so that it doesn't change when switching between the tabs -->
-					<!-- TODO: P1: also must not change when going through steps 1-2-3, or maybe the change can at least be animated -->
+		<StepPanels ref="stepPanels" class="box-content overflow-hidden transition-[height] duration-500">
+			<StepPanel v-slot="{ activateCallback }" value="0">
+				<Tabs v-model:value="activeTab" :pt="{ inkbar: {class: 'hidden'}}" class="border-t dark:border-dark-400" @update:value="onChangeTab">
 					<TabList>
 						<Tab value="0" :class="{ grow: true }"><i class="pi pi-check mr-2"/>I'm already running a probe</Tab>
 						<Tab value="1" :class="{ grow: true }"><i class="pi pi-times mr-2"/>I'm not running a probe yet</Tab>
 					</TabList>
-					<TabPanels>
-						<TabPanel value="0">
+					<TabPanels ref="tabPanels" class="box-content overflow-hidden transition-[height] duration-500">
+						<TabPanel value="0" class="overflow-auto">
 							<p class="mb-4 mt-2 text-lg font-bold">Set up your probe</p>
 							<p>First, update your container by running the following commands:</p>
 							<CodeBlock :commands="setUpCommands" class="mt-4"/>
 						</TabPanel>
-						<TabPanel value="1">
+						<TabPanel value="1" class="overflow-auto">
 							<p class="mb-4 mt-2 text-lg font-bold">Join the network</p>
 							<StartProbe/>
 						</TabPanel>
@@ -52,32 +50,32 @@
 				</Tabs>
 				<div class="p-5 pt-2 text-right">
 					<Button class="mr-2" label="Cancel" severity="secondary" text @click="$emit('cancel')"/>
-					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="activateCallback('2')"/>
+					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="activateCallback('1')"/>
 				</div>
 			</StepPanel>
-			<StepPanel v-slot="{ activateCallback }" value="2">
+			<StepPanel v-slot="{ activateCallback }" value="1">
 				<div class="p-5">
 					<p class="mb-4 mt-2 text-lg font-bold">Send adoption code</p>
 					<p>Enter your probe's public IP address and we will send it a verification code.</p>
 					<p class="font-semibold">Your probe will have the same IP address as the network it's connected to.</p>
-					<InputText
-						v-model="ip"
-						placeholder="Enter IP address of your probe"
-						class="mt-6 w-full"
-						:invalid="!isIpValid"
-						@keyup.enter="sendAdoptionCode(activateCallback)"
-						@update:model-value="resetIsIpValid"
-					/>
-					<!-- TODO: P1: invalid state has both red and green (focus) outline; should be just red -->
-					<!-- TODO: P1: can't be absolute - breaks on mobile (when scrollable) - check also other places when absolute is used-->
-					<p v-if="!isIpValid" class="absolute text-red-500">{{ invalidIpMessage }}</p>
+					<div class="relative">
+						<InputText
+							v-model="ip"
+							placeholder="Enter IP address of your probe"
+							class="mt-6 w-full"
+							:invalid="!isIpValid"
+							@keyup.enter="sendAdoptionCode(activateCallback)"
+							@update:model-value="resetIsIpValid"
+						/>
+						<p v-if="!isIpValid" class="absolute text-red-500">{{ invalidIpMessage }}</p>
+					</div>
 					<div class="mt-6 text-right">
-						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('1')"/>
+						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('0')"/>
 						<Button label="Send code to probe" :loading="sendAdoptionCodeLoading" @click="sendAdoptionCode(activateCallback)"/>
 					</div>
 				</div>
 			</StepPanel>
-			<StepPanel v-slot="{ activateCallback }" value="3">
+			<StepPanel v-slot="{ activateCallback }" value="2">
 				<div v-if="!isSuccess" class="p-5">
 					<p class="mb-4 mt-2 text-lg font-bold">Verify</p>
 					<p>Adoption code sent to <span class="font-semibold">your probe with IP address {{ ip }}</span>.</p>
@@ -85,7 +83,9 @@
 						<SelectButton
 							v-model="probeType"
 							:options="probeTypes"
+							:allow-empty="false"
 							aria-labelledby="basic"
+							option-label="name"
 							option-value="value"
 							severity="primary"
 						>
@@ -113,11 +113,11 @@
 						<Button class="mt-3" label="Resend code" severity="secondary" text @click="resendCode"/>
 					</div>
 					<div class="mt-6 text-right">
-						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('2')"/>
+						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('1')"/>
 						<Button label="Verify the code" :loading="verifyCodeLoading" @click="verifyCode"/>
 					</div>
 				</div>
-				<div v-else class="px-5 py-7">
+				<div v-else class="p-5">
 					<div class="rounded-xl bg-green-400/10 p-6">
 						<p class="flex items-center justify-center text-center text-lg font-bold">
 							<i class="pi pi-verified mr-2 text-green-600"/>
@@ -145,6 +145,7 @@
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
 	import CountryFlag from 'vue-country-flag-next';
+	import { smoothResize } from '~/utils/smooth-resize';
 	import { validateIp } from '~/utils/validate-ip';
 
 	const { $directus } = useNuxtApp();
@@ -152,9 +153,33 @@
 
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 
-	const activeStep = ref('1');
+	let prevStep = '0';
+	const activeStep = ref('0');
+	const stepPanels = ref();
+
+	watchEffect(() => { prevStep = activeStep.value; });
+
+	const onChangeStep = (i: string | number) => {
+		const wrapper = stepPanels.value.$el;
+		const currentChild = wrapper.children[Number(prevStep)];
+		const newChild = wrapper.children[Number(i)];
+		smoothResize(wrapper, currentChild, newChild);
+	};
 
 	// STEP 1
+
+	let prevTab = '0';
+	const activeTab = ref('0');
+	const tabPanels = ref();
+
+	watchEffect(() => { prevTab = activeTab.value; });
+
+	const onChangeTab = function (i: string | number) {
+		const wrapper = tabPanels.value.$el;
+		const currentChild = wrapper.children[Number(prevTab)];
+		const newChild = wrapper.children[Number(i)];
+		smoothResize(wrapper, currentChild, newChild);
+	};
 
 	const setUpCommands = [
 		[ 'docker pull globalping/globalping-probe' ],
@@ -188,7 +213,7 @@
 
 		try {
 			await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/send-code', body: JSON.stringify({ ip: ip.value }) }));
-			activateCallback('3');
+			activateCallback('2');
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';
 			isIpValid.value = false;
@@ -239,6 +264,11 @@
 			const response = await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/verify-code', body: JSON.stringify({ code: code.value.substring(0, 6) }) })) as Probe;
 			probe.value = response;
 			isSuccess.value = true;
+
+			const wrapper = stepPanels.value.$el;
+			const currentChild = wrapper.children[Number(activeStep.value)];
+			smoothResize(wrapper, currentChild, currentChild);
+
 			emit('adopted');
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';

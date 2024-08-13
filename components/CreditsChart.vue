@@ -1,82 +1,80 @@
-
 <template>
 	<Chart type="line" :data="chartData" :options="chartOptions" class="h-30rem"/>
 </template>
 
 <script setup lang="ts">
 	import Chart from 'primevue/chart';
+	import { formatDate } from '~/utils/date-formatters';
 
 	const props = defineProps({
-		startAmount: {
+		start: {
 			type: Number,
 			default: 0,
 		},
-		creditsChanges: {
-			type: Array as () => CreditsChange[],
+		additions: {
+			type: Array as () => CreditsAddition[],
+			default: () => [],
+		},
+		deductions: {
+			type: Array as () => CreditsDeduction[],
 			default: () => [],
 		},
 	});
 
-	// TODO: P1: we must fill in any missing dates (=where the value didn't change) on the FE otherwise the charts looks broken
-	// TODO: P1: the chart must show data for the past 30 days, regardless of pagination
 	const documentStyle = getComputedStyle(document.documentElement);
 	const bluegray400 = documentStyle.getPropertyValue('--bluegray-400');
 	const surface300 = documentStyle.getPropertyValue('--p-surface-300');
 	const primary = documentStyle.getPropertyValue('--p-primary-color');
 
 	const changes = computed(() => {
-		const changesAsc = [ ...props.creditsChanges ].reverse();
+		const dayToAddition = new Map(props.additions.map((addition) => {
+			return [ formatDate(addition.date_created, 'short'), addition ];
+		}));
+		const dayToDeduction = new Map(props.deductions.map((deduction) => {
+			return [ formatDate(deduction.date, 'short'), deduction ];
+		}));
+		const last30Days = getLast30Days();
 
 		const data: {
 			label: string;
 			total: number;
 			generated: number;
 			spent: number;
-		}[] = [];
+		}[] = [{
+			label: last30Days[0],
+			total: props.start,
+			generated: dayToAddition.get(last30Days[0])?.amount ?? 0,
+			spent: dayToDeduction.get(last30Days[0])?.amount ?? 0,
+		}];
 
-		changesAsc.forEach((change) => {
-			const [ _year, month, day ] = change.date_created.split('-');
-			const label = `${day}/${month}`;
-			const prevElem = data.at(-1);
+		for (let i = 1; i < last30Days.length; i++) {
+			const day = last30Days[i];
+			const addition = dayToAddition.get(day)?.amount ?? 0;
+			const deduction = dayToDeduction.get(day)?.amount ?? 0;
 
-			if (!prevElem) {
-				data.push({
-					label,
-					total: change.type === 'addition' ? props.startAmount + change.amount : props.startAmount - change.amount,
-					generated: change.type === 'addition' ? change.amount : 0,
-					spent: change.type === 'deduction' ? change.amount : 0,
-				});
-			} else if (prevElem.label === label) {
-				const currentDiff = prevElem.generated - prevElem.spent;
-				const updatedDiff = currentDiff + (change.type === 'addition' ? change.amount : -change.amount);
-				prevElem.total += change.type === 'addition' ? change.amount : -change.amount;
-
-				if (updatedDiff > 0) {
-					prevElem.generated = updatedDiff;
-					prevElem.spent = 0;
-				} else {
-					prevElem.generated = 0;
-					prevElem.spent = -updatedDiff;
-				}
-			} else if (change.type === 'addition') {
-				data.push({
-					label,
-					total: prevElem.total + change.amount,
-					generated: change.amount,
-					spent: 0,
-				});
-			} else if (change.type === 'deduction') {
-				data.push({
-					label,
-					total: prevElem.total - change.amount,
-					generated: 0,
-					spent: change.amount,
-				});
-			}
-		});
+			data.push({
+				label: day,
+				total: data[i - 1].total + addition - deduction,
+				generated: addition,
+				spent: deduction,
+			});
+		}
 
 		return data;
 	});
+
+	const getLast30Days = () => {
+		const days = [];
+		const currentDay = new Date();
+		currentDay.setDate(currentDay.getDate() + 1);
+
+		for (let i = 0; i < 30; i++) {
+			currentDay.setDate(currentDay.getDate() - 1);
+			days.push(formatDate(currentDay, 'short'));
+		}
+
+		return days.reverse();
+	};
 
 	const chartData = computed(() => {
 		return {
@@ -119,9 +117,9 @@
 				callbacks: {
 					title: () => null,
 					label: () => null,
-					afterBody: (ctx: any) => `Total credits: ${changes.value[ctx[0].dataIndex].total.toLocaleString()}
-Generated: ${changes.value[ctx[0].dataIndex].generated.toLocaleString()}
-Spent: ${changes.value[ctx[0].dataIndex].spent.toLocaleString()}`,
+					afterBody: (ctx: any) => `Total credits: ${changes.value[ctx[0].dataIndex].total.toLocaleString('en-US')}
+Generated: ${changes.value[ctx[0].dataIndex].generated.toLocaleString('en-US')}
+Spent: ${changes.value[ctx[0].dataIndex].spent.toLocaleString('en-US')}`,
 				},
 				bodyFont: {
 					weight: 400,

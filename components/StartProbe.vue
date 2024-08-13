@@ -4,20 +4,23 @@
 		<SelectButton
 			v-model="platform"
 			:options="platformOptions"
+			:allow-empty="false"
 			option-label="name"
 			option-value="value"
 			aria-labelledby="basic"
 			severity="primary"
+			@update:model-value="onChangePlatform"
 		/>
 	</div>
-	<div class="relative mt-4 rounded-xl border p-4 pr-0 dark:bg-dark-900">
-		<!-- TODO: P1: the expand effect and the modal resize must be animated (and probably it'll have to be just downwards, not in both directions) -->
+	<div ref="codeWrapperElem" class="relative mt-4 box-content overflow-hidden rounded-xl border p-4 pr-0 transition-[height] duration-500 dark:bg-dark-900">
 		<!-- TODO: P1: related ^ all the modals may work better if they are closer to the top, not fully vertically centered -->
 
 		<!-- TODO: P3: collapse/expand thing could be a component -->
-		<pre v-if="(size === 'compact')" class="no-scrollbar overflow-scroll"><code class="mr-16">{{ commands[platform][size] }}</code></pre>
-		<div v-if="size === 'expanded'" class="no-scrollbar overflow-scroll">
-			<pre v-for="line in commands[platform][size]" :key="line.toString()"><code>{{ line[0] }}</code><code class="mr-16 text-bluegray-300">{{ line[1] }}</code></pre>
+		<div ref="codeElem">
+			<pre v-if="(size === 'compact')" class="no-scrollbar overflow-scroll"><code class="mr-16">{{ commands[platform][size] }}</code></pre>
+			<div v-if="size === 'expanded'" class="no-scrollbar overflow-scroll">
+				<pre v-for="line in commands[platform][size]" :key="line.toString()"><code>{{ line[0] }}</code><code class="mr-16 text-bluegray-300">{{ line[1] }}</code></pre>
+			</div>
 		</div>
 		<div class="!absolute right-2 top-2">
 			<!-- TODO: P3: copy button could be a component -->
@@ -34,7 +37,6 @@
 		</div>
 	</div>
 	<div class="flex justify-center">
-		<!-- TODO: P2: transition on expand/collapse -->
 		<Button
 			class="size-6 rounded-t-none border-t-0"
 			size="small"
@@ -50,6 +52,11 @@
 </template>
 
 <script setup lang="ts">
+	import { smoothResize } from '~/utils/smooth-resize';
+
+	const codeWrapperElem = ref<HTMLElement>();
+	const codeElem = ref<HTMLElement>();
+
 	const commands = {
 		docker: {
 			compact: 'docker run -d --log-driver local --network host --restart=always --name globalping-probe globalping/globalping-probe',
@@ -82,7 +89,14 @@
 	const platform: Ref<'docker' | 'podman'> = ref('docker');
 	const size: Ref<'compact' | 'expanded'> = ref('compact');
 
-	const toggleSize = () => size.value = size.value === 'compact' ? 'expanded' : 'compact';
+	const onChangePlatform = () => {
+		smoothResize(codeWrapperElem.value!, codeElem.value!, codeElem.value!);
+	};
+
+	const toggleSize = () => {
+		size.value = size.value === 'compact' ? 'expanded' : 'compact';
+		smoothResize(codeWrapperElem.value!, codeElem.value!, codeElem.value!);
+	};
 
 	const copyTooltip = ref(false);
 	const copyCommand = async () => {

@@ -1,5 +1,5 @@
 <template>
-	<div :class="{'relative flex size-10 items-center justify-center rounded-full border bg-surface-0 dark:bg-dark-900': border}">
+	<div :class="{'flex size-10 items-center justify-center rounded-full border bg-surface-0 dark:bg-dark-900': border}" class="relative">
 		<nuxt-icon class="text-base text-primary" :class="{'text-xl': border}" :name="name" :filled="filled"/>
 		<i v-if="statusColor" v-tooltip.top="capitalize(props.status.replaceAll('-', ' '))" class="pi pi-circle-fill absolute right-[-3px] top-0 rounded-full border-2 border-surface-0 text-2xs dark:border-dark-900" :class="statusColor"/>
 	</div>

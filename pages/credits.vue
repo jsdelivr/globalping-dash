@@ -9,20 +9,19 @@
 		<div class="mt-2 flex">
 			<div class="mr-20">
 				<p>Total credits</p>
-				<!-- TODO: P3: locate functions should consistently use en-US everywhere -->
-				<p class="text-lg font-bold">{{ creditsStats.credits.toLocaleString() }}</p>
+				<p class="text-lg font-bold">{{ credits.total.toLocaleString('en-US') }}</p>
 			</div>
 			<div class="mr-20">
 				<p>Generated past 30 days</p>
-				<p class="text-lg font-bold">{{ creditsStats.additions.toLocaleString() }}</p>
+				<p class="text-lg font-bold">{{ totalAdditions.toLocaleString('en-US') }}</p>
 			</div>
 			<div>
 				<p>Spent past 30 days</p>
-				<p class="text-lg font-bold">{{ creditsStats.deductions.toLocaleString() }}</p>
+				<p class="text-lg font-bold">{{ totalDeductions.toLocaleString('en-US') }}</p>
 			</div>
 		</div>
 		<div class="mt-6">
-			<CreditsChart :start-amount="startAmount" :credits-changes="creditsChanges"/>
+			<CreditsChart :start="credits.total - totalAdditions + totalDeductions" :additions="credits.additions" :deductions="credits.deductions"/>
 		</div>
 		<div v-if="creditsChanges.length || loading" class="mt-6">
 			<DataTable
@@ -71,6 +70,7 @@
 	import type { DataTablePageEvent } from 'primevue/datatable';
 	import type { PageState } from 'primevue/paginator';
 	import { useAuth } from '~/store/auth';
+	import { formatDateForTable } from '~/utils/date-formatters';
 	import { sendToast } from '~/utils/send-toast';
 
 	useHead({
@@ -87,45 +87,40 @@
 	const creditsChangesCount = ref(0);
 	const creditsChanges = ref<CreditsChange[]>([]);
 	const first = ref(0);
-	const startAmount = ref(0);
 	const lazyParams = ref<Partial<DataTablePageEvent>>({});
 
-	const { data: creditsStats } = await useLazyAsyncData('credits-stats', async () => {
+	const { data: credits } = await useLazyAsyncData('credits-stats', async () => {
 		try {
-			const [ credits, additions, deductions ] = await Promise.all([
-				$directus.request<[{amount: number}]>(readItems('gp_credits', {
+			const [ total, additions, deductions ] = await Promise.all([
+				$directus.request<{amount: number}[]>(readItems('gp_credits', {
 					filter: { user_id: { _eq: user.id } },
 				})),
-				$directus.request<[{sum: {amount: number}}]>(aggregate('gp_credits_additions', {
-					aggregate: { sum: 'amount' },
-					query: { filter: {
+				$directus.request<CreditsAddition[]>(readItems('gp_credits_additions', {
+					filter: {
 						github_id: { _eq: user.external_identifier || 'admin' },
 						// @ts-ignore
 						date_created: { _gte: '$NOW(-30 day)' },
-					} },
+					},
 				})),
-				// TODO: P2: for deductions let's show comment "Measurements run on this day."
 				// TODO: P2: let's also drop the "For (the)" prefix from other messages (server side) => "Adopted probe ...", "$10 sponsorship"
-				$directus.request<[{sum: {amount: number}}]>(aggregate('gp_credits_deductions', {
-					aggregate: { sum: 'amount' },
-					query: { filter: {
+				$directus.request<CreditsDeduction[]>(readItems('gp_credits_deductions', {
+					filter: {
 						user_id: { _eq: user.id },
 						// @ts-ignore
 						date: { _gte: '$NOW(-30 day)' },
-					} },
+					},
 				})),
 			]);
 
-			return {
-				credits: credits[0]?.amount || 0,
-				additions: additions[0]?.sum.amount || 0,
-				deductions: deductions[0]?.sum.amount || 0,
-			};
+			return { total: total[0]?.amount || 0, additions, deductions };
 		} catch (e) {
 			sendToast(e);
 			throw e;
 		}
-	}, { default: () => ({ credits: 0, additions: 0, deductions: 0 }) });
+	}, { default: () => ({ total: 0, additions: [], deductions: [] }) });
+
+	const totalAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + addition.amount, 0));
+	const totalDeductions = computed(() => credits.value.deductions.reduce((sum, deduction) => sum + deduction.amount, 0));
 
 	const loadLazyData = async (event?: PageState) => {
 		loading.value = true;
@@ -133,11 +128,11 @@
 
 		try {
 			const [
-				{ amountBeforeChanges, changes },
+				{ changes },
 				[{ count: additionsCount }],
 				[{ count: deductionsCount }],
 			] = await Promise.all([
-				$directus.request<{amountBeforeChanges: number, changes: CreditsChange[]}>(customEndpoint({ method: 'GET', path: '/credits-timeline', params: {
+				$directus.request<{changes: CreditsChange[]}>(customEndpoint({ method: 'GET', path: '/credits-timeline', params: {
 					offset: lazyParams.value.first,
 					limit: itemsPerPage,
 				} })),
@@ -152,13 +147,13 @@
 			]);
 
 			creditsChanges.value = [
-				...changes.map(addition => ({
-					...addition,
-					date_created: addition.date_created.split('T')[0],
+				...changes.map(change => ({
+					...change,
+					comment: !change.comment && change.type === 'deduction' ? 'Measurements run on this day.' : change.comment,
+					date_created: formatDateForTable(change.date_created),
 				})),
 			];
 
-			startAmount.value = amountBeforeChanges;
 			creditsChangesCount.value = additionsCount + deductionsCount;
 		} catch (e) {
 			sendToast(e);

@@ -151,7 +151,7 @@
 										<div v-for="(tag, index) in tags" :key="index" class="mb-2 flex items-center" :class="{ 'mb-5': !isTagValid(tag.value) }">
 											<Select v-model="tag.uPrefix" class="grow" :options="uPrefixes" :scroll-height="'200px'"/>
 											<span class="mx-2">-</span>
-											<span class="grow">
+											<span class="relative grow">
 												<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full"/>
 												<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
 											</span>
@@ -298,7 +298,7 @@
 		</Dialog>
 		<Dialog
 			v-model:visible="adoptProbeDialog"
-			class="min-w-[700px] max-md:min-w-[95%]"
+			class="max-h-[95vh] min-w-[700px] max-md:min-w-[95%]"
 			modal
 			dismissable-mask
 			:draggable="false"

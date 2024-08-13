@@ -88,9 +88,8 @@
 					<AccordionPanel v-for="notification in reverseNotifications" :key="notification.id" :value="notification.id">
 						<AccordionHeader>{{ notification.subject }}</AccordionHeader>
 						<AccordionContent>
-							<!-- TODO: P2: return the notifications from the server in a safe HTML format; DOMPurify + MD shouldn't be loaded on the client if we can avoid it (too much bloat for no good reason) -->
 							<!-- eslint-disable-next-line vue/no-v-html -->
-							<span v-if="notification.message" class="notification" v-html="DOMPurify.sanitize(md.render(notification.message))"/>
+							<span v-if="notification.message" class="notification" v-html="notification.message"/>
 						</AccordionContent>
 					</AccordionPanel>
 				</Accordion>
@@ -120,9 +119,7 @@
 <script lang="ts" setup>
 	import { readNotifications, updateNotifications } from '@directus/sdk';
 	import { defaults } from 'chart.js';
-	import DOMPurify from 'dompurify';
 	import capitalize from 'lodash/capitalize';
-	import markdownit from 'markdown-it';
 	import { useAuth } from '~/store/auth';
 
 	const { $directus } = useNuxtApp();
@@ -131,8 +128,6 @@
 	const user = auth.getUser as User;
 
 	// NOTIFICATIONS
-
-	const md = markdownit();
 
 	const notificationsPanel = ref();
 	const toggleNotifications = async (event: Event) => {
@@ -144,7 +139,10 @@
 	};
 
 	const { data: notifications } = await useAsyncData('directus_notifications', async () => {
-		return $directus.request(readNotifications());
+		return $directus.request(readNotifications({
+			// @ts-ignore
+			format: 'html',
+		}));
 	}, { default: () => [] });
 
 	const newNotifications = computed(() => notifications.value.filter(notification => notification.status === 'inbox'));

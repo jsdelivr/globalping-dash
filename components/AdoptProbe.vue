@@ -83,7 +83,9 @@
 						<SelectButton
 							v-model="probeType"
 							:options="probeTypes"
+							:allow-empty="false"
 							aria-labelledby="basic"
+							option-label="name"
 							option-value="value"
 							severity="primary"
 						>

@@ -20,7 +20,7 @@
 						severity="contrast"
 						text
 						label="Sync from GitHub"
-						:icon="{'pi pi-sync': true, 'pi-spin': loadingIconId === 1}"
+						:icon="loadingIconId === 1 ? 'pi pi-sync pi-spin' : 'pi pi-sync'"
 						class="!absolute right-8 top-[5px] h-6 bg-transparent !px-1 hover:bg-transparent"
 						@click="syncFromGithub(1)"
 					/>
@@ -40,7 +40,9 @@
 					v-model="appearance"
 					class="mt-2"
 					:options="themeOptions"
+					:allow-empty="false"
 					aria-labelledby="basic"
+					option-label="name"
 					option-value="value"
 				>
 					<template #option="slotProps">
@@ -65,7 +67,7 @@
 						severity="contrast"
 						text
 						label="Sync from GitHub"
-						:icon="{'pi pi-sync': true, 'pi-spin': loadingIconId === 2}"
+						:icon="loadingIconId === 2 ? 'pi pi-sync pi-spin' : 'pi pi-sync'"
 						class="!absolute right-8 top-[5px] h-6 bg-transparent !px-1 hover:bg-transparent"
 						@click="syncFromGithub(2)"
 					/>

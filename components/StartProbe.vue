@@ -4,6 +4,7 @@
 		<SelectButton
 			v-model="platform"
 			:options="platformOptions"
+			:allow-empty="false"
 			option-label="name"
 			option-value="value"
 			aria-labelledby="basic"

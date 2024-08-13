@@ -29,14 +29,14 @@
 				/>
 			</Step>
 		</StepList>
-		<StepPanels id="ap-step-panels" class="box-content overflow-hidden transition-[height] duration-500">
+		<StepPanels ref="stepPanels" class="box-content overflow-hidden transition-[height] duration-500">
 			<StepPanel v-slot="{ activateCallback }" value="0">
 				<Tabs v-model:value="activeTab" :pt="{ inkbar: {class: 'hidden'}}" class="border-t dark:border-dark-400" @update:value="onChangeTab">
 					<TabList>
 						<Tab value="0" :class="{ grow: true }"><i class="pi pi-check mr-2"/>I'm already running a probe</Tab>
 						<Tab value="1" :class="{ grow: true }"><i class="pi pi-times mr-2"/>I'm not running a probe yet</Tab>
 					</TabList>
-					<TabPanels id="ap-tab-panels" class="box-content overflow-hidden transition-[height] duration-500">
+					<TabPanels ref="tabPanels" class="box-content overflow-hidden transition-[height] duration-500">
 						<TabPanel value="0" class="overflow-auto">
 							<p class="mb-4 mt-2 text-lg font-bold">Set up your probe</p>
 							<p>First, update your container by running the following commands:</p>
@@ -153,11 +153,12 @@
 
 	let prevStep = '0';
 	const activeStep = ref('0');
+	const stepPanels = ref();
 
 	watchEffect(() => { prevStep = activeStep.value; });
 
 	const onChangeStep = (i: string | number) => {
-		const wrapper = document.querySelector('#ap-step-panels')!;
+		const wrapper = stepPanels.value.$el;
 		const currentChild = wrapper.children[Number(prevStep)];
 		const newChild = wrapper.children[Number(i)];
 		smoothResize(wrapper, currentChild, newChild);
@@ -167,11 +168,12 @@
 
 	let prevTab = '0';
 	const activeTab = ref('0');
+	const tabPanels = ref();
 
 	watchEffect(() => { prevTab = activeTab.value; });
 
 	const onChangeTab = function (i: string | number) {
-		const wrapper = document.querySelector('#ap-tab-panels')!;
+		const wrapper = tabPanels.value.$el;
 		const currentChild = wrapper.children[Number(prevTab)];
 		const newChild = wrapper.children[Number(i)];
 		smoothResize(wrapper, currentChild, newChild);
@@ -261,7 +263,7 @@
 			probe.value = response;
 			isSuccess.value = true;
 
-			const wrapper = document.querySelector('#ap-step-panels')!;
+			const wrapper = stepPanels.value.$el;
 			const currentChild = wrapper.children[Number(activeStep.value)];
 			smoothResize(wrapper, currentChild, currentChild);
 

@@ -1,6 +1,6 @@
 <template>
-	<section class="grid grid-cols-[480px_auto] max-md:grid-cols-1">
-		<div class="flex flex-col px-20 py-12" style="box-shadow: 0 20px 25px -5px rgba(0 0 0 / .1), 0 8px 10px -6px rgba(0 0 0 / .1); z-index: 2;">
+	<section class="grid grid-cols-[480px_auto] max-md:grid-cols-1 dark:bg-dark-800">
+		<div class="flex flex-col px-20 py-12 shadow-xl max-[480px]:px-10 dark:shadow-dark-800" style="z-index: 2;">
 			<div class="mb-auto flex flex-col">
 				<div class="flex items-center">
 					<picture class="inline-flex">
@@ -17,7 +17,7 @@
 			</div>
 
 			<div class="mb-auto">
-				<h2 class="text-4xl font-bold">Sign in</h2>
+				<h2 class="text-4xl font-bold">Sign In</h2>
 				<Divider class="h-2 before:border-t-2"/>
 				<Button
 					class="h-12 w-full bg-black !text-left"
@@ -34,7 +34,7 @@
 			</NuxtLink>
 		</div>
 
-		<div class="rounded-xl bg-[url('~/assets/images/login-bg.svg')] bg-cover max-md:hidden dark:bg-[url('~/assets/images/login-bg-dark.svg')]"/>
+		<div class="bg-[url('~/assets/images/login-bg.svg')] bg-cover max-md:hidden dark:bg-[url('~/assets/images/login-bg-dark.svg')]"/>
 	</section>
 </template>
 

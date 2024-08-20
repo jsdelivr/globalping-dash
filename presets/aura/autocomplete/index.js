@@ -32,7 +32,7 @@ export default {
 
 			// Spacing
 			'm-0 list-none',
-			'py-1 px-1',
+			'py-1 px-3',
 
 			// Size
 			'w-full',

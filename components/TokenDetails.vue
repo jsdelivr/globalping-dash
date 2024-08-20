@@ -66,7 +66,7 @@
 		</div>
 		<div class="text-xs">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
 		<label for="origins" class="mt-6 block">Origins</label>
-		<!-- TODO: P1: finish migrating this: storing doesn't seem to work at all, the separator param would be nice to bring back, input needs padding -->
+		<!-- TODO: P1: finish migrating this: storing doesn't seem to work at all, the separator param would be nice to bring back -->
 		<AutoComplete
 			id="origins"
 			v-model="origins"

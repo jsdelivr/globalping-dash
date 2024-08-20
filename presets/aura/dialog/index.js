@@ -115,7 +115,10 @@ export default {
 		],
 	}),
 	transition: ({ props }) => {
-		return props.position === 'top'
+		// Use default animation for the "position": "top"
+		// return props.position === 'top'
+		// eslint-disable-next-line no-constant-condition
+		return false
 			? {
 				enterFromClass: 'opacity-0 scale-75 translate-x-0 -translate-y-full translate-z-0 mask-active',
 				enterActiveClass: 'transition-all duration-200 ease-out',

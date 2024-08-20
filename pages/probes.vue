@@ -289,7 +289,7 @@
 		<Dialog
 			v-model:visible="startProbeDialog"
 			position="top"
-			class="mt-12 min-w-[700px] max-md:min-w-[95%]"
+			class="mt-8 min-w-[700px] max-md:min-w-[95%]"
 			modal
 			dismissable-mask
 			:draggable="false"
@@ -300,7 +300,7 @@
 		<Dialog
 			v-model:visible="adoptProbeDialog"
 			position="top"
-			class="mt-12 max-h-[95vh] min-w-[700px] max-md:min-w-[95%]"
+			class="mt-8 max-h-[95vh] min-w-[700px] max-md:min-w-[95%]"
 			modal
 			dismissable-mask
 			:draggable="false"

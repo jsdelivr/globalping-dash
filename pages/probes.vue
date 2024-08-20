@@ -288,7 +288,8 @@
 		</div>
 		<Dialog
 			v-model:visible="startProbeDialog"
-			class="min-w-[700px] max-md:min-w-[95%]"
+			position="top"
+			class="mt-12 min-w-[700px] max-md:min-w-[95%]"
 			modal
 			dismissable-mask
 			:draggable="false"
@@ -298,7 +299,8 @@
 		</Dialog>
 		<Dialog
 			v-model:visible="adoptProbeDialog"
-			class="max-h-[95vh] min-w-[700px] max-md:min-w-[95%]"
+			position="top"
+			class="mt-12 max-h-[95vh] min-w-[700px] max-md:min-w-[95%]"
 			modal
 			dismissable-mask
 			:draggable="false"

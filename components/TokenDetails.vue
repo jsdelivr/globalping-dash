@@ -66,7 +66,6 @@
 		</div>
 		<div class="text-xs">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
 		<label for="origins" class="mt-6 block">Origins</label>
-		<!-- TODO: P1: finish migrating this: storing doesn't seem to work at all, the separator param would be nice to bring back -->
 		<AutoComplete
 			id="origins"
 			v-model="origins"
@@ -75,7 +74,9 @@
 			remove-token-icon="pi pi-times"
 			multiple
 			:typeahead="false"
+			:pt="{ inputChip: { id: 'token-details-origins-input-wrapper'} }"
 			@update:model-value="updateOrigins"
+			@blur="onAutoCompleteBlur"
 		/>
 		<p class="mt-1 text-xs">
 			A list of origins which are allowed to use the token. If empty, any origin is valid.
@@ -174,6 +175,39 @@
 	const updateOrigins = (value: string[]) => {
 		origins.value = value.filter(v => !!v);
 	};
+
+	const onAutoCompleteBlur = (event: Event) => {
+		const input = event?.target as HTMLInputElement | null;
+
+		if (input?.value) {
+			origins.value.push(input.value);
+			input.value = '';
+		}
+	};
+
+	let inputElem: HTMLInputElement | null;
+	const inputChangeValueHandler = () => {
+		if (!inputElem || !inputElem.value) {
+			return;
+		} else if (inputElem.value === ',') {
+			inputElem.value = '';
+			return;
+		}
+
+		if (inputElem.value.endsWith(',') && inputElem.value.replaceAll(',', '')) {
+			origins.value.push(inputElem.value.replaceAll(',', ''));
+			inputElem.value = '';
+		}
+	};
+
+	onMounted(() => {
+		inputElem = document.querySelector<HTMLInputElement>('#token-details-origins-input-wrapper input');
+		inputElem && inputElem.addEventListener('input', inputChangeValueHandler);
+	});
+
+	onUnmounted(() => {
+		inputElem && inputElem.removeEventListener('input', inputChangeValueHandler);
+	});
 
 	// ACTIONS
 

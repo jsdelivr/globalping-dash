@@ -17,7 +17,7 @@
 
 		<!-- TODO: P3: collapse/expand thing could be a component -->
 		<div ref="codeElem">
-			<pre v-if="(size === 'compact')" class="no-scrollbar overflow-scroll"><code class="mr-16">{{ commands[platform][size] }}</code></pre>
+			<pre v-if="size === 'compact'" class="no-scrollbar flex min-h-[22px] items-center overflow-scroll"><code class="mr-16">{{ commands[platform][size] }}</code></pre>
 			<div v-if="size === 'expanded'" class="no-scrollbar overflow-scroll">
 				<pre v-for="line in commands[platform][size]" :key="line.toString()"><code>{{ line[0] }}</code><code class="mr-16 text-bluegray-300">{{ line[1] }}</code></pre>
 			</div>

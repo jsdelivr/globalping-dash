@@ -1,5 +1,5 @@
 export default {
-	root: ({ state }) => ({
+	root: ({ props, state }) => ({
 		class: [
 			// Shape
 			'rounded-lg',
@@ -7,7 +7,8 @@ export default {
 			'border-0',
 
 			// Size
-			'max-h-[90vh]',
+			props.position === 'top' ? 'max-h[calc(95vh-7*16px)]' : 'max-h-[90vh]',
+			{ 'mt-28': props.position === 'top' },
 			'w-[50vw]',
 			'm-0',
 

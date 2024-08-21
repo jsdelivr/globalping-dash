@@ -97,7 +97,7 @@
 		<Dialog
 			v-model:visible="deleteDialog"
 			position="top"
-			class="mt-8 min-w-[700px] max-md:min-w-[95%]"
+			class="min-w-[700px] max-md:min-w-[95%]"
 			modal
 			dismissable-mask
 			:draggable="false"

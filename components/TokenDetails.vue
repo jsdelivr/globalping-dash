@@ -102,7 +102,7 @@
 <script setup lang="ts">
 	import { createItem, customEndpoint, updateItem } from '@directus/sdk';
 	import { formatDate } from '~/utils/date-formatters';
-	import { sendToast } from '~/utils/send-toast';
+	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const props = defineProps({
 		token: {
@@ -231,7 +231,7 @@
 
 			emit('generate', response.id, token);
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 		}
 	};
 
@@ -251,9 +251,11 @@
 				expire: expire.value && expire.value.toISOString().split('T')[0],
 			}));
 
+			sendToast('success', 'Done', 'Token info was successfully updated');
+
 			emit('save');
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 		}
 	};
 
@@ -276,9 +278,11 @@
 				value: token,
 			}));
 
+			sendToast('success', 'Done', 'Token was successfully regenerated');
+
 			emit('regenerate', response.id, token);
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 		}
 	};
 </script>

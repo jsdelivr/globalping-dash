@@ -158,7 +158,7 @@
 	import type { PageState } from 'primevue/paginator';
 	import { useAuth } from '~/store/auth';
 	import { formatDate, getRelativeTimeString } from '~/utils/date-formatters';
-	import { sendToast } from '~/utils/send-toast';
+	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	useHead({
 		title: 'Tokens -',
@@ -192,7 +192,7 @@
 			tokens.value = gpTokens;
 			tokensCount.value = count;
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 		}
 
 		loading.value = false;
@@ -283,8 +283,10 @@
 			expandedRows.value = { [id]: true };
 			tokenToRegenerate.value = null;
 			regenerateDialog.value = false;
+
+			sendToast('success', 'Done', 'Token was successfully regenerated');
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 		}
 	};
 
@@ -312,8 +314,10 @@
 			await loadLazyData();
 			tokenToDelete.value = null;
 			deleteDialog.value = false;
+
+			sendToast('success', 'Done', 'Token was deleted');
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 		}
 	};
 </script>

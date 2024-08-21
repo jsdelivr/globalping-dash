@@ -141,7 +141,7 @@
 	import isEmpty from 'lodash/isEmpty';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useAuth } from '~/store/auth';
-	import { sendToast } from '~/utils/send-toast';
+	import { sendErrorToast } from '~/utils/send-toast';
 
 	useHead({
 		title: 'Overview -',
@@ -159,7 +159,7 @@
 			}));
 			return result;
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 			throw e;
 		}
 	}, { default: () => [] });
@@ -182,7 +182,7 @@
 			}));
 			return result;
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 			throw e;
 		}
 	}, { default: () => [] });
@@ -204,7 +204,7 @@
 			}));
 			return result;
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 			throw e;
 		}
 	}, { default: () => [] });

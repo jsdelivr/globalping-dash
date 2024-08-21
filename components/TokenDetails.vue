@@ -70,11 +70,10 @@
 			id="origins"
 			v-model="origins"
 			class="mt-2"
-			input-class="h-[22px]"
 			remove-token-icon="pi pi-times"
 			multiple
 			:typeahead="false"
-			:pt="{ inputChip: { id: 'token-details-origins-input-wrapper'} }"
+			:pt="{ inputChip: { id: 'token-details-origins-input-wrapper'}, chipItem: 'my-0.5' }"
 			@update:model-value="updateOrigins"
 			@blur="onAutoCompleteBlur"
 		/>

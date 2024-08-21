@@ -14,7 +14,7 @@
 	</div>
 	<div class="relative">
 		<div ref="codeWrapperElem" class="mt-4 box-content overflow-hidden rounded-xl border p-4 pr-0 transition-[height] duration-500 dark:bg-dark-900">
-			<!-- TODO: P3: collapse/expand thing could be a component -->
+			<!-- TODO: P3: collapse/expand thing could be a component, collapse/expand is not smooth if triggered immideately after copy click -->
 			<div ref="codeElem">
 				<pre v-if="size === 'compact'" class="no-scrollbar flex min-h-[22px] items-center overflow-scroll"><code class="mr-16">{{ commands[platform][size] }}</code></pre>
 				<div v-if="size === 'expanded'" class="no-scrollbar overflow-scroll">

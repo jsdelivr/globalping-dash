@@ -122,6 +122,7 @@
 		</div>
 		<Dialog
 			v-model:visible="adoptProbeDialog"
+			position="top"
 			class="min-w-[700px] max-md:min-w-[95%]"
 			modal
 			dismissable-mask
@@ -140,7 +141,7 @@
 	import isEmpty from 'lodash/isEmpty';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useAuth } from '~/store/auth';
-	import { sendToast } from '~/utils/send-toast';
+	import { sendErrorToast } from '~/utils/send-toast';
 
 	useHead({
 		title: 'Overview -',
@@ -158,7 +159,7 @@
 			}));
 			return result;
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 			throw e;
 		}
 	}, { default: () => [] });
@@ -181,7 +182,7 @@
 			}));
 			return result;
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 			throw e;
 		}
 	}, { default: () => [] });
@@ -203,7 +204,7 @@
 			}));
 			return result;
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 			throw e;
 		}
 	}, { default: () => [] });

@@ -96,6 +96,7 @@
 		<!-- TODO: P3: we have many of these in the same style, might be worth to wrap in our own component (possibly same applies to other components). -->
 		<Dialog
 			v-model:visible="deleteDialog"
+			position="top"
 			class="min-w-[700px] max-md:min-w-[95%]"
 			modal
 			dismissable-mask
@@ -122,7 +123,7 @@
 <script setup lang="ts">
 	import { customEndpoint, deleteUser, updateMe } from '@directus/sdk';
 	import { useAuth } from '~/store/auth';
-	import { sendToast } from '~/utils/send-toast';
+	import { sendErrorToast } from '~/utils/send-toast';
 
 	useHead({
 		title: 'Settings -',
@@ -163,7 +164,7 @@
 
 			toast.add({ severity: 'success', summary: 'Saved', detail: 'All settings saved', life: 4000 });
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 		}
 
 		saveLoading.value = false;
@@ -195,7 +196,7 @@
 
 			toast.add({ severity: 'success', summary: 'Synced', detail: 'GitHub data synced', life: 4000 });
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 		}
 
 		loadingIconId.value = null;
@@ -209,7 +210,7 @@
 			await $directus.request(deleteUser(user.id!));
 			reloadNuxtApp();
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 		}
 	};
 </script>

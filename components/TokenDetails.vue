@@ -66,16 +66,16 @@
 		</div>
 		<div class="text-xs">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
 		<label for="origins" class="mt-6 block">Origins</label>
-		<!-- TODO: P1: finish migrating this: storing doesn't seem to work at all, the separator param would be nice to bring back, input needs padding -->
 		<AutoComplete
 			id="origins"
 			v-model="origins"
 			class="mt-2"
-			input-class="h-[22px]"
 			remove-token-icon="pi pi-times"
 			multiple
 			:typeahead="false"
+			:pt="{ inputChip: { id: 'token-details-origins-input-wrapper'}, chipItem: 'my-0.5' }"
 			@update:model-value="updateOrigins"
+			@blur="onAutoCompleteBlur"
 		/>
 		<p class="mt-1 text-xs">
 			A list of origins which are allowed to use the token. If empty, any origin is valid.
@@ -102,7 +102,7 @@
 <script setup lang="ts">
 	import { createItem, customEndpoint, updateItem } from '@directus/sdk';
 	import { formatDate } from '~/utils/date-formatters';
-	import { sendToast } from '~/utils/send-toast';
+	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const props = defineProps({
 		token: {
@@ -175,6 +175,39 @@
 		origins.value = value.filter(v => !!v);
 	};
 
+	const onAutoCompleteBlur = (event: Event) => {
+		const input = event?.target as HTMLInputElement | null;
+
+		if (input?.value) {
+			origins.value.push(input.value);
+			input.value = '';
+		}
+	};
+
+	let inputElem: HTMLInputElement | null;
+	const inputChangeValueHandler = () => {
+		if (!inputElem || !inputElem.value) {
+			return;
+		} else if (inputElem.value === ',') {
+			inputElem.value = '';
+			return;
+		}
+
+		if (inputElem.value.endsWith(',') && inputElem.value.replaceAll(',', '')) {
+			origins.value.push(inputElem.value.replaceAll(',', ''));
+			inputElem.value = '';
+		}
+	};
+
+	onMounted(() => {
+		inputElem = document.querySelector<HTMLInputElement>('#token-details-origins-input-wrapper input');
+		inputElem && inputElem.addEventListener('input', inputChangeValueHandler);
+	});
+
+	onUnmounted(() => {
+		inputElem && inputElem.removeEventListener('input', inputChangeValueHandler);
+	});
+
 	// ACTIONS
 
 	const generateTokenLoading = ref(false);
@@ -198,7 +231,7 @@
 
 			emit('generate', response.id, token);
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 		}
 	};
 
@@ -218,9 +251,11 @@
 				expire: expire.value && expire.value.toISOString().split('T')[0],
 			}));
 
+			sendToast('success', 'Done', 'Token info was successfully updated');
+
 			emit('save');
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 		}
 	};
 
@@ -243,9 +278,11 @@
 				value: token,
 			}));
 
+			sendToast('success', 'Done', 'Token was successfully regenerated');
+
 			emit('regenerate', response.id, token);
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 		}
 	};
 </script>

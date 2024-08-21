@@ -37,13 +37,14 @@
 						<Tab value="1" :class="{ grow: true }"><i class="pi pi-times mr-2"/>I'm not running a probe yet</Tab>
 					</TabList>
 					<TabPanels ref="tabPanels" class="box-content overflow-hidden transition-[height] duration-500">
-						<TabPanel value="0" class="overflow-auto">
-							<p class="mb-4 mt-2 text-lg font-bold">Set up your probe</p>
+						<TabPanel value="0">
+							<!-- inline-block is required so mt-2 is not collapsed -->
+							<p class="mb-4 mt-2 inline-block text-lg font-bold">Set up your probe</p>
 							<p>First, update your container by running the following commands:</p>
 							<CodeBlock :commands="setUpCommands" class="mt-4"/>
 						</TabPanel>
-						<TabPanel value="1" class="overflow-auto">
-							<p class="mb-4 mt-2 text-lg font-bold">Join the network</p>
+						<TabPanel value="1">
+							<p class="mb-4 mt-2 inline-block text-lg font-bold">Join the network</p>
 							<StartProbe/>
 						</TabPanel>
 					</TabPanels>

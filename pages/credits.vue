@@ -71,7 +71,7 @@
 	import type { PageState } from 'primevue/paginator';
 	import { useAuth } from '~/store/auth';
 	import { formatDateForTable } from '~/utils/date-formatters';
-	import { sendToast } from '~/utils/send-toast';
+	import { sendErrorToast } from '~/utils/send-toast';
 
 	useHead({
 		title: 'Credits -',
@@ -114,7 +114,7 @@
 
 			return { total: total[0]?.amount || 0, additions, deductions };
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 			throw e;
 		}
 	}, { default: () => ({ total: 0, additions: [], deductions: [] }) });
@@ -156,7 +156,7 @@
 
 			creditsChangesCount.value = additionsCount + deductionsCount;
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 		}
 
 		loading.value = false;

@@ -288,6 +288,7 @@
 		</div>
 		<Dialog
 			v-model:visible="startProbeDialog"
+			position="top"
 			class="min-w-[700px] max-md:min-w-[95%]"
 			modal
 			dismissable-mask
@@ -298,7 +299,8 @@
 		</Dialog>
 		<Dialog
 			v-model:visible="adoptProbeDialog"
-			class="max-h-[95vh] min-w-[700px] max-md:min-w-[95%]"
+			position="top"
+			class="min-w-[700px] max-md:min-w-[95%]"
 			modal
 			dismissable-mask
 			:draggable="false"
@@ -318,7 +320,7 @@
 	import CountryFlag from 'vue-country-flag-next';
 	import { useAuth } from '~/store/auth';
 	import { initGoogleMap } from '~/utils/init-google-map';
-	import { sendToast } from '~/utils/send-toast';
+	import { sendErrorToast } from '~/utils/send-toast';
 
 	const config = useRuntimeConfig();
 
@@ -387,7 +389,7 @@
 			probes.value = adoptedProbes;
 			probesCount.value = count;
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 		}
 
 		loading.value = false;
@@ -524,7 +526,7 @@
 			const updatedProbe = await $directus.request(updateItem('gp_adopted_probes', id, newData));
 			probes.value = [ ...probes.value.map(probe => probe.id === updatedProbe.id ? updatedProbe : probe) ];
 		} catch (e) {
-			sendToast(e);
+			sendErrorToast(e);
 		}
 	};
 </script>

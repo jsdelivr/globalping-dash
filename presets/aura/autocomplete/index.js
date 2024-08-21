@@ -32,7 +32,7 @@ export default {
 
 			// Spacing
 			'm-0 list-none',
-			'px-3',
+			'px-1',
 
 			// Size
 			'w-full',
@@ -67,7 +67,7 @@ export default {
 		class: [ 'py-1 px-0 ml-2', 'inline-flex flex-auto' ],
 	},
 	inputChip: {
-		class: 'flex-auto inline-flex h-[35px]',
+		class: 'flex-auto inline-flex h-[35px] only:pl-2',
 	},
 	input: {
 		class: 'border-none outline-none bg-transparent m-0 p-0 shadow-none rounded-none w-full',

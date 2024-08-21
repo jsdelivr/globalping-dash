@@ -49,6 +49,7 @@ declare global {
     date_created: string;
     date_updated: string;
     ip: string;
+    altIps: string[];
     isCustomCity: boolean;
     lastSyncDate: string;
     latitude: number;

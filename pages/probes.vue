@@ -19,7 +19,7 @@
 				:loading="loading"
 				table-class="table-fixed"
 				:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"
-				@row-click="openRow"
+				@row-click="openprobeDetails"
 			>
 				<template #header>
 					<h3>List of probes</h3>
@@ -118,6 +118,22 @@
 			</div>
 		</div>
 		<Dialog
+			v-model:visible="probeDetailsDialog"
+			position="top"
+			class="mt-8 min-w-[700px] max-md:min-w-[95%]"
+			modal
+			dismissable-mask
+			:draggable="false"
+			header="Probe details"
+			content-class="!p-0"
+		>
+			<ProbeDetails
+				:probe="probeDetails"
+				@cancel="probeDetailsDialog = false"
+				@save="handleSave"
+			/>
+		</Dialog>
+		<Dialog
 			v-model:visible="startProbeDialog"
 			position="top"
 			class="min-w-[700px] max-md:min-w-[95%]"
@@ -150,7 +166,6 @@
 	import type { PageState } from 'primevue/paginator';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useAuth } from '~/store/auth';
-	import { initGoogleMap } from '~/utils/init-google-map';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const config = useRuntimeConfig();
@@ -175,7 +190,6 @@
 	const credits = ref<Record<string, number>>({});
 	const first = ref(0);
 	const lazyParams = ref<Partial<DataTablePageEvent>>({});
-	const openedRow = ref<number>(0);
 	const totalCredits = ref(0);
 
 	const loadLazyData = async (event?: PageState) => {
@@ -243,15 +257,19 @@
 
 	// PROBE DETAILS
 
-	const openRow = (event: DataTableRowClickEvent) => {
-		if (event.data.id !== openedRow.value) {
-			isEditingName.value = false;
-			isEditingCity.value = false;
-			isEditingTags.value = false;
-			openedRow.value = event.data.id;
-			const probe = probes.value.find(probe => probe.id === openedRow.value);
-			probe && initGoogleMap(probe);
-		}
+	const probeDetails = ref<Probe | null>(null);
+
+	const probeDetailsDialog = ref(false);
+
+	const openprobeDetails = (event: DataTableRowClickEvent) => {
+		const probe = probes.value.find(probe => probe.id === event.data.id);
+		probeDetails.value = probe ? { ...probe } : null;
+		probeDetailsDialog.value = true;
+	};
+
+	const handleSave = async () => {
+		await loadLazyData();
+		probeDetailsDialog.value = false;
 	};
 
 	//  EDIT NAME
@@ -339,14 +357,6 @@
 	const cancelTags = () => {
 		tags.value = [];
 		isEditingTags.value = false;
-	};
-
-	// OPEN/CLOSE DETAILS
-
-	const onKeyDown = async (event: KeyboardEvent) => {
-		if (event.key === 'Enter' || event.key === ' ') {
-			openedRow.value = 0;
-		}
 	};
 
 	// UTILS

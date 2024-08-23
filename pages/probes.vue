@@ -161,13 +161,15 @@
 </template>
 
 <script setup lang="ts">
-	import { aggregate, readItems, updateItem } from '@directus/sdk';
-	import memoize from 'lodash/memoize';
+	import { aggregate, readItems } from '@directus/sdk';
 	import type { DataTablePageEvent, DataTableRowClickEvent } from 'primevue/datatable';
 	import type { PageState } from 'primevue/paginator';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useAuth } from '~/store/auth';
 	import { sendErrorToast } from '~/utils/send-toast';
+
+	const auth = useAuth();
+	const user = auth.getUser as User;
 
 	const config = useRuntimeConfig();
 
@@ -274,52 +276,5 @@
 	const handleSave = async () => {
 		await loadLazyData();
 		probeDetailsDialog.value = false;
-	};
-
-	// EDIT TAGS
-
-	const auth = useAuth();
-	const user = auth.getUser as User;
-
-	const isEditingTags = ref<boolean>(false);
-	const tags = ref<{ uPrefix: string, value: string }[]>([]);
-
-	const uPrefixes = [ user.github_username, ...user.github_organizations ].map(value => `u-${value}`);
-
-	const editTags = (currentTags: Probe['tags']) => {
-		currentTags = currentTags || [];
-		isEditingTags.value = true;
-
-		tags.value = currentTags.map(({ prefix, value }) => ({
-			uPrefix: `u-${prefix}`,
-			value,
-		}));
-	};
-
-	const addTag = () => {
-		tags.value.push({ uPrefix: '', value: '' });
-	};
-
-	const removeTag = (index: number) => {
-		tags.value?.splice(index, 1);
-	};
-
-	const saveTags = async (id: number) => {
-		isEditingTags.value = false;
-
-		await updateProbe(id, { tags: tags.value.map(({ uPrefix, value }) => ({
-			prefix: uPrefix.replace('u-', ''),
-			value,
-		})) });
-	};
-
-	const tagRegex = /^[a-zA-Z0-9-]+$/;
-	const isTagValid = memoize((value: string) => {
-		return value === '' || (value.length <= 32 && tagRegex.test(value));
-	});
-
-	const cancelTags = () => {
-		tags.value = [];
-		isEditingTags.value = false;
 	};
 </script>

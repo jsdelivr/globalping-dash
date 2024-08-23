@@ -67,8 +67,46 @@
 			City where the probe is located. If you know that city is wrong it can be changed here: type in the valid city and click save.
 		</p>
 		<label for="tags" class="mt-3 block text-xs">Tags</label>
-		<div class="relative mt-1">
-			<i class="pi pi-pencil absolute right-3 top-2.5 text-bluegray-500"/>
+		<div v-if="isEditingTags">
+			<div>
+				<div v-for="(tag, index) in tagsToEdit" :key="index" class="mb-2 flex items-center" :class="{ 'mb-5': !isTagValid(tag.value) }">
+					<Select v-model="tag.uPrefix" class="grow" :options="uPrefixes" :scroll-height="'200px'"/>
+					<span class="mx-2">-</span>
+					<span class="relative grow">
+						<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full"/>
+						<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
+					</span>
+					<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900 dark:text-surface-0" @click="removeTag(index)"/>
+				</div>
+			</div>
+			<div class="mt-6 flex">
+				<Button
+					label="Add tag"
+					icon="pi pi-plus"
+					severity="secondary"
+					class="dark:!bg-dark-800"
+					outlined
+					@click="addTag"
+				/>
+				<Button
+					label="Save"
+					icon="pi pi-check"
+					severity="secondary"
+					outlined
+					class="ml-auto bg-surface-200"
+					@click="saveTags"
+				/>
+				<Button label="Cancel" severity="secondary" outlined class="ml-1 dark:!bg-dark-800" @click="cancelTags"/>
+			</div>
+			<p class="mt-3 text-2xs text-bluegray-400">
+				Public tags of the probe. They can be used as location filters for a measurement. Format is <code class="font-bold">u-${prefix}-${value}</code> where prefix is user/organization github login, and value is your custom string.
+
+				E.g. for user with github username <code class="font-bold">"jimaek"</code>
+				and tag <code class="font-bold">"home1"</code> location filter is<br>
+				<code class="font-bold">{ "tags": ["u-jimaek-home1"] }</code>.
+			</p>
+		</div>
+		<div v-else class="relative mt-1">
 			<AutoComplete
 				id="tags"
 				v-model="tagStrings"
@@ -77,6 +115,15 @@
 				multiple
 				disabled
 				:typeahead="false"
+			/>
+			<Button
+				icon="pi pi-pencil"
+				class="!absolute right-0.5 top-0.5 text-bluegray-500"
+				severity="secondary"
+				text
+				aria-label="Edit tags"
+				size="small"
+				@click="editTags"
 			/>
 		</div>
 		<p class="mt-1 text-xs text-bluegray-400">
@@ -90,8 +137,10 @@
 </template>
 
 <script setup lang="ts">
-	import { createItem, customEndpoint, updateItem } from '@directus/sdk';
+	import { updateItem } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
+	import memoize from 'lodash/memoize';
+	import { useAuth } from '~/store/auth';
 	import { initGoogleMap } from '~/utils/init-google-map';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
@@ -106,7 +155,7 @@
 		},
 	});
 
-	const probe = computed(() => ({ ...props.probe }));
+	const probe = ref({ ...props.probe });
 
 	initGoogleMap(probe.value);
 
@@ -116,7 +165,54 @@
 
 	// TAGS
 
+	const auth = useAuth();
+	const user = auth.getUser as User;
+
+	const isEditingTags = ref<boolean>(false);
 	const tagStrings = computed(() => probe.value.tags.map(({ prefix, value }) => `u-${prefix}-${value}`));
+	const tagsToEdit = ref<{ uPrefix: string, value: string }[]>([]);
+
+	const uPrefixes = [ user.github_username, ...user.github_organizations ].map(value => `u-${value}`);
+
+	const editTags = () => {
+		isEditingTags.value = true;
+
+		tagsToEdit.value = probe.value.tags.map(({ prefix, value }) => ({
+			uPrefix: `u-${prefix}`,
+			value,
+		}));
+	};
+
+	const addTag = () => {
+		tagsToEdit.value.push({ uPrefix: '', value: '' });
+	};
+
+	const removeTag = (index: number) => {
+		tagsToEdit.value?.splice(index, 1);
+	};
+
+	const saveTags = async () => {
+		probe.value.tags = convertTags(tagsToEdit.value);
+
+		tagsToEdit.value = [];
+
+		isEditingTags.value = false;
+	};
+
+	const convertTags = (tagsToEdit: { uPrefix: string, value: string }[]) => tagsToEdit.map(({ uPrefix, value }) => ({
+		prefix: uPrefix.replace('u-', ''),
+		value,
+	}));
+
+	const tagRegex = /^[a-zA-Z0-9-]+$/;
+	const isTagValid = memoize((value: string) => {
+		return value === '' || (value.length <= 32 && tagRegex.test(value));
+	});
+
+	const cancelTags = () => {
+		tagsToEdit.value = [];
+		isEditingTags.value = false;
+	};
 
 	// // ACTIONS
 
@@ -128,6 +224,7 @@
 			await $directus.request(updateItem('gp_adopted_probes', probe.value.id, {
 				name: probe.value.name,
 				city: probe.value.city,
+				tags: tagsToEdit.value.length ? convertTags(tagsToEdit.value) : probe.value.tags,
 			}));
 
 			sendToast('success', 'Done', 'Probe info was successfully updated');

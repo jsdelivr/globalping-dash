@@ -70,9 +70,9 @@
 		<div v-if="isEditingTags">
 			<div>
 				<div v-for="(tag, index) in tagsToEdit" :key="index" class="mb-2 flex items-center" :class="{ 'mb-5': !isTagValid(tag.value) }">
-					<Select v-model="tag.uPrefix" class="grow" :options="uPrefixes" :scroll-height="'200px'"/>
+					<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
 					<span class="mx-2">-</span>
-					<span class="relative grow">
+					<span class="relative flex-1">
 						<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full"/>
 						<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
 					</span>
@@ -98,7 +98,7 @@
 				/>
 				<Button label="Cancel" severity="secondary" outlined class="ml-1 dark:!bg-dark-800" @click="cancelTags"/>
 			</div>
-			<p class="mt-3 text-2xs text-bluegray-400">
+			<p class="mt-3 text-xs text-bluegray-400">
 				Public tags of the probe. They can be used as location filters for a measurement. Format is <code class="font-bold">u-${prefix}-${value}</code> where prefix is user/organization github login, and value is your custom string.
 
 				E.g. for user with github username <code class="font-bold">"jimaek"</code>
@@ -126,18 +126,47 @@
 				@click="editTags"
 			/>
 		</div>
-		<p class="mt-1 text-xs text-bluegray-400">
-			Public tags of the probe. They can be used as location filters for a measurement.
-		</p>
-		<div class="mt-7 text-right">
+		<div class="mt-7 flex justify-end">
+			<Button
+				class="mr-auto"
+				label="Delete probe"
+				severity="secondary"
+				icon="pi pi-trash"
+				text
+				:loading="deleteProbeLoading"
+				@click="deleteDialog = true"
+			/>
 			<Button class="mr-2" label="Cancel" severity="secondary" text @click="$emit('cancel')"/>
 			<Button label="Save" :loading="updateProbeLoading" @click="updateProbe"/>
 		</div>
 	</div>
+	<Dialog
+		v-model:visible="deleteDialog"
+		position="top"
+		class="min-w-[700px] max-md:min-w-[95%]"
+		modal
+		dismissable-mask
+		:draggable="false"
+		header="Delete probe"
+	>
+		<div class="flex items-center">
+			<div>
+				<i class="pi pi-exclamation-triangle text-xl text-primary"/>
+			</div>
+			<div class="ml-3">
+				<p>You are about to delete probe <span class="font-bold">{{ probe.name || probe.city }}</span> ({{ probe.ip }}).</p>
+				<p>Are you sure you want to delete this probe? You will not be able to undo this action.</p>
+			</div>
+		</div>
+		<div class="mt-7 text-right">
+			<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
+			<Button label="Delete probe" severity="danger" @click="deleteProbe"/>
+		</div>
+	</Dialog>
 </template>
 
 <script setup lang="ts">
-	import { updateItem } from '@directus/sdk';
+	import { deleteItem, updateItem } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
 	import memoize from 'lodash/memoize';
 	import { useAuth } from '~/store/auth';
@@ -231,6 +260,22 @@
 			emit('save');
 		} catch (e) {
 			updateProbeLoading.value = false;
+			sendErrorToast(e);
+		}
+	};
+
+	const deleteDialog = ref(false);
+	const deleteProbeLoading = ref(false);
+	const deleteProbe = async () => {
+		deleteProbeLoading.value = true;
+
+		try {
+			await $directus.request(deleteItem('gp_adopted_probes', probe.value.id));
+
+			sendToast('success', 'Done', 'Probe was deleted');
+			emit('save');
+		} catch (e) {
+			deleteProbeLoading.value = false;
 			sendErrorToast(e);
 		}
 	};

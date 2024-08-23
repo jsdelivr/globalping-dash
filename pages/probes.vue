@@ -276,46 +276,6 @@
 		probeDetailsDialog.value = false;
 	};
 
-	//  EDIT NAME
-
-	const isEditingName = ref<boolean>(false);
-	const name = ref<string>('');
-
-	const editName = (currentName: string) => {
-		isEditingName.value = true;
-		name.value = currentName;
-	};
-
-	const saveName = async (id: number) => {
-		isEditingName.value = false;
-		await updateProbe(id, { name: name.value });
-	};
-
-	const cancelName = () => {
-		name.value = '';
-		isEditingName.value = false;
-	};
-
-	// EDIT CITY
-
-	const isEditingCity = ref<boolean>(false);
-	const city = ref<string>('');
-
-	const editCity = (currentCity: string) => {
-		isEditingCity.value = true;
-		city.value = currentCity;
-	};
-
-	const saveCity = async (id: number) => {
-		isEditingCity.value = false;
-		await updateProbe(id, { city: city.value });
-	};
-
-	const cancelCity = () => {
-		city.value = '';
-		isEditingCity.value = false;
-	};
-
 	// EDIT TAGS
 
 	const auth = useAuth();
@@ -361,16 +321,5 @@
 	const cancelTags = () => {
 		tags.value = [];
 		isEditingTags.value = false;
-	};
-
-	// UTILS
-
-	const updateProbe = async (id: number, newData: Partial<Probe>) => {
-		try {
-			const updatedProbe = await $directus.request(updateItem('gp_adopted_probes', id, newData));
-			probes.value = [ ...probes.value.map(probe => probe.id === updatedProbe.id ? updatedProbe : probe) ];
-		} catch (e) {
-			sendErrorToast(e);
-		}
 	};
 </script>

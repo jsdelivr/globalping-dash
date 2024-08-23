@@ -19,7 +19,7 @@
 		<label for="probeName" class="text-xs">Probe name</label>
 		<InputText
 			id="probeName"
-			v-model="name"
+			v-model="probe.name"
 			class="mt-1 w-full"
 		/>
 		<label for="primary-ip" class="mt-3 block text-xs">Primary IP</label>
@@ -66,28 +66,34 @@
 		<p class="mt-1 text-xs text-bluegray-400">
 			City where the probe is located. If you know that city is wrong it can be changed here: type in the valid city and click save.
 		</p>
-		<!-- <label for="primary-ip">Primary IP</label>
-		<InputText
-			id="primary-ip"
-			v-model="name"
-			class="mt-2 w-full"
-			@update:model-value="resetInvalid"
-		/>
-		<label for="alternative-ips" class="mt-6 block">Alternative IPs</label>
-		<p class="mt-1 text-xs">
-			A list of origins which are allowed to use the token. If empty, any origin is valid.
-			Examples of valid origins: "https://www.jsdelivr.com", "https://www.jsdelivr.com:10000".
+		<label for="tags" class="mt-3 block text-xs">Tags</label>
+		<div class="relative mt-1">
+			<i class="pi pi-pencil absolute right-3 top-2.5 text-bluegray-500"/>
+			<AutoComplete
+				id="tags"
+				v-model="tagStrings"
+				class="bg-transparent dark:bg-transparent"
+				chip-icon="hidden"
+				multiple
+				disabled
+				:typeahead="false"
+			/>
+		</div>
+		<p class="mt-1 text-xs text-bluegray-400">
+			Public tags of the probe. They can be used as location filters for a measurement.
 		</p>
 		<div class="mt-7 text-right">
 			<Button class="mr-2" label="Cancel" severity="secondary" text @click="$emit('cancel')"/>
 			<Button label="Save" :loading="updateProbeLoading" @click="updateProbe"/>
-		</div> -->
+		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
+	import { createItem, customEndpoint, updateItem } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
 	import { initGoogleMap } from '~/utils/init-google-map';
+	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const props = defineProps({
 		probe: {
@@ -104,47 +110,31 @@
 
 	initGoogleMap(probe.value);
 
-	// import { createItem, customEndpoint, updateItem } from '@directus/sdk';
-	// import { sendErrorToast, sendToast } from '~/utils/send-toast';
+	const emit = defineEmits([ 'cancel', 'save' ]);
 
-	// const props = defineProps({
-	// 	token: {
-	// 		type: Object as () => Probe | null,
-	// 		default: () => null,
-	// 	},
-	// });
+	const { $directus } = useNuxtApp();
 
-	// const emit = defineEmits([ 'generate', 'cancel', 'save', 'regenerate' ]);
+	// TAGS
 
-	// const { $directus } = useNuxtApp();
-
-	// NAME
-
-	const name = ref(props.probe.name || '');
+	const tagStrings = computed(() => probe.value.tags.map(({ prefix, value }) => `u-${prefix}-${value}`));
 
 	// // ACTIONS
 
-	// const updateProbeLoading = ref(false);
-	// const updateProbe = async () => {
-	// 	if (!name.value) {
-	// 		isNameInvalid.value = true;
-	// 		return;
-	// 	}
+	const updateProbeLoading = ref(false);
+	const updateProbe = async () => {
+		updateProbeLoading.value = true;
 
-	// 	updateProbeLoading.value = true;
+		try {
+			await $directus.request(updateItem('gp_adopted_probes', probe.value.id, {
+				name: probe.value.name,
+				city: probe.value.city,
+			}));
 
-	// 	try {
-	// 		await $directus.request(updateItem('gp_tokens', props.token!.id, {
-	// 			// name: name.value,
-	// 			// origins: origins.value,
-	// 			// expire: expire.value && expire.value.toISOString().split('T')[0],
-	// 		}));
-
-	// 		sendToast('success', 'Done', 'Probe info was successfully updated');
-
-	// 		emit('save');
-	// 	} catch (e) {
-	// 		sendErrorToast(e);
-	// 	}
-	// };
+			sendToast('success', 'Done', 'Probe info was successfully updated');
+			emit('save');
+		} catch (e) {
+			updateProbeLoading.value = false;
+			sendErrorToast(e);
+		}
+	};
 </script>

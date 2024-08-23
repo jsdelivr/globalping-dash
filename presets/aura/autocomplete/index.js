@@ -17,7 +17,7 @@ export default {
 
 			// States
 			{
-				'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default': props.disabled,
+				'bg-surface-200 dark:bg-surface-700': props.disabled,
 			},
 		],
 	}),
@@ -53,7 +53,7 @@ export default {
 			{ 'border-red-500 dark:border-red-400': props.invalid },
 
 			// States
-			{ 'hover:border-surface-400 dark:hover:border-surface-700': !props.invalid },
+			{ 'hover:border-surface-400 dark:hover:border-surface-700': !props.invalid && !props.disabled },
 			{ 'outline-none outline-offset-0 z-10 ring-1 ring-primary-500 dark:ring-primary-400': state.focused },
 
 			// Transition
@@ -70,7 +70,7 @@ export default {
 		class: 'flex-auto inline-flex h-[35px] only:pl-2',
 	},
 	input: {
-		class: 'border-none outline-none bg-transparent m-0 p-0 shadow-none rounded-none w-full',
+		class: 'border-none outline-none bg-transparent m-0 p-0 shadow-none rounded-none w-full cursor-text',
 	},
 	dropdown: {
 		class: [

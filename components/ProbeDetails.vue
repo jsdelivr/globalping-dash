@@ -23,18 +23,23 @@
 			class="mt-1 w-full"
 		/>
 		<label for="primary-ip" class="mt-3 block text-xs">Primary IP</label>
-		<InputText
-			id="primary-ip"
-			v-model="probe.ip"
-			class="mt-1 w-full"
-		/>
+		<div class="relative mt-1">
+			<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
+			<InputText
+				id="primary-ip"
+				v-model="probe.ip"
+				disabled
+				class="w-full bg-transparent dark:bg-transparent"
+			/>
+		</div>
 		<label for="primary-ip" class="mt-3 block text-xs">Alternative IPs</label>
 		<AutoComplete
 			id="alternative-ips"
 			v-model="probe.altIps"
-			class="mt-1"
+			class="mt-1 bg-transparent dark:bg-transparent"
 			chip-icon="hidden"
 			multiple
+			disabled
 			:typeahead="false"
 		/>
 		<!-- <label for="primary-ip">Primary IP</label>

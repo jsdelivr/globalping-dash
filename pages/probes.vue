@@ -128,7 +128,8 @@
 			content-class="!p-0"
 		>
 			<ProbeDetails
-				:probe="probeDetails"
+				:credits="credits[probeDetails!.id] || 0"
+				:probe="probeDetails!"
 				@cancel="probeDetailsDialog = false"
 				@save="handleSave"
 			/>
@@ -263,8 +264,11 @@
 
 	const openprobeDetails = (event: DataTableRowClickEvent) => {
 		const probe = probes.value.find(probe => probe.id === event.data.id);
-		probeDetails.value = probe ? { ...probe } : null;
-		probeDetailsDialog.value = true;
+
+		if (probe) {
+			probeDetails.value = { ...probe };
+			probeDetailsDialog.value = true;
+		}
 	};
 
 	const handleSave = async () => {

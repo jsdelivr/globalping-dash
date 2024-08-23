@@ -1,5 +1,20 @@
 <template>
-	<div id="gp-map" class="mt-3 h-44 rounded-md"/>
+	<div class="relative border-t">
+		<div id="gp-map" class="h-44"/>
+		<div class="absolute inset-x-0 top-2 ml-4 mr-20 flex justify-between">
+			<div>
+				Status:<span class="ml-2 font-bold">{{ capitalize(probe.status.replaceAll('-', ' ')) }}</span>
+				<StatusIcon class="ml-2 text-3xs" :status="probe.status"/>
+			</div>
+			<div class="flex items-center">
+				Credits per month:
+				<nuxt-icon class="ml-2 text-green-500" name="coin"/>
+				<span class="ml-2 font-bold text-green-500">+{{ props.credits }}</span>
+			</div>
+			<div>Type:<span class="ml-2 font-bold">{{ props.probe.hardwareDevice || 'Container' }}</span></div>
+			<div>Version:<span class="ml-2 font-bold">{{ props.probe.version }}</span></div>
+		</div>
+	</div>
 	<div class="px-5 py-7 dark:text-surface-0">
 		<label for="probeName" class="text-xs">Probe name</label>
 		<InputText
@@ -21,7 +36,6 @@
 			chip-icon="hidden"
 			multiple
 			:typeahead="false"
-			:pt="{ chipItem: '' }"
 		/>
 		<!-- <label for="primary-ip">Primary IP</label>
 		<InputText
@@ -43,12 +57,17 @@
 </template>
 
 <script setup lang="ts">
+	import capitalize from 'lodash/capitalize';
 	import { initGoogleMap } from '~/utils/init-google-map';
 
 	const props = defineProps({
 		probe: {
 			type: Object as () => Probe,
 			default: () => {},
+		},
+		credits: {
+			type: Number,
+			default: 0,
 		},
 	});
 

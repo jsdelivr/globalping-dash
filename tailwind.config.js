@@ -70,6 +70,7 @@ export default {
 			},
 			fontSize: {
 				'2xs': [ '0.7rem', '0.85rem' ],
+				'3xs': [ '0.6rem', '0.7rem' ],
 			},
 		},
 	},

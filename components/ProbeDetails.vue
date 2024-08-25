@@ -200,7 +200,7 @@
 
 	initGoogleMap(probe.value);
 
-	const emit = defineEmits([ 'cancel', 'save' ]);
+	const emit = defineEmits([ 'cancel', 'save', 'tags-update' ]);
 
 	const { $directus } = useNuxtApp();
 
@@ -239,6 +239,16 @@
 		tagsToEdit.value = [];
 
 		isEditingTags.value = false;
+
+		try {
+			await $directus.request(updateItem('gp_adopted_probes', probe.value.id, {
+				tags: probe.value.tags,
+			}));
+
+			emit('tags-update');
+		} catch (e) {
+			console.error(e);
+		}
 	};
 
 	const convertTags = (tagsToEdit: { uPrefix: string, value: string }[]) => tagsToEdit.map(({ uPrefix, value }) => ({

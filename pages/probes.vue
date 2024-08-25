@@ -132,6 +132,7 @@
 				:probe="probeDetails!"
 				@cancel="probeDetailsDialog = false"
 				@save="handleSave"
+				@tags-update="handleTagsUpdate"
 			/>
 		</Dialog>
 		<Dialog
@@ -276,5 +277,9 @@
 	const handleSave = async () => {
 		await loadLazyData();
 		probeDetailsDialog.value = false;
+	};
+
+	const handleTagsUpdate = async () => {
+		await loadLazyData();
 	};
 </script>

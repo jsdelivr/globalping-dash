@@ -79,7 +79,7 @@
 					<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900 dark:text-surface-0" @click="removeTag(index)"/>
 				</div>
 			</div>
-			<div class="mt-6 flex">
+			<div class="mt-1 flex">
 				<Button
 					label="Add tag"
 					icon="pi pi-plus"
@@ -98,13 +98,16 @@
 				/>
 				<Button label="Cancel" severity="secondary" outlined class="ml-1 dark:!bg-dark-800" @click="cancelTags"/>
 			</div>
-			<p class="mt-3 text-xs text-bluegray-400">
-				Public tags of the probe. They can be used as location filters for a measurement. Format is <code class="font-bold">u-${prefix}-${value}</code> where prefix is user/organization github login, and value is your custom string.
-
-				E.g. for user with github username <code class="font-bold">"jimaek"</code>
-				and tag <code class="font-bold">"home1"</code> location filter is<br>
-				<code class="font-bold">{ "tags": ["u-jimaek-home1"] }</code>.
-			</p>
+		</div>
+		<div v-else-if="!isEditingTags && probe.tags.length === 0">
+			<Button
+				label="Add tag"
+				icon="pi pi-plus"
+				severity="secondary"
+				class="mt-1 dark:!bg-dark-800"
+				outlined
+				@click="addTag"
+			/>
 		</div>
 		<div v-else class="relative mt-1">
 			<AutoComplete
@@ -117,8 +120,10 @@
 				:typeahead="false"
 			/>
 			<Button
+				label="Edit tags"
 				icon="pi pi-pencil"
-				class="!absolute right-0.5 top-0.5 text-bluegray-500"
+				icon-pos="right"
+				class="!absolute right-0.5 top-1 text-bluegray-500"
 				severity="secondary"
 				text
 				aria-label="Edit tags"
@@ -126,6 +131,13 @@
 				@click="editTags"
 			/>
 		</div>
+		<p class="mt-3 text-xs text-bluegray-400">
+			Public tags of the probe. They can be used as location filters for a measurement. Format is <code class="font-bold">u-${prefix}-${value}</code> where prefix is user/organization github login, and value is your custom string.
+
+			E.g. for user with github username <code class="font-bold">"jimaek"</code>
+			and tag <code class="font-bold">"home1"</code> location filter is<br>
+			<code class="font-bold">{ "tags": ["u-jimaek-home1"] }</code>.
+		</p>
 		<div class="mt-7 flex justify-end">
 			<Button
 				class="mr-auto"
@@ -213,6 +225,7 @@
 	};
 
 	const addTag = () => {
+		isEditingTags.value = true;
 		tagsToEdit.value.push({ uPrefix: '', value: '' });
 	};
 

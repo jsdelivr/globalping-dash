@@ -120,7 +120,7 @@
 		<Dialog
 			v-model:visible="probeDetailsDialog"
 			position="top"
-			class="mt-8 min-w-[700px] max-md:min-w-[95%]"
+			class="!my-8 min-w-[700px] max-md:min-w-[95%]"
 			modal
 			dismissable-mask
 			:draggable="false"

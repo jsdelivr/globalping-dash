@@ -36,8 +36,8 @@ import global from './global';
 // import iconfield from './iconfield';
 // import image from './image';
 // import inplace from './inplace';
-// import inputgroup from './inputgroup';
-// import inputgroupaddon from './inputgroupaddon';
+import inputgroup from './inputgroup';
+import inputgroupaddon from './inputgroupaddon';
 // import inputmask from './inputmask';
 // import inputnumber from './inputnumber';
 import inputotp from './inputotp';
@@ -129,8 +129,8 @@ export default {
 	// cascadeselect,
 	// listbox,
 	// colorpicker,
-	// inputgroup,
-	// inputgroupaddon,
+	inputgroup,
+	inputgroupaddon,
 	// inputmask,
 	// knob,
 	// treeselect,

@@ -1,5 +1,15 @@
 <template>
-	<div>
+	<Dialog
+		v-model:visible="probeDetailsDialog"
+		position="top"
+		class="!my-8 min-w-[700px] max-md:min-w-[95%]"
+		modal
+		dismissable-mask
+		:draggable="false"
+		header="Probe details"
+		content-class="!p-0"
+		@after-hide="router.back"
+	>
 		<div class="relative border-t">
 			<div id="gp-map" class="h-44"/>
 			<div class="absolute inset-x-0 top-2 ml-4 mr-20 flex justify-between">
@@ -174,7 +184,7 @@
 				<Button label="Delete probe" severity="danger" @click="deleteProbe"/>
 			</div>
 		</Dialog>
-	</div>
+	</Dialog>
 </template>
 
 <script setup lang="ts">
@@ -185,6 +195,9 @@
 	import { useAuth } from '~/store/auth';
 	import { initGoogleMap } from '~/utils/init-google-map';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
+
+	const { $directus } = useNuxtApp();
+	const router = useRouter();
 
 	const props = defineProps({
 		probe: {
@@ -197,13 +210,15 @@
 		},
 	});
 
+	const emit = defineEmits([ 'cancel', 'save', 'tags-update' ]);
+
+	// ROOT
+
+	const probeDetailsDialog = ref(true);
+
 	const probe = ref({ ...props.probe });
 
 	initGoogleMap(probe.value);
-
-	const emit = defineEmits([ 'cancel', 'save', 'tags-update' ]);
-
-	const { $directus } = useNuxtApp();
 
 	// TAGS
 

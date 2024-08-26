@@ -117,24 +117,14 @@
 				<Button class="mt-6" label="Start a probe" @click="startProbeDialog = true"/>
 			</div>
 		</div>
-		<Dialog
-			v-model:visible="probeDetailsDialog"
-			position="top"
-			class="!my-8 min-w-[700px] max-md:min-w-[95%]"
-			modal
-			dismissable-mask
-			:draggable="false"
-			header="Probe details"
-			content-class="!p-0"
-		>
-			<ProbeDetails
-				:credits="credits[probeDetails!.id] || 0"
-				:probe="probeDetails!"
-				@cancel="probeDetailsDialog = false"
-				@save="handleSave"
-				@tags-update="handleTagsUpdate"
-			/>
-		</Dialog>
+		<NuxtPage
+			v-if="probeDetails"
+			:credits="credits[probeDetails!.id] || 0"
+			:probe="probeDetails!"
+			@cancel="probeDetailsDialog = false"
+			@save="handleSave"
+			@tags-update="handleTagsUpdate"
+		/>
 		<Dialog
 			v-model:visible="startProbeDialog"
 			position="top"
@@ -270,7 +260,8 @@
 
 		if (probe) {
 			probeDetails.value = { ...probe };
-			probeDetailsDialog.value = true;
+			navigateTo(`/probes/${probe.id}`);
+			// probeDetailsDialog.value = true;
 		}
 	};
 

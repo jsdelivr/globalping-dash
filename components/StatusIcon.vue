@@ -1,5 +1,5 @@
 <template>
-	<i v-if="statusColor" v-tooltip.top="capitalize(props.status.replaceAll('-', ' '))" class="pi pi-circle-fill rounded-full border-2 border-surface-0 text-2xs dark:border-dark-900" :class="statusColor"/>
+	<i v-if="statusColor" v-tooltip.top="capitalize(props.status.replaceAll('-', ' '))" class="pi pi-circle-fill rounded-full text-2xs" :class="[statusColor, {'border-2 border-surface-0 dark:border-dark-900': props.border}]"/>
 </template>
 
 <script setup lang="ts">
@@ -10,6 +10,7 @@
 			type: String,
 			default: '',
 		},
+		border: Boolean,
 	});
 
 	const statusColor = computed(() => {

@@ -157,7 +157,7 @@
 					:loading="deleteProbeLoading"
 					@click="deleteDialog = true"
 				/>
-				<Button class="mr-2" label="Cancel" severity="secondary" text @click="$emit('cancel')"/>
+				<Button class="mr-2" label="Cancel" severity="secondary" text @click="probeDetailsDialog = false"/>
 				<Button label="Save" :loading="updateProbeLoading" @click="updateProbe"/>
 			</div>
 		</div>
@@ -210,7 +210,7 @@
 		},
 	});
 
-	const emit = defineEmits([ 'cancel', 'save', 'tags-update' ]);
+	const emit = defineEmits([ 'save', 'tags-update' ]);
 
 	// ROOT
 
@@ -252,7 +252,7 @@
 	const saveTags = async () => {
 		const convertedTags = convertTags(tagsToEdit.value);
 
-		if (convertedTags.some(({ prefix, value }) => !prefix || !value)) {
+		if (areTagsEmpty(convertedTags)) {
 			sendToast('error', 'Tags are invalid', 'Some tag values are empty');
 			return;
 		}
@@ -284,6 +284,8 @@
 		return value === '' || (value.length <= 32 && tagRegex.test(value));
 	});
 
+	const areTagsEmpty = (tags: Probe['tags']) => tags.some(({ prefix, value }) => !prefix || !value);
+
 	const cancelTags = () => {
 		tagsToEdit.value = [];
 		isEditingTags.value = false;
@@ -294,20 +296,28 @@
 	const updateProbeLoading = ref(false);
 	const updateProbe = async () => {
 		updateProbeLoading.value = true;
+		const tags = isEditingTags.value ? convertTags(tagsToEdit.value) : probe.value.tags;
+
+		if (areTagsEmpty(tags)) {
+			sendToast('error', 'Tags are invalid', 'Some tag values are empty');
+			return;
+		}
 
 		try {
 			await $directus.request(updateItem('gp_adopted_probes', probe.value.id, {
 				name: probe.value.name,
 				city: probe.value.city,
-				tags: tagsToEdit.value.length ? convertTags(tagsToEdit.value) : probe.value.tags,
+				tags,
 			}));
 
 			sendToast('success', 'Done', 'Probe info was successfully updated');
 			emit('save');
+			probeDetailsDialog.value = false;
 		} catch (e) {
-			updateProbeLoading.value = false;
 			sendErrorToast(e);
 		}
+
+		updateProbeLoading.value = false;
 	};
 
 	const deleteDialog = ref(false);
@@ -320,9 +330,11 @@
 
 			sendToast('success', 'Done', 'Probe was deleted');
 			emit('save');
+			probeDetailsDialog.value = false;
 		} catch (e) {
-			deleteProbeLoading.value = false;
 			sendErrorToast(e);
 		}
+
+		deleteProbeLoading.value = false;
 	};
 </script>

@@ -121,9 +121,8 @@
 			v-if="probeDetails"
 			:credits="credits[probeDetails!.id] || 0"
 			:probe="probeDetails!"
-			@cancel="probeDetailsDialog = false"
-			@save="handleSave"
-			@tags-update="handleTagsUpdate"
+			@save="loadLazyData"
+			@tags-update="loadLazyData"
 		/>
 		<Dialog
 			v-model:visible="startProbeDialog"
@@ -253,24 +252,12 @@
 
 	const probeDetails = ref<Probe | null>(null);
 
-	const probeDetailsDialog = ref(false);
-
 	const openprobeDetails = (event: DataTableRowClickEvent) => {
 		const probe = probes.value.find(probe => probe.id === event.data.id);
 
 		if (probe) {
 			probeDetails.value = { ...probe };
 			navigateTo(`/probes/${probe.id}`);
-			// probeDetailsDialog.value = true;
 		}
-	};
-
-	const handleSave = async () => {
-		await loadLazyData();
-		probeDetailsDialog.value = false;
-	};
-
-	const handleTagsUpdate = async () => {
-		await loadLazyData();
 	};
 </script>

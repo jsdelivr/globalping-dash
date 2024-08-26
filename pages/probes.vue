@@ -50,8 +50,8 @@
 				<Column header="Tags" class="w-[34%]" body-class="!p-0">
 					<template #body="slotProps">
 						<div class="px-2 py-4">
-							<Tag v-if="slotProps.data.tags[0]" :key="slotProps.data.tags[0]" class="my-0.5 mr-1 flex bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`${slotProps.data.tags[0].prefix}-${slotProps.data.tags[0].value}`"/>
-							<Tag v-if="slotProps.data.tags[1]" :key="slotProps.data.tags[1]" class="my-0.5 mr-1 flex bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`${slotProps.data.tags[1].prefix}-${slotProps.data.tags[1].value}`"/>
+							<Tag v-if="slotProps.data.tags[0]" :key="slotProps.data.tags[0]" class="my-0.5 mr-1 flex bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${slotProps.data.tags[0].prefix}-${slotProps.data.tags[0].value}`"/>
+							<Tag v-if="slotProps.data.tags[1]" :key="slotProps.data.tags[1]" class="my-0.5 mr-1 flex bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${slotProps.data.tags[1].prefix}-${slotProps.data.tags[1].value}`"/>
 							<Tag v-if="slotProps.data.tags.length > 2" key="other" class="my-0.5 mr-1 flex bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`+${slotProps.data.tags.length - 2}`"/>
 						</div>
 					</template>

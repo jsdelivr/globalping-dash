@@ -233,7 +233,14 @@
 	};
 
 	const saveTags = async () => {
-		probe.value.tags = convertTags(tagsToEdit.value);
+		const convertedTags = convertTags(tagsToEdit.value);
+
+		if (convertedTags.some(({ prefix, value }) => !prefix || !value)) {
+			sendToast('error', 'Tags are invalid', 'Some tag values are empty');
+			return;
+		}
+
+		probe.value.tags = convertedTags;
 
 		tagsToEdit.value = [];
 

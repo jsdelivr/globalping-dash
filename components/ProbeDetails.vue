@@ -110,13 +110,19 @@
 				chip-icon="hidden"
 				multiple
 				disabled
+				:pt="{
+					inputMultiple: 'pb-1 pr-28',
+					inputChip: 'hidden',
+					chipItem: 'mt-1'
+				}"
+				:pt-options="{ mergeProps: true }"
 				:typeahead="false"
 			/>
 			<Button
 				label="Edit tags"
 				icon="pi pi-pencil"
 				icon-pos="right"
-				class="!absolute right-0.5 top-1 text-bluegray-500"
+				class="!absolute right-1.5 top-1.5 text-bluegray-500 hover:bg-transparent"
 				severity="secondary"
 				text
 				aria-label="Edit tags"
@@ -128,8 +134,7 @@
 			Public tags of the probe. They can be used as location filters for a measurement. Format is <code class="font-bold">u-${prefix}-${value}</code> where prefix is user/organization github login, and value is your custom string.
 
 			E.g. for user with github username <code class="font-bold">"jimaek"</code>
-			and tag <code class="font-bold">"home1"</code> location filter is<br>
-			<code class="font-bold">{ "tags": ["u-jimaek-home1"] }</code>.
+			and tag <code class="font-bold">"home1"</code> location filter is <code class="whitespace-nowrap font-bold">{ "tags": ["u-jimaek-home1"] }</code>.
 		</p>
 		<div class="mt-7 flex justify-end">
 			<Button

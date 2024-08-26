@@ -151,7 +151,7 @@
 </template>
 
 <script setup lang="ts">
-	import { aggregate, readItems } from '@directus/sdk';
+	import { aggregate, readItem, readItems } from '@directus/sdk';
 	import type { DataTablePageEvent, DataTableRowClickEvent } from 'primevue/datatable';
 	import type { PageState } from 'primevue/paginator';
 	import CountryFlag from 'vue-country-flag-next';
@@ -173,6 +173,7 @@
 	});
 
 	const { $directus } = useNuxtApp();
+	const route = useRoute();
 
 	const itemsPerPage = config.public.itemsPerTablePage;
 	const startProbeDialog = ref(false);
@@ -232,7 +233,17 @@
 		loading.value = false;
 	};
 
-	onMounted(() => {
+	const loadProbeData = async (id: string) => {
+		try {
+			const probe = await $directus.request(readItem('gp_adopted_probes', id));
+
+			probeDetails.value = probe;
+		} catch (e) {
+			sendErrorToast(e);
+		}
+	};
+
+	onMounted(async () => {
 		loading.value = true;
 
 		lazyParams.value = {
@@ -240,12 +251,17 @@
 			rows: itemsPerPage,
 		};
 
-		loadLazyData();
+		const probeId = route.params.id as string;
+
+		await Promise.all([
+			probeId && loadProbeData(probeId),
+			loadLazyData(),
+		]);
 	});
 
-	const onPage = (event: PageState) => {
+	const onPage = async (event: PageState) => {
 		lazyParams.value = event;
-		loadLazyData(event);
+		await loadLazyData(event);
 	};
 
 	// PROBE DETAILS

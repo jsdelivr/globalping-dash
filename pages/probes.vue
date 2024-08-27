@@ -26,14 +26,11 @@
 				</template>
 				<Column header="Name" class="w-1/4" body-class="!p-0">
 					<template #body="slotProps">
-						<ProbeHeader
-							:name="slotProps.data.name || slotProps.data.city"
-							:ip="slotProps.data.ip"
-							:status="slotProps.data.status"
-							:hardware-device="!!slotProps.data.hardwareDevice"
-							ip-css="text-bluegray-900 dark:text-bluegray-400"
-							class="px-2 py-3"
-						/>
+						<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3">
+							<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'gp' : 'docker'" border :status="slotProps.data.status"/>
+							<p class="col-start-2 col-end-3 flex items-center font-bold">{{ slotProps.data.name || slotProps.data.city }}</p>
+							<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-900 dark:text-bluegray-400">{{ slotProps.data.ip }}</p>
+						</div>
 					</template>
 				</Column>
 				<Column header="Location" class="w-1/4" body-class="!p-0">

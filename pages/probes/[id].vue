@@ -8,7 +8,7 @@
 		:draggable="false"
 		header="Probe details"
 		content-class="!p-0"
-		@after-hide="router.back"
+		@after-hide="navigateTo('/probes')"
 	>
 		<div class="relative border-t">
 			<div id="gp-map" class="h-44"/>
@@ -197,7 +197,6 @@
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();
-	const router = useRouter();
 
 	const props = defineProps({
 		probe: {

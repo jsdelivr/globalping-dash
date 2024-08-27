@@ -96,16 +96,15 @@
 				<div class="p-6">
 					<div v-if="adoptedProbes.length" class="probes-wrapper flex overflow-hidden max-sm:flex-col">
 						<div v-for="probe in adoptedProbes" :key="probe.id" class="probe box-content min-w-60 py-2">
-							<!-- TODO: P1: clicking the name here should bring me to /probes, with the correct probe expanded and scrolled down to (if needed) -->
-							<!-- TODO: P2: a somewhat related bonus to the above - it would be nice if expanding probe details at /probes resulted in URL change  -->
-							<ProbeHeader
-								class="mb-6"
-								:name="probe.name || probe.city"
-								:ip="probe.ip"
-								:status="probe.status"
-								:hardware-device="!!probe.hardwareDevice"
-								ip-css="text-[13px]"
-							/>
+							<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
+								<BigIcon class="col-span-1 row-span-2" :name="probe.hardwareDevice ? 'gp' : 'docker'" border :status="probe.status"/>
+								<div
+									class="col-start-2 col-end-3 flex items-center font-bold"
+								>
+									<NuxtLink class="hover:underline" :to="`/probes/${probe.id}`">{{ probe.name || probe.city }}</NuxtLink>
+								</div>
+								<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-400">{{ probe.ip }}</p>
+							</div>
 							<div>
 								<div class="mb-2 flex items-center text-nowrap">
 									<span class="mr-6 font-semibold">Location:</span>

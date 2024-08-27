@@ -167,6 +167,7 @@
 		try {
 			const result = await $directus.request(readItems('gp_adopted_probes', {
 				filter: { userId: { _eq: user.id } },
+				limit: 10,
 			}));
 			return result;
 		} catch (e) {

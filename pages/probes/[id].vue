@@ -199,6 +199,7 @@
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();
+	const config = useRuntimeConfig();
 
 	const props = defineProps({
 		probe: {
@@ -213,13 +214,22 @@
 
 	const emit = defineEmits([ 'save', 'tags-update' ]);
 
+	useHead({
+		title: 'Probes -',
+		script: [{
+			src: `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsKey}`,
+			onload: () => {
+				initGoogleMap(probe.value);
+			},
+		}],
+	});
+
 	// ROOT
 
 	const probeDetailsDialog = ref(true);
 
 	const probe = ref({ ...props.probe });
 
-	initGoogleMap(probe.value);
 
 	// TAGS
 

@@ -158,15 +158,6 @@
 
 	const config = useRuntimeConfig();
 
-	useHead({
-		title: 'Probes -',
-		script: [{
-			src: `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsKey}&loading=async`,
-			async: true,
-			defer: true,
-		}],
-	});
-
 	const { $directus } = useNuxtApp();
 	const route = useRoute();
 

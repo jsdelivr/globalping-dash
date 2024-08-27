@@ -9,11 +9,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
 	if (auth.isLoggedIn && to?.name === 'login') {
 		abortNavigation();
-		return navigateTo('/');
+		return navigateTo(auth.getRedirectUrl(), { external: true });
 	}
 
 	if (!auth.isLoggedIn && to?.name !== 'login') {
 		abortNavigation();
-		return navigateTo('/login');
+		return navigateTo(`/login?redirect=${encodeURIComponent(location.href)}`);
 	}
 });

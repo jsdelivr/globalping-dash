@@ -43,9 +43,20 @@ export const useAuth = defineStore('auth', {
 	},
 
 	actions: {
+		getRedirectUrl () {
+			const url = new URL(location.href);
+			const redirect = url.searchParams.get('redirect') || '/';
+			const redirectUrl = new URL(redirect, url.origin);
+
+			if (redirectUrl.origin !== url.origin) {
+				return url.origin;
+			}
+
+			return redirectUrl.toString();
+		},
 		async login () {
 			const config = useRuntimeConfig();
-			const redirect = `${window.location.origin}${'/'}`;
+			const redirect = this.getRedirectUrl();
 			await navigateTo(`${config.public.directusUrl}/auth/login/github?redirect=${encodeURIComponent(redirect)}`, { external: true });
 		},
 		async logout () {

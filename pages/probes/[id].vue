@@ -22,8 +22,8 @@
 					<nuxt-icon class="ml-2 text-green-500" name="coin"/>
 					<span class="ml-2 font-bold text-green-500">+{{ props.credits }}</span>
 				</div>
-				<div>Type:<span class="ml-2 font-bold">{{ props.probe.hardwareDevice || 'Container' }}</span></div>
-				<div>Version:<span class="ml-2 font-bold">{{ props.probe.version }}</span></div>
+				<div>Type:<span class="ml-2 font-bold">{{ probe.hardwareDevice || 'Container' }}</span></div>
+				<div>Version:<span class="ml-2 font-bold">{{ probe.version }}</span></div>
 			</div>
 		</div>
 		<div class="px-5 py-7 dark:text-surface-0">
@@ -188,8 +188,10 @@
 </template>
 
 <script setup lang="ts">
+	/* eslint-disable no-extra-parens */
 	import { deleteItem, updateItem } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
+	import isEqual from 'lodash/isEqual';
 	import memoize from 'lodash/memoize';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useAuth } from '~/store/auth';
@@ -290,7 +292,7 @@
 		isEditingTags.value = false;
 	};
 
-	// // ACTIONS
+	// ACTIONS
 
 	const updateProbeLoading = ref(false);
 	const updateProbe = async () => {
@@ -304,9 +306,9 @@
 
 		try {
 			await $directus.request(updateItem('gp_adopted_probes', probe.value.id, {
-				name: probe.value.name,
-				city: probe.value.city,
-				tags,
+				...(probe.value.name !== props.probe.name && { name: probe.value.name }),
+				...(probe.value.city !== props.probe.city && { city: probe.value.city }),
+				...(!isEqual(tags, props.probe.tags) && { tags }),
 			}));
 
 			sendToast('success', 'Done', 'Probe info was successfully updated');

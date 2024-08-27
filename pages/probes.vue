@@ -12,7 +12,6 @@
 			<DataTable
 				:value="probes"
 				lazy
-				:first="first"
 				:rows="itemsPerPage"
 				data-key="id"
 				:total-records="probesCount"
@@ -93,7 +92,6 @@
 			<Paginator
 				v-if="probes.length !== probesCount"
 				class="mt-9"
-				:first="first"
 				:rows="itemsPerPage"
 				:total-records="probesCount"
 				template="PrevPageLink PageLinks NextPageLink"
@@ -149,7 +147,7 @@
 
 <script setup lang="ts">
 	import { aggregate, readItem, readItems } from '@directus/sdk';
-	import type { DataTablePageEvent, DataTableRowClickEvent } from 'primevue/datatable';
+	import type { DataTableRowClickEvent } from 'primevue/datatable';
 	import type { PageState } from 'primevue/paginator';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useAuth } from '~/store/auth';
@@ -180,18 +178,16 @@
 	const probes = ref<Probe[]>([]);
 	const credits = ref<Record<string, number>>({});
 	const first = ref(0);
-	const lazyParams = ref<Partial<DataTablePageEvent>>({});
 	const totalCredits = ref(0);
 
 	const loadLazyData = async (event?: PageState) => {
 		loading.value = true;
-		lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
 
 		try {
 			const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
 				$directus.request(readItems('gp_adopted_probes', {
 					filter: { userId: { _eq: user.id } },
-					offset: lazyParams.value.first,
+					offset: event?.first || first.value,
 					limit: itemsPerPage,
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_adopted_probes', {
@@ -243,11 +239,6 @@
 	onMounted(async () => {
 		loading.value = true;
 
-		lazyParams.value = {
-			first: 0,
-			rows: itemsPerPage,
-		};
-
 		const probeId = route.params.id as string;
 
 		await Promise.all([
@@ -257,7 +248,7 @@
 	});
 
 	const onPage = async (event: PageState) => {
-		lazyParams.value = event;
+		first.value = event.first;
 		await loadLazyData(event);
 	};
 

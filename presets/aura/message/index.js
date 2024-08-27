@@ -3,7 +3,7 @@ export default {
 		class: [
 			// Spacing and Shape
 			'rounded-md',
-			'outline',
+			'outline outline-1',
 
 			// Colors
 			{
@@ -50,8 +50,8 @@ export default {
 	text: {
 		class: [
 			// Font and Text
-			'text-base leading-[normal]',
-			'font-medium',
+			// 'text-base leading-[normal]',
+			// 'font-medium',
 		],
 	},
 	closeButton: ({ props }) => ({

@@ -47,7 +47,7 @@ import inputtext from './inputtext';
 // import megamenu from './megamenu';
 // import menu from './menu';
 // import menubar from './menubar';
-// import message from './message';
+import message from './message';
 // import metergroup from './metergroup';
 // import multiselect from './multiselect';
 // import orderlist from './orderlist';
@@ -60,7 +60,7 @@ import paginator from './paginator';
 // import picklist from './picklist';
 import popover from './popover';
 // import progressbar from './progressbar';
-// import progressspinner from './progressspinner';
+import progressspinner from './progressspinner';
 // import radiobutton from './radiobutton';
 // import rating from './rating';
 // import ripple from './ripple';
@@ -208,7 +208,7 @@ export default {
 	// confirmdialog,
 
 	// messages
-	// message,
+	message,
 	toast,
 
 	// media
@@ -230,5 +230,5 @@ export default {
 	// blockui,
 	// metergroup,
 	// inplace,
-	// progressspinner,
+	progressspinner,
 };

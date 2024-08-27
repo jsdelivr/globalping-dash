@@ -1,47 +1,52 @@
 <template>
 	<div class="grid grid-cols-2 gap-4 p-6">
 		<h1 class="col-span-2 mb-2 text-2xl font-bold">Overview</h1>
+
 		<div class="rounded-xl border bg-surface-0 max-xl:col-span-2 dark:bg-dark-800">
 			<p class="flex border-b px-6 py-3 font-bold text-bluegray-700 dark:text-dark-0">Summary</p>
-			<div class="p-6">
-				<div class="flex max-sm:flex-wrap">
-					<div class="flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:bg-surface-50 max-sm:p-4 max-sm:dark:bg-dark-700">
-						<BigIcon name="gp" border/>
-						<div><span class="mx-2 text-3xl font-bold">{{ adoptedProbes.length }}</span>Probes</div>
-					</div>
-					<div class="ml-auto mr-6 flex items-center max-sm:ml-0 max-sm:mt-3">
-						<BigIcon name="point-online" filled/>
-						<div><span class="mx-2 text-3xl font-bold">{{ onlineProbes.length }}</span>Online</div>
-					</div>
-					<div class="flex items-center max-sm:mt-3">
-						<BigIcon name="point-offline" filled/>
-						<div><span class="mx-2 text-3xl font-bold">{{ offlineProbes.length }}</span>Offline</div>
-					</div>
-				</div>
-				<div class="mt-6 flex items-center text-nowrap max-sm:flex-wrap">
-					<div class="fade-out flex grow items-center overflow-hidden max-sm:basis-full">
-						<div>Locations: </div>
-						<div
-							v-for="({ city, count }) in cities"
-							:key="city"
-							class="ml-3 rounded-full border px-3 py-2 dark:border-dark-600"
-						>
-							{{ city }}<span class="ml-1.5 text-bluegray-500 dark:text-bluegray-400">{{ count }}</span>
+
+			<AsyncBlock :status="statusProbes">
+				<div class="p-6">
+					<div class="flex max-sm:flex-wrap">
+						<div class="flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:bg-surface-50 max-sm:p-4 max-sm:dark:bg-dark-700">
+							<BigIcon name="gp" border/>
+							<div><span class="mx-2 text-3xl font-bold">{{ adoptedProbes.length }}</span>Probes</div>
 						</div>
-						<div v-if="isEmpty(cities)" class="ml-2">No locations to show</div>
+						<div class="ml-auto mr-6 flex items-center max-sm:ml-0 max-sm:mt-3">
+							<BigIcon name="point-online" filled/>
+							<div><span class="mx-2 text-3xl font-bold">{{ onlineProbes.length }}</span>Online</div>
+						</div>
+						<div class="flex items-center max-sm:mt-3">
+							<BigIcon name="point-offline" filled/>
+							<div><span class="mx-2 text-3xl font-bold">{{ offlineProbes.length }}</span>Offline</div>
+						</div>
 					</div>
-					<Button
-						class="ml-auto min-w-36 max-sm:ml-0 max-sm:mt-3"
-						:severity="adoptedProbes.length ? 'secondary' : undefined"
-						:outlined="adoptedProbes.length ? true : false"
-						@click="adoptProbeDialog = true"
-					>
-						<nuxt-icon class="pi" name="capture"/>
-						<span class="font-bold">{{ adoptedProbes.length ? "Adopt probe" : "Adopt your first probe" }}</span>
-					</Button>
+					<div class="mt-6 flex items-center text-nowrap max-sm:flex-wrap">
+						<div class="fade-out flex grow items-center overflow-hidden max-sm:basis-full">
+							<div>Locations: </div>
+							<div
+								v-for="({ city, count }) in cities"
+								:key="city"
+								class="ml-3 rounded-full border px-3 py-2 dark:border-dark-600"
+							>
+								{{ city }}<span class="ml-1.5 text-bluegray-500 dark:text-bluegray-400">{{ count }}</span>
+							</div>
+							<div v-if="isEmpty(cities)" class="ml-2">No locations to show</div>
+						</div>
+						<Button
+							class="ml-auto min-w-36 max-sm:ml-0 max-sm:mt-3"
+							:severity="adoptedProbes.length ? 'secondary' : undefined"
+							:outlined="adoptedProbes.length ? true : false"
+							@click="adoptProbeDialog = true"
+						>
+							<nuxt-icon class="pi" name="capture"/>
+							<span class="font-bold">{{ adoptedProbes.length ? "Adopt probe" : "Adopt your first probe" }}</span>
+						</Button>
+					</div>
 				</div>
-			</div>
+			</AsyncBlock>
 		</div>
+
 		<div class="rounded-xl border bg-surface-0 max-xl:col-span-2 dark:bg-dark-800">
 			<p class="flex items-center border-b px-6 py-3 font-bold text-bluegray-700 dark:text-dark-0">
 				Credits<i
@@ -49,32 +54,36 @@
 					class="pi pi-info-circle ml-2"
 				/><!-- TODO: P2: really username? -->
 			</p>
-			<div class="p-6">
-				<div class="flex max-sm:flex-wrap">
-					<div class="flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:bg-surface-50 max-sm:p-4 max-sm:dark:bg-dark-700">
-						<BigIcon name="coin" border/>
-						<div><span class="mx-2 text-3xl font-bold">{{ total }}</span>Total</div>
+
+			<AsyncBlock :status="statusCredits">
+				<div class="p-6">
+					<div class="flex max-sm:flex-wrap">
+						<div class="flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:bg-surface-50 max-sm:p-4 max-sm:dark:bg-dark-700">
+							<BigIcon name="coin" border/>
+							<div><span class="mx-2 text-3xl font-bold">{{ total }}</span>Total</div>
+						</div>
+						<div class="ml-auto flex items-center rounded-md border px-4 py-2 max-sm:ml-0 max-sm:mt-3">
+							<span class="p-button-label mr-2 font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500 dark:text-bluegray-400': !perDay }">+{{ perDay }}</span>
+							<span>Per day</span>
+						</div>
 					</div>
-					<div class="ml-auto flex items-center rounded-md border px-4 py-2 max-sm:ml-0 max-sm:mt-3">
-						<span class="p-button-label mr-2 font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500 dark:text-bluegray-400': !perDay }">+{{ perDay }}</span>
-						<span>Per day</span>
+					<div class="mt-6 flex items-center text-nowrap">
+						<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank">
+							<Button
+								:severity="perDay ? 'secondary' : undefined"
+								:outlined="perDay ? true : false"
+								icon="pi pi-plus"
+								label="Add credits"
+							/>
+						</NuxtLink>
+						<NuxtLink v-if="perDay" class="ml-auto" to="/credits" tabindex="-1">
+							<Button link label="See details" icon-pos="right" icon="pi pi-chevron-right"/>
+						</NuxtLink>
 					</div>
 				</div>
-				<div class="mt-6 flex items-center text-nowrap">
-					<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank">
-						<Button
-							:severity="perDay ? 'secondary' : undefined"
-							:outlined="perDay ? true : false"
-							icon="pi pi-plus"
-							label="Add credits"
-						/>
-					</NuxtLink>
-					<NuxtLink v-if="perDay" class="ml-auto" to="/credits" tabindex="-1">
-						<Button link label="See details" icon-pos="right" icon="pi pi-chevron-right"/>
-					</NuxtLink>
-				</div>
-			</div>
+			</AsyncBlock>
 		</div>
+
 		<div class="col-span-2 rounded-xl border bg-surface-0 dark:bg-dark-800">
 			<div class="flex h-10 items-center border-b px-6 font-bold text-bluegray-700 dark:text-dark-0">
 				<span>Probes</span>
@@ -82,44 +91,48 @@
 					<Button link label="See all" icon-pos="right" icon="pi pi-chevron-right"/>
 				</NuxtLink>
 			</div>
-			<div class="p-6">
-				<div v-if="adoptedProbes.length" class="probes-wrapper flex overflow-hidden max-sm:flex-col">
-					<div v-for="probe in adoptedProbes" :key="probe.id" class="probe box-content min-w-60 py-2">
-						<!-- TODO: P1: clicking the name here should bring me to /probes, with the correct probe expanded and scrolled down to (if needed) -->
-						<!-- TODO: P2: a somewhat related bonus to the above - it would be nice if expanding probe details at /probes resulted in URL change  -->
-						<ProbeHeader
-							class="mb-6"
-							:name="probe.name || probe.city"
-							:ip="probe.ip"
-							:status="probe.status"
-							:hardware-device="!!probe.hardwareDevice"
-							ip-css="text-[13px]"
-						/>
-						<div>
-							<div class="mb-2 flex items-center text-nowrap">
-								<span class="mr-6 font-semibold">Location:</span>
-								<span class="ml-auto mr-2 flex items-center justify-end">
-									{{ probe.city }}, {{ probe.country }}
-								</span>
-								<CountryFlag :country="probe.country" size="small"/>
-							</div>
-							<div class="mb-2 flex items-center justify-between text-nowrap">
-								<span class="mr-6 font-semibold">Version:</span>
-								<span>{{ probe.version }}</span>
+
+			<AsyncBlock :status="statusProbes">
+				<div class="p-6">
+					<div v-if="adoptedProbes.length" class="probes-wrapper flex overflow-hidden max-sm:flex-col">
+						<div v-for="probe in adoptedProbes" :key="probe.id" class="probe box-content min-w-60 py-2">
+							<!-- TODO: P1: clicking the name here should bring me to /probes, with the correct probe expanded and scrolled down to (if needed) -->
+							<!-- TODO: P2: a somewhat related bonus to the above - it would be nice if expanding probe details at /probes resulted in URL change  -->
+							<ProbeHeader
+								class="mb-6"
+								:name="probe.name || probe.city"
+								:ip="probe.ip"
+								:status="probe.status"
+								:hardware-device="!!probe.hardwareDevice"
+								ip-css="text-[13px]"
+							/>
+							<div>
+								<div class="mb-2 flex items-center text-nowrap">
+									<span class="mr-6 font-semibold">Location:</span>
+									<span class="ml-auto mr-2 flex items-center justify-end">
+										{{ probe.city }}, {{ probe.country }}
+									</span>
+									<CountryFlag :country="probe.country" size="small"/>
+								</div>
+								<div class="mb-2 flex items-center justify-between text-nowrap">
+									<span class="mr-6 font-semibold">Version:</span>
+									<span>{{ probe.version }}</span>
+								</div>
 							</div>
 						</div>
 					</div>
+					<div v-if="!adoptedProbes.length" class="flex rounded-xl bg-surface-50 p-6 max-sm:flex-col max-sm:items-center dark:bg-dark-600">
+						<img class="size-24 max-sm:mb-4" src="~/assets/images/hw-probe.png" alt="Hardware probe">
+						<p class="ml-6 leading-tight">
+							<b>You don't have any probes yet.</b><br><br>
+							Get started by going to the <NuxtLink class="font-semibold text-primary hover:underline" to="/probes">Probes</NuxtLink> page to create a container probe.<br>
+							<NuxtLink class="font-semibold text-primary hover:underline" to="https://github.com/sponsors/jsdelivr" target="_blank" rel="noopener">Become a sponsor</NuxtLink> and get a free plug-and-play hardware device.
+						</p>
+					</div>
 				</div>
-				<div v-if="!adoptedProbes.length" class="flex rounded-xl bg-surface-50 p-6 max-sm:flex-col max-sm:items-center dark:bg-dark-600">
-					<img class="size-24 max-sm:mb-4" src="~/assets/images/hw-probe.png" alt="Hardware probe">
-					<p class="ml-6 leading-tight">
-						<b>You don't have any probes yet.</b><br><br>
-						Get started by going to the <NuxtLink class="font-semibold text-primary hover:underline" to="/probes">Probes</NuxtLink> page to create a container probe.<br>
-						<NuxtLink class="font-semibold text-primary hover:underline" to="https://github.com/sponsors/jsdelivr" target="_blank" rel="noopener">Become a sponsor</NuxtLink> and get a free plug-and-play hardware device.
-					</p>
-				</div>
-			</div>
+			</AsyncBlock>
 		</div>
+
 		<Dialog
 			v-model:visible="adoptProbeDialog"
 			position="top"
@@ -151,8 +164,7 @@
 
 	// SUMMARY
 
-	// TODO: @MartinKolarik - handle loading states everywhere
-	const { data: adoptedProbes } = await useLazyAsyncData('gp_adopted_probes', async () => {
+	const { status: statusProbes, data: adoptedProbes } = await useLazyAsyncData('gp_adopted_probes', async () => {
 		try {
 			const result = await $directus.request(readItems('gp_adopted_probes', {
 				filter: { userId: { _eq: user.id } },
@@ -175,7 +187,7 @@
 	const auth = useAuth();
 	const user = auth.getUser;
 
-	const { data: credits } = await useLazyAsyncData('gp_credits', async () => {
+	const { status: statusCredits, data: credits } = await useLazyAsyncData('gp_credits', async () => {
 		try {
 			const result = $directus.request(readItems('gp_credits', {
 				filter: { user_id: { _eq: user.id } },

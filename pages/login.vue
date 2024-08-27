@@ -16,7 +16,7 @@
 				<h2 class="mt-8 text-xl text-bluegray-400">Manage your probes, credits, and access tokens</h2>
 			</div>
 
-			<div class="mb-auto">
+			<div class="mb-auto mt-4">
 				<h2 class="text-4xl font-bold">Sign In</h2>
 				<Divider class="h-2 before:border-t-2"/>
 				<Button
@@ -29,7 +29,7 @@
 				/>
 			</div>
 
-			<NuxtLink to="https://globalping.io/" class="text-bluegray-400 hover:underline" target="_blank">
+			<NuxtLink to="https://globalping.io/" class="mt-4 text-bluegray-400 hover:underline" target="_blank">
 				Learn more about Globalping <i class="pi pi-external-link text-2xs"/>
 			</NuxtLink>
 		</div>

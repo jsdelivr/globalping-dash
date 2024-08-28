@@ -116,6 +116,7 @@
 			v-if="probeDetails"
 			:credits="credits[probeDetails!.id] || 0"
 			:probe="probeDetails!"
+			:gmaps-loaded="gmapsLoaded"
 			@save="loadLazyData"
 			@tags-update="loadLazyData"
 		/>
@@ -170,6 +171,19 @@
 	const credits = ref<Record<string, number>>({});
 	const first = ref(0);
 	const totalCredits = ref(0);
+	const gmapsLoaded = ref(false);
+
+	useHead(() => {
+		return {
+			title: 'Probes -',
+			script: [{
+				src: `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsKey}`,
+				onload: () => {
+					gmapsLoaded.value = true;
+				},
+			}],
+		};
+	});
 
 	const loadLazyData = async (event?: PageState) => {
 		loading.value = true;

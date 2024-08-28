@@ -199,7 +199,6 @@
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();
-	const config = useRuntimeConfig();
 
 	const props = defineProps({
 		probe: {
@@ -210,19 +209,13 @@
 			type: Number,
 			default: 0,
 		},
+		gmapsLoaded: {
+			type: Boolean,
+			default: false,
+		},
 	});
 
 	const emit = defineEmits([ 'save', 'tags-update' ]);
-
-	useHead({
-		title: 'Probes -',
-		script: [{
-			src: `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsKey}`,
-			onload: () => {
-				initGoogleMap(probe.value);
-			},
-		}],
-	});
 
 	// ROOT
 
@@ -230,6 +223,21 @@
 
 	const probe = ref({ ...props.probe });
 
+	useHead(() => {
+		return {
+			title: `Probe '${props.probe.name || props.probe.city}' -`,
+		};
+	});
+
+	// GOOGLE MAP
+
+	watch(() => props.gmapsLoaded, () => {
+		initGoogleMap(probe.value);
+	});
+
+	onMounted(() => {
+		props.gmapsLoaded && initGoogleMap(probe.value);
+	});
 
 	// TAGS
 

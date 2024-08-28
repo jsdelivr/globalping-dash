@@ -178,6 +178,7 @@
 			title: 'Probes -',
 			script: [{
 				src: `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsKey}`,
+				async: true,
 				onload: () => {
 					gmapsLoaded.value = true;
 				},

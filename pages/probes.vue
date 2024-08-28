@@ -18,54 +18,46 @@
 				:loading="loading"
 				table-class="table-fixed"
 				:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"
-				@row-click="openprobeDetails"
 			>
 				<template #header>
 					<h3>List of probes</h3>
 				</template>
 				<Column header="Name" class="w-1/4" body-class="!p-0">
 					<template #body="slotProps">
-						<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3">
+						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3" @click="openprobeDetails(slotProps.data.id)">
 							<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'gp' : 'docker'" border :status="slotProps.data.status"/>
 							<p class="col-start-2 col-end-3 flex items-center font-bold">{{ slotProps.data.name || slotProps.data.city }}</p>
 							<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-900 dark:text-bluegray-400">{{ slotProps.data.ip }}</p>
-						</div>
+						</NuxtLink>
 					</template>
 				</Column>
 				<Column header="Location" class="w-1/4" body-class="!p-0">
 					<template #body="slotProps">
-						<div class="px-2 py-3">
+						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="block px-2 py-3" @click="openprobeDetails(slotProps.data.id)">
 							<div class="mb-1 flex items-center">
 								<CountryFlag :country="slotProps.data.country" size="small"/>
 								<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
 							</div>
 							<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
-						</div>
+						</NuxtLink>
 					</template>
 				</Column>
 				<Column header="Tags" class="w-[34%]" body-class="!p-0">
 					<template #body="slotProps">
-						<div class="px-2 py-4">
+						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="block px-2 py-4" @click="openprobeDetails(slotProps.data.id)">
 							<Tag v-if="slotProps.data.tags[0]" :key="slotProps.data.tags[0]" class="my-0.5 mr-1 flex bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${slotProps.data.tags[0].prefix}-${slotProps.data.tags[0].value}`"/>
 							<Tag v-if="slotProps.data.tags[1]" :key="slotProps.data.tags[1]" class="my-0.5 mr-1 flex bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${slotProps.data.tags[1].prefix}-${slotProps.data.tags[1].value}`"/>
 							<Tag v-if="slotProps.data.tags.length > 2" key="other" class="my-0.5 mr-1 flex bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`+${slotProps.data.tags.length - 2}`"/>
-						</div>
+						</NuxtLink>
 					</template>
 				</Column>
 				<Column header="Credits past month" class="w-[13%]" body-class="!p-0">
 					<template #body="slotProps">
-						<div class="px-2 py-4">
+						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="block px-2 py-4" @click="openprobeDetails(slotProps.data.id)">
 							<Tag class="flex items-center !text-sm" severity="success" value="Success">
 								<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ credits[slotProps.data.id] || 0 }}
 							</Tag>
-						</div>
-					</template>
-				</Column>
-				<Column expander class="w-[3%]" body-class="!p-0">
-					<template #body="">
-						<div class="px-2 py-4">
-							<i class="pi pi-chevron-right"/>
-						</div>
+						</NuxtLink>
 					</template>
 				</Column>
 				<template v-if="!loading" #footer>
@@ -148,7 +140,6 @@
 
 <script setup lang="ts">
 	import { aggregate, readItem, readItems } from '@directus/sdk';
-	import type { DataTableRowClickEvent } from 'primevue/datatable';
 	import type { PageState } from 'primevue/paginator';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useAuth } from '~/store/auth';
@@ -184,6 +175,17 @@
 				},
 			}],
 		};
+	});
+
+	onMounted(async () => {
+		loading.value = true;
+
+		const probeId = route.params.id as string;
+
+		await Promise.all([
+			probeId && loadProbeData(probeId),
+			loadLazyData(),
+		]);
 	});
 
 	const loadLazyData = async (event?: PageState) => {
@@ -242,17 +244,6 @@
 		}
 	};
 
-	onMounted(async () => {
-		loading.value = true;
-
-		const probeId = route.params.id as string;
-
-		await Promise.all([
-			probeId && loadProbeData(probeId),
-			loadLazyData(),
-		]);
-	});
-
 	const onPage = async (event: PageState) => {
 		first.value = event.first;
 		await loadLazyData(event);
@@ -262,12 +253,11 @@
 
 	const probeDetails = ref<Probe | null>(null);
 
-	const openprobeDetails = (event: DataTableRowClickEvent) => {
-		const probe = probes.value.find(probe => probe.id === event.data.id);
+	const openprobeDetails = (id: number) => {
+		const probe = probes.value.find(probe => probe.id === id);
 
 		if (probe) {
 			probeDetails.value = { ...probe };
-			navigateTo(`/probes/${probe.id}`);
 		}
 	};
 </script>

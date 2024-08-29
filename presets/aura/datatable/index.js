@@ -349,7 +349,7 @@ export default {
 			class: [
 			// Color
 				'dark:text-surface-0',
-				{ 'bg-surface-50 dark:!bg-dark-700 align-top !cursor-auto': expanded },
+				{ 'bg-surface-50 dark:!bg-dark-700 !cursor-auto': expanded },
 				{ 'bg-highlight': context.selected && props.highlightOnSelect },
 				{ 'bg-surface-0 dark:bg-dark-800': !context.selected },
 				{ 'font-bold bg-surface-0 dark:bg-dark-800 z-20': props.frozenRow },

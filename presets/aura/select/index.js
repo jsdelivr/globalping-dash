@@ -15,7 +15,7 @@ export default {
 
 			'border',
 			{ 'dark:border-dark-400': parent.instance.$name !== 'InputGroup' },
-			{ 'dark:border-surface-600': parent.instance.$name === 'InputGroup' },
+			{ 'dark:border-dark-400': parent.instance.$name === 'InputGroup' },
 			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
 
 			// Invalid State
@@ -28,7 +28,7 @@ export default {
 			'duration-200',
 
 			// States
-			{ 'hover:border-surface-400 dark:hover:border-surface-600': !props.invalid },
+			{ 'hover:border-surface-400 dark:hover:border-dark-400': !props.invalid },
 			{ 'outline-none outline-offset-0 ring-1 ring-primary-500 dark:ring-primary-400 z-10': state.focused },
 
 			// Misc
@@ -136,16 +136,9 @@ export default {
 
 			// Colors
 			{
-				'text-surface-700 dark:text-white/80': (!context.focused && !context.selected) || (context.focused && !context.selected),
-				'bg-surface-200 dark:bg-surface-600/60': context.focused && !context.selected,
-				// 'text-surface-700 dark:text-white/80': context.focused && !context.selected,
-				'bg-highlight': context.selected,
+				'text-bluegray-900 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-dark-600': !context.selected,
+				'text-primary-700 bg-primary-50 dark:bg-primary dark:text-surface-0': context.selected,
 			},
-
-			// States
-			{ 'hover:bg-surface-100 dark:hover:bg-[rgba(255,255,255,0.03)]': !context.focused && !context.selected },
-			{ 'hover:bg-highlight-emphasis': context.selected },
-			{ 'hover:text-surface-700 hover:bg-surface-100 dark:hover:text-white dark:hover:bg-[rgba(255,255,255,0.03)]': context.focused && !context.selected },
 
 			// Transition
 			'transition-shadow duration-200',

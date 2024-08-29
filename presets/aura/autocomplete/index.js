@@ -43,9 +43,9 @@ export default {
 			// Color
 			'text-bluegray-900 dark:text-surface-0',
 			'placeholder:text-surface-400 dark:placeholder:text-surface-500',
-			{ 'bg-surface-0 dark:bg-surface-950': !props.disabled },
+			{ 'bg-surface-0 dark:bg-dark-900': !props.disabled },
 			'border',
-			{ 'border-surface-300 dark:border-surface-700': !props.invalid },
+			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
 
 			// Invalid State
 			'invalid:focus:ring-red-200',
@@ -53,7 +53,7 @@ export default {
 			{ 'border-red-500 dark:border-red-400': props.invalid },
 
 			// States
-			{ 'hover:border-surface-400 dark:hover:border-surface-700': !props.invalid && !props.disabled },
+			{ 'hover:border-surface-400 dark:hover:border-dark-600': !props.invalid && !props.disabled },
 			{ 'outline-none outline-offset-0 z-10 ring-1 ring-primary-500 dark:ring-primary-400': state.focused },
 
 			// Transition

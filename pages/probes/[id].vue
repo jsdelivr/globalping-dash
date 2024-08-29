@@ -12,7 +12,7 @@
 	>
 		<div class="relative border-t">
 			<div id="gp-map" class="h-44"/>
-			<div class="absolute inset-x-0 top-2 ml-4 mr-20 flex justify-between">
+			<div class="absolute inset-x-0 top-2 ml-4 mr-20 flex justify-between dark:text-bluegray-900">
 				<div>
 					Status:<span class="ml-2 font-bold">{{ capitalize(probe.status.replaceAll('-', ' ')) }}</span>
 					<StatusIcon class="ml-2 text-3xs" :status="probe.status"/>
@@ -33,7 +33,7 @@
 				v-model="probe.name"
 				class="mt-1 w-full"
 			/>
-			<label for="primary-ip" class="mt-3 block text-xs">Primary IP</label>
+			<label for="primary-ip" class="mt-3 inline-block text-xs">Primary IP</label>
 			<div class="relative mt-1">
 				<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
 				<InputText
@@ -43,7 +43,7 @@
 					class="w-full bg-transparent dark:bg-transparent"
 				/>
 			</div>
-			<label for="alternative-ips" class="mt-3 block text-xs">Alternative IPs</label>
+			<label for="alternative-ips" class="mt-3 inline-block text-xs">Alternative IPs</label>
 			<div class="relative mt-1">
 				<i class="pi pi-lock absolute right-3 top-[13px] text-bluegray-500"/>
 				<AutoComplete
@@ -56,22 +56,22 @@
 					:typeahead="false"
 				/>
 			</div>
-			<label for="city" class="mt-3 block text-xs">Location</label>
+			<label for="city" class="mt-3 inline-block text-xs">Location</label>
 			<InputGroup class="mt-1">
-				<InputGroupAddon>
+				<InputGroupAddon class="!bg-transparent">
 					<CountryFlag :country="probe.country" size="small"/>
 				</InputGroupAddon>
 				<InputText
 					id="city"
 					v-model="probe.city"
-					class="w-full bg-transparent dark:bg-transparent"
+					class="w-full"
 				/>
 			</InputGroup>
 			<p class="mt-2 text-xs text-bluegray-400">
 				City where the probe is located. If you know that city is wrong it can be changed here: type in the valid city and click save.
 			</p>
-			<label for="tags" class="mt-3 block text-xs">Tags</label>
-			<div v-if="isEditingTags">
+			<label for="tags" class="mt-3 inline-block text-xs">Tags</label>
+			<div v-if="isEditingTags" class="mt-1">
 				<div>
 					<div v-for="(tag, index) in tagsToEdit" :key="index" class="mb-2 flex items-center" :class="{ 'mb-5': !isTagValid(tag.value) }">
 						<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
@@ -133,8 +133,8 @@
 					label="Edit tags"
 					icon="pi pi-pencil"
 					icon-pos="right"
-					class="!absolute right-1.5 top-1.5 text-bluegray-500 hover:bg-transparent"
-					severity="secondary"
+					class="!absolute right-1.5 top-1.5 bg-transparent hover:bg-transparent"
+					severity="contrast"
 					text
 					aria-label="Edit tags"
 					size="small"

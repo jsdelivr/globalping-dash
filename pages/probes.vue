@@ -178,14 +178,23 @@
 	});
 
 	onMounted(async () => {
-		loading.value = true;
+		await loadLazyData();
+	});
 
+	onMounted(async () => {
 		const probeId = route.params.id as string;
 
-		await Promise.all([
-			probeId && loadProbeData(probeId),
-			loadLazyData(),
-		]);
+		if (probeId) {
+			await loadProbeData(probeId);
+		}
+	});
+
+	watch(() => route.path, async () => {
+		const probeId = route.params.id as string;
+
+		if (probeId) {
+			await loadProbeData(probeId);
+		}
 	});
 
 	const loadLazyData = async (event?: PageState) => {

@@ -45,7 +45,7 @@
 			</div>
 			<label for="alternative-ips" class="mt-3 block text-xs">Alternative IPs</label>
 			<div class="relative mt-1">
-				<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
+				<i class="pi pi-lock absolute right-3 top-[13px] text-bluegray-500"/>
 				<AutoComplete
 					id="alternative-ips"
 					v-model="probe.altIps"

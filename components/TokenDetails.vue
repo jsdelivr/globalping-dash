@@ -73,7 +73,8 @@
 			remove-token-icon="pi pi-times"
 			multiple
 			:typeahead="false"
-			:pt="{ inputChip: { id: 'token-details-origins-input-wrapper'}, chipItem: 'my-0.5' }"
+			:pt="{ inputChip: { id: 'token-details-origins-input-wrapper' }, chipItem: 'my-1' }"
+			:pt-options="{ mergeProps: true }"
 			@update:model-value="updateOrigins"
 			@blur="onAutoCompleteBlur"
 		/>

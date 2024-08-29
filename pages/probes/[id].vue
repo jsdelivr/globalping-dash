@@ -157,8 +157,8 @@
 					:loading="deleteProbeLoading"
 					@click="deleteDialog = true"
 				/>
-				<Button class="mr-2" label="Cancel" severity="secondary" text @click="probeDetailsDialog = false"/>
-				<Button label="Save" :loading="updateProbeLoading" @click="updateProbe"/>
+				<Button class="mr-2" label="Close" severity="secondary" text @click="probeDetailsDialog = false"/>
+				<Button label="Save" :loading="updateProbeLoading" :disabled="!isSaveEnabled" @click="updateProbe"/>
 			</div>
 		</div>
 		<Dialog
@@ -311,6 +311,14 @@
 	};
 
 	// ACTIONS
+
+	const isSaveEnabled = computed(() => (
+		probe.value.name !== props.probe.name
+		|| probe.value.city !== props.probe.city
+		|| !isEqual(probe.value.tags, props.probe.tags)
+		|| isEditingTags.value
+	));
+
 
 	const updateProbeLoading = ref(false);
 	const updateProbe = async () => {

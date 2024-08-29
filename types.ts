@@ -41,7 +41,7 @@ declare global {
   };
 
   type Probe = {
-    id: number;
+    id: string;
     asn: number;
     city: string;
     country: string;

@@ -107,6 +107,9 @@
 	};
 
 	const chartOptions = computed(() => ({
+		animation: {
+			duration: 0,
+		},
 		maintainAspectRatio: false,
 		aspectRatio: 0.6,
 		plugins: {

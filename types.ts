@@ -103,4 +103,10 @@ declare global {
     }];
     message?: string;
   };
+
+  type CodeApprovalDetails = {
+    client: {
+      name: string;
+    };
+  } | null;
 }

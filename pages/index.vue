@@ -1,6 +1,6 @@
 <template>
 	<div class="grid grid-cols-2 gap-4 p-6">
-		<h1 class="col-span-2 mb-2 text-2xl font-bold">Overview</h1>
+		<h1 class="title col-span-2 mb-2">Overview</h1>
 
 		<div class="rounded-xl border bg-surface-0 max-xl:col-span-2 dark:bg-dark-800">
 			<p class="flex border-b px-6 py-3 font-bold text-bluegray-700 dark:text-dark-0">Summary</p>

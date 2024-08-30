@@ -3,7 +3,7 @@
 		<div>
 			<!-- TODO: P3: this and most likely other elements should use custom classes, e.g. page-title -->
 			<!-- https://tailwindcss.com/docs/adding-custom-styles#adding-component-classes -->
-			<h1 class="col-span-2 text-2xl font-bold">Settings</h1>
+			<h1 class="title">Settings</h1>
 		</div>
 		<div class="mt-6 flex rounded-xl border bg-surface-0 p-6 max-sm:flex-col dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">

@@ -3,6 +3,10 @@ import { useAuth } from '~/store/auth';
 const auth = useAuth();
 
 declare global {
+  interface Window {
+    googleMapsLoadCallback: () => void,
+  }
+
   type DirectusSchema = {
     gp_adopted_probes: Probe[];
     gp_credits: Credits[];

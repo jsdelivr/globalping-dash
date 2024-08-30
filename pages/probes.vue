@@ -168,14 +168,14 @@
 		return {
 			title: 'Probes -',
 			script: [{
-				src: `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsKey}`,
+				src: `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsKey}&loading=async&callback=googleMapsLoadCallback`,
 				async: true,
-				onload: () => {
-					gmapsLoaded.value = true;
-				},
 			}],
 		};
 	});
+
+	const googleMapsLoadCallback = () => { gmapsLoaded.value = true; };
+	window.googleMapsLoadCallback = googleMapsLoadCallback;
 
 	onMounted(async () => {
 		await loadLazyData();
@@ -262,7 +262,7 @@
 
 	const probeDetails = ref<Probe | null>(null);
 
-	const openprobeDetails = (id: number) => {
+	const openprobeDetails = (id: string) => {
 		const probe = probes.value.find(probe => probe.id === id);
 
 		if (probe) {

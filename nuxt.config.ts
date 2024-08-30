@@ -47,8 +47,7 @@ export default defineNuxtConfig({
 	},
 	tailwindcss: {},
 	typescript: {
-		// TODO: P2: fix and uncomment.
-		// typeCheck: 'build',
+		typeCheck: 'build',
 	},
 	$development: {
 		runtimeConfig: {

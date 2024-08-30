@@ -13,21 +13,8 @@
 		/>
 	</div>
 	<div class="relative">
-		<div class="!absolute right-2 top-2">
-			<!-- TODO: P3: copy button could be a component -->
-			<Button
-				icon="pi pi-copy"
-				severity="secondary"
-				aria-label="Copy"
-				outlined
-				@click="copyCommand"
-			/>
-			<div v-if="copyTooltip" class="absolute -top-10 left-1/2 -translate-x-1/2 rounded-md bg-bluegray-700 p-2 text-surface-0">
-				Copied!
-			</div>
-		</div>
+		<CopyButton :content="commands[platform][size]"/>
 		<div ref="codeWrapperElem" class="mt-4 box-content overflow-hidden rounded-xl border p-4 pr-0 transition-[height] duration-500 dark:bg-dark-900">
-			<!-- TODO: P3: collapse/expand thing could be a component -->
 			<div ref="codeElem">
 				<pre v-if="size === 'compact'" class="no-scrollbar flex min-h-[22px] items-center overflow-scroll"><code class="mr-16">{{ commands[platform][size] }}</code></pre>
 				<div v-if="size === 'expanded'" class="no-scrollbar overflow-scroll">
@@ -96,18 +83,5 @@
 	const toggleSize = () => {
 		size.value = size.value === 'compact' ? 'expanded' : 'compact';
 		smoothResize(codeWrapperElem.value!, codeElem.value!, codeElem.value!);
-	};
-
-	const copyTooltip = ref(false);
-	const copyCommand = async () => {
-		let content = commands[platform.value][size.value];
-
-		if (Array.isArray(content)) {
-			content = content.map(parts => parts.join('')).join('\n');
-		}
-
-		await navigator.clipboard.writeText(content);
-		copyTooltip.value = true;
-		setTimeout(() => copyTooltip.value = false, 1000);
 	};
 </script>

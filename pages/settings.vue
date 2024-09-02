@@ -94,13 +94,8 @@
 			<Button label="Apply settings" :loading="saveLoading" @click="save"/>
 		</div>
 		<!-- TODO: P3: we have many of these in the same style, might be worth to wrap in our own component (possibly same applies to other components). -->
-		<Dialog
+		<GPDialog
 			v-model:visible="deleteDialog"
-			position="top"
-			class="min-w-[700px] max-md:min-w-[95%]"
-			modal
-			dismissable-mask
-			:draggable="false"
 			header="Delete account"
 		>
 			<div class="flex items-center">
@@ -116,7 +111,7 @@
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
 				<Button label="Delete account" severity="danger" @click="deleteAccount"/>
 			</div>
-		</Dialog>
+		</GPDialog>
 	</div>
 </template>
 

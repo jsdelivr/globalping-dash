@@ -20,7 +20,7 @@
 				:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"
 			>
 				<template #header>
-					<h3>List of probes</h3>
+					<h3 class="px-2">List of probes</h3>
 				</template>
 				<Column header="Name" class="w-1/4" body-class="!p-0">
 					<template #body="slotProps">

@@ -9,6 +9,7 @@ export default {
 			// Size
 			props.position === 'top' ? 'max-h[calc(95vh-7*16px)]' : 'max-h-[90vh]',
 			{ 'my-28': props.position === 'top' },
+			'max-w-[900px]',
 			'w-[50vw]',
 			'm-0',
 

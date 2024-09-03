@@ -19,7 +19,9 @@
 				<BlockLoading v-if="status === 'pending'"/>
 
 				<div v-else-if="status === 'success' && code">
-					<h2 class="text-4xl font-bold">Authorize<br>{{ code?.client?.name }}</h2>
+					<h2 class="text-4xl font-bold">Authorize<br>{{ code?.client.name }}</h2>
+					<NuxtLink v-if="code?.client.owner.name" :to="code?.client.owner.url as string" class="text-bluegray-400 hover:underline">by {{ code?.client.owner.name }} <i class="pi pi-external-link text-2xs"/></NuxtLink>
+					<span v-else class="text-bluegray-400">by Globalping <i class="pi pi-check-circle text-2xs text-primary"/></span>
 					<h3 class="mt-8">to perform measurements under your <strong>{{ auth.user.github_username }}</strong> account.</h3>
 
 					<Divider class="h-2 before:border-t-2"/>

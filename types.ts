@@ -107,6 +107,10 @@ declare global {
   type CodeApprovalDetails = {
     client: {
       name: string;
+      owner: {
+        name: string | null;
+        url: string | null;
+      }
     };
   } | null;
 }

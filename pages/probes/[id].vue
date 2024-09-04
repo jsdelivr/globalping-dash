@@ -76,11 +76,11 @@
 				<div>
 					<div v-for="(tag, index) in tagsToEdit" :key="index" class="mb-2 flex items-center" :class="{ 'mb-5': !isTagValid(tag.value) }">
 						<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
-						<span class="mx-2">-</span>
-						<span class="relative flex-1">
+						<div class="mx-2">-</div>
+						<div class="relative flex-1">
 							<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full"/>
 							<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
-						</span>
+						</div>
 						<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900 dark:text-surface-0" @click="removeTag(index)"/>
 					</div>
 				</div>
@@ -143,7 +143,7 @@
 				<Button
 					class="mr-auto"
 					label="Delete probe"
-					severity="secondary"
+					severity="danger"
 					icon="pi pi-trash"
 					text
 					:loading="deleteProbeLoading"

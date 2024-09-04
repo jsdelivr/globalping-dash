@@ -110,7 +110,6 @@
 			:probe="probeDetails"
 			:gmaps-loaded="gmapsLoaded"
 			@save="loadLazyData"
-			@tags-update="loadLazyData"
 		/>
 		<Dialog
 			v-model:visible="startProbeDialog"

@@ -93,15 +93,6 @@
 						outlined
 						@click="addTag"
 					/>
-					<Button
-						label="Save"
-						icon="pi pi-check"
-						severity="secondary"
-						outlined
-						class="ml-auto bg-surface-200"
-						@click="saveTags"
-					/>
-					<Button label="Cancel" severity="secondary" outlined class="ml-1 dark:!bg-dark-800" @click="cancelTags"/>
 				</div>
 			</div>
 			<div v-else-if="!isEditingTags && probe.tags.length === 0">
@@ -241,7 +232,7 @@
 		},
 	});
 
-	const emit = defineEmits([ 'save', 'tags-update' ]);
+	const emit = defineEmits([ 'save' ]);
 
 	// ROOT
 
@@ -294,31 +285,6 @@
 		tagsToEdit.value?.splice(index, 1);
 	};
 
-	const saveTags = async () => {
-		const convertedTags = convertTags(tagsToEdit.value);
-
-		if (areTagsEmpty(convertedTags)) {
-			sendToast('error', 'Tags are invalid', 'Some tag values are empty');
-			return;
-		}
-
-		probe.value.tags = convertedTags;
-
-		tagsToEdit.value = [];
-
-		isEditingTags.value = false;
-
-		try {
-			await $directus.request(updateItem('gp_adopted_probes', probe.value.id, {
-				tags: probe.value.tags,
-			}));
-
-			emit('tags-update');
-		} catch (e) {
-			console.error(e);
-		}
-	};
-
 	const convertTags = (tagsToEdit: { uPrefix: string, value: string }[]) => tagsToEdit.map(({ uPrefix, value }) => ({
 		prefix: uPrefix.replace('u-', ''),
 		value,
@@ -330,11 +296,6 @@
 	});
 
 	const areTagsEmpty = (tags: Probe['tags']) => tags.some(({ prefix, value }) => !prefix || !value);
-
-	const cancelTags = () => {
-		tagsToEdit.value = [];
-		isEditingTags.value = false;
-	};
 
 	// ACTIONS
 

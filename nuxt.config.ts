@@ -2,7 +2,8 @@ export default defineNuxtConfig({
 	compatibilityDate: '2024-07-01',
 	runtimeConfig: {
 		public: {
-			directusUrl: process.env.DIRECTUS_URL,
+			gpAuthUrl: process.env.GP_API_URL || 'https://auth.globalping.io',
+			directusUrl: process.env.DIRECTUS_URL || 'https://dash-directus.globalping.io',
 			googleMapsKey: process.env.GOOGLE_MAPS_KEY,
 			itemsPerTablePage: 10,
 		},
@@ -52,6 +53,7 @@ export default defineNuxtConfig({
 	$development: {
 		runtimeConfig: {
 			public: {
+				gpAuthUrl: process.env.GP_API_URL || 'http://localhost:13110',
 				directusUrl: process.env.DIRECTUS_URL || 'http://localhost:18055',
 			},
 		},

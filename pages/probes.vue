@@ -17,23 +17,23 @@
 				:total-records="probesCount"
 				:loading="loading"
 				table-class="table-fixed"
-				:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"
+				:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700 min-h-16'"
 			>
 				<template #header>
 					<h3 class="px-2">List of probes</h3>
 				</template>
-				<Column header="Name" class="w-1/4" body-class="!p-0">
+				<Column header="Name" body-class="!p-0">
 					<template #body="slotProps">
-						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3" @click="openprobeDetails(slotProps.data.id)">
+						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="grid h-full grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3" @click="openprobeDetails(slotProps.data.id)">
 							<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'gp' : 'docker'" border :status="slotProps.data.status"/>
 							<p class="col-start-2 col-end-3 flex items-center font-bold">{{ slotProps.data.name || slotProps.data.city }}</p>
 							<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-900 dark:text-bluegray-400">{{ slotProps.data.ip }}</p>
 						</NuxtLink>
 					</template>
 				</Column>
-				<Column header="Location" class="w-1/4" body-class="!p-0">
+				<Column header="Location" body-class="!p-0">
 					<template #body="slotProps">
-						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="block px-2 py-3" @click="openprobeDetails(slotProps.data.id)">
+						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="block h-full px-2 py-3" @click="openprobeDetails(slotProps.data.id)">
 							<div class="mb-1 flex items-center">
 								<CountryFlag :country="slotProps.data.country" size="small"/>
 								<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
@@ -42,21 +42,13 @@
 						</NuxtLink>
 					</template>
 				</Column>
-				<Column header="Tags" class="w-[34%]" body-class="!p-0">
+				<Column header="Tags" class="w-5/12" body-class="!p-0">
 					<template #body="slotProps">
-						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="block px-2 py-4" @click="openprobeDetails(slotProps.data.id)">
-							<Tag v-if="slotProps.data.tags[0]" :key="slotProps.data.tags[0]" class="my-0.5 mr-1 flex bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${slotProps.data.tags[0].prefix}-${slotProps.data.tags[0].value}`"/>
-							<Tag v-if="slotProps.data.tags[1]" :key="slotProps.data.tags[1]" class="my-0.5 mr-1 flex bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${slotProps.data.tags[1].prefix}-${slotProps.data.tags[1].value}`"/>
-							<Tag v-if="slotProps.data.tags.length > 2" key="other" class="my-0.5 mr-1 flex bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`+${slotProps.data.tags.length - 2}`"/>
-						</NuxtLink>
-					</template>
-				</Column>
-				<Column header="Credits past month" class="w-[13%]" body-class="!p-0">
-					<template #body="slotProps">
-						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="block px-2 py-4" @click="openprobeDetails(slotProps.data.id)">
-							<Tag class="flex items-center !text-sm" severity="success" value="Success">
-								<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ credits[slotProps.data.id] || 0 }}
-							</Tag>
+						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="block h-full" @click="openprobeDetails(slotProps.data.id)">
+							<div class="flex h-full flex-wrap items-center">
+								<Tag v-for="tag in slotProps.data.tags.slice(0, 5)" :key="tag" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${tag.prefix}-${tag.value}`"/>
+								<Tag v-if="slotProps.data.tags.length > 5" key="other" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`+${slotProps.data.tags.length - 5}`"/>
+							</div>
 						</NuxtLink>
 					</template>
 				</Column>

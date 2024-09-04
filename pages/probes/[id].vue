@@ -39,7 +39,7 @@
 					id="primary-ip"
 					v-model="probe.ip"
 					disabled
-					class="w-full bg-transparent dark:bg-transparent"
+					class="pointer-events-auto w-full cursor-text select-auto bg-transparent dark:bg-transparent"
 				/>
 			</div>
 			<label for="alternative-ips" class="mt-3 inline-block text-xs">Alternative IPs</label>

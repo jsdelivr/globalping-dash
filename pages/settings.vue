@@ -25,7 +25,7 @@
 						@click="syncFromGithub(1)"
 					/>
 					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
-					<InputText id="username" v-model="user.github_username" disabled class="w-full bg-transparent pr-44 dark:bg-transparent"/>
+					<InputText id="username" v-model="user.github_username" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 			</div>
 		</div>
@@ -72,12 +72,12 @@
 						@click="syncFromGithub(2)"
 					/>
 					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
-					<InputText id="organizations" v-model="organizationsString" disabled class="w-full bg-transparent pr-44 dark:bg-transparent"/>
+					<InputText id="organizations" v-model="organizationsString" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 				<label for="userType" class="mt-6 block font-bold">User type</label>
 				<div class="relative mt-2">
 					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
-					<InputText id="userType" v-model="user.user_type" disabled class="w-full bg-transparent pr-44 dark:bg-transparent"/>
+					<InputText id="userType" v-model="user.user_type" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 			</div>
 		</div>

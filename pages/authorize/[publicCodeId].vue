@@ -73,13 +73,15 @@
 		layout: false,
 	});
 
-	useHead({
-		title: 'Authorize',
-	});
-
 	const auth = useAuth();
 	const route = useRoute();
 	const config = useRuntimeConfig();
 
 	const { status, data: code, error: codeError } = await useLazyFetch<CodeApprovalDetails>(`${config.public.gpAuthUrl}/oauth/approve/${route.params.publicCodeId}`);
+
+	watch(code, () => {
+		useHead({
+			title: `Authorize ${code.value?.client.name ? `${code.value?.client.name} ` : ''}- `,
+		});
+	});
 </script>

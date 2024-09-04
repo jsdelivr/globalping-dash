@@ -1,16 +1,13 @@
 <template>
 	<section class="grid max-md:grid-cols-1 dark:bg-dark-800">
 		<div class="absolute flex w-full max-w-[480px] flex-col self-center justify-self-center bg-white px-20 py-12 shadow-xl max-[480px]:h-full max-[480px]:max-w-none dark:bg-dark-800 dark:shadow-dark-900" style="z-index: 2;">
-			<div class="mb-32 flex flex-col max-[480px]:mb-auto">
+			<div class="mb-12 flex flex-col max-[480px]:mb-auto">
 				<div class="flex items-center">
 					<picture class="inline-flex">
 						<img class="h-10 " src="~/assets/icons/gp.svg" alt="Globalping logo">
 					</picture>
 					<div class="ml-3">
 						<h1 class="text-xl font-bold">Globalping</h1>
-						<NuxtLink to="https://www.jsdelivr.com" class="text-s relative top-[-.25rem] text-bluegray-400 hover:underline" target="_blank">
-							by jsDelivr <i class="pi pi-external-link text-2xs"/>
-						</NuxtLink>
 					</div>
 				</div>
 			</div>
@@ -60,7 +57,7 @@
 				</div>
 			</div>
 
-			<NuxtLink to="https://globalping.io/" class="mt-32 text-bluegray-400 hover:underline max-[480px]:mt-4" target="_blank">
+			<NuxtLink to="https://globalping.io/" class="mt-16 text-bluegray-400 hover:underline max-[480px]:mt-4" target="_blank">
 				Learn more about Globalping <i class="pi pi-external-link text-2xs"/>
 			</NuxtLink>
 		</div>

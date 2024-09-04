@@ -17,7 +17,7 @@ export default {
 
 			// States
 			{
-				'bg-surface-200 dark:bg-surface-700': props.disabled,
+				'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default': props.disabled,
 			},
 		],
 	}),

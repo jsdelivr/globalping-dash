@@ -48,7 +48,7 @@
 				<AutoComplete
 					id="alternative-ips"
 					v-model="probe.altIps"
-					class="bg-transparent dark:bg-transparent"
+					class="pointer-events-auto cursor-auto select-auto bg-transparent dark:bg-transparent"
 					chip-icon="hidden"
 					multiple
 					disabled
@@ -116,7 +116,7 @@
 				<AutoComplete
 					id="tags"
 					v-model="tagStrings"
-					class="bg-transparent dark:bg-transparent"
+					class="pointer-events-auto cursor-auto select-auto bg-transparent dark:bg-transparent "
 					chip-icon="hidden"
 					multiple
 					disabled

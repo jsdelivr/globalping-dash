@@ -32,7 +32,7 @@
 				v-model="probe.name"
 				class="mt-1 w-full"
 			/>
-			<label for="primary-ip" class="mt-3 inline-block text-xs">Primary IP</label>
+			<label for="primary-ip" class="mt-3 inline-block text-xs">{{ probe.altIps.length ? 'Primary IP' : 'IP address' }}</label>
 			<div class="relative mt-1">
 				<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
 				<InputText
@@ -42,18 +42,20 @@
 					class="pointer-events-auto w-full cursor-text select-auto bg-transparent dark:bg-transparent"
 				/>
 			</div>
-			<label for="alternative-ips" class="mt-3 inline-block text-xs">Alternative IPs</label>
-			<div class="relative mt-1">
-				<i class="pi pi-lock absolute right-3 top-[13px] text-bluegray-500"/>
-				<AutoComplete
-					id="alternative-ips"
-					v-model="probe.altIps"
-					class="pointer-events-auto cursor-auto select-auto bg-transparent dark:bg-transparent"
-					chip-icon="hidden"
-					multiple
-					disabled
-					:typeahead="false"
-				/>
+			<div v-if="probe.altIps.length">
+				<label for="alternative-ips" class="mt-3 inline-block text-xs">Alternative IPs</label>
+				<div class="relative mt-1">
+					<i class="pi pi-lock absolute right-3 top-[13px] text-bluegray-500"/>
+					<AutoComplete
+						id="alternative-ips"
+						v-model="probe.altIps"
+						class="pointer-events-auto cursor-auto select-auto bg-transparent dark:bg-transparent"
+						chip-icon="hidden"
+						multiple
+						disabled
+						:typeahead="false"
+					/>
+				</div>
 			</div>
 			<label for="city" class="mt-3 inline-block text-xs">Location</label>
 			<InputGroup class="mt-1">
@@ -201,8 +203,33 @@
 
 	const props = defineProps({
 		probe: {
-			type: Object as () => Probe,
-			default: () => {},
+			type: Object as PropType<Probe>,
+			default: () => ({
+				id: '',
+				asn: 0,
+				city: '',
+				country: '',
+				countryOfCustomCity: null,
+				date_created: '',
+				date_updated: '',
+				ip: '',
+				altIps: [],
+				isCustomCity: false,
+				lastSyncDate: '',
+				latitude: 0,
+				longitude: 0,
+				name: null,
+				network: '',
+				onlineTimesToday: 0,
+				state: null,
+				status: 'ready',
+				tags: [],
+				userId: '',
+				uuid: '',
+				version: '',
+				hardwareDevice: null,
+				nodeVersion: '',
+			} as Probe),
 		},
 		credits: {
 			type: Number,

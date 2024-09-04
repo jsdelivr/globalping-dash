@@ -107,7 +107,7 @@
 
 	const props = defineProps({
 		token: {
-			type: Object as () => Token | null,
+			type: Object as PropType<Token | null>,
 			default: () => null,
 		},
 	});

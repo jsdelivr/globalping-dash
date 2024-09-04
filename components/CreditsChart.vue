@@ -12,11 +12,11 @@
 			default: 0,
 		},
 		additions: {
-			type: Array as () => CreditsAddition[],
+			type: Array as PropType<CreditsAddition[]>,
 			default: () => [],
 		},
 		deductions: {
-			type: Array as () => CreditsDeduction[],
+			type: Array as PropType<CreditsDeduction[]>,
 			default: () => [],
 		},
 	});

@@ -107,7 +107,7 @@
 		<NuxtPage
 			v-if="probeDetails"
 			:credits="credits[probeDetails!.id] || 0"
-			:probe="probeDetails!"
+			:probe="probeDetails"
 			:gmaps-loaded="gmapsLoaded"
 			@save="loadLazyData"
 			@tags-update="loadLazyData"

@@ -103,7 +103,7 @@
 								>
 									<NuxtLink class="hover:underline" :to="`/probes/${probe.id}`">{{ probe.name || probe.city }}</NuxtLink>
 								</div>
-								<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-400">{{ probe.ip }}</p>
+								<p class="col-start-2 col-end-3 row-start-2 row-end-3 max-w-[185px] overflow-hidden text-ellipsis text-[13px] text-bluegray-400">{{ probe.ip }}</p>
 							</div>
 							<div>
 								<div class="mb-2 flex items-center text-nowrap">

@@ -207,6 +207,7 @@
 			const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
 				$directus.request(readItems('gp_adopted_probes', {
 					filter: { userId: { _eq: user.id } },
+					sort: [ 'name' ],
 					offset: event?.first || first.value,
 					limit: itemsPerPage,
 				})),

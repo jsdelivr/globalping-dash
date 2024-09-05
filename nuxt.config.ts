@@ -10,7 +10,7 @@ export default defineNuxtConfig({
 	},
 	app: {
 		head: {
-			titleTemplate: '%s GP Dashboard',
+			titleTemplate: '%s Globalping Dashboard',
 			htmlAttrs: {
 				lang: 'en-us',
 			},

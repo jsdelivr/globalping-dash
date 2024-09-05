@@ -132,18 +132,13 @@
 			</AsyncBlock>
 		</div>
 
-		<Dialog
+		<GPDialog
 			v-model:visible="adoptProbeDialog"
-			position="top"
-			class="min-w-[700px] max-md:min-w-[95%]"
-			modal
-			dismissable-mask
-			:draggable="false"
 			header="Adopt a probe"
 			content-class="!p-0"
 		>
 			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="refreshNuxtData"/>
-		</Dialog>
+		</GPDialog>
 	</div>
 </template>
 

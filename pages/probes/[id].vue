@@ -1,10 +1,7 @@
 <template>
-	<Dialog
+	<GPDialog
 		v-model:visible="probeDetailsDialog"
-		class="min-w-[700px] max-md:min-w-[95%]"
-		modal
-		dismissable-mask
-		:draggable="false"
+		position="center"
 		header="Probe details"
 		content-class="!p-0"
 		@after-hide="navigateTo('/probes')"
@@ -177,13 +174,8 @@
 				<Button label="Save" :loading="updateProbeLoading" :disabled="!isSaveEnabled" @click="updateProbe"/>
 			</div>
 		</div>
-		<Dialog
+		<GPDialog
 			v-model:visible="deleteDialog"
-			position="top"
-			class="min-w-[700px] max-md:min-w-[95%]"
-			modal
-			dismissable-mask
-			:draggable="false"
 			header="Delete probe"
 		>
 			<div class="flex items-center">
@@ -199,8 +191,8 @@
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
 				<Button label="Delete probe" severity="danger" @click="deleteProbe"/>
 			</div>
-		</Dialog>
-	</Dialog>
+		</GPDialog>
+	</GPDialog>
 </template>
 
 <script setup lang="ts">

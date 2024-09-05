@@ -24,7 +24,11 @@
 				<template #header>
 					<h3 class="px-2">List of probes</h3>
 				</template>
-				<Column header="Name" body-class="!p-0 h-16">
+				<Column body-class="!p-0 h-16">
+					<template #header>
+						Name <i v-tooltip.top="'Private name of the probe, visible only to you'" class="pi pi-info-circle"/>
+					</template>
+
 					<template #body="slotProps">
 						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
 							<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3">
@@ -43,7 +47,7 @@
 									<CountryFlag :country="slotProps.data.country" size="small"/>
 									<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
 								</div>
-								<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
+								<p>{{ slotProps.data.network }}, AS{{ slotProps.data.asn }}</p>
 							</div>
 						</NuxtLink>
 					</template>
@@ -67,7 +71,7 @@
 							</Tag>
 						</div>
 						<div class="ml-8">
-							<span>Amount of probes:</span>
+							<span>Number of probes:</span>
 							<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ probesCount }}</Tag>
 						</div>
 						<Button

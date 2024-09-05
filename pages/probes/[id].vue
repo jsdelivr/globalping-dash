@@ -9,9 +9,10 @@
 		content-class="!p-0"
 		@after-hide="navigateTo('/probes')"
 	>
-		<div class="relative border-t">
+		<div class="relative border-y">
 			<div id="gp-map" class="h-44"/>
-			<div class="absolute inset-x-0 top-2 ml-4 mr-20 flex justify-between dark:text-bluegray-900">
+
+			<div class="absolute inset-x-0 top-2 mx-6 flex justify-between dark:text-bluegray-900">
 				<div>
 					Status:<span class="ml-2 font-bold">{{ capitalize(probe.status.replaceAll('-', ' ')) }}</span>
 					<StatusIcon class="ml-2 text-3xs" :status="probe.status"/>
@@ -21,12 +22,14 @@
 					<nuxt-icon class="ml-2 text-green-500" name="coin"/>
 					<span class="ml-2 font-bold text-green-500">+{{ props.credits }}</span>
 				</div>
-				<div>Type:<span class="ml-2 font-bold">{{ probe.hardwareDevice || 'Container' }}</span></div>
-				<div>Version:<span class="ml-2 font-bold">{{ probe.version }}</span></div>
+				<div class="flex w-1/2 text-right">
+					<div class="w-1/2">Type:<span class="ml-2 font-bold">{{ probe.hardwareDevice || 'Container' }}</span></div>
+					<div class="w-1/2">Version:<span class="ml-2 font-bold">{{ probe.version }}</span></div>
+				</div>
 			</div>
 		</div>
 
-		<div class="px-5 py-7 dark:text-surface-0">
+		<div class="px-6 py-7 dark:text-surface-0">
 			<label for="probeName" class="text-xs">Probe name</label>
 			<InputText
 				id="probeName"

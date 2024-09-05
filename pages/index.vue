@@ -50,9 +50,9 @@
 		<div class="rounded-xl border bg-surface-0 max-xl:col-span-2 dark:bg-dark-800">
 			<p class="flex items-center border-b px-6 py-3 font-bold text-bluegray-700 dark:text-dark-0">
 				Credits<i
-					v-tooltip.top="user.github_username"
+					v-tooltip.top="'Credits allow you to run measurements above the hourly limits.'"
 					class="pi pi-info-circle ml-2"
-				/><!-- TODO: P2: really username? -->
+				/>
 			</p>
 
 			<AsyncBlock :status="statusCredits">

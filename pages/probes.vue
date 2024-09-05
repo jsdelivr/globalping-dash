@@ -68,7 +68,7 @@
 						</div>
 						<div class="ml-8">
 							<span>Amount of probes:</span>
-							<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">16</Tag>
+							<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ probesCount }}</Tag>
 						</div>
 						<Button
 							class="ml-auto"

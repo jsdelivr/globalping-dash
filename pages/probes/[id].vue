@@ -195,32 +195,7 @@
 	const props = defineProps({
 		probe: {
 			type: Object as PropType<Probe>,
-			default: () => ({
-				id: '',
-				asn: 0,
-				city: '',
-				country: '',
-				countryOfCustomCity: null,
-				date_created: '',
-				date_updated: '',
-				ip: '',
-				altIps: [],
-				isCustomCity: false,
-				lastSyncDate: '',
-				latitude: 0,
-				longitude: 0,
-				name: null,
-				network: '',
-				onlineTimesToday: 0,
-				state: null,
-				status: 'ready',
-				tags: [],
-				userId: '',
-				uuid: '',
-				version: '',
-				hardwareDevice: null,
-				nodeVersion: '',
-			} as Probe),
+			required: true,
 		},
 		credits: {
 			type: Number,
@@ -237,6 +212,8 @@
 	// ROOT
 
 	const probeDetailsDialog = ref(true);
+
+	console.log('props.probe.id', props.probe.id);
 
 	const probe = ref({ ...props.probe });
 

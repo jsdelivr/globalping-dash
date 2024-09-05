@@ -213,20 +213,18 @@
 				$directus.request(readItems('gp_credits_additions', {
 					filter: {
 						github_id: { _eq: user.external_identifier || 'admin' },
+						adopted_probe: { _null: false },
 						// @ts-ignore
 						date_created: { _gte: '$NOW(-1 month)' },
 					},
 				})),
 			]);
 
+			const creditsAdditionsFromProbes = creditsAdditions as (CreditsAddition & {adopted_probe: number})[];
 			const creditsByProbeId: Record<number, number> = {};
 
-			for (const addition of creditsAdditions) {
+			for (const addition of creditsAdditionsFromProbes) {
 				const { adopted_probe: adoptedProbe, amount } = addition;
-
-				if (!adoptedProbe) {
-					continue;
-				}
 
 				totalCredits.value += amount;
 				creditsByProbeId[adoptedProbe] = creditsByProbeId[adoptedProbe] ? creditsByProbeId[adoptedProbe] + amount : amount;

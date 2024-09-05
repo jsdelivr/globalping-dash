@@ -213,8 +213,6 @@
 
 	const probeDetailsDialog = ref(true);
 
-	console.log('props.probe.id', props.probe.id);
-
 	const probe = ref({ ...props.probe });
 
 	useHead(() => {

@@ -288,6 +288,7 @@
 		const tags = isEditingTags.value ? convertTags(tagsToEdit.value) : probe.value.tags;
 
 		if (areTagsEmpty(tags)) {
+			updateProbeLoading.value = false;
 			sendToast('error', 'Tags are invalid', 'Some tag values are empty');
 			return;
 		}

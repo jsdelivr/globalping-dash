@@ -17,36 +17,40 @@
 				:total-records="probesCount"
 				:loading="loading"
 				table-class="table-fixed"
-				:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700 min-h-16'"
+				:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"
 			>
 				<template #header>
 					<h3 class="px-2">List of probes</h3>
 				</template>
-				<Column header="Name" body-class="!p-0">
+				<Column header="Name" body-class="!p-0 h-16">
 					<template #body="slotProps">
-						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="grid h-full grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3" @click="openprobeDetails(slotProps.data.id)">
-							<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'gp' : 'docker'" border :status="slotProps.data.status"/>
-							<p class="col-start-2 col-end-3 flex items-center font-bold">{{ slotProps.data.name || slotProps.data.city }}</p>
-							<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-900 dark:text-bluegray-400">{{ slotProps.data.ip }}</p>
-						</NuxtLink>
-					</template>
-				</Column>
-				<Column header="Location" body-class="!p-0">
-					<template #body="slotProps">
-						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="block h-full px-2 py-3" @click="openprobeDetails(slotProps.data.id)">
-							<div class="mb-1 flex items-center">
-								<CountryFlag :country="slotProps.data.country" size="small"/>
-								<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
+						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
+							<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3">
+								<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'gp' : 'docker'" border :status="slotProps.data.status"/>
+								<p class="col-start-2 col-end-3 flex items-center font-bold">{{ slotProps.data.name || slotProps.data.city }}</p>
+								<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-900 dark:text-bluegray-400">{{ slotProps.data.ip }}</p>
 							</div>
-							<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
 						</NuxtLink>
 					</template>
 				</Column>
-				<Column header="Tags" class="w-5/12" body-class="!p-0">
+				<Column header="Location" body-class="!p-0 h-16">
 					<template #body="slotProps">
-						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="block h-full" @click="openprobeDetails(slotProps.data.id)">
+						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
+							<div class="px-2 py-3">
+								<div class="mb-1 flex items-center">
+									<CountryFlag :country="slotProps.data.country" size="small"/>
+									<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
+								</div>
+								<p>{{ slotProps.data.network }}, {{ slotProps.data.asn }}</p>
+							</div>
+						</NuxtLink>
+					</template>
+				</Column>
+				<Column header="Tags" class="w-5/12" body-class="!p-0 h-16">
+					<template #body="slotProps">
+						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
 							<div class="flex h-full flex-wrap items-center">
-								<Tag v-for="tag in slotProps.data.tags.slice(0, 5)" :key="tag" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${tag.prefix}-${tag.value}`"/>
+								<Tag v-for="tag in slotProps.data.tags.slice(0, 50)" :key="tag" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${tag.prefix}-${tag.value}`"/>
 								<Tag v-if="slotProps.data.tags.length > 5" key="other" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`+${slotProps.data.tags.length - 5}`"/>
 							</div>
 						</NuxtLink>
@@ -253,7 +257,7 @@
 
 	const probeDetails = ref<Probe | null>(null);
 
-	const openprobeDetails = (id: string) => {
+	const openProbeDetails = (id: string) => {
 		const probe = probes.value.find(probe => probe.id === id);
 
 		if (probe) {

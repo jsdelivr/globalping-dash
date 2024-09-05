@@ -18,6 +18,8 @@
 				:loading="loading"
 				table-class="table-fixed"
 				:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"
+				:pt="{footer: '!pt-0 border-t-0'}"
+				:pt-options="{ mergeProps: true }"
 			>
 				<template #header>
 					<h3 class="px-2">List of probes</h3>
@@ -57,23 +59,25 @@
 					</template>
 				</Column>
 				<template v-if="!loading" #footer>
-					<div class="flex items-center">
-						<div class="w-3/4">
-							<Button
-								class="mt-2"
-								severity="secondary"
-								outlined
-								label="Start a probe"
-								icon="pi pi-question-circle"
-								@click="startProbeDialog = true"
-							/>
-						</div>
-						<div class="w-[10%] pt-4">Total</div>
-						<div class="pt-4">
-							<Tag class="flex items-center !text-sm" severity="success" value="Success">
-								<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ totalCredits }}
+					<div class="flex h-14 items-center rounded-b-xl border-t bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] px-3">
+						<div class="flex items-center">
+							<span>Credits gained past month:</span>
+							<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">
+								<nuxt-icon class="mr-1" name="coin"/>+{{ totalCredits }}
 							</Tag>
 						</div>
+						<div class="ml-8">
+							<span>Amount of probes:</span>
+							<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">16</Tag>
+						</div>
+						<Button
+							class="ml-auto"
+							severity="secondary"
+							outlined
+							label="Start a probe"
+							icon="pi pi-question-circle"
+							@click="startProbeDialog = true"
+						/>
 					</div>
 				</template>
 			</DataTable>

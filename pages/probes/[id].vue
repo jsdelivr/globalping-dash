@@ -8,8 +8,7 @@
 	>
 		<div class="relative border-y">
 			<div id="gp-map" class="h-44"/>
-
-			<div class="absolute inset-x-0 top-2 mx-6 flex justify-between dark:text-bluegray-900">
+			<div class="absolute inset-x-0 top-2 mx-6 flex flex-wrap justify-between gap-4 dark:text-bluegray-900">
 				<div>
 					Status:<span class="ml-2 font-bold">{{ capitalize(probe.status.replaceAll('-', ' ')) }}</span>
 					<StatusIcon class="ml-2 text-3xs" :status="probe.status"/>

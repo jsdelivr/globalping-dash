@@ -25,6 +25,7 @@
 				<div>Version:<span class="ml-2 font-bold">{{ probe.version }}</span></div>
 			</div>
 		</div>
+
 		<div class="px-5 py-7 dark:text-surface-0">
 			<label for="probeName" class="text-xs">Probe name</label>
 			<InputText
@@ -32,7 +33,11 @@
 				v-model="probe.name"
 				class="mt-1 w-full"
 			/>
-			<label for="primary-ip" class="mt-3 inline-block text-xs">{{ probe.altIps.length ? 'Primary IP' : 'IP address' }}</label>
+			<p class="mt-2 text-xs text-bluegray-400">
+				Private name of the probe, visible only to you.
+			</p>
+
+			<label for="primary-ip" class="mt-4 inline-block text-xs">{{ probe.altIps.length ? 'Primary IP' : 'IP address' }}</label>
 			<div class="relative mt-1">
 				<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
 				<InputText
@@ -42,8 +47,12 @@
 					class="pointer-events-auto w-full cursor-text select-auto bg-transparent dark:bg-transparent"
 				/>
 			</div>
+			<p class="mt-2 text-xs text-bluegray-400">
+				The IP address from which the probe connected.
+			</p>
+
 			<div v-if="probe.altIps.length">
-				<label for="alternative-ips" class="mt-3 inline-block text-xs">Alternative IPs</label>
+				<label for="alternative-ips" class="mt-4 inline-block text-xs">Alternative IPs</label>
 				<div class="relative mt-1">
 					<i class="pi pi-lock absolute right-3 top-[13px] text-bluegray-500"/>
 					<AutoComplete
@@ -56,8 +65,12 @@
 						:typeahead="false"
 					/>
 				</div>
+				<p class="mt-2 text-xs text-bluegray-400">
+					Additional public IP addresses reported by the probe.
+				</p>
 			</div>
-			<label for="city" class="mt-3 inline-block text-xs">Location</label>
+
+			<label for="city" class="mt-4 inline-block text-xs">Location</label>
 			<InputGroup class="mt-1">
 				<InputGroupAddon class="!bg-transparent">
 					<CountryFlag :country="probe.country" size="small"/>
@@ -69,16 +82,23 @@
 				/>
 			</InputGroup>
 			<p class="mt-2 text-xs text-bluegray-400">
-				City where the probe is located. If you know that city is wrong it can be changed here: type in the valid city and click save.
+				City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
 			</p>
-			<label for="tags" class="mt-3 inline-block text-xs">Tags</label>
+
+			<label for="tags" class="mt-4 inline-block text-xs">Tags</label>
 			<div v-if="isEditingTags" class="mt-1">
 				<div>
+					<div class="flex text-xs">
+						<div class="flex-1 content-center">Prefix</div>
+						<div class="mx-3"/>
+						<div class="flex-1 content-center">Your tag</div>
+						<Button icon="pi pi-trash" text class="invisible"/>
+					</div>
 					<div v-for="(tag, index) in tagsToEdit" :key="index" class="mb-2 flex items-center" :class="{ 'mb-5': !isTagValid(tag.value) }">
 						<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
 						<div class="mx-2">-</div>
 						<div class="relative flex-1">
-							<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full"/>
+							<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full" placeholder="my-tag"/>
 							<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
 						</div>
 						<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900 dark:text-surface-0" @click="removeTag(index)"/>
@@ -134,11 +154,12 @@
 				/>
 			</div>
 			<p class="mt-2 text-xs text-bluegray-400">
-				Public tags of the probe. They can be used as location filters for a measurement. Format is <code class="font-bold">u-${prefix}-${value}</code> where prefix is user/organization github login, and value is your custom string.
-
-				E.g. for user with github username <code class="font-bold">"jimaek"</code>
-				and tag <code class="font-bold">"home1"</code> location filter is <code class="whitespace-nowrap font-bold">{ "tags": ["u-jimaek-home1"] }</code>.
+				Public tags that can be used for targeting the probe in measurements.
+				Each tag must be prefixed by your GitHub username or organization.
+				E.g., for a user with username <code class="font-bold">jimaek</code>
+				and tag <code class="font-bold">home-1</code> the final tag would be <code class="whitespace-nowrap font-bold">u-jimaek-home-1</code>.
 			</p>
+
 			<div class="mt-7 flex justify-end">
 				<Button
 					class="mr-auto"
@@ -253,7 +274,7 @@
 
 	const addTag = () => {
 		isEditingTags.value = true;
-		tagsToEdit.value.push({ uPrefix: '', value: '' });
+		tagsToEdit.value.push({ uPrefix: `u-${user.github_username}`, value: '' });
 	};
 
 	const removeTag = (index: number) => {

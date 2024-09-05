@@ -53,6 +53,7 @@ export const initGoogleMap = async (probe: Probe) => {
 		fullscreenControl: false,
 		minZoom: MAP_MIN_ZOOM,
 		maxZoom: MAP_MAX_ZOOM,
+		gestureHandling: 'cooperative',
 	});
 
 	createMapMarker(probe);

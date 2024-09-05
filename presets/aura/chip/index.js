@@ -11,7 +11,7 @@ export default {
 			'rounded-md',
 
 			// Colors
-			'text-surface-700 dark:text-white',
+			'text-bluegray-900 dark:text-surface-0',
 			'border',
 		],
 	},

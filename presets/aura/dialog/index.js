@@ -8,7 +8,8 @@ export default {
 
 			// Size
 			props.position === 'top' ? 'max-h[calc(95vh-7*16px)]' : 'max-h-[90vh]',
-			{ 'mt-28': props.position === 'top' },
+			{ 'my-28': props.position === 'top' },
+			'max-w-[900px]',
 			'w-[50vw]',
 			'm-0',
 
@@ -113,6 +114,8 @@ export default {
 
 			// Background and Effects
 			{ 'has-[.mask-active]:bg-transparent bg-black/40': props.modal },
+
+			'overflow-y-scroll',
 		],
 	}),
 	transition: ({ props }) => {

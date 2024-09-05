@@ -9,7 +9,7 @@
 			@update:model-value="resetInvalid"
 		/>
 		<p v-if="isNameInvalid" class="pl-1 text-red-500">Name can't be empty</p>
-		<p class="mt-1 text-xs">A unique name for this token.</p>
+		<p class="mt-1 text-xs text-bluegray-400">A unique name for this token.</p>
 		<p class="mt-6">Expiration</p>
 		<div class="mt-2">
 			<Button
@@ -64,7 +64,7 @@
 				<TokenCalendar :value="expire && new Date(expire)" @change="changeDate"/>
 			</Popover>
 		</div>
-		<div class="text-xs">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
+		<div class="text-xs text-bluegray-400">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
 		<label for="origins" class="mt-6 block">Origins</label>
 		<AutoComplete
 			id="origins"
@@ -73,11 +73,12 @@
 			remove-token-icon="pi pi-times"
 			multiple
 			:typeahead="false"
-			:pt="{ inputChip: { id: 'token-details-origins-input-wrapper'}, chipItem: 'my-0.5' }"
+			:pt="{ inputChip: { id: 'token-details-origins-input-wrapper' }, chipItem: 'my-1' }"
+			:pt-options="{ mergeProps: true }"
 			@update:model-value="updateOrigins"
 			@blur="onAutoCompleteBlur"
 		/>
-		<p class="mt-1 text-xs">
+		<p class="mt-1 text-xs text-bluegray-400">
 			A list of origins which are allowed to use the token. If empty, any origin is valid.
 			Examples of valid origins: "https://www.jsdelivr.com", "https://www.jsdelivr.com:10000".
 		</p>
@@ -106,7 +107,7 @@
 
 	const props = defineProps({
 		token: {
-			type: Object as () => Token | null,
+			type: Object as PropType<Token | null>,
 			default: () => null,
 		},
 	});

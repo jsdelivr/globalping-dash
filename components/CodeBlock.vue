@@ -21,7 +21,7 @@
 <script setup lang="ts">
 	const props = defineProps({
 		commands: {
-			type: Array as () => string[][],
+			type: Array as PropType<string[][]>,
 			default: () => [],
 		},
 	});

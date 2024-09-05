@@ -3,6 +3,10 @@ import { useAuth } from '~/store/auth';
 const auth = useAuth();
 
 declare global {
+  interface Window {
+    googleMapsLoadCallback: () => void,
+  }
+
   type DirectusSchema = {
     gp_adopted_probes: Probe[];
     gp_credits: Credits[];
@@ -41,7 +45,7 @@ declare global {
   };
 
   type Probe = {
-    id: number;
+    id: string;
     asn: number;
     city: string;
     country: string;
@@ -49,6 +53,7 @@ declare global {
     date_created: string;
     date_updated: string;
     ip: string;
+    altIps: string[];
     isCustomCity: boolean;
     lastSyncDate: string;
     latitude: number;

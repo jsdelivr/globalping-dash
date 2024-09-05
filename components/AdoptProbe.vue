@@ -3,7 +3,7 @@
 		<StepList>
 			<Step v-slot="{ active, value }" as-child value="0">
 				<StepHeader
-					:button-text="value"
+					:button-text="value.toString()"
 					header-text="Set up your probe"
 					:active="active"
 					:highlighted="Number(activeStep) > 0"
@@ -12,7 +12,7 @@
 			</Step>
 			<Step v-slot="{ active, value }" as-child value="1">
 				<StepHeader
-					:button-text="value"
+					:button-text="value.toString()"
 					header-text="Send adoption code"
 					:active="active"
 					:highlighted="Number(activeStep) > 1"
@@ -21,7 +21,7 @@
 			</Step>
 			<Step v-slot="{ active, value }" as-child value="2">
 				<StepHeader
-					:button-text="value"
+					:button-text="value.toString()"
 					header-text="Verify"
 					:active="active"
 					:highlighted="Number(activeStep) > 2"

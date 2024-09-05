@@ -16,7 +16,6 @@
 				data-key="id"
 				:total-records="probesCount"
 				:loading="loading"
-				table-class="table-fixed"
 				:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"
 				:pt="{footer: '!pt-0 border-t-0'}"
 				:pt-options="{ mergeProps: true }"
@@ -52,7 +51,7 @@
 						</NuxtLink>
 					</template>
 				</Column>
-				<Column header="Tags" class="w-5/12" body-class="!p-0 h-16">
+				<Column header="Tags" body-class="!p-0 h-16">
 					<template #body="slotProps">
 						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
 							<div class="flex h-full flex-wrap items-center">

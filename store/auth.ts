@@ -79,5 +79,8 @@ export const useAuth = defineStore('auth', {
 				console.error(error);
 			}
 		},
+		setAppearance (appearance: AuthState['user']['appearance']) {
+			this.user.appearance = appearance;
+		},
 	},
 });

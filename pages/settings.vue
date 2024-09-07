@@ -32,7 +32,6 @@
 				<h5 class="text-lg font-bold">Interface</h5>
 			</div>
 			<div class="grow">
-				<!-- TODO: P3: can we automatically "preview" the theme when I click a button here without saving? the setting should revert when I leave the page/reload -->
 				<p class="font-bold">Theme</p>
 				<SelectButton
 					v-model="appearance"
@@ -42,6 +41,7 @@
 					aria-labelledby="basic"
 					option-label="name"
 					option-value="value"
+					@update:model-value="auth.setAppearance"
 				>
 					<template #option="slotProps">
 						<i :class="slotProps.option.icon"/>
@@ -152,6 +152,8 @@
 				email: email.value,
 			}));
 
+			lastSavedAppearance = appearance.value;
+
 			await auth.refresh();
 
 			toast.add({ severity: 'success', summary: 'Saved', detail: 'All settings saved', life: 4000 });
@@ -161,6 +163,11 @@
 
 		saveLoading.value = false;
 	};
+
+	// APPEARANCE
+
+	let lastSavedAppearance = user.appearance;
+	onUnmounted(() => auth.setAppearance(lastSavedAppearance));
 
 	// SYNC WITH GITHUB
 

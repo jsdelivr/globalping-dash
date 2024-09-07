@@ -133,7 +133,7 @@
 					multiple
 					disabled
 					:pt="{
-						inputMultiple: 'pb-1 pr-28',
+						inputMultiple: 'pb-1 pr-28 min-h-10',
 						inputChip: 'hidden',
 						chipItem: 'mt-1'
 					}"

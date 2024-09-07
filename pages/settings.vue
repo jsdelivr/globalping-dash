@@ -57,20 +57,34 @@
 			<div class="grow">
 				<label for="email" class="block font-bold">Email</label>
 				<InputText id="email" v-model="email" class="mt-2 w-full"/>
-				<!-- TODO: P2: let's use a "tag-like" design here, like we have for token origins -->
-				<!-- should also resolve issues with overflows by breaking it up into several lines when there are many values -->
 				<label for="organizations" class="mt-6 block font-bold">Organizations</label>
 				<div class="relative mt-2">
+					<AutoComplete
+						id="tags"
+						v-model="user.github_organizations"
+						class="pointer-events-auto cursor-auto select-auto bg-transparent dark:bg-transparent"
+						chip-icon="hidden"
+						multiple
+						disabled
+						:pt="{
+							inputMultiple: 'pb-1 pr-48 min-h-10',
+							inputChip: 'hidden',
+							chipItem: 'mt-1'
+						}"
+						:pt-options="{ mergeProps: true }"
+						:typeahead="false"
+					/>
 					<Button
 						severity="contrast"
+						size="small"
 						text
 						label="Sync from GitHub"
+						aria-label="Sync from GitHub"
 						:icon="loadingIconId === 2 ? 'pi pi-sync pi-spin' : 'pi pi-sync'"
-						class="!absolute right-8 top-[5px] h-6 bg-transparent !px-1 hover:bg-transparent"
+						class="!absolute right-8 top-2 h-6 bg-transparent !px-1 hover:bg-transparent"
 						@click="syncFromGithub(2)"
 					/>
-					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
-					<InputText id="organizations" v-model="organizationsString" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
+					<i class="pi pi-lock absolute right-3 top-3 text-bluegray-500"/>
 				</div>
 				<label for="userType" class="mt-6 block font-bold">User type</label>
 				<div class="relative mt-2">
@@ -130,7 +144,6 @@
 	const lastName = ref(user.last_name);
 	const appearance = ref(user.appearance);
 	const email = ref(user.email);
-	const organizationsString = computed(() => user.github_organizations.join(', '));
 
 	const themeOptions = [
 		{ name: 'Auto', value: null, icon: 'pi pi-cog' },

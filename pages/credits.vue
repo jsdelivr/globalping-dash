@@ -1,7 +1,7 @@
 <template>
-	<div class="flex min-h-full flex-col p-6" :class="{'min-w-[640px]': creditsChanges.length}">
-		<div class="mb-6 flex">
-			<h1 class="title">Credits</h1>
+	<div class="min-h-full p-6" :class="{'min-w-[640px]': creditsChanges.length}">
+		<div class="mb-4 flex">
+			<h1 class="page-title">Credits</h1>
 			<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" class="ml-auto" target="_blank" rel="noopener">
 				<Button label="Become a sponsor" icon="pi pi-github"/>
 			</NuxtLink>

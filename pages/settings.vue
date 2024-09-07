@@ -1,9 +1,7 @@
 <template>
-	<div class="flex min-h-full flex-col p-6">
+	<div class="min-h-full p-6">
 		<div>
-			<!-- TODO: P3: this and most likely other elements should use custom classes, e.g. page-title -->
-			<!-- https://tailwindcss.com/docs/adding-custom-styles#adding-component-classes -->
-			<h1 class="title">Settings</h1>
+			<h1 class="page-title">Settings</h1>
 		</div>
 		<div class="mt-6 flex rounded-xl border bg-surface-0 p-6 max-sm:flex-col dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">

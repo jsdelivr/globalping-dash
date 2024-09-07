@@ -1,8 +1,8 @@
 <template>
 	<!-- TODO: P1: @MartinKolarik - review including all texts after the design update. -->
-	<div class="flex min-h-full flex-col p-6" :class="{'min-w-[1024px]': probes?.length}">
-		<div class="mb-6 flex">
-			<h1 class="title">Probes</h1>
+	<div class="min-h-full p-6" :class="{'min-w-[1024px]': probes?.length}">
+		<div class="mb-4 flex">
+			<h1 class="page-title">Probes</h1>
 			<Button class="ml-auto" @click="adoptProbeDialog = true">
 				<nuxt-icon class="pi" name="capture"/>
 				<span class="font-bold">Adopt a probe</span>

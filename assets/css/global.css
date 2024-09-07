@@ -71,7 +71,7 @@ input[disabled], textarea[disabled], select[disabled='disabled'] {
 }
 
 @layer classes {
-	.title {
+	.page-title {
 		@apply text-2xl font-bold
 	}
 }

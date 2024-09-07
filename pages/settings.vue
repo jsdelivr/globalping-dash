@@ -79,7 +79,6 @@
 						size="small"
 						text
 						label="Sync from GitHub"
-						aria-label="Sync from GitHub"
 						:icon="loadingIconId === 2 ? 'pi pi-sync pi-spin' : 'pi pi-sync'"
 						class="!absolute right-8 top-2 h-6 bg-transparent !px-1 hover:bg-transparent"
 						@click="syncFromGithub(2)"

@@ -1,5 +1,7 @@
 <template>
-	<Chart type="line" :data="chartData" :options="chartOptions" class="h-30rem"/>
+	<div class="credits-chart">
+		<Chart type="line" :data="chartData" :options="chartOptions" class="h-40"/>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -185,3 +187,11 @@ Spent: ${changes.value[ctx[0].dataIndex].spent.toLocaleString('en-US')}`,
 		},
 	}));
 </script>
+
+<style>
+	/* https://github.com/chartjs/Chart.js/issues/11005 */
+	.credits-chart canvas {
+		width: 100% !important;
+		height: 100% !important;
+	}
+</style>

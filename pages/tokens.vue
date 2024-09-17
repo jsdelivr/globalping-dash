@@ -152,6 +152,7 @@
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
+	const route = useRoute();
 
 	const user = auth.getUser as User;
 	const itemsPerPage = config.public.itemsPerTablePage;
@@ -162,6 +163,12 @@
 
 	const loadLazyData = async () => {
 		loading.value = true;
+
+		if (route.query.page) {
+			first.value = (Number(route.query.page) - 1) * itemsPerPage;
+		} else {
+			first.value = 0;
+		}
 
 		try {
 			const [ gpTokens, [{ count }] ] = await Promise.all([
@@ -183,15 +190,26 @@
 		loading.value = false;
 	};
 
-	onMounted(() => {
+	onMounted(async () => {
 		loading.value = true;
-		loadLazyData();
+		await loadLazyData();
 	});
 
-	const onPage = (event: PageState) => {
-		first.value = event.first;
-		loadLazyData();
+	// NAVIGATION
+
+	const onPage = async (event: PageState) => {
+		await navigateTo({
+			path: '/tokens',
+			query: {
+				page: event.page + 1,
+			},
+		});
 	};
+
+	watch(() => route.query.page, async () => {
+		resetState();
+		await loadLazyData();
+	});
 
 	// TOKEN DETAILS
 
@@ -217,7 +235,7 @@
 	const generatedToken = ref<{id: number, value: string} | null>(null);
 
 	const handleGenerate = async (id: number, tokenValue: string) => {
-		first.value = 0;
+		await navigateTo('/tokens');
 		await loadLazyData();
 		generatedToken.value = { id, value: tokenValue };
 		expandedRows.value = { [id]: true };
@@ -291,9 +309,13 @@
 			await $directus.request(deleteItem('gp_tokens', tokenToDelete.value!.id));
 
 			// Go to prev page if that is last item.
-			if (tokens.value.length === 1) {
-				const newFirst = first.value - itemsPerPage;
-				first.value = newFirst >= 0 ? newFirst : 0;
+			if (tokens.value.length === 1 && route.query.page) {
+				await navigateTo({
+					path: '/tokens',
+					query: {
+						page: Number(route.query.page) - 1,
+					},
+				});
 			}
 
 			await loadLazyData();

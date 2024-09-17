@@ -189,7 +189,7 @@
 		}
 	});
 
-	const loadLazyData = async (event?: PageState) => {
+	const loadLazyData = async () => {
 		loading.value = true;
 
 		try {
@@ -197,7 +197,7 @@
 				$directus.request(readItems('gp_adopted_probes', {
 					filter: { userId: { _eq: user.id } },
 					sort: [ 'name' ],
-					offset: event?.first || first.value,
+					offset: first.value,
 					limit: itemsPerPage,
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_adopted_probes', {
@@ -216,6 +216,8 @@
 
 			const creditsAdditionsFromProbes = creditsAdditions as (CreditsAddition & {adopted_probe: number})[];
 			const creditsByProbeId: Record<number, number> = {};
+
+			totalCredits.value = 0;
 
 			for (const addition of creditsAdditionsFromProbes) {
 				const { adopted_probe: adoptedProbe, amount } = addition;
@@ -246,7 +248,7 @@
 
 	const onPage = async (event: PageState) => {
 		first.value = event.first;
-		await loadLazyData(event);
+		await loadLazyData();
 	};
 
 	// PROBE DETAILS

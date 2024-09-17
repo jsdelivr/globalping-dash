@@ -191,7 +191,6 @@
 	};
 
 	onMounted(async () => {
-		loading.value = true;
 		await loadLazyData();
 	});
 

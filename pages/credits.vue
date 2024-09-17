@@ -158,8 +158,8 @@
 		loading.value = false;
 	};
 
-	onMounted(() => {
-		loadLazyData();
+	onMounted(async () => {
+		await loadLazyData();
 	});
 
 	const onPage = async (event: PageState) => {

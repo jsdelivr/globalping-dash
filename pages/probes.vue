@@ -87,6 +87,7 @@
 			<Paginator
 				v-if="probes.length !== probesCount"
 				class="mt-9"
+				:first="first"
 				:rows="itemsPerPage"
 				:total-records="probesCount"
 				template="PrevPageLink PageLinks NextPageLink"
@@ -169,28 +170,14 @@
 	const googleMapsLoadCallback = () => { gmapsLoaded.value = true; };
 	window.googleMapsLoadCallback = googleMapsLoadCallback;
 
-	onMounted(async () => {
-		await loadLazyData();
-	});
-
-	onMounted(async () => {
-		const probeId = route.params.id as string;
-
-		if (probeId) {
-			await loadProbeData(probeId);
-		}
-	});
-
-	watch(() => route.path, async () => {
-		const probeId = route.params.id as string;
-
-		if (probeId) {
-			await loadProbeData(probeId);
-		}
-	});
-
 	const loadLazyData = async () => {
 		loading.value = true;
+
+		if (route.query.page) {
+			first.value = (Number(route.query.page) - 1) * itemsPerPage;
+		} else {
+			first.value = 0;
+		}
 
 		try {
 			const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
@@ -236,6 +223,30 @@
 		loading.value = false;
 	};
 
+	onMounted(async () => {
+		await loadLazyData();
+	});
+
+	onMounted(async () => {
+		const probeId = route.params.id as string;
+
+		if (probeId) {
+			await loadProbeData(probeId);
+		}
+	});
+
+	watch(() => route.path, async () => {
+		const probeId = route.params.id as string;
+
+		if (probeId) {
+			await loadProbeData(probeId);
+		}
+	});
+
+	watch(() => route.query.page, async () => {
+		await loadLazyData();
+	});
+
 	const loadProbeData = async (id: string) => {
 		try {
 			const probe = await $directus.request(readItem('gp_adopted_probes', id));
@@ -247,8 +258,12 @@
 	};
 
 	const onPage = async (event: PageState) => {
-		first.value = event.first;
-		await loadLazyData();
+		await navigateTo({
+			path: '/probes',
+			query: {
+				page: event.page + 1,
+			},
+		});
 	};
 
 	// PROBE DETAILS

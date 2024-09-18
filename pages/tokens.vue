@@ -316,8 +316,6 @@
 						page: Number(route.query.page) - 1,
 					},
 				});
-
-				await loadLazyData();
 			}
 
 			await loadLazyData();

@@ -220,7 +220,7 @@
 		},
 	});
 
-	const emit = defineEmits([ 'save', 'hide' ]);
+	const emit = defineEmits([ 'save', 'hide', 'delete' ]);
 
 	// ROOT
 
@@ -332,7 +332,7 @@
 			await $directus.request(deleteItem('gp_adopted_probes', probe.value.id));
 
 			sendToast('success', 'Done', 'Probe was deleted');
-			emit('save');
+			emit('delete');
 			probeDetailsDialog.value = false;
 		} catch (e) {
 			sendErrorToast(e);

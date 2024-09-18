@@ -115,6 +115,7 @@
 			:gmaps-loaded="gmapsLoaded"
 			@save="loadLazyData"
 			@hide="onHide"
+			@delete="onDelete"
 		/>
 		<GPDialog
 			v-model:visible="startProbeDialog"
@@ -157,7 +158,7 @@
 	const first = ref(0);
 	const totalCredits = ref(0);
 	const gmapsLoaded = ref(false);
-	const prevPage = ref<string | null>(null);
+	const prevPage = ref<number | null>(null);
 
 	useHead(() => {
 		return {
@@ -174,9 +175,10 @@
 
 	const loadLazyData = async () => {
 		loading.value = true;
+		const page = route.params.id ? prevPage.value : Number(route.query.page);
 
-		if (route.query.page) {
-			first.value = (Number(route.query.page) - 1) * itemsPerPage;
+		if (page) {
+			first.value = (page - 1) * itemsPerPage;
 		} else {
 			first.value = 0;
 		}
@@ -274,12 +276,21 @@
 		const probe = probes.value.find(probe => probe.id === id);
 
 		if (probe) {
-			prevPage.value = route.query.page ? `/probes?page=${route.query.page}` : null;
+			prevPage.value = route.query.page ? Number(route.query.page) : null;
 			probeDetails.value = { ...probe };
 		}
 	};
 
 	const onHide = async () => {
-		await navigateTo(prevPage.value || '/probes');
+		await navigateTo(prevPage.value ? `/probes?page=${prevPage.value}` : '/probes');
+	};
+
+	const onDelete = async () => {
+		// Go to prev page if that is last item.
+		if (probes.value.length === 1 && prevPage.value && prevPage.value !== 1) {
+			prevPage.value -= 1;
+		}
+
+		await loadLazyData();
 	};
 </script>

@@ -86,6 +86,7 @@
 	const creditsChangesCount = ref(0);
 	const creditsChanges = ref<CreditsChange[]>([]);
 	const first = ref(0);
+	const route = useRoute();
 
 	const { data: credits } = await useLazyAsyncData('credits-stats', async () => {
 		try {
@@ -121,6 +122,12 @@
 
 	const loadLazyData = async () => {
 		loading.value = true;
+
+		if (route.query.page) {
+			first.value = (Number(route.query.page) - 1) * itemsPerPage;
+		} else {
+			first.value = 0;
+		}
 
 		try {
 			const [
@@ -163,7 +170,13 @@
 	});
 
 	const onPage = async (event: PageState) => {
-		first.value = event.first;
+		await navigateTo({
+			path: '/credits',
+			query: {
+				page: event.page + 1,
+			},
+		});
+
 		await loadLazyData();
 	};
 </script>

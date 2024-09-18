@@ -169,6 +169,10 @@
 		await loadLazyData();
 	});
 
+	watch(() => route.query.page, async () => {
+		loadLazyData();
+	});
+
 	const onPage = async (event: PageState) => {
 		await navigateTo({
 			path: '/credits',
@@ -176,7 +180,5 @@
 				page: event.page + 1,
 			},
 		});
-
-		await loadLazyData();
 	};
 </script>

@@ -247,6 +247,12 @@
 		}
 	});
 
+	watch([ () => route.query.page, () => route.params.id ], async ([ newPage, newId ], [ oldPage, oldId ]) => {
+		if (newPage !== oldPage && !oldId && !newId) {
+			loadLazyData();
+		}
+	});
+
 	const loadProbeData = async (id: string) => {
 		try {
 			const probe = await $directus.request(readItem('gp_adopted_probes', id));
@@ -264,8 +270,6 @@
 				page: event.page + 1,
 			},
 		});
-
-		await loadLazyData();
 	};
 
 	// PROBE DETAILS

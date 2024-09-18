@@ -114,6 +114,7 @@
 			:probe="probeDetails"
 			:gmaps-loaded="gmapsLoaded"
 			@save="loadLazyData"
+			@hide="onHide"
 		/>
 		<GPDialog
 			v-model:visible="startProbeDialog"
@@ -156,6 +157,7 @@
 	const first = ref(0);
 	const totalCredits = ref(0);
 	const gmapsLoaded = ref(false);
+	const prevPage = ref<string | null>(null);
 
 	useHead(() => {
 		return {
@@ -243,10 +245,6 @@
 		}
 	});
 
-	watch(() => route.query.page, async () => {
-		await loadLazyData();
-	});
-
 	const loadProbeData = async (id: string) => {
 		try {
 			const probe = await $directus.request(readItem('gp_adopted_probes', id));
@@ -264,6 +262,8 @@
 				page: event.page + 1,
 			},
 		});
+
+		await loadLazyData();
 	};
 
 	// PROBE DETAILS
@@ -274,7 +274,12 @@
 		const probe = probes.value.find(probe => probe.id === id);
 
 		if (probe) {
+			prevPage.value = route.query.page ? `/probes?page=${route.query.page}` : null;
 			probeDetails.value = { ...probe };
 		}
+	};
+
+	const onHide = async () => {
+		await navigateTo(prevPage.value || '/probes');
 	};
 </script>

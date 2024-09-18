@@ -203,11 +203,12 @@
 				page: event.page + 1,
 			},
 		});
+
+		await loadLazyData();
 	};
 
 	watch(() => route.query.page, async () => {
 		resetState();
-		await loadLazyData();
 	});
 
 	// TOKEN DETAILS
@@ -315,6 +316,8 @@
 						page: Number(route.query.page) - 1,
 					},
 				});
+
+				await loadLazyData();
 			}
 
 			await loadLazyData();

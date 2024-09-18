@@ -4,11 +4,11 @@
 		position="center"
 		header="Probe details"
 		content-class="!p-0"
-		@after-hide="navigateTo('/probes')"
+		@after-hide="emit('hide')"
 	>
 		<div class="relative border-y">
 			<div id="gp-map" class="h-44"/>
-			<div class="absolute inset-x-0 top-2 mx-6 flex flex-wrap justify-between gap-4 dark:text-bluegray-900">
+			<div class="absolute inset-x-0 top-2 mx-4 flex flex-wrap justify-between gap-3 dark:text-bluegray-900">
 				<div>
 					Status:<span class="ml-2 font-bold">{{ capitalize(probe.status.replaceAll('-', ' ')) }}</span>
 					<StatusIcon class="ml-2 text-3xs" :status="probe.status"/>
@@ -18,10 +18,8 @@
 					<nuxt-icon class="ml-2 text-green-500" name="coin"/>
 					<span class="ml-2 font-bold text-green-500">+{{ props.credits }}</span>
 				</div>
-				<div class="flex w-1/2 text-right">
-					<div class="w-1/2">Type:<span class="ml-2 font-bold">{{ probe.hardwareDevice || 'Container' }}</span></div>
-					<div class="w-1/2">Version:<span class="ml-2 font-bold">{{ probe.version }}</span></div>
-				</div>
+				<div>Type:<span class="ml-2 font-bold">{{ probe.hardwareDevice || 'Container' }}</span></div>
+				<div>Version:<span class="ml-2 font-bold">{{ probe.version }}</span></div>
 			</div>
 		</div>
 
@@ -222,7 +220,7 @@
 		},
 	});
 
-	const emit = defineEmits([ 'save' ]);
+	const emit = defineEmits([ 'save', 'hide' ]);
 
 	// ROOT
 

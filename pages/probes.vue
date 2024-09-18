@@ -61,7 +61,7 @@
 						</NuxtLink>
 					</template>
 				</Column>
-				<template v-if="!loading" #footer>
+				<template #footer>
 					<div class="flex h-14 items-center rounded-b-xl border-t bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] px-3 dark:from-dark-700 dark:to-dark-700">
 						<div class="flex items-center">
 							<span>Credits gained past month:</span>

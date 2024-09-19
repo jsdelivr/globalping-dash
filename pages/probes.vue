@@ -202,15 +202,14 @@
 						// @ts-ignore
 						date_created: { _gte: '$NOW(-1 month)' },
 					},
-				})),
+				})) as Promise<(CreditsAddition & {adopted_probe: number})[]>,
 			]);
 
-			const creditsAdditionsFromProbes = creditsAdditions as (CreditsAddition & {adopted_probe: number})[];
 			const creditsByProbeId: Record<number, number> = {};
 
 			totalCredits.value = 0;
 
-			for (const addition of creditsAdditionsFromProbes) {
+			for (const addition of creditsAdditions) {
 				const { adopted_probe: adoptedProbe, amount } = addition;
 
 				totalCredits.value += amount;
@@ -227,9 +226,29 @@
 		loading.value = false;
 	};
 
+	// PROBES LIST
+
 	onMounted(async () => {
 		await loadLazyData();
 	});
+
+	// Update list data only when navigating list to list (e.g. page 1 to page 2), not list to details or details to list.
+	watch([ () => route.query.page, () => route.params.id ], async ([ newPage, newId ], [ oldPage, oldId ]) => {
+		if (newPage !== oldPage && !oldId && !newId) {
+			loadLazyData();
+		}
+	});
+
+	const onPage = async (event: PageState) => {
+		await navigateTo({
+			path: '/probes',
+			query: {
+				page: event.page + 1,
+			},
+		});
+	};
+
+	// PROBE DETAILS
 
 	onMounted(async () => {
 		const probeId = route.params.id as string;
@@ -244,12 +263,8 @@
 
 		if (probeId) {
 			await loadProbeData(probeId);
-		}
-	});
-
-	watch([ () => route.query.page, () => route.params.id ], async ([ newPage, newId ], [ oldPage, oldId ]) => {
-		if (newPage !== oldPage && !oldId && !newId) {
-			loadLazyData();
+		} else {
+			probeDetails.value = null;
 		}
 	});
 
@@ -263,17 +278,6 @@
 		}
 	};
 
-	const onPage = async (event: PageState) => {
-		await navigateTo({
-			path: '/probes',
-			query: {
-				page: event.page + 1,
-			},
-		});
-	};
-
-	// PROBE DETAILS
-
 	const probeDetails = ref<Probe | null>(null);
 
 	const openProbeDetails = (id: string) => {
@@ -281,7 +285,7 @@
 
 		if (probe) {
 			prevPage.value = route.query.page ? Number(route.query.page) : null;
-			probeDetails.value = { ...probe };
+			probeDetails.value = probe;
 		}
 	};
 

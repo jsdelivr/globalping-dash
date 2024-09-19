@@ -227,6 +227,9 @@
 	const probeDetailsDialog = ref(true);
 
 	const probe = ref({ ...props.probe });
+	watch(() => props.probe, () => {
+		probe.value = { ...props.probe };
+	});
 
 	useHead(() => {
 		return {

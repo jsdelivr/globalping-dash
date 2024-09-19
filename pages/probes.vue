@@ -1,8 +1,8 @@
 <template>
 	<!-- TODO: P1: @MartinKolarik - review including all texts after the design update. -->
-	<div class="flex min-h-full flex-col p-6" :class="{'min-w-[1024px]': probes?.length}">
-		<div class="mb-6 flex">
-			<h1 class="col-span-2 text-2xl font-bold">Probes</h1>
+	<div class="min-h-full p-6" :class="{'min-w-[1024px]': probes?.length}">
+		<div class="mb-4 flex">
+			<h1 class="page-title">Probes</h1>
 			<Button class="ml-auto" @click="adoptProbeDialog = true">
 				<nuxt-icon class="pi" name="capture"/>
 				<span class="font-bold">Adopt a probe</span>
@@ -16,7 +16,6 @@
 				data-key="id"
 				:total-records="probesCount"
 				:loading="loading"
-				table-class="table-fixed"
 				:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"
 				:pt="{footer: '!pt-0 border-t-0'}"
 				:pt-options="{ mergeProps: true }"
@@ -24,7 +23,7 @@
 				<template #header>
 					<h3 class="px-2">List of probes</h3>
 				</template>
-				<Column body-class="!p-0 h-16">
+				<Column class="w-96" body-class="!p-0 h-16">
 					<template #header>
 						Name <i v-tooltip.top="'Private name of the probe, visible only to you'" class="pi pi-info-circle"/>
 					</template>
@@ -39,7 +38,7 @@
 						</NuxtLink>
 					</template>
 				</Column>
-				<Column header="Location" body-class="!p-0 h-16">
+				<Column header="Location" class="w-96" body-class="!p-0 h-16">
 					<template #body="slotProps">
 						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
 							<div class="px-2 py-3">
@@ -52,7 +51,7 @@
 						</NuxtLink>
 					</template>
 				</Column>
-				<Column header="Tags" class="w-5/12" body-class="!p-0 h-16">
+				<Column header="Tags" body-class="!p-0 h-16">
 					<template #body="slotProps">
 						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
 							<div class="flex h-full flex-wrap items-center">
@@ -115,29 +114,19 @@
 			:gmaps-loaded="gmapsLoaded"
 			@save="loadLazyData"
 		/>
-		<Dialog
+		<GPDialog
 			v-model:visible="startProbeDialog"
-			position="top"
-			class="min-w-[700px] max-md:min-w-[95%]"
-			modal
-			dismissable-mask
-			:draggable="false"
 			header="Start a probe"
 		>
 			<StartProbe/>
-		</Dialog>
-		<Dialog
+		</GPDialog>
+		<GPDialog
 			v-model:visible="adoptProbeDialog"
-			position="top"
-			class="min-w-[700px] max-md:min-w-[95%]"
-			modal
-			dismissable-mask
-			:draggable="false"
 			header="Adopt a probe"
 			content-class="!p-0"
 		>
 			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="loadLazyData"/>
-		</Dialog>
+		</GPDialog>
 	</div>
 </template>
 

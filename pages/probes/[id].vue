@@ -1,18 +1,14 @@
 <template>
-	<Dialog
+	<GPDialog
 		v-model:visible="probeDetailsDialog"
-		class="min-w-[700px] max-md:min-w-[95%]"
-		modal
-		dismissable-mask
-		:draggable="false"
+		position="center"
 		header="Probe details"
 		content-class="!p-0"
 		@after-hide="navigateTo('/probes')"
 	>
 		<div class="relative border-y">
 			<div id="gp-map" class="h-44"/>
-
-			<div class="absolute inset-x-0 top-2 mx-6 flex justify-between dark:text-bluegray-900">
+			<div class="absolute inset-x-0 top-2 mx-6 flex flex-wrap justify-between gap-4 dark:text-bluegray-900">
 				<div>
 					Status:<span class="ml-2 font-bold">{{ capitalize(probe.status.replaceAll('-', ' ')) }}</span>
 					<StatusIcon class="ml-2 text-3xs" :status="probe.status"/>
@@ -137,7 +133,7 @@
 					multiple
 					disabled
 					:pt="{
-						inputMultiple: 'pb-1 pr-28',
+						inputMultiple: 'pb-1 pr-28 min-h-10',
 						inputChip: 'hidden',
 						chipItem: 'mt-1'
 					}"
@@ -177,13 +173,8 @@
 				<Button label="Save" :loading="updateProbeLoading" :disabled="!isSaveEnabled" @click="updateProbe"/>
 			</div>
 		</div>
-		<Dialog
+		<GPDialog
 			v-model:visible="deleteDialog"
-			position="top"
-			class="min-w-[700px] max-md:min-w-[95%]"
-			modal
-			dismissable-mask
-			:draggable="false"
 			header="Delete probe"
 		>
 			<div class="flex items-center">
@@ -199,8 +190,8 @@
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
 				<Button label="Delete probe" severity="danger" @click="deleteProbe"/>
 			</div>
-		</Dialog>
-	</Dialog>
+		</GPDialog>
+	</GPDialog>
 </template>
 
 <script setup lang="ts">

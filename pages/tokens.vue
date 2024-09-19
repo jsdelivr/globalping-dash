@@ -1,7 +1,7 @@
 <template>
-	<div class="flex min-h-full flex-col p-6" :class="{'min-w-[640px]': tokens.length}">
+	<div class="min-h-full p-6" :class="{'min-w-[640px]': tokens.length}">
 		<div class="mb-4 flex">
-			<h1 class="col-span-2 text-2xl font-bold">Tokens</h1>
+			<h1 class="page-title">Tokens</h1>
 			<Button class="ml-auto" label="Generate new token" @click="openTokenDetails('generate')"/>
 		</div>
 		<p class="xl:w-1/2">
@@ -86,13 +86,8 @@
 				<p class="mt-4">Adopt a probe or become a sponsor to track your credit usage</p>
 			</div>
 		</div>
-		<Dialog
+		<GPDialog
 			v-model:visible="tokenDetailsDialog"
-			position="top"
-			class="min-w-[700px] max-md:min-w-[95%]"
-			modal
-			dismissable-mask
-			:draggable="false"
 			:header="tokenDetails ? 'Edit token' : 'Generate new token'"
 			content-class="!p-0"
 		>
@@ -103,14 +98,9 @@
 				@save="handleSave"
 				@regenerate="handleRegenerate"
 			/>
-		</Dialog>
-		<Dialog
+		</GPDialog>
+		<GPDialog
 			v-model:visible="deleteDialog"
-			position="top"
-			class="min-w-[700px] max-md:min-w-[95%]"
-			modal
-			dismissable-mask
-			:draggable="false"
 			header="Delete token"
 		>
 			<div class="flex items-center">
@@ -126,14 +116,9 @@
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
 				<Button label="Delete token" severity="danger" @click="deleteToken"/>
 			</div>
-		</Dialog>
-		<Dialog
+		</GPDialog>
+		<GPDialog
 			v-model:visible="regenerateDialog"
-			position="top"
-			class="min-w-[700px] max-md:min-w-[95%]"
-			modal
-			dismissable-mask
-			:draggable="false"
 			header="Regenerate token"
 		>
 			<div class="flex items-center">
@@ -149,7 +134,7 @@
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="regenerateDialog = false"/>
 				<Button label="Regenerate" @click="regenerateToken"/>
 			</div>
-		</Dialog>
+		</GPDialog>
 	</div>
 </template>
 

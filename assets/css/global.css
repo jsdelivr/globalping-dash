@@ -69,3 +69,9 @@ input[disabled], textarea[disabled], select[disabled='disabled'] {
 	opacity: 1;
 	color: var(--text-bluegray-500);
 }
+
+@layer classes {
+	.page-title {
+		@apply text-2xl font-bold
+	}
+}

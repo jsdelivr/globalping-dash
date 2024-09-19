@@ -58,12 +58,12 @@
 						</div>
 					</template>
 
-					<NuxtLink active-class="active" class="sidebar-link" to="/" @click="mobileSidebar = false"><i class="pi pi-home pl-4 pr-3 text-lg text-bluegray-400"/>Overview</NuxtLink>
-					<NuxtLink active-class="active" class="sidebar-link" to="/probes" @click="mobileSidebar = false"><nuxt-icon class="pi pl-4 pr-3 text-lg text-bluegray-400" name="probe"/>Probes</NuxtLink>
-					<NuxtLink active-class="active" class="sidebar-link" to="/credits" @click="mobileSidebar = false"><nuxt-icon class="pi pl-4 pr-3 text-lg text-bluegray-400" name="coin"/>Credits</NuxtLink>
-					<NuxtLink active-class="active" class="sidebar-link" to="/tokens" @click="mobileSidebar = false"><i class="pi pi-database pl-4 pr-3 text-lg text-bluegray-400"/>Tokens</NuxtLink>
-					<NuxtLink active-class="active" class="sidebar-link" to="/settings" @click="mobileSidebar = false"><i class="pi pi-cog pl-4 pr-3 text-lg text-bluegray-400"/>Settings</NuxtLink>
-					<button active-class="active" class="sidebar-link" @click="auth.logout"><i class="pi pi-power-off pl-4 pr-3 text-lg text-bluegray-400"/>Sign out</button>
+					<NuxtLink active-class="active" class="sidebar-link" to="/" @click="mobileSidebar = false"><i class="pi pi-home sidebar-link-icon"/>Overview</NuxtLink>
+					<NuxtLink active-class="active" class="sidebar-link" to="/probes" @click="mobileSidebar = false"><nuxt-icon class="pi sidebar-link-icon" name="probe"/>Probes</NuxtLink>
+					<NuxtLink active-class="active" class="sidebar-link" to="/credits" @click="mobileSidebar = false"><nuxt-icon class="pi sidebar-link-icon" name="coin"/>Credits</NuxtLink>
+					<NuxtLink active-class="active" class="sidebar-link" to="/tokens" @click="mobileSidebar = false"><i class="pi pi-database sidebar-link-icon"/>Tokens</NuxtLink>
+					<NuxtLink active-class="active" class="sidebar-link" to="/settings" @click="mobileSidebar = false"><i class="pi pi-cog sidebar-link-icon"/>Settings</NuxtLink>
+					<button active-class="active" class="sidebar-link" @click="auth.logout"><i class="pi pi-power-off sidebar-link-icon"/>Sign out</button>
 					<div class="flex flex-col border-t">
 						<NuxtLink class="ml-6 mt-4 text-bluegray-600 no-underline hover:underline dark:text-bluegray-100" to="https://www.jsdelivr.com/" target="_blank">
 							<i class="pi pi-external-link text-bluegray-300"/>
@@ -98,10 +98,10 @@
 		</header>
 
 		<aside class="flex flex-col border-r bg-surface-100 p-4 max-lg:hidden dark:bg-dark-700">
-			<NuxtLink active-class="active" class="sidebar-link" to="/"><i class="pi pi-home pl-4 pr-3 text-lg text-bluegray-400"/>Overview</NuxtLink>
-			<NuxtLink active-class="active" class="sidebar-link" to="/probes"><nuxt-icon class="pi pl-4 pr-3 text-lg text-bluegray-400" name="probe"/>Probes</NuxtLink>
-			<NuxtLink active-class="active" class="sidebar-link" to="/credits"><nuxt-icon class="pi pl-4 pr-3 text-lg text-bluegray-400" name="coin"/>Credits</NuxtLink>
-			<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database pl-4 pr-3 text-lg text-bluegray-400"/>Tokens</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar-link" to="/"><i class="pi pi-home sidebar-link-icon"/>Overview</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar-link" to="/probes"><nuxt-icon class="pi sidebar-link-icon" name="probe"/>Probes</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar-link" to="/credits"><nuxt-icon class="pi sidebar-link-icon" name="coin"/>Credits</NuxtLink>
+			<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database sidebar-link-icon"/>Tokens</NuxtLink>
 			<div class="mt-auto rounded-xl border bg-surface-0 p-6 dark:border-dark-400 dark:bg-dark-500">
 				<p class="mb-2 font-bold">Sponsorship</p>
 				<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
@@ -110,7 +110,7 @@
 				</NuxtLink>
 			</div>
 		</aside>
-		<div class="max-lg:overflow-x-scroll">
+		<div class="overflow-auto">
 			<slot/>
 		</div>
 	</section>
@@ -217,6 +217,10 @@
 		display: flex;
 		align-items: center;
 		box-sizing: border-box;
+	}
+
+	.sidebar-link-icon {
+		@apply pl-4 pr-3 text-lg text-bluegray-400;
 	}
 
 	.dark .sidebar-link {

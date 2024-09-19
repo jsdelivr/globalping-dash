@@ -1,9 +1,7 @@
 <template>
-	<div class="flex min-h-full flex-col p-6">
+	<div class="min-h-full p-6">
 		<div>
-			<!-- TODO: P3: this and most likely other elements should use custom classes, e.g. page-title -->
-			<!-- https://tailwindcss.com/docs/adding-custom-styles#adding-component-classes -->
-			<h1 class="col-span-2 text-2xl font-bold">Settings</h1>
+			<h1 class="page-title">Settings</h1>
 		</div>
 		<div class="mt-6 flex rounded-xl border bg-surface-0 p-6 max-sm:flex-col dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
@@ -34,7 +32,6 @@
 				<h5 class="text-lg font-bold">Interface</h5>
 			</div>
 			<div class="grow">
-				<!-- TODO: P3: can we automatically "preview" the theme when I click a button here without saving? the setting should revert when I leave the page/reload -->
 				<p class="font-bold">Theme</p>
 				<SelectButton
 					v-model="appearance"
@@ -44,6 +41,7 @@
 					aria-labelledby="basic"
 					option-label="name"
 					option-value="value"
+					@update:model-value="auth.setAppearance"
 				>
 					<template #option="slotProps">
 						<i :class="slotProps.option.icon"/>
@@ -59,20 +57,33 @@
 			<div class="grow">
 				<label for="email" class="block font-bold">Email</label>
 				<InputText id="email" v-model="email" class="mt-2 w-full"/>
-				<!-- TODO: P2: let's use a "tag-like" design here, like we have for token origins -->
-				<!-- should also resolve issues with overflows by breaking it up into several lines when there are many values -->
 				<label for="organizations" class="mt-6 block font-bold">Organizations</label>
 				<div class="relative mt-2">
+					<AutoComplete
+						id="tags"
+						v-model="user.github_organizations"
+						class="pointer-events-auto cursor-auto select-auto bg-transparent dark:bg-transparent"
+						chip-icon="hidden"
+						multiple
+						disabled
+						:pt="{
+							inputMultiple: 'pb-1 pr-48 min-h-10',
+							inputChip: 'hidden',
+							chipItem: 'mt-1'
+						}"
+						:pt-options="{ mergeProps: true }"
+						:typeahead="false"
+					/>
 					<Button
 						severity="contrast"
+						size="small"
 						text
 						label="Sync from GitHub"
 						:icon="loadingIconId === 2 ? 'pi pi-sync pi-spin' : 'pi pi-sync'"
-						class="!absolute right-8 top-[5px] h-6 bg-transparent !px-1 hover:bg-transparent"
+						class="!absolute right-8 top-2 h-6 bg-transparent !px-1 hover:bg-transparent"
 						@click="syncFromGithub(2)"
 					/>
-					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
-					<InputText id="organizations" v-model="organizationsString" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
+					<i class="pi pi-lock absolute right-3 top-3 text-bluegray-500"/>
 				</div>
 				<label for="userType" class="mt-6 block font-bold">User type</label>
 				<div class="relative mt-2">
@@ -93,14 +104,8 @@
 		<div class="mt-6 text-right">
 			<Button label="Apply settings" :loading="saveLoading" @click="save"/>
 		</div>
-		<!-- TODO: P3: we have many of these in the same style, might be worth to wrap in our own component (possibly same applies to other components). -->
-		<Dialog
+		<GPDialog
 			v-model:visible="deleteDialog"
-			position="top"
-			class="min-w-[700px] max-md:min-w-[95%]"
-			modal
-			dismissable-mask
-			:draggable="false"
 			header="Delete account"
 		>
 			<div class="flex items-center">
@@ -116,7 +121,7 @@
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
 				<Button label="Delete account" severity="danger" @click="deleteAccount"/>
 			</div>
-		</Dialog>
+		</GPDialog>
 	</div>
 </template>
 
@@ -138,7 +143,6 @@
 	const lastName = ref(user.last_name);
 	const appearance = ref(user.appearance);
 	const email = ref(user.email);
-	const organizationsString = computed(() => user.github_organizations.join(', '));
 
 	const themeOptions = [
 		{ name: 'Auto', value: null, icon: 'pi pi-cog' },
@@ -160,6 +164,8 @@
 				email: email.value,
 			}));
 
+			lastSavedAppearance = appearance.value;
+
 			await auth.refresh();
 
 			toast.add({ severity: 'success', summary: 'Saved', detail: 'All settings saved', life: 4000 });
@@ -169,6 +175,11 @@
 
 		saveLoading.value = false;
 	};
+
+	// APPEARANCE
+
+	let lastSavedAppearance = user.appearance;
+	onUnmounted(() => auth.setAppearance(lastSavedAppearance));
 
 	// SYNC WITH GITHUB
 

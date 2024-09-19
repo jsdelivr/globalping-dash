@@ -2,19 +2,19 @@
 	<div>
 		<DatePicker
 			:min-date="new Date()"
-			:model-value="value"
+			:model-value="props.value"
 			inline
 			prev-icon="pi pi-arrow-left"
 			next-icon="pi pi-arrow-right"
-			@update:model-value="(date: Date) => emit('change', date)"
+			@update:model-value="(date) => emit('change', date || null)"
 		/>
 	</div>
 </template>
 
 <script setup lang="ts">
-	defineProps({
+	const props = defineProps({
 		value: {
-			type: [ Date, null, undefined ],
+			type: Object as () => Date | null,
 			default: null,
 		},
 	});

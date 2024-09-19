@@ -23,7 +23,7 @@
 				<template #header>
 					<h3 class="px-2">List of probes</h3>
 				</template>
-				<Column body-class="!p-0 h-16">
+				<Column class="w-96" body-class="!p-0 h-16">
 					<template #header>
 						Name <i v-tooltip.top="'Private name of the probe, visible only to you'" class="pi pi-info-circle"/>
 					</template>
@@ -38,7 +38,7 @@
 						</NuxtLink>
 					</template>
 				</Column>
-				<Column header="Location" body-class="!p-0 h-16">
+				<Column header="Location" class="w-96" body-class="!p-0 h-16">
 					<template #body="slotProps">
 						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
 							<div class="px-2 py-3">

@@ -5,8 +5,7 @@ export interface PaginationOptions {
 }
 
 export const usePagination = ({ itemsPerPage }: PaginationOptions) => {
-	const page = ref(0);
-	page.value = route.query.page ? Number(route.query.page) - 1 : 0;
+	const page = ref(route.query.page ? Number(route.query.page) - 1 : 0);
 
 	return {
 		page: computed({

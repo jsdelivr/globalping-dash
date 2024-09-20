@@ -10,7 +10,7 @@ export default {
 	}),
 	message: ({ props }) => ({
 		class: [
-			'mb-4 rounded-md w-full',
+			'mt-4 first:mt-0 rounded-md w-full',
 			'border border-transparent',
 			'backdrop-blur-[10px] shadow-md',
 

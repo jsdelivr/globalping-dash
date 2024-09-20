@@ -4,7 +4,7 @@
 		position="center"
 		header="Probe details"
 		content-class="!p-0"
-		@after-hide="navigateTo('/probes')"
+		@after-hide="emit('hide')"
 	>
 		<div class="relative border-y">
 			<div class="flex flex-wrap justify-between gap-4 border-b px-6 py-2">
@@ -17,10 +17,8 @@
 					<nuxt-icon class="ml-2 text-green-500" name="coin"/>
 					<span class="ml-2 font-bold text-green-500">+{{ props.credits }}</span>
 				</div>
-				<div class="flex w-1/2 text-right">
-					<div class="w-1/2">Type:<span class="ml-2 font-bold">{{ probe.hardwareDevice || 'Container' }}</span></div>
-					<div class="w-1/2">Version:<span class="ml-2 font-bold">{{ probe.version }}</span></div>
-				</div>
+				<div>Type:<span class="ml-2 font-bold">{{ probe.hardwareDevice || 'Container' }}</span></div>
+				<div>Version:<span class="ml-2 font-bold">{{ probe.version }}</span></div>
 			</div>
 			<div id="gp-map" class="h-48"/>
 		</div>
@@ -222,13 +220,16 @@
 		},
 	});
 
-	const emit = defineEmits([ 'save' ]);
+	const emit = defineEmits([ 'save', 'hide', 'delete' ]);
 
 	// ROOT
 
 	const probeDetailsDialog = ref(true);
 
 	const probe = ref({ ...props.probe });
+	watch(() => props.probe, () => {
+		probe.value = { ...props.probe };
+	});
 
 	useHead(() => {
 		return {
@@ -334,7 +335,7 @@
 			await $directus.request(deleteItem('gp_adopted_probes', probe.value.id));
 
 			sendToast('success', 'Done', 'Probe was deleted');
-			emit('save');
+			emit('delete');
 			probeDetailsDialog.value = false;
 		} catch (e) {
 			sendErrorToast(e);

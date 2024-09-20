@@ -61,7 +61,7 @@
 						</NuxtLink>
 					</template>
 				</Column>
-				<template v-if="!loading" #footer>
+				<template #footer>
 					<div class="flex h-14 items-center rounded-b-xl border-t bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] px-3 dark:from-dark-700 dark:to-dark-700">
 						<div class="flex items-center">
 							<span>Credits gained past month:</span>
@@ -87,10 +87,11 @@
 			<Paginator
 				v-if="probes.length !== probesCount"
 				class="mt-9"
+				:first="first"
 				:rows="itemsPerPage"
 				:total-records="probesCount"
 				template="PrevPageLink PageLinks NextPageLink"
-				@page="onPage($event)"
+				@page="page = $event.page"
 			/>
 		</div>
 		<div v-else class="flex grow flex-col overflow-hidden rounded-xl border bg-surface-0 dark:bg-dark-800">
@@ -113,6 +114,8 @@
 			:probe="probeDetails"
 			:gmaps-loaded="gmapsLoaded"
 			@save="loadLazyData"
+			@hide="onHide"
+			@delete="onDelete"
 		/>
 		<GPDialog
 			v-model:visible="startProbeDialog"
@@ -132,8 +135,8 @@
 
 <script setup lang="ts">
 	import { aggregate, readItem, readItems } from '@directus/sdk';
-	import type { PageState } from 'primevue/paginator';
 	import CountryFlag from 'vue-country-flag-next';
+	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
 	import { sendErrorToast } from '~/utils/send-toast';
 
@@ -152,7 +155,7 @@
 	const probesCount = ref(0);
 	const probes = ref<Probe[]>([]);
 	const credits = ref<Record<string, number>>({});
-	const first = ref(0);
+	const { page, first } = usePagination({ itemsPerPage, active: () => !route.params.id });
 	const totalCredits = ref(0);
 	const gmapsLoaded = ref(false);
 
@@ -169,27 +172,7 @@
 	const googleMapsLoadCallback = () => { gmapsLoaded.value = true; };
 	window.googleMapsLoadCallback = googleMapsLoadCallback;
 
-	onMounted(async () => {
-		await loadLazyData();
-	});
-
-	onMounted(async () => {
-		const probeId = route.params.id as string;
-
-		if (probeId) {
-			await loadProbeData(probeId);
-		}
-	});
-
-	watch(() => route.path, async () => {
-		const probeId = route.params.id as string;
-
-		if (probeId) {
-			await loadProbeData(probeId);
-		}
-	});
-
-	const loadLazyData = async (event?: PageState) => {
+	const loadLazyData = async () => {
 		loading.value = true;
 
 		try {
@@ -197,7 +180,7 @@
 				$directus.request(readItems('gp_adopted_probes', {
 					filter: { userId: { _eq: user.id } },
 					sort: [ 'name' ],
-					offset: event?.first || first.value,
+					offset: first.value,
 					limit: itemsPerPage,
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_adopted_probes', {
@@ -211,13 +194,14 @@
 						// @ts-ignore
 						date_created: { _gte: '$NOW(-1 month)' },
 					},
-				})),
+				})) as Promise<(CreditsAddition & {adopted_probe: number})[]>,
 			]);
 
-			const creditsAdditionsFromProbes = creditsAdditions as (CreditsAddition & {adopted_probe: number})[];
 			const creditsByProbeId: Record<number, number> = {};
 
-			for (const addition of creditsAdditionsFromProbes) {
+			totalCredits.value = 0;
+
+			for (const addition of creditsAdditions) {
 				const { adopted_probe: adoptedProbe, amount } = addition;
 
 				totalCredits.value += amount;
@@ -234,6 +218,39 @@
 		loading.value = false;
 	};
 
+	// PROBES LIST
+
+	onMounted(async () => {
+		await loadLazyData();
+	});
+
+	// Update list data only when navigating list to list (e.g. page 1 to page 2), not list to details or details to list.
+	watch([ () => page.value, () => route.params.id ], async ([ newPage, newId ], [ oldPage, oldId ]) => {
+		if (newPage !== oldPage && !oldId && !newId) {
+			await loadLazyData();
+		}
+	});
+
+	// PROBE DETAILS
+
+	onMounted(async () => {
+		const probeId = route.params.id as string;
+
+		if (probeId) {
+			await loadProbeData(probeId);
+		}
+	});
+
+	watch(() => route.path, async () => {
+		const probeId = route.params.id as string;
+
+		if (probeId) {
+			await loadProbeData(probeId);
+		} else {
+			probeDetails.value = null;
+		}
+	});
+
 	const loadProbeData = async (id: string) => {
 		try {
 			const probe = await $directus.request(readItem('gp_adopted_probes', id));
@@ -244,20 +261,26 @@
 		}
 	};
 
-	const onPage = async (event: PageState) => {
-		first.value = event.first;
-		await loadLazyData(event);
-	};
-
-	// PROBE DETAILS
-
 	const probeDetails = ref<Probe | null>(null);
 
 	const openProbeDetails = (id: string) => {
 		const probe = probes.value.find(probe => probe.id === id);
 
 		if (probe) {
-			probeDetails.value = { ...probe };
+			probeDetails.value = probe;
 		}
+	};
+
+	const onHide = async () => {
+		await navigateTo(page.value ? `/probes?page=${page.value + 1}` : '/probes');
+	};
+
+	const onDelete = async () => {
+		// Go to prev page if that is last item.
+		if (probes.value.length === 1 && page.value) {
+			page.value--;
+		}
+
+		await loadLazyData();
 	};
 </script>

@@ -146,11 +146,11 @@
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
 	import CountryFlag from 'vue-country-flag-next';
+	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 	import { smoothResize } from '~/utils/smooth-resize';
 	import { validateIp } from '~/utils/validate-ip';
 
 	const { $directus } = useNuxtApp();
-	const toast = useToast();
 
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 
@@ -248,12 +248,12 @@
 
 		try {
 			await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/send-code', body: JSON.stringify({ ip: ip.value }) }));
-			toast.add({ severity: 'info', summary: 'Code was resent', detail: 'Now you need to get it and paste to the input', life: 5000 });
+			sendToast('info', 'Code was resent', 'Now you need to get it and paste to the input');
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';
 			isIpValid.value = false;
 			invalidIpMessage.value = detail;
-			toast.add({ severity: 'error', summary: 'Resend failed', detail, life: 20000 });
+			sendErrorToast(e);
 		}
 	};
 

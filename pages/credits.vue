@@ -53,7 +53,7 @@
 				:rows="itemsPerPage"
 				:total-records="creditsChangesCount"
 				template="PrevPageLink PageLinks NextPageLink"
-				@page="onPage($event)"
+				@page="page = $event.page"
 			/>
 		</div>
 		<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
@@ -67,8 +67,7 @@
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, readItems } from '@directus/sdk';
-	import type { DataTablePageEvent } from 'primevue/datatable';
-	import type { PageState } from 'primevue/paginator';
+	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
 	import { formatDateForTable } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
@@ -86,8 +85,7 @@
 	const loading = ref(false);
 	const creditsChangesCount = ref(0);
 	const creditsChanges = ref<CreditsChange[]>([]);
-	const first = ref(0);
-	const lazyParams = ref<Partial<DataTablePageEvent>>({});
+	const { page, first } = usePagination({ itemsPerPage });
 
 	const { data: credits } = await useLazyAsyncData('credits-stats', async () => {
 		try {
@@ -121,9 +119,8 @@
 	const totalAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + addition.amount, 0));
 	const totalDeductions = computed(() => credits.value.deductions.reduce((sum, deduction) => sum + deduction.amount, 0));
 
-	const loadLazyData = async (event?: PageState) => {
+	const loadLazyData = async () => {
 		loading.value = true;
-		lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
 
 		try {
 			const [
@@ -132,7 +129,7 @@
 				[{ count: deductionsCount }],
 			] = await Promise.all([
 				$directus.request<{changes: CreditsChange[]}>(customEndpoint({ method: 'GET', path: '/credits-timeline', params: {
-					offset: lazyParams.value.first,
+					offset: first.value,
 					limit: itemsPerPage,
 				} })),
 				$directus.request<[{count: number}]>(aggregate('gp_credits_additions', {
@@ -161,19 +158,11 @@
 		loading.value = false;
 	};
 
-	onMounted(() => {
-		loading.value = true;
-
-		lazyParams.value = {
-			first: 0,
-			rows: itemsPerPage,
-		};
-
-		loadLazyData();
+	onMounted(async () => {
+		await loadLazyData();
 	});
 
-	const onPage = (event: PageState) => {
-		lazyParams.value = event;
-		loadLazyData(event);
-	};
+	watch(page, async () => {
+		await loadLazyData();
+	});
 </script>

@@ -77,7 +77,7 @@
 				:rows="itemsPerPage"
 				:total-records="tokensCount"
 				template="PrevPageLink PageLinks NextPageLink"
-				@page="onPage($event)"
+				@page="page = $event.page"
 			/>
 		</div>
 		<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
@@ -140,7 +140,7 @@
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
-	import type { PageState } from 'primevue/paginator';
+	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
 	import { formatDate, getRelativeTimeString } from '~/utils/date-formatters';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
@@ -158,7 +158,7 @@
 	const loading = ref(false);
 	const tokensCount = ref(0);
 	const tokens = ref<Token[]>([]);
-	const first = ref(0);
+	const { page, first } = usePagination({ itemsPerPage });
 
 	const loadLazyData = async () => {
 		loading.value = true;
@@ -183,15 +183,16 @@
 		loading.value = false;
 	};
 
-	onMounted(() => {
-		loading.value = true;
-		loadLazyData();
+	onMounted(async () => {
+		await loadLazyData();
 	});
 
-	const onPage = (event: PageState) => {
-		first.value = event.first;
-		loadLazyData();
-	};
+	// NAVIGATION
+
+	watch(page, async () => {
+		resetState();
+		await loadLazyData();
+	});
 
 	// TOKEN DETAILS
 
@@ -217,7 +218,7 @@
 	const generatedToken = ref<{id: number, value: string} | null>(null);
 
 	const handleGenerate = async (id: number, tokenValue: string) => {
-		first.value = 0;
+		await navigateTo('/tokens');
 		await loadLazyData();
 		generatedToken.value = { id, value: tokenValue };
 		expandedRows.value = { [id]: true };
@@ -291,9 +292,8 @@
 			await $directus.request(deleteItem('gp_tokens', tokenToDelete.value!.id));
 
 			// Go to prev page if that is last item.
-			if (tokens.value.length === 1) {
-				const newFirst = first.value - itemsPerPage;
-				first.value = newFirst >= 0 ? newFirst : 0;
+			if (tokens.value.length === 1 && page.value) {
+				page.value--;
 			}
 
 			await loadLazyData();

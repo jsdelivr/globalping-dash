@@ -91,7 +91,7 @@
 				:rows="itemsPerPage"
 				:total-records="probesCount"
 				template="PrevPageLink PageLinks NextPageLink"
-				@page="onPage($event)"
+				@page="page = $event.page"
 			/>
 		</div>
 		<div v-else class="flex grow flex-col overflow-hidden rounded-xl border bg-surface-0 dark:bg-dark-800">
@@ -135,8 +135,8 @@
 
 <script setup lang="ts">
 	import { aggregate, readItem, readItems } from '@directus/sdk';
-	import type { PageState } from 'primevue/paginator';
 	import CountryFlag from 'vue-country-flag-next';
+	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
 	import { sendErrorToast } from '~/utils/send-toast';
 
@@ -155,10 +155,9 @@
 	const probesCount = ref(0);
 	const probes = ref<Probe[]>([]);
 	const credits = ref<Record<string, number>>({});
-	const first = ref(0);
+	const { page, first } = usePagination({ itemsPerPage });
 	const totalCredits = ref(0);
 	const gmapsLoaded = ref(false);
-	const prevPage = ref<number | null>(null);
 
 	useHead(() => {
 		return {
@@ -175,13 +174,6 @@
 
 	const loadLazyData = async () => {
 		loading.value = true;
-		const page = route.params.id ? prevPage.value : Number(route.query.page);
-
-		if (page) {
-			first.value = (page - 1) * itemsPerPage;
-		} else {
-			first.value = 0;
-		}
 
 		try {
 			const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
@@ -239,15 +231,6 @@
 		}
 	});
 
-	const onPage = async (event: PageState) => {
-		await navigateTo({
-			path: '/probes',
-			query: {
-				page: event.page + 1,
-			},
-		});
-	};
-
 	// PROBE DETAILS
 
 	onMounted(async () => {
@@ -284,19 +267,18 @@
 		const probe = probes.value.find(probe => probe.id === id);
 
 		if (probe) {
-			prevPage.value = route.query.page ? Number(route.query.page) : null;
 			probeDetails.value = probe;
 		}
 	};
 
 	const onHide = async () => {
-		await navigateTo(prevPage.value ? `/probes?page=${prevPage.value}` : '/probes');
+		await navigateTo(page.value ? `/probes?page=${page.value + 1}` : '/probes');
 	};
 
 	const onDelete = async () => {
 		// Go to prev page if that is last item.
-		if (probes.value.length === 1 && prevPage.value && prevPage.value !== 1) {
-			prevPage.value -= 1;
+		if (probes.value.length === 1 && page.value) {
+			page.value--;
 		}
 
 		await loadLazyData();

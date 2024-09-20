@@ -77,7 +77,7 @@
 				:rows="itemsPerPage"
 				:total-records="tokensCount"
 				template="PrevPageLink PageLinks NextPageLink"
-				@page="onPage($event)"
+				@page="page = $event.page"
 			/>
 		</div>
 		<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
@@ -140,7 +140,7 @@
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
-	import type { PageState } from 'primevue/paginator';
+	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
 	import { formatDate, getRelativeTimeString } from '~/utils/date-formatters';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
@@ -159,16 +159,10 @@
 	const loading = ref(false);
 	const tokensCount = ref(0);
 	const tokens = ref<Token[]>([]);
-	const first = ref(0);
+	const { page, first } = usePagination({ itemsPerPage });
 
 	const loadLazyData = async () => {
 		loading.value = true;
-
-		if (route.query.page) {
-			first.value = (Number(route.query.page) - 1) * itemsPerPage;
-		} else {
-			first.value = 0;
-		}
 
 		try {
 			const [ gpTokens, [{ count }] ] = await Promise.all([
@@ -196,18 +190,9 @@
 
 	// NAVIGATION
 
-	const onPage = async (event: PageState) => {
-		await navigateTo({
-			path: '/tokens',
-			query: {
-				page: event.page + 1,
-			},
-		});
-	};
-
 	watch(() => route.query.page, async () => {
 		resetState();
-		loadLazyData();
+		await loadLazyData();
 	});
 
 	// TOKEN DETAILS
@@ -308,13 +293,8 @@
 			await $directus.request(deleteItem('gp_tokens', tokenToDelete.value!.id));
 
 			// Go to prev page if that is last item.
-			if (tokens.value.length === 1 && route.query.page) {
-				await navigateTo({
-					path: '/tokens',
-					query: {
-						page: Number(route.query.page) - 1,
-					},
-				});
+			if (tokens.value.length === 1 && page.value) {
+				page.value--;
 			}
 
 			await loadLazyData();

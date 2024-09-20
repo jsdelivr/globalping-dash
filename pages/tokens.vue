@@ -152,7 +152,6 @@
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
-	const route = useRoute();
 
 	const user = auth.getUser as User;
 	const itemsPerPage = config.public.itemsPerTablePage;
@@ -190,7 +189,7 @@
 
 	// NAVIGATION
 
-	watch(() => route.query.page, async () => {
+	watch(page, async () => {
 		resetState();
 		await loadLazyData();
 	});

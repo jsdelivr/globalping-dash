@@ -1,11 +1,18 @@
 const route = useRoute();
 
 export interface PaginationOptions {
+	active?: () => boolean;
 	itemsPerPage: number;
 }
 
-export const usePagination = ({ itemsPerPage }: PaginationOptions) => {
-	const page = ref(route.query.page ? Number(route.query.page) - 1 : 0);
+export const usePagination = ({ active = () => true, itemsPerPage }: PaginationOptions) => {
+	const page = ref(0);
+
+	watch(() => route.query.page, () => {
+		if (active()) {
+			page.value = route.query.page ? Number(route.query.page) - 1 : 0;
+		}
+	}, { immediate: true });
 
 	return {
 		page: computed({

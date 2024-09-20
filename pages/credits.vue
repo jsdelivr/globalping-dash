@@ -86,7 +86,6 @@
 	const creditsChangesCount = ref(0);
 	const creditsChanges = ref<CreditsChange[]>([]);
 	const { page, first } = usePagination({ itemsPerPage });
-	const route = useRoute();
 
 	const { data: credits } = await useLazyAsyncData('credits-stats', async () => {
 		try {
@@ -163,7 +162,7 @@
 		await loadLazyData();
 	});
 
-	watch(() => route.query.page, async () => {
+	watch(page, async () => {
 		await loadLazyData();
 	});
 </script>

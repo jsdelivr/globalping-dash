@@ -155,7 +155,7 @@
 	const probesCount = ref(0);
 	const probes = ref<Probe[]>([]);
 	const credits = ref<Record<string, number>>({});
-	const { page, first } = usePagination({ itemsPerPage });
+	const { page, first } = usePagination({ itemsPerPage, active: () => !route.params.id });
 	const totalCredits = ref(0);
 	const gmapsLoaded = ref(false);
 
@@ -225,9 +225,9 @@
 	});
 
 	// Update list data only when navigating list to list (e.g. page 1 to page 2), not list to details or details to list.
-	watch([ () => route.query.page, () => route.params.id ], async ([ newPage, newId ], [ oldPage, oldId ]) => {
+	watch([ () => page.value, () => route.params.id ], async ([ newPage, newId ], [ oldPage, oldId ]) => {
 		if (newPage !== oldPage && !oldId && !newId) {
-			loadLazyData();
+			await loadLazyData();
 		}
 	});
 

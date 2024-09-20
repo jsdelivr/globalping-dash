@@ -7,8 +7,7 @@
 		@after-hide="emit('hide')"
 	>
 		<div class="relative border-y">
-			<div id="gp-map" class="h-44"/>
-			<div class="absolute inset-x-0 top-2 mx-4 flex flex-wrap justify-between gap-3 dark:text-bluegray-900">
+			<div class="flex flex-wrap justify-between gap-4 border-b px-6 py-2">
 				<div>
 					Status:<span class="ml-2 font-bold">{{ capitalize(probe.status.replaceAll('-', ' ')) }}</span>
 					<StatusIcon class="ml-2 text-3xs" :status="probe.status"/>
@@ -21,6 +20,7 @@
 				<div>Type:<span class="ml-2 font-bold">{{ probe.hardwareDevice || 'Container' }}</span></div>
 				<div>Version:<span class="ml-2 font-bold">{{ probe.version }}</span></div>
 			</div>
+			<div id="gp-map" class="h-48"/>
 		</div>
 
 		<div class="px-6 py-7 dark:text-surface-0">

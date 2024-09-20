@@ -128,14 +128,13 @@
 <script setup lang="ts">
 	import { customEndpoint, deleteUser, updateMe } from '@directus/sdk';
 	import { useAuth } from '~/store/auth';
-	import { sendErrorToast } from '~/utils/send-toast';
+	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	useHead({
 		title: 'Settings -',
 	});
 
 	const { $directus } = useNuxtApp();
-	const toast = useToast();
 	const auth = useAuth();
 	const user = auth.getUser as User;
 
@@ -168,7 +167,7 @@
 
 			await auth.refresh();
 
-			toast.add({ severity: 'success', summary: 'Saved', detail: 'All settings saved', life: 4000 });
+			sendToast('success', 'Saved', 'All settings saved');
 		} catch (e) {
 			sendErrorToast(e);
 		}
@@ -205,7 +204,7 @@
 
 			await auth.refresh();
 
-			toast.add({ severity: 'success', summary: 'Synced', detail: 'GitHub data synced', life: 4000 });
+			sendToast('success', 'Synced', 'GitHub data synced');
 		} catch (e) {
 			sendErrorToast(e);
 		}

@@ -12,12 +12,16 @@
 				<p class="text-lg font-bold">{{ credits.total.toLocaleString('en-US') }}</p>
 			</div>
 			<div class="mr-20">
-				<p>Generated past 30 days <i v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="pi pi-info-circle"/></p>
+				<p>Generated past 30 days</p>
 				<p class="text-lg font-bold">{{ totalAdditions.toLocaleString('en-US') }}</p>
 			</div>
-			<div>
+			<div class="mr-20">
 				<p>Spent past 30 days</p>
 				<p class="text-lg font-bold">{{ totalDeductions.toLocaleString('en-US') }}</p>
+			</div>
+			<div>
+				<p>Estimated to generate today <i v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="pi pi-info-circle"/></p>
+				<p class="text-lg font-bold">{{ todayAdditions.toLocaleString('en-US') }}</p>
 			</div>
 		</div>
 		<div class="mt-6">
@@ -38,10 +42,10 @@
 				<Column header="Amount" field="amount">
 					<template #body="slotProps">
 						<Tag v-if="slotProps.data.type === 'addition'" class="flex items-center !text-sm" severity="success">
-							<nuxt-icon class="mr-1 mt-0.5" name="coin"/>+{{ slotProps.data.amount || 0 }}
+							<nuxt-icon class="mr-2 mt-0.5" name="coin"/>+{{ (slotProps.data.amount || 0).toLocaleString('en-US') }}
 						</Tag>
 						<Tag v-else class="flex items-center !text-sm" severity="danger">
-							<nuxt-icon class="mr-1 mt-0.5" name="coin"/>-{{ slotProps.data.amount || 0 }}
+							<nuxt-icon class="mr-2 mt-0.5" name="coin"/>-{{ (slotProps.data.amount || 0).toLocaleString('en-US') }}
 						</Tag>
 					</template>
 				</Column>
@@ -80,6 +84,7 @@
 	const auth = useAuth();
 	const user = auth.getUser as User;
 	const { $directus } = useNuxtApp();
+	const creditsPerAdoptedProbePerDay = config.public.creditsPerAdoptedProbePerDay;
 
 	const itemsPerPage = config.public.itemsPerTablePage;
 	const loading = ref(false);
@@ -89,7 +94,7 @@
 
 	const { data: credits } = await useLazyAsyncData('credits-stats', async () => {
 		try {
-			const [ total, additions, deductions ] = await Promise.all([
+			const [ total, additions, deductions, todayOnlineProbes ] = await Promise.all([
 				$directus.request<{amount: number}[]>(readItems('gp_credits', {
 					filter: { user_id: { _eq: user.id } },
 				})),
@@ -107,17 +112,22 @@
 						date: { _gte: '$NOW(-30 day)' },
 					},
 				})),
+				$directus.request<[{count: number}]>(aggregate('gp_adopted_probes', {
+					query: { filter: { userId: { _eq: user.id }, onlineTimesToday: { _gt: 0 } } },
+					aggregate: { count: '*' },
+				})),
 			]);
 
-			return { total: total[0]?.amount || 0, additions, deductions };
+			return { total: total[0]?.amount || 0, additions, deductions, todayOnlineProbes: todayOnlineProbes[0].count || 0 };
 		} catch (e) {
 			sendErrorToast(e);
 			throw e;
 		}
-	}, { default: () => ({ total: 0, additions: [], deductions: [] }) });
+	}, { default: () => ({ total: 0, additions: [], deductions: [], todayOnlineProbes: 0 }) });
 
 	const totalAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + addition.amount, 0));
 	const totalDeductions = computed(() => credits.value.deductions.reduce((sum, deduction) => sum + deduction.amount, 0));
+	const todayAdditions = computed(() => credits.value.todayOnlineProbes * creditsPerAdoptedProbePerDay);
 
 	const loadLazyData = async () => {
 		loading.value = true;

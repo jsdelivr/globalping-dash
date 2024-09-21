@@ -38,7 +38,11 @@
 						</NuxtLink>
 					</template>
 				</Column>
-				<Column header="Location" class="w-96" body-class="!p-0 h-16">
+				<Column class="w-96" body-class="!p-0 h-16">
+					<template #header>
+						Location <i v-tooltip.top="'Current probe location. If the auto-detected value is wrong, you can adjust it in probe details.'" class="pi pi-info-circle"/>
+					</template>
+
 					<template #body="slotProps">
 						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
 							<div class="px-2 py-3">
@@ -51,7 +55,11 @@
 						</NuxtLink>
 					</template>
 				</Column>
-				<Column header="Tags" body-class="!p-0 h-16">
+				<Column body-class="!p-0 h-16">
+					<template #header>
+						Tags <i v-tooltip.top="'Public tags that can be used to target the probe in measurements.'" class="pi pi-info-circle"/>
+					</template>
+
 					<template #body="slotProps">
 						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
 							<div class="flex h-full flex-wrap items-center">
@@ -65,7 +73,7 @@
 					<div class="flex h-14 items-center rounded-b-xl border-t bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] px-3 dark:from-dark-700 dark:to-dark-700">
 						<div class="flex items-center">
 							<span>Credits gained past month:</span>
-							<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">
+							<Tag v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">
 								<nuxt-icon class="mr-1" name="coin"/>+{{ totalCredits }}
 							</Tag>
 						</div>

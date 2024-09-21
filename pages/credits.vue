@@ -12,7 +12,7 @@
 				<p class="text-lg font-bold">{{ credits.total.toLocaleString('en-US') }}</p>
 			</div>
 			<div class="mr-20">
-				<p>Generated past 30 days</p>
+				<p>Generated past 30 days <i v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="pi pi-info-circle"/></p>
 				<p class="text-lg font-bold">{{ totalAdditions.toLocaleString('en-US') }}</p>
 			</div>
 			<div>

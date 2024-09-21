@@ -151,7 +151,7 @@
 				/>
 			</div>
 			<p class="mt-2 text-xs text-bluegray-400">
-				Public tags that can be used for targeting the probe in measurements.
+				Public tags that can be used to target the probe in measurements.
 				Each tag must be prefixed by your GitHub username or organization.
 				E.g., for a user with username <code class="font-bold">jimaek</code>
 				and tag <code class="font-bold">home-1</code> the final tag would be <code class="whitespace-nowrap font-bold">u-jimaek-home-1</code>.

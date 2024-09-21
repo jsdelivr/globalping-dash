@@ -25,8 +25,10 @@
 
 	const documentStyle = getComputedStyle(document.documentElement);
 	const bluegray400 = documentStyle.getPropertyValue('--bluegray-400');
+	const bluegray700 = documentStyle.getPropertyValue('--bluegray-700');
 	const surface300 = documentStyle.getPropertyValue('--p-surface-300');
 	const primary = documentStyle.getPropertyValue('--p-primary-color');
+	const dark = document.documentElement.classList.contains('dark');
 
 	const changes = computed(() => {
 		const dayToAddition = new Map(props.additions.map((addition) => {
@@ -140,7 +142,7 @@ Spent: ${changes.value[ctx[0].dataIndex].spent.toLocaleString('en-US')}`,
 					color: bluegray400,
 				},
 				grid: {
-					color: surface300,
+					color: dark ? bluegray700 : surface300,
 				},
 				border: {
 					display: false,
@@ -153,7 +155,7 @@ Spent: ${changes.value[ctx[0].dataIndex].spent.toLocaleString('en-US')}`,
 					color: bluegray400,
 				},
 				grid: {
-					color: surface300,
+					color: dark ? bluegray700 : surface300,
 				},
 				border: {
 					display: false,

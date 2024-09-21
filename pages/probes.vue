@@ -74,7 +74,7 @@
 						<div class="flex items-center">
 							<span>Credits gained past month:</span>
 							<Tag v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">
-								<nuxt-icon class="mr-1" name="coin"/>+{{ totalCredits }}
+								<nuxt-icon class="mr-2" name="coin"/>+{{ totalCredits.toLocaleString('en-US') }}
 							</Tag>
 						</div>
 						<div class="ml-8">
@@ -187,7 +187,7 @@
 			const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
 				$directus.request(readItems('gp_adopted_probes', {
 					filter: { userId: { _eq: user.id } },
-					sort: [ 'name' ],
+					sort: [ 'status', 'name' ],
 					offset: first.value,
 					limit: itemsPerPage,
 				})),

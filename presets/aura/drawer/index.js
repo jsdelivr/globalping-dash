@@ -15,7 +15,7 @@ export default {
 			},
 
 			// Shape
-			'border-0 dark:border',
+			'border-0',
 			'shadow-lg',
 
 			// Colors

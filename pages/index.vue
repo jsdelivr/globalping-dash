@@ -60,10 +60,10 @@
 					<div class="flex max-sm:flex-wrap">
 						<div class="flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:bg-surface-50 max-sm:p-4 max-sm:dark:bg-dark-700">
 							<BigIcon name="coin" border/>
-							<div><span class="mx-2 text-3xl font-bold">{{ total }}</span>Total</div>
+							<div><span class="mx-2 text-3xl font-bold">{{ total.toLocaleString('en-US') }}</span>Total</div>
 						</div>
 						<div class="ml-auto flex items-center rounded-md border px-4 py-2 max-sm:ml-0 max-sm:mt-3">
-							<span class="p-button-label mr-2 font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500 dark:text-bluegray-400': !perDay }">+{{ perDay }}</span>
+							<span class="p-button-label mr-2 font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500 dark:text-bluegray-400': !perDay }">+{{ perDay.toLocaleString('en-US') }}</span>
 							<span>Per day</span>
 						</div>
 					</div>
@@ -154,7 +154,9 @@
 		title: 'Overview -',
 	});
 
+	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
+	const creditsPerAdoptedProbePerDay = config.public.creditsPerAdoptedProbePerDay;
 
 	// SUMMARY
 
@@ -165,6 +167,7 @@
 				sort: [ 'name' ],
 				limit: 10,
 			}));
+
 			return result;
 		} catch (e) {
 			sendErrorToast(e);
@@ -197,27 +200,10 @@
 
 	const total = computed(() => {
 		const creditsObj = credits.value?.find(({ user_id }) => user_id === user.id);
-		return creditsObj ? creditsObj.amount.toLocaleString('en-US') : 0;
+		return creditsObj ? creditsObj.amount : 0;
 	});
 
-	const { data: creditsAdditions } = await useLazyAsyncData('gp_credits_additions_last_day', () => {
-		try {
-			const result = $directus.request(readItems('gp_credits_additions', {
-				filter: {
-					github_id: { _eq: user.external_identifier || 'admin' },
-					// @ts-ignore
-					date_created: { _gte: '$NOW(-1 day)' },
-					adopted_probe: { _nnull: true },
-				},
-			}));
-			return result;
-		} catch (e) {
-			sendErrorToast(e);
-			throw e;
-		}
-	}, { default: () => [] });
-
-	const perDay = computed(() => creditsAdditions.value.reduce((sum, { amount }) => sum += amount, 0));
+	const perDay = computed(() => adoptedProbes.value.reduce((sum, { onlineTimesToday }) => sum += onlineTimesToday ? creditsPerAdoptedProbePerDay : 0, 0));
 
 	// ADOPT PROBE DIALOG
 

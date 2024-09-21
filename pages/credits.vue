@@ -20,8 +20,8 @@
 				<p class="text-lg font-bold">{{ totalDeductions.toLocaleString('en-US') }}</p>
 			</div>
 			<div>
-				<p>Estimated to generate today <i v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="pi pi-info-circle"/></p>
-				<p class="text-lg font-bold">{{ todayAdditions.toLocaleString('en-US') }}</p>
+				<p>Estimated to generate per day <i v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="pi pi-info-circle"/></p>
+				<p class="text-lg font-bold">{{ dailyAdditions.toLocaleString('en-US') }}</p>
 			</div>
 		</div>
 		<div class="mt-6">
@@ -127,7 +127,7 @@
 
 	const totalAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + addition.amount, 0));
 	const totalDeductions = computed(() => credits.value.deductions.reduce((sum, deduction) => sum + deduction.amount, 0));
-	const todayAdditions = computed(() => credits.value.todayOnlineProbes * creditsPerAdoptedProbePerDay);
+	const dailyAdditions = computed(() => credits.value.todayOnlineProbes * creditsPerAdoptedProbePerDay);
 
 	const loadLazyData = async () => {
 		loading.value = true;

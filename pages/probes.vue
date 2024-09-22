@@ -144,6 +144,7 @@
 <script setup lang="ts">
 	import { aggregate, readItem, readItems } from '@directus/sdk';
 	import CountryFlag from 'vue-country-flag-next';
+	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
 	import { sendErrorToast } from '~/utils/send-toast';
@@ -170,15 +171,10 @@
 	useHead(() => {
 		return {
 			title: 'Probes -',
-			script: [{
-				src: `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsKey}&loading=async&callback=googleMapsLoadCallback`,
-				async: true,
-			}],
 		};
 	});
 
-	const googleMapsLoadCallback = () => { gmapsLoaded.value = true; };
-	window.googleMapsLoadCallback = googleMapsLoadCallback;
+	useGoogleMaps(() => { gmapsLoaded.value = true; });
 
 	const loadLazyData = async () => {
 		loading.value = true;

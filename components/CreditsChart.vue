@@ -130,10 +130,10 @@ Spent: ${changes.value[ctx[0].dataIndex].spent.toLocaleString('en-US')}`,
 				},
 				bodyFont: {
 					weight: 400,
-					size: 12,
+					size: 13,
 				},
 				padding: 10,
-				backgroundColor: '#4b5563',
+				backgroundColor: bluegray700,
 			},
 		},
 		scales: {

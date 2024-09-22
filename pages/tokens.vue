@@ -10,7 +10,7 @@
 		</p>
 		<div v-if="tokens.length || loading" class="mt-6">
 			<DataTable
-				v-model:expandedRows="expandedRows"
+				v-model:expanded-rows="expandedRows"
 				:value="tokens"
 				lazy
 				:first="first"

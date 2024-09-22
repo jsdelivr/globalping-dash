@@ -166,12 +166,15 @@
 		try {
 			const [ gpTokens, [{ count }] ] = await Promise.all([
 				$directus.request(readItems('gp_tokens', {
-					filter: { user_created: { _eq: user.id } },
+					filter: { user_created: { _eq: user.id }, app_id: { _null: true } },
 					offset: first.value,
 					limit: itemsPerPage,
 					sort: '-date_created',
 				})),
-				$directus.request<[{count: number}]>(aggregate('gp_tokens', { aggregate: { count: '*' } })),
+				$directus.request<[{count: number}]>(aggregate('gp_tokens', {
+					query: { filter: { user_created: { _eq: user.id }, app_id: { _null: true } } },
+					aggregate: { count: '*' },
+				})),
 			]);
 
 			tokens.value = gpTokens;

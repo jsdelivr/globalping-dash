@@ -8,6 +8,9 @@ patchedDependencies:
   '@primevue/nuxt-module@4.0.7':
     hash: wiemqw53ii2cuxy56mkzosavte
     path: patches/@primevue__nuxt-module@4.0.4.patch
+  primevue@4.0.7:
+    hash: shuleqbvqj4r4pzha77j5trnzq
+    path: patches/primevue@4.0.7.patch
 
 importers:
 
@@ -54,7 +57,7 @@ importers:
         version: 7.0.0
       primevue:
         specifier: ^4.0.7
-        version: 4.0.7(vue@3.5.8(typescript@5.5.4))
+        version: 4.0.7(patch_hash=shuleqbvqj4r4pzha77j5trnzq)(vue@3.5.8(typescript@5.5.4))
       tailwindcss:
         specifier: ^3.4.12
         version: 3.4.12
@@ -6102,7 +6105,7 @@ snapshots:
       '@primevue/auto-import-resolver': 4.0.7
       '@primevue/metadata': 4.0.7
       pathe: 1.1.2
-      primevue: 4.0.7(vue@3.5.8(typescript@5.5.4))
+      primevue: 4.0.7(patch_hash=shuleqbvqj4r4pzha77j5trnzq)(vue@3.5.8(typescript@5.5.4))
       unplugin-vue-components: 0.27.0(@babel/parser@7.25.6)(@nuxt/kit@3.13.2(magicast@0.3.5)(rollup@4.22.4)(webpack-sources@3.2.3))(rollup@4.22.4)(vue@3.5.8(typescript@5.5.4))(webpack-sources@3.2.3)
     transitivePeerDependencies:
       - '@babel/parser'
@@ -9531,7 +9534,7 @@ snapshots:
 
   primeicons@7.0.0: {}
 
-  primevue@4.0.7(vue@3.5.8(typescript@5.5.4)):
+  primevue@4.0.7(patch_hash=shuleqbvqj4r4pzha77j5trnzq)(vue@3.5.8(typescript@5.5.4)):
     dependencies:
       '@primeuix/styled': 0.0.5
       '@primeuix/utils': 0.0.5

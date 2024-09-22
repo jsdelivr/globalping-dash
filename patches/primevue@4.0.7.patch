@@ -1,0 +1,50 @@
+diff --git a/tooltip/index.mjs b/tooltip/index.mjs
+index b5f50d9605456e01ce14fdeadd80054c421d67b2..182f9cd6f0c5d142f21a78178db41748e428a103 100644
+--- a/tooltip/index.mjs
++++ b/tooltip/index.mjs
+@@ -110,9 +110,11 @@ var Tooltip = BaseTooltip.extend('tooltip', {
+         el.$_mouseenterevent = function (event) {
+           return _this.onMouseEnter(event, options);
+         };
++        el.$_tleave = this.onMouseLeave.bind(this);
++        el.$_tclick = (e) => this.onClick(e);
+         el.addEventListener('mouseenter', el.$_mouseenterevent);
+-        el.addEventListener('mouseleave', this.onMouseLeave.bind(this));
+-        el.addEventListener('click', this.onClick.bind(this));
++        el.addEventListener('mouseleave', el.$_tleave);
++        el.addEventListener('click', el.$_tclick);
+       }
+       el.addEventListener('keydown', this.onKeydown.bind(this));
+     },
+@@ -125,8 +127,8 @@ var Tooltip = BaseTooltip.extend('tooltip', {
+       } else {
+         el.removeEventListener('mouseenter', el.$_mouseenterevent);
+         el.$_mouseenterevent = null;
+-        el.removeEventListener('mouseleave', this.onMouseLeave.bind(this));
+-        el.removeEventListener('click', this.onClick.bind(this));
++        el.removeEventListener('mouseleave', el.$_tleave);
++        el.removeEventListener('click', el.$_tclick);
+       }
+       el.removeEventListener('keydown', this.onKeydown.bind(this));
+     },
+@@ -173,7 +175,7 @@ var Tooltip = BaseTooltip.extend('tooltip', {
+     onClick: function onClick(event) {
+       var el = event.currentTarget;
+       var hideDelay = el.$_ptooltipHideDelay;
+-      this.hide(el, hideDelay);
++      this.getTooltipElement(el) && this.hide(el, hideDelay);
+     },
+     onKeydown: function onKeydown(event) {
+       var el = event.currentTarget;
+@@ -355,7 +357,7 @@ var Tooltip = BaseTooltip.extend('tooltip', {
+       this.preAlign(el, 'top');
+       var tooltipElement = this.getTooltipElement(el);
+       var hostOffset = this.getHostOffset(el);
+-      var left = hostOffset.left + (getOuterWidth(el) - getOuterWidth(tooltipElement)) / 2;
++      var left = Math.max(hostOffset.left + (getOuterWidth(el) - getOuterWidth(tooltipElement)) / 2, 0);
+       var top = hostOffset.top - getOuterHeight(tooltipElement);
+       tooltipElement.style.left = left + 'px';
+       tooltipElement.style.top = top + 'px';
+diff --git a/tooltip/index.mjs.map b/tooltip/index.mjs.map
+deleted file mode 100644
+index ccbc21d64ef2acb77675ba64786fa8385e23333b..0000000000000000000000000000000000000000

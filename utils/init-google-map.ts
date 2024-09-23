@@ -9,7 +9,6 @@ const DEFAULT_MARKER_COLOR = '#17d4a7';
 
 const INITIAL_MAP_STYLES = mapStyles;
 const MODERATE_MAP_STYLES = [
-	...INITIAL_MAP_STYLES,
 	{
 		elementType: 'labels.text.stroke',
 		stylers: [{ visibility: 'on' }],
@@ -23,26 +22,32 @@ const MODERATE_MAP_STYLES = [
 	},
 ];
 const DETAILED_MAP_STYLES = [
-	...MODERATE_MAP_STYLES,
 	{
 		featureType: 'road',
 		stylers: [{ visibility: 'on' }],
 	},
 ];
-const INITIAL_MAP_STYLES_DARK = [ ...INITIAL_MAP_STYLES, ...darkMapStyles ];
-const MODERATE_MAP_STYLES_DARK = [ ...MODERATE_MAP_STYLES, ...darkMapStyles ];
-const DETAILED_MAP_STYLES_DARK = [ ...DETAILED_MAP_STYLES, ...darkMapStyles ];
+const INITIAL_MAP_STYLES_DARK = darkMapStyles;
+const MODERATE_MAP_STYLES_DARK = [{
+	elementType: 'labels.text.stroke',
+	stylers: [
+		{ visibility: 'on' },
+		{ color: '#131728' },
+	],
+}];
 
 const stylesByTheme = {
 	light: {
+		background: '#ffffff',
 		initial: INITIAL_MAP_STYLES,
-		moderate: MODERATE_MAP_STYLES,
-		detailed: DETAILED_MAP_STYLES,
+		moderate: [ ...INITIAL_MAP_STYLES, ...MODERATE_MAP_STYLES ],
+		detailed: [ ...INITIAL_MAP_STYLES, ...MODERATE_MAP_STYLES, ...DETAILED_MAP_STYLES ],
 	},
 	dark: {
-		initial: INITIAL_MAP_STYLES_DARK,
-		moderate: MODERATE_MAP_STYLES_DARK,
-		detailed: DETAILED_MAP_STYLES_DARK,
+		background: '#131728',
+		initial: [ ...INITIAL_MAP_STYLES, ...INITIAL_MAP_STYLES_DARK ],
+		moderate: [ ...INITIAL_MAP_STYLES, ...MODERATE_MAP_STYLES, ...INITIAL_MAP_STYLES_DARK, ...MODERATE_MAP_STYLES_DARK ],
+		detailed: [ ...INITIAL_MAP_STYLES, ...MODERATE_MAP_STYLES, ...DETAILED_MAP_STYLES, ...INITIAL_MAP_STYLES_DARK, ...MODERATE_MAP_STYLES_DARK ],
 	},
 };
 
@@ -64,7 +69,7 @@ export const initGoogleMap = async (probe: Probe) => {
 	const style = stylesByTheme[auth.theme];
 
 	map = new Map(element, {
-		backgroundColor: '#fafafa',
+		backgroundColor: style.background,
 		styles: style.initial,
 		zoom: MAP_ZOOM_REG,
 		center: { lat: probe.latitude, lng: probe.longitude },

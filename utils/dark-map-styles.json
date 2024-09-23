@@ -4,7 +4,7 @@
 		"elementType": "geometry",
 		"stylers": [
 			{
-				"color": "#ff0000"
+				"color": "#131728"
 			},
 			{
 				"lightness": 0
@@ -16,7 +16,7 @@
 		"elementType": "geometry",
 		"stylers": [
 			{
-				"color": "#00ff00"
+				"color": "#2d3c59"
 			},
 			{
 				"lightness": 0
@@ -28,7 +28,7 @@
 		"elementType": "geometry.stroke",
 		"stylers": [
 			{
-				"color": "#0000ff"
+				"color": "#17233a"
 			},
 			{
 				"lightness": 0

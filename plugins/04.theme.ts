@@ -9,6 +9,7 @@ export default defineNuxtPlugin(() => {
 		const systemAppearance = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 		const appearance = userAppearance.value ?? systemAppearance;
 		document.documentElement.className = appearance;
+		auth.setTheme(appearance);
 	};
 
 	updateAppearance();

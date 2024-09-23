@@ -1,0 +1,41 @@
+[
+	{
+		"featureType": "water",
+		"elementType": "geometry",
+		"stylers": [
+			{
+				"color": "#ff0000"
+			},
+			{
+				"lightness": 0
+			}
+		]
+	},
+	{
+		"featureType": "landscape",
+		"elementType": "geometry",
+		"stylers": [
+			{
+				"color": "#00ff00"
+			},
+			{
+				"lightness": 0
+			}
+		]
+	},
+	{
+		"featureType": "administrative",
+		"elementType": "geometry.stroke",
+		"stylers": [
+			{
+				"color": "#0000ff"
+			},
+			{
+				"lightness": 0
+			},
+			{
+				"weight": 1.2
+			}
+		]
+	}
+]

@@ -1,10 +1,13 @@
+import darkMapStyles from './dark-map-styles.json';
 import mapStyles from './map-styles.json';
+import { useAuth } from '~/store/auth.js';
 
-const INITIAL_MAP_STYLES = mapStyles;
 const MAP_MIN_ZOOM = 1;
 const MAP_MAX_ZOOM = 22;
 const MAP_ZOOM_REG = 3.74;
 const DEFAULT_MARKER_COLOR = '#17d4a7';
+
+const INITIAL_MAP_STYLES = mapStyles;
 const MODERATE_MAP_STYLES = [
 	...INITIAL_MAP_STYLES,
 	{
@@ -26,6 +29,22 @@ const DETAILED_MAP_STYLES = [
 		stylers: [{ visibility: 'on' }],
 	},
 ];
+const INITIAL_MAP_STYLES_DARK = [ ...INITIAL_MAP_STYLES, ...darkMapStyles ];
+const MODERATE_MAP_STYLES_DARK = [ ...MODERATE_MAP_STYLES, ...darkMapStyles ];
+const DETAILED_MAP_STYLES_DARK = [ ...DETAILED_MAP_STYLES, ...darkMapStyles ];
+
+const stylesByTheme = {
+	light: {
+		initial: INITIAL_MAP_STYLES,
+		moderate: MODERATE_MAP_STYLES,
+		detailed: DETAILED_MAP_STYLES,
+	},
+	dark: {
+		initial: INITIAL_MAP_STYLES_DARK,
+		moderate: MODERATE_MAP_STYLES_DARK,
+		detailed: DETAILED_MAP_STYLES_DARK,
+	},
+};
 
 let map: google.maps.Map, marker: google.maps.Marker, infoWindow: google.maps.InfoWindow;
 
@@ -41,9 +60,12 @@ export const initGoogleMap = async (probe: Probe) => {
 		return;
 	}
 
+	const auth = useAuth();
+	const style = stylesByTheme[auth.theme];
+
 	map = new Map(element, {
 		backgroundColor: '#fafafa',
-		styles: INITIAL_MAP_STYLES,
+		styles: style.initial,
 		zoom: MAP_ZOOM_REG,
 		center: { lat: probe.latitude, lng: probe.longitude },
 		mapTypeId: 'roadmap',
@@ -60,18 +82,26 @@ export const initGoogleMap = async (probe: Probe) => {
 
 	map.addListener('zoom_changed', () => {
 		infoWindow && infoWindow.close();
-
-		const currZoom = map.getZoom();
-
-		// handle map detalization on zoom
-		if (currZoom && currZoom >= 14) {
-			map.setOptions({ styles: DETAILED_MAP_STYLES });
-		} else if (currZoom && currZoom >= 5) {
-			map.setOptions({ styles: MODERATE_MAP_STYLES });
-		} else {
-			map.setOptions({ styles: INITIAL_MAP_STYLES });
-		}
+		updateStyles(map, auth.theme);
 	});
+
+	const removeWatcher = auth.$subscribe(() => updateStyles(map, auth.theme));
+
+	return removeWatcher;
+};
+
+const updateStyles = (map: google.maps.Map, theme: 'light' | 'dark') => {
+	const style = stylesByTheme[theme];
+	const currZoom = map.getZoom();
+
+	// handle map detalization on zoom
+	if (currZoom && currZoom >= 14) {
+		map.setOptions({ styles: style.detailed });
+	} else if (currZoom && currZoom >= 5) {
+		map.setOptions({ styles: style.moderate });
+	} else {
+		map.setOptions({ styles: style.initial });
+	}
 };
 
 function createMapMarker (probe: Probe) {

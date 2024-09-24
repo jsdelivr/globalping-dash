@@ -4,7 +4,6 @@ import { defineStore } from 'pinia';
 interface AuthState {
 	isLoggedIn: boolean,
 	expiresAt: number,
-	theme: 'light' | 'dark',
 	user: {
 		id: string,
 		first_name: string | null,
@@ -23,7 +22,6 @@ export const useAuth = defineStore('auth', {
 	state: (): AuthState => ({
 		isLoggedIn: false,
 		expiresAt: 0,
-		theme: 'light',
 		user: {
 			id: '',
 			first_name: '',
@@ -39,7 +37,6 @@ export const useAuth = defineStore('auth', {
 	}),
 
 	getters: {
-		getExpiresAt: state => state.expiresAt,
 		getUser: state => state.user,
 	},
 
@@ -82,9 +79,6 @@ export const useAuth = defineStore('auth', {
 		},
 		setAppearance (appearance: AuthState['user']['appearance']) {
 			this.user.appearance = appearance;
-		},
-		setTheme (theme: AuthState['theme']) {
-			this.theme = theme;
 		},
 	},
 });

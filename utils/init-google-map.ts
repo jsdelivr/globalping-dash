@@ -1,6 +1,6 @@
 import darkMapStyles from './dark-map-styles.json';
 import mapStyles from './map-styles.json';
-import { useAuth } from '~/store/auth.js';
+import { useAppearance } from '~/store/appearance.js';
 
 const MAP_MIN_ZOOM = 1;
 const MAP_MAX_ZOOM = 22;
@@ -65,8 +65,8 @@ export const initGoogleMap = async (probe: Probe) => {
 		return;
 	}
 
-	const auth = useAuth();
-	const style = stylesByTheme[auth.theme];
+	const appearance = useAppearance();
+	const style = stylesByTheme[appearance.theme];
 
 	map = new Map(element, {
 		backgroundColor: style.background,
@@ -87,10 +87,10 @@ export const initGoogleMap = async (probe: Probe) => {
 
 	map.addListener('zoom_changed', () => {
 		infoWindow && infoWindow.close();
-		updateStyles(map, auth.theme);
+		updateStyles(map, appearance.theme);
 	});
 
-	const removeWatcher = auth.$subscribe(() => updateStyles(map, auth.theme));
+	const removeWatcher = appearance.$subscribe(() => updateStyles(map, appearance.theme));
 
 	return removeWatcher;
 };

@@ -37,9 +37,7 @@ export const useAuth = defineStore('auth', {
 	}),
 
 	getters: {
-		getExpiresAt: state => state.expiresAt,
 		getUser: state => state.user,
-		getGithubUsername: state => state.user.github_username,
 	},
 
 	actions: {

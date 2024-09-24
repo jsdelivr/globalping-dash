@@ -1,12 +1,14 @@
+import darkMapStyles from './dark-map-styles.json';
 import mapStyles from './map-styles.json';
+import { useAppearance } from '~/store/appearance.js';
 
-const INITIAL_MAP_STYLES = mapStyles;
 const MAP_MIN_ZOOM = 1;
 const MAP_MAX_ZOOM = 22;
 const MAP_ZOOM_REG = 3.74;
 const DEFAULT_MARKER_COLOR = '#17d4a7';
+
+const INITIAL_MAP_STYLES = mapStyles;
 const MODERATE_MAP_STYLES = [
-	...INITIAL_MAP_STYLES,
 	{
 		elementType: 'labels.text.stroke',
 		stylers: [{ visibility: 'on' }],
@@ -20,12 +22,34 @@ const MODERATE_MAP_STYLES = [
 	},
 ];
 const DETAILED_MAP_STYLES = [
-	...MODERATE_MAP_STYLES,
 	{
 		featureType: 'road',
 		stylers: [{ visibility: 'on' }],
 	},
 ];
+const INITIAL_MAP_STYLES_DARK = darkMapStyles;
+const MODERATE_MAP_STYLES_DARK = [{
+	elementType: 'labels.text.stroke',
+	stylers: [
+		{ visibility: 'on' },
+		{ color: '#131728' },
+	],
+}];
+
+const stylesByTheme = {
+	light: {
+		background: '#ffffff',
+		initial: INITIAL_MAP_STYLES,
+		moderate: [ ...INITIAL_MAP_STYLES, ...MODERATE_MAP_STYLES ],
+		detailed: [ ...INITIAL_MAP_STYLES, ...MODERATE_MAP_STYLES, ...DETAILED_MAP_STYLES ],
+	},
+	dark: {
+		background: '#131728',
+		initial: [ ...INITIAL_MAP_STYLES, ...INITIAL_MAP_STYLES_DARK ],
+		moderate: [ ...INITIAL_MAP_STYLES, ...MODERATE_MAP_STYLES, ...INITIAL_MAP_STYLES_DARK, ...MODERATE_MAP_STYLES_DARK ],
+		detailed: [ ...INITIAL_MAP_STYLES, ...MODERATE_MAP_STYLES, ...DETAILED_MAP_STYLES, ...INITIAL_MAP_STYLES_DARK, ...MODERATE_MAP_STYLES_DARK ],
+	},
+};
 
 let map: google.maps.Map, marker: google.maps.Marker, infoWindow: google.maps.InfoWindow;
 
@@ -41,9 +65,12 @@ export const initGoogleMap = async (probe: Probe) => {
 		return;
 	}
 
+	const appearance = useAppearance();
+	const style = stylesByTheme[appearance.theme];
+
 	map = new Map(element, {
-		backgroundColor: '#fafafa',
-		styles: INITIAL_MAP_STYLES,
+		backgroundColor: style.background,
+		styles: style.initial,
 		zoom: MAP_ZOOM_REG,
 		center: { lat: probe.latitude, lng: probe.longitude },
 		mapTypeId: 'roadmap',
@@ -60,18 +87,26 @@ export const initGoogleMap = async (probe: Probe) => {
 
 	map.addListener('zoom_changed', () => {
 		infoWindow && infoWindow.close();
-
-		const currZoom = map.getZoom();
-
-		// handle map detalization on zoom
-		if (currZoom && currZoom >= 14) {
-			map.setOptions({ styles: DETAILED_MAP_STYLES });
-		} else if (currZoom && currZoom >= 5) {
-			map.setOptions({ styles: MODERATE_MAP_STYLES });
-		} else {
-			map.setOptions({ styles: INITIAL_MAP_STYLES });
-		}
+		updateStyles(map, appearance.theme);
 	});
+
+	const removeWatcher = appearance.$subscribe(() => updateStyles(map, appearance.theme));
+
+	return removeWatcher;
+};
+
+const updateStyles = (map: google.maps.Map, theme: 'light' | 'dark') => {
+	const style = stylesByTheme[theme];
+	const currZoom = map.getZoom();
+
+	// handle map detalization on zoom
+	if (currZoom && currZoom >= 14) {
+		map.setOptions({ styles: style.detailed });
+	} else if (currZoom && currZoom >= 5) {
+		map.setOptions({ styles: style.moderate });
+	} else {
+		map.setOptions({ styles: style.initial });
+	}
 };
 
 function createMapMarker (probe: Probe) {

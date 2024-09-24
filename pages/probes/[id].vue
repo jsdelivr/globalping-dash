@@ -222,6 +222,9 @@
 
 	const emit = defineEmits([ 'save', 'hide', 'delete' ]);
 
+	const auth = useAuth();
+	const user = auth.getUser as User;
+
 	// ROOT
 
 	const probeDetailsDialog = ref(true);
@@ -239,18 +242,22 @@
 
 	// GOOGLE MAP
 
-	watch(() => props.gmapsLoaded, () => {
-		initGoogleMap(probe.value);
+	let removeWatcher: (() => void) | undefined;
+	watch(() => props.gmapsLoaded, async () => {
+		removeWatcher = await initGoogleMap(probe.value);
 	});
 
-	onMounted(() => {
-		props.gmapsLoaded && initGoogleMap(probe.value);
+	onMounted(async () => {
+		if (props.gmapsLoaded) {
+			removeWatcher = await initGoogleMap(probe.value);
+		}
+	});
+
+	onUnmounted(() => {
+		removeWatcher && removeWatcher();
 	});
 
 	// TAGS
-
-	const auth = useAuth();
-	const user = auth.getUser as User;
 
 	const isEditingTags = ref<boolean>(false);
 	const tagStrings = computed(() => probe.value.tags.map(({ prefix, value }) => `u-${prefix}-${value}`));

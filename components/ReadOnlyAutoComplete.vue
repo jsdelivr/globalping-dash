@@ -18,7 +18,10 @@
 
 	defineProps({
 		pt: {
-			type: Object as PropType<Record<string, unknown>>,
+			type: Object as PropType<{
+				inputMultiple?: Record<string, unknown>,
+				[field: string]: unknown
+			}>,
 			default: () => ({}),
 		},
 	});

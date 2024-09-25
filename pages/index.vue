@@ -95,7 +95,7 @@
 			<AsyncBlock :status="statusProbes">
 				<div class="p-6">
 					<div v-if="adoptedProbes.length" class="probes-wrapper flex overflow-hidden max-sm:flex-col">
-						<div v-for="probe in adoptedProbes" :key="probe.id" class="probe box-content min-w-60 py-2">
+						<div v-for="probe in adoptedProbes.slice(0, 10)" :key="probe.id" class="probe box-content min-w-60 py-2">
 							<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
 								<BigIcon class="col-span-1 row-span-2" :name="probe.hardwareDevice ? 'gp' : 'docker'" border :status="probe.status"/>
 								<div

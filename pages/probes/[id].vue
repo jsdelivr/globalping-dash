@@ -82,7 +82,30 @@
 				City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
 			</p>
 
-			<label for="tags" class="mt-4 inline-block text-xs">Tags</label>
+			<label for="systemTags" class="mt-4 inline-block text-xs">System tags</label>
+			<div class="relative mt-1">
+				<i class="pi pi-lock absolute right-3 top-[13px] text-bluegray-500"/>
+				<AutoComplete
+					id="systemTags"
+					v-model="probe.systemTags"
+					class="pointer-events-auto cursor-auto select-auto bg-transparent dark:bg-transparent"
+					chip-icon="hidden"
+					multiple
+					disabled
+					:pt="{
+						inputMultiple: 'pb-1 pr-10 min-h-10',
+						inputChip: 'hidden',
+						chipItem: 'mt-1'
+					}"
+					:pt-options="{ mergeProps: true }"
+					:typeahead="false"
+				/>
+			</div>
+			<p class="mt-2 text-xs text-bluegray-400">
+				Public tags that can be used to target the probe in measurements.
+			</p>
+
+			<label for="tags" class="mt-4 inline-block text-xs">User tags</label>
 			<div v-if="isEditingTags" class="mt-1">
 				<div>
 					<div class="flex text-xs">
@@ -126,12 +149,12 @@
 				<AutoComplete
 					id="tags"
 					v-model="tagStrings"
-					class="pointer-events-auto cursor-auto select-auto bg-transparent dark:bg-transparent "
+					class="pointer-events-auto cursor-auto select-auto bg-transparent dark:bg-transparent"
 					chip-icon="hidden"
 					multiple
 					disabled
 					:pt="{
-						inputMultiple: 'pb-1 pr-28 min-h-10',
+						inputMultiple: 'pb-1 pr-24 min-h-10',
 						inputChip: 'hidden',
 						chipItem: 'mt-1'
 					}"
@@ -139,19 +162,19 @@
 					:typeahead="false"
 				/>
 				<Button
-					label="Edit tags"
+					label="Edit"
 					icon="pi pi-pencil"
 					icon-pos="right"
 					class="!absolute right-1.5 top-1.5 bg-transparent hover:bg-transparent"
 					severity="contrast"
 					text
-					aria-label="Edit tags"
+					aria-label="Edit"
 					size="small"
 					@click="editTags"
 				/>
 			</div>
 			<p class="mt-2 text-xs text-bluegray-400">
-				Public tags that can be used to target the probe in measurements.
+				Public user-defined tags that can be used to target the probe in measurements.
 				Each tag must be prefixed by your GitHub username or organization.
 				E.g., for a user with username <code class="font-bold">jimaek</code>
 				and tag <code class="font-bold">home-1</code> the final tag would be <code class="whitespace-nowrap font-bold">u-jimaek-home-1</code>.

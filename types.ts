@@ -67,6 +67,7 @@ declare global {
         value: string;
         prefix: string;
       }[],
+    systemTags: string[],
     userId: string;
     uuid: string;
     version: string;

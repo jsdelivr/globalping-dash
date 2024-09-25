@@ -62,9 +62,9 @@
 
 					<template #body="slotProps">
 						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
-							<div class="flex h-full flex-wrap items-center">
-								<Tag v-for="tag in slotProps.data.tags.slice(0, 50)" :key="tag" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${tag.prefix}-${tag.value}`"/>
-								<Tag v-if="slotProps.data.tags.length > 5" key="other" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`+${slotProps.data.tags.length - 5}`"/>
+							<div v-for="{ id, tagsToShow, remainingTagsNumber } in [getAllTags(slotProps.data)]" :key="id" class="flex h-full flex-wrap items-center">
+								<Tag v-for="tag in tagsToShow" :key="tag" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="tag"/>
+								<Tag v-if="remainingTagsNumber" key="other" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`+${remainingTagsNumber}`"/>
 							</div>
 						</NuxtLink>
 					</template>
@@ -234,6 +234,16 @@
 			await loadLazyData();
 		}
 	});
+
+	const getAllTags = (probe: Probe) => {
+		const NUMBER_OF_TAGS_TO_SHOW = 5;
+		const systemTags = probe.systemTags;
+		const userTags = probe.tags.map(({ prefix, value }) => `u-${prefix}-${value}`);
+		const allTags = systemTags.concat(userTags);
+		const tagsToShow = allTags.slice(0, NUMBER_OF_TAGS_TO_SHOW);
+		const remainingTagsNumber = allTags.length - NUMBER_OF_TAGS_TO_SHOW;
+		return { id: probe.id, tagsToShow, remainingTagsNumber: remainingTagsNumber > 0 ? remainingTagsNumber : 0 };
+	};
 
 	// PROBE DETAILS
 

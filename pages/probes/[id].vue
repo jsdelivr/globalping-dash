@@ -52,14 +52,9 @@
 				<label for="alternative-ips" class="mt-4 inline-block text-xs">Alternative IPs</label>
 				<div class="relative mt-1">
 					<i class="pi pi-lock absolute right-3 top-[13px] text-bluegray-500"/>
-					<AutoComplete
+					<ReadOnlyAutoComplete
 						id="alternative-ips"
 						v-model="probe.altIps"
-						class="pointer-events-auto cursor-auto select-auto bg-transparent dark:bg-transparent"
-						chip-icon="hidden"
-						multiple
-						disabled
-						:typeahead="false"
 					/>
 				</div>
 				<p class="mt-2 text-xs text-bluegray-400">
@@ -85,20 +80,14 @@
 			<label for="systemTags" class="mt-4 inline-block text-xs">System tags</label>
 			<div class="relative mt-1">
 				<i class="pi pi-lock absolute right-3 top-[13px] text-bluegray-500"/>
-				<AutoComplete
+				<ReadOnlyAutoComplete
 					id="systemTags"
 					v-model="probe.systemTags"
-					class="pointer-events-auto cursor-auto select-auto bg-transparent dark:bg-transparent"
-					chip-icon="hidden"
-					multiple
-					disabled
 					:pt="{
-						inputMultiple: 'pb-1 pr-10 min-h-10',
+						inputMultiple: {class: 'pb-1 pr-10 min-h-10'},
 						inputChip: 'hidden',
 						chipItem: 'mt-1'
 					}"
-					:pt-options="{ mergeProps: true }"
-					:typeahead="false"
 				/>
 			</div>
 			<p class="mt-2 text-xs text-bluegray-400">
@@ -146,20 +135,14 @@
 				/>
 			</div>
 			<div v-else class="relative mt-1">
-				<AutoComplete
+				<ReadOnlyAutoComplete
 					id="tags"
 					v-model="tagStrings"
-					class="pointer-events-auto cursor-auto select-auto bg-transparent dark:bg-transparent"
-					chip-icon="hidden"
-					multiple
-					disabled
 					:pt="{
-						inputMultiple: 'pb-1 pr-24 min-h-10',
+						inputMultiple: {class: 'pb-1 pr-24 min-h-10'},
 						inputChip: 'hidden',
 						chipItem: 'mt-1'
 					}"
-					:pt-options="{ mergeProps: true }"
-					:typeahead="false"
 				/>
 				<Button
 					label="Edit"

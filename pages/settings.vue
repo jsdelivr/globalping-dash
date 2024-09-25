@@ -59,20 +59,14 @@
 				<InputText id="email" v-model="email" class="mt-2 w-full"/>
 				<label for="organizations" class="mt-6 block font-bold">Organizations</label>
 				<div class="relative mt-2">
-					<AutoComplete
+					<ReadOnlyAutoComplete
 						id="tags"
 						v-model="user.github_organizations"
-						class="pointer-events-auto cursor-auto select-auto bg-transparent dark:bg-transparent"
-						chip-icon="hidden"
-						multiple
-						disabled
 						:pt="{
-							inputMultiple: {class: 'pb-1 pr-48 min-h-10', tabindex: ''},
+							inputMultiple: { class: 'pb-1 pr-48 min-h-10' },
 							inputChip: 'hidden',
 							chipItem: 'mt-1'
 						}"
-						:pt-options="{ mergeProps: true }"
-						:typeahead="false"
 					/>
 					<Button
 						severity="contrast"

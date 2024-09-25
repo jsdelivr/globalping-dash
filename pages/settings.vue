@@ -67,7 +67,7 @@
 						multiple
 						disabled
 						:pt="{
-							inputMultiple: 'pb-1 pr-48 min-h-10',
+							inputMultiple: {class: 'pb-1 pr-48 min-h-10', tabindex: ''},
 							inputChip: 'hidden',
 							chipItem: 'mt-1'
 						}"

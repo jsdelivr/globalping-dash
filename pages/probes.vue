@@ -57,14 +57,16 @@
 				</Column>
 				<Column body-class="!p-0 h-16">
 					<template #header>
-						Tags <i v-tooltip.top="'Public tags that can be used to target the probe in measurements.'" class="pi pi-info-circle"/>
+						<span ref="tagsHeaderContentRef">
+							Tags <i v-tooltip.top="'Public tags that can be used to target the probe in measurements.'" class="pi pi-info-circle"/>
+						</span>
 					</template>
 
 					<template #body="slotProps">
 						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
-							<div v-for="{ id, tagsToShow, remainingTagsNumber } in [getAllTags(slotProps.data)]" :key="id" class="flex h-full flex-wrap items-center">
-								<Tag v-for="tag in tagsToShow" :key="tag" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="tag"/>
-								<Tag v-if="remainingTagsNumber" key="other" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`+${remainingTagsNumber}`"/>
+							<div v-for="{ id, allTags } in [getAllTags(slotProps.data)]" :key="id" class="flex h-full flex-wrap items-center">
+								<Tag v-for="tag in allTags.slice(0, numberOfTagsToShow)" :key="tag" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="tag"/>
+								<Tag v-if="allTags.length > numberOfTagsToShow" key="other" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`+${allTags.length - numberOfTagsToShow}`"/>
 							</div>
 						</NuxtLink>
 					</template>
@@ -236,17 +238,19 @@
 	});
 
 	const getAllTags = (probe: Probe) => {
-		const NUMBER_OF_TAGS_TO_SHOW = 5;
 		const systemTags = probe.systemTags;
 		const userTags = probe.tags.map(({ prefix, value }) => `u-${prefix}-${value}`);
-		const allTags = systemTags.concat(userTags);
-		const tagsToShow = allTags.slice(0, NUMBER_OF_TAGS_TO_SHOW);
-		const remainingTagsNumber = allTags.length - NUMBER_OF_TAGS_TO_SHOW;
-		return { id: probe.id, tagsToShow, remainingTagsNumber: remainingTagsNumber > 0 ? remainingTagsNumber : 0 };
+		const allTags = userTags.concat(systemTags);
+		return { id: probe.id, allTags };
 	};
 
-	// PROBE DETAILS
+	// Calculate the number of tags to show, based on the expected average tag width <= 200px.
+	const tagsHeaderContentRef = ref(null);
+	const tagsHeaderRef = useParentElement(tagsHeaderContentRef);
+	const { width: tagsColumnWidth } = useElementSize(tagsHeaderRef);
+	const numberOfTagsToShow = computed(() => Math.max(Math.floor(tagsColumnWidth.value / 100), 1));
 
+	// PROBE DETAILS
 	onMounted(async () => {
 		const probeId = route.params.id as string;
 

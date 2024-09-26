@@ -58,9 +58,7 @@
 				</Column>
 				<Column body-class="!p-0 h-16" :style="{ width: `${columnWidths.tags}px` }">
 					<template #header>
-						<span ref="tagsHeaderContentRef">
-							Tags <i v-tooltip.top="'Public tags that can be used to target the probe in measurements.'" class="pi pi-info-circle"/>
-						</span>
+						Tags <i ref="tagsHeaderContentRef" v-tooltip.top="'Public tags that can be used to target the probe in measurements.'" class="pi pi-info-circle"/>
 					</template>
 
 					<template #body="slotProps">

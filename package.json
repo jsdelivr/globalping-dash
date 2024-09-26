@@ -23,6 +23,8 @@
 		"@pinia/nuxt": "^0.5.4",
 		"@primevue/nuxt-module": "^4.0.7",
 		"@primevue/themes": "^4.0.7",
+		"@vueuse/core": "^11.1.0",
+		"@vueuse/nuxt": "^11.1.0",
 		"chart.js": "^4.4.4",
 		"eslint-plugin-import": "^2.30.0",
 		"lodash": "^4.17.21",

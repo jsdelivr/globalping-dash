@@ -57,14 +57,16 @@
 				</Column>
 				<Column body-class="!p-0 h-16">
 					<template #header>
-						Tags <i v-tooltip.top="'Public tags that can be used to target the probe in measurements.'" class="pi pi-info-circle"/>
+						<span ref="tagsHeaderContentRef">
+							Tags <i v-tooltip.top="'Public tags that can be used to target the probe in measurements.'" class="pi pi-info-circle"/>
+						</span>
 					</template>
 
 					<template #body="slotProps">
 						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
-							<div class="flex h-full flex-wrap items-center">
-								<Tag v-for="tag in slotProps.data.tags.slice(0, 50)" :key="tag" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${tag.prefix}-${tag.value}`"/>
-								<Tag v-if="slotProps.data.tags.length > 5" key="other" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`+${slotProps.data.tags.length - 5}`"/>
+							<div v-for="{ id, allTags } in [getAllTags(slotProps.data)]" :key="id" class="flex h-full flex-wrap items-center">
+								<Tag v-for="tag in allTags.slice(0, numberOfTagsToShow)" :key="tag" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="tag"/>
+								<Tag v-if="allTags.length > numberOfTagsToShow" key="other" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`+${allTags.length - numberOfTagsToShow}`"/>
 							</div>
 						</NuxtLink>
 					</template>
@@ -235,8 +237,20 @@
 		}
 	});
 
-	// PROBE DETAILS
+	const getAllTags = (probe: Probe) => {
+		const systemTags = probe.systemTags;
+		const userTags = probe.tags.map(({ prefix, value }) => `u-${prefix}-${value}`);
+		const allTags = userTags.concat(systemTags);
+		return { id: probe.id, allTags };
+	};
 
+	// Calculate the number of tags to show, based on the expected average tag width <= 200px.
+	const tagsHeaderContentRef = ref(null);
+	const tagsHeaderRef = useParentElement(tagsHeaderContentRef);
+	const { width: tagsColumnWidth } = useElementSize(tagsHeaderRef);
+	const numberOfTagsToShow = computed(() => Math.max(Math.floor(tagsColumnWidth.value / 100), 1));
+
+	// PROBE DETAILS
 	onMounted(async () => {
 		const probeId = route.params.id as string;
 

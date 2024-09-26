@@ -5,8 +5,8 @@ export default {
 
 			// Flex
 			{
-				'flex': props.fluid,
-				'inline-flex': !props.fluid,
+				flex: props.fluid,
+				// 'inline-flex': !props.fluid,
 			},
 
 			// Size

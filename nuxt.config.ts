@@ -29,6 +29,7 @@ export default defineNuxtConfig({
 		'@nuxtjs/tailwindcss',
 		'@primevue/nuxt-module',
 		'@pinia/nuxt',
+		'@vueuse/nuxt',
 		'nuxt-icons',
 	],
 	css: [ 'primeicons/primeicons.css', '~/assets/css/base.css', '~/assets/css/global.css' ],

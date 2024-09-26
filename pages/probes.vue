@@ -10,6 +10,7 @@
 		</div>
 		<div v-if="probes.length || loading">
 			<DataTable
+				ref="dataTableRef"
 				:value="probes"
 				lazy
 				:rows="itemsPerPage"
@@ -23,7 +24,7 @@
 				<template #header>
 					<h3 class="px-2">List of probes</h3>
 				</template>
-				<Column class="w-96" body-class="!p-0 h-16">
+				<Column class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.name}px` }">
 					<template #header>
 						Name <i v-tooltip.top="'Private name of the probe, visible only to you'" class="pi pi-info-circle"/>
 					</template>
@@ -38,7 +39,7 @@
 						</NuxtLink>
 					</template>
 				</Column>
-				<Column class="w-96" body-class="!p-0 h-16">
+				<Column class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.location}px` }">
 					<template #header>
 						Location <i v-tooltip.top="'Current probe location. If the auto-detected value is wrong, you can adjust it in probe details.'" class="pi pi-info-circle"/>
 					</template>
@@ -55,7 +56,7 @@
 						</NuxtLink>
 					</template>
 				</Column>
-				<Column body-class="!p-0 h-16">
+				<Column body-class="!p-0 h-16" :style="{ width: `${columnWidths.tags}px` }">
 					<template #header>
 						<span ref="tagsHeaderContentRef">
 							Tags <i v-tooltip.top="'Public tags that can be used to target the probe in measurements.'" class="pi pi-info-circle"/>
@@ -244,11 +245,38 @@
 		return { id: probe.id, allTags };
 	};
 
-	// Calculate the number of tags to show, based on the expected average tag width <= 200px.
+	// Calculate the number of tags to show, based on the expected average tag width <= 200px (in two rows).
 	const tagsHeaderContentRef = ref(null);
 	const tagsHeaderRef = useParentElement(tagsHeaderContentRef);
 	const { width: tagsColumnWidth } = useElementSize(tagsHeaderRef);
 	const numberOfTagsToShow = computed(() => Math.max(Math.floor(tagsColumnWidth.value / 100), 1));
+
+	// Calculate the column widths based on the table size.
+	const dataTableRef = ref(null);
+	const { width: dataTableWidth } = useElementSize(dataTableRef);
+	const columnWidths = computed(() => {
+		const columns = [
+			{ width: 0, min: 96 * 4, max: 96 * 4 * 1.375, preferred: .25 },
+			{ width: 0, min: 96 * 4, max: 96 * 4 * 1.375, preferred: .25 },
+			{ width: 0, min: 174, preferred: .5 },
+		];
+
+		columns.forEach((column) => {
+			column.width = Math.min(
+				Math.max(Math.floor(dataTableWidth.value * column.preferred), column.min || -Infinity),
+				column.max || Infinity,
+			);
+		});
+
+		const usedWidth = columns.reduce((total, column) => total + column.width, 0);
+		columns.at(-1)!.width += dataTableWidth.value - usedWidth;
+
+		return {
+			name: columns[0].width,
+			location: columns[1].width,
+			tags: columns[2].width,
+		};
+	});
 
 	// PROBE DETAILS
 	onMounted(async () => {

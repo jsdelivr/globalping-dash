@@ -67,7 +67,14 @@
 						<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
 							<div v-for="{ id, allTags } in [getAllTags(slotProps.data)]" :key="id" class="flex h-full flex-wrap items-center">
 								<Tag v-for="tag in allTags.slice(0, numberOfTagsToShow)" :key="tag" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="tag"/>
-								<Tag v-if="allTags.length > numberOfTagsToShow" key="other" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="`+${allTags.length - numberOfTagsToShow}`"/>
+								<Tag
+									v-if="allTags.length > numberOfTagsToShow"
+									key="other"
+									v-tooltip.top="allTags.slice(numberOfTagsToShow).join(', ')"
+									class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800"
+									severity="secondary"
+									:value="`+${allTags.length - numberOfTagsToShow}`"
+								/>
 							</div>
 						</NuxtLink>
 					</template>

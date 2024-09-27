@@ -56,7 +56,7 @@
 						</NuxtLink>
 					</template>
 				</Column>
-				<Column body-class="!p-0 h-16" :style="{ width: `${columnWidths.tags}px` }">
+				<Column body-class="h-16" :style="{ width: `${columnWidths.tags}px` }">
 					<template #header>
 						Tags <i ref="tagsHeaderContentRef" v-tooltip.top="'Public tags that can be used to target the probe in measurements.'" class="pi pi-info-circle"/>
 					</template>

@@ -155,7 +155,7 @@
 			creditsChanges.value = [
 				...changes.map(change => ({
 					...change,
-					comment: !change.comment && change.type === 'deduction' ? 'Measurements run on this day.' : change.comment,
+					comment: !change.comment && change.type === 'deduction' ? 'Measurements ran on this day.' : change.comment,
 					date_created: formatDateForTable(change.date_created),
 				})),
 			];

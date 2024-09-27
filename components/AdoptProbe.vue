@@ -72,14 +72,14 @@
 					</div>
 					<div class="mt-6 text-right">
 						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('0')"/>
-						<Button label="Send code to probe" :loading="sendAdoptionCodeLoading" @click="sendAdoptionCode(activateCallback)"/>
+						<Button label="Send adoption code" :loading="sendAdoptionCodeLoading" :disabled="!ip.length" @click="sendAdoptionCode(activateCallback)"/>
 					</div>
 				</div>
 			</StepPanel>
 			<StepPanel v-slot="{ activateCallback }" value="2">
 				<div v-if="!isSuccess" class="p-5">
 					<p class="mb-4 mt-2 text-lg font-bold">Verify</p>
-					<p>Adoption code sent to <span class="font-semibold">your probe with IP address {{ ip }}</span>.</p>
+					<p>The adoption code has been sent to <span class="font-semibold">your probe with IP address {{ ip }}</span>.</p>
 					<div class="my-4">
 						<SelectButton
 							v-model="probeType"
@@ -98,7 +98,7 @@
 					</div>
 					<p class="mt-4">Now you need to check the probe's log output to find the verification code. If you're running it inside a Docker container then you can quickly find it by running this command:</p>
 					<CodeBlock class="mt-3" :commands="probeType === 'docker' ? [['docker logs -f --tail 25 globalping-probe']] : [['ssh logs@IP-ADDRESS']]"/>
-					<p class="mt-3">Find the code in the logs and input it here to verify ownership.</p>
+					<p class="mt-3">Find the code in the logs and enter it below to verify ownership.</p>
 					<div class="mt-6 rounded-xl bg-surface-50 py-10 text-center dark:bg-dark-600 ">
 						<div class="flex justify-center">
 							<InputOtp
@@ -115,7 +115,7 @@
 					</div>
 					<div class="mt-6 text-right">
 						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('1')"/>
-						<Button label="Verify the code" :loading="verifyCodeLoading" @click="verifyCode"/>
+						<Button label="Verify the code" :loading="verifyCodeLoading" :disabled="code.length < 6" @click="verifyCode"/>
 					</div>
 				</div>
 				<div v-else class="p-5">
@@ -133,7 +133,7 @@
 							</p>
 						</div>
 					</div>
-					<p class="mt-4">The probe will now generate credits that you can use to run more tests. We also recommend you verify and correct the probe's location.</p>
+					<p class="mt-4">The probe will generate credits that you can use to run more tests. We also recommend you verify and correct the probe's location.</p>
 					<div class="mt-7 flex justify-end">
 						<Button label="Finish" @click="$emit('cancel')"/>
 					</div>
@@ -206,7 +206,7 @@
 
 		if (!isValid) {
 			isIpValid.value = false;
-			invalidIpMessage.value = 'Invalid ip format';
+			invalidIpMessage.value = 'Invalid IP address format';
 			return;
 		}
 
@@ -248,7 +248,7 @@
 
 		try {
 			await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/send-code', body: JSON.stringify({ ip: ip.value }) }));
-			sendToast('info', 'Code was resent', 'Now you need to get it and paste to the input');
+			sendToast('info', 'The code has been resent', 'Paste it to the input to adopt the probe');
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';
 			isIpValid.value = false;

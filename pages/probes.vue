@@ -1,5 +1,4 @@
 <template>
-	<!-- TODO: P1: @MartinKolarik - review including all texts after the design update. -->
 	<div class="min-h-full p-6" :class="{'min-w-[1024px]': probes?.length}">
 		<div class="mb-4 flex">
 			<h1 class="page-title">Probes</h1>

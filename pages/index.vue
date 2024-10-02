@@ -40,7 +40,7 @@
 							@click="adoptProbeDialog = true"
 						>
 							<nuxt-icon class="pi" name="capture"/>
-							<span class="font-bold">{{ adoptedProbes.length ? "Adopt probe" : "Adopt your first probe" }}</span>
+							<span class="font-bold">{{ adoptedProbes.length ? "Adopt a probe" : "Adopt your first probe" }}</span>
 						</Button>
 					</div>
 				</div>

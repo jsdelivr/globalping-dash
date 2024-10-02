@@ -13,7 +13,7 @@
 					<i class="pi pi-external-link text-bluegray-300"/>
 					<span class="m-2">jsDelivr</span>
 				</NuxtLink>
-				<NuxtLink class="ml-6 text-surface-0 no-underline hover:underline" to="https://www.jsdelivr.com/globalping" target="_blank">
+				<NuxtLink class="ml-6 text-surface-0 no-underline hover:underline" to="https://globalping.io" target="_blank">
 					<i class="pi pi-external-link text-bluegray-300"/>
 					<span class="m-2">Globalping</span>
 				</NuxtLink>
@@ -69,7 +69,7 @@
 							<i class="pi pi-external-link text-bluegray-300"/>
 							<span class="m-2">jsDelivr</span>
 						</NuxtLink>
-						<NuxtLink class="ml-6 mt-4 text-bluegray-600 no-underline hover:underline dark:text-bluegray-100" to="https://www.jsdelivr.com/globalping" target="_blank">
+						<NuxtLink class="ml-6 mt-4 text-bluegray-600 no-underline hover:underline dark:text-bluegray-100" to="https://globalping.io" target="_blank">
 							<i class="pi pi-external-link text-bluegray-300"/>
 							<span class="m-2">Globalping</span>
 						</NuxtLink>

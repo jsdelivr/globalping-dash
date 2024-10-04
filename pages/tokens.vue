@@ -261,7 +261,7 @@
 
 	const regenerateToken = async () => {
 		try {
-			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/token-generator' }));
+			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/bytes' }));
 			const id = tokenToRegenerate.value!.id;
 
 			await $directus.request(updateItem('gp_tokens', id, {

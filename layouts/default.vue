@@ -84,7 +84,7 @@
 				</Drawer>
 			</div>
 			<Popover ref="notificationsPanel">
-				<Accordion v-if="reverseNotifications.length" class="box-border w-80" expand-icon="pi pi-chevron-right">
+				<Accordion v-if="reverseNotifications.length" class="box-border w-96 max-w-[calc(100vw-16px)]" expand-icon="pi pi-chevron-right">
 					<AccordionPanel v-for="notification in reverseNotifications" :key="notification.id" :value="notification.id">
 						<AccordionHeader>{{ notification.subject }}</AccordionHeader>
 						<AccordionContent>

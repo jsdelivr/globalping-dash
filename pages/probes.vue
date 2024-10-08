@@ -199,14 +199,11 @@
 					query: { filter: { userId: { _eq: user.id } } },
 					aggregate: { count: '*' },
 				})),
-				$directus.request(readItems('gp_credits_additions', {
-					filter: {
-						github_id: { _eq: user.external_identifier || 'admin' },
-						adopted_probe: { _null: false },
-						// @ts-ignore
-						date_created: { _gte: '$NOW(-1 month)' },
-					},
-				})) as Promise<(CreditsAddition & {adopted_probe: number})[]>,
+				$directus.request<[{ sum: { amount: number }, date_created: string, adopted_probe: number}]>(aggregate('gp_credits_additions', {
+					query: { filter: { github_id: { _eq: user.external_identifier || 'admin' }, adopted_probe: { _null: false }, date_created: { _gte: '$NOW(-30 day)' } } },
+					groupBy: [ 'date_created', 'adopted_probe' ],
+					aggregate: { sum: 'amount' },
+				})),
 			]);
 
 			const creditsByProbeId: Record<number, number> = {};
@@ -214,7 +211,7 @@
 			totalCredits.value = 0;
 
 			for (const addition of creditsAdditions) {
-				const { adopted_probe: adoptedProbe, amount } = addition;
+				const { adopted_probe: adoptedProbe, sum: { amount } } = addition;
 
 				totalCredits.value += amount;
 				creditsByProbeId[adoptedProbe] = creditsByProbeId[adoptedProbe] ? creditsByProbeId[adoptedProbe] + amount : amount;

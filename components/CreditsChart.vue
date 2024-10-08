@@ -14,11 +14,11 @@
 			default: 0,
 		},
 		additions: {
-			type: Array as PropType<CreditsAddition[]>,
+			type: Array as PropType<Pick<CreditsAddition, 'amount' | 'date_created'>[]>,
 			default: () => [],
 		},
 		deductions: {
-			type: Array as PropType<CreditsDeduction[]>,
+			type: Array as PropType<Pick<CreditsDeduction, 'amount' | 'date'>[]>,
 			default: () => [],
 		},
 	});

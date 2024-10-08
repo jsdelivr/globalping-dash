@@ -25,14 +25,14 @@ declare global {
   type CreditsAddition = {
     amount: number;
     comment: string;
-    date_created: string;
+    date_created: 'datetime';
     adopted_probe: number | null;
     github_id: string;
   };
 
   type CreditsDeduction = {
     amount: number;
-    date: string;
+    date: 'datetime';
     user_id: string;
   };
 

@@ -57,7 +57,7 @@
 
 			<AsyncBlock :status="statusCredits">
 				<div class="p-6">
-					<div class="flex max-sm:flex-wrap">
+					<div class="flex gap-x-2 max-sm:flex-wrap">
 						<div class="flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:bg-surface-50 max-sm:p-4 max-sm:dark:bg-dark-700">
 							<BigIcon name="coin" border/>
 							<div><span class="mx-2 text-3xl font-bold">{{ total.toLocaleString('en-US') }}</span>Total</div>
@@ -69,7 +69,7 @@
 							</div>
 							<div class="text-xs font-semibold text-bluegray-500">from probes</div>
 						</div>
-						<div :class="{ 'border-yellow-200 bg-yellow-50/80 dark:border-yellow-500/20 dark:bg-yellow-500/10': credits?.fromSponsorship }" class="-mb-1 -mt-3 ml-2 flex flex-col items-center rounded-md border px-4 pt-2 max-sm:mt-3 max-sm:py-2">
+						<div :class="{ 'border-yellow-200 bg-yellow-50/80 dark:border-yellow-500/20 dark:bg-yellow-500/10': credits?.fromSponsorship }" class="-mb-1 -mt-3 ml-0 flex flex-col items-center rounded-md border px-4 pt-2 max-sm:mt-3 max-sm:py-2">
 							<div>
 								<span class="p-button-label font-bold" :class="{ 'text-green-500': credits?.fromSponsorship, 'text-bluegray-500 dark:text-bluegray-400': !credits?.fromSponsorship }">+{{ credits?.fromSponsorship.toLocaleString('en-US') }}</span>
 								<span>&nbsp;/ month</span>

@@ -17,7 +17,7 @@
 		"prepare": "husky || echo 'Failed to install husky'"
 	},
 	"dependencies": {
-		"@directus/sdk": "^15.1.0",
+		"@directus/sdk": "^17.0.2",
 		"@nuxtjs/google-fonts": "^3.2.0",
 		"@nuxtjs/tailwindcss": "^6.12.1",
 		"@pinia/nuxt": "^0.5.4",

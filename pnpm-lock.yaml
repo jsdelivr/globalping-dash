@@ -17,8 +17,8 @@ importers:
   .:
     dependencies:
       '@directus/sdk':
-        specifier: ^15.1.0
-        version: 15.1.0
+        specifier: ^17.0.2
+        version: 17.0.2
       '@nuxtjs/google-fonts':
         specifier: ^3.2.0
         version: 3.2.0(magicast@0.3.5)(rollup@4.22.4)(webpack-sources@3.2.3)
@@ -312,12 +312,9 @@ packages:
     peerDependencies:
       postcss-selector-parser: ^6.0.13
 
-  '@directus/sdk@15.1.0':
-    resolution: {integrity: sha512-M2+Z1WmU8Q5KlR22K5ugmBHq10a6tcGl3QuvGKnN+jNwDnRyN5brJxt7FvgtWrY3Q1ToGLxmL37GHAH9s12dlQ==}
+  '@directus/sdk@17.0.2':
+    resolution: {integrity: sha512-gKfWH6oQKnHw6mUl5lM32PTjtWrmSF6f09/zfN/74FKGPD853srCwip6rGif2R0GfdcrPHXwGHc7vTMXNDlniw==}
     engines: {node: '>=18.0.0'}
-
-  '@directus/system-data@1.0.2':
-    resolution: {integrity: sha512-PweDAwTz4zImEGJnhoaX8apOCvcAfE0aGQrCSk+3cf1sLso0ShNlcDvUymtVfrqOXy0qT9sLa833bpJVaXF5ng==}
 
   '@es-joy/jsdoccomment@0.46.0':
     resolution: {integrity: sha512-C3Axuq1xd/9VqFZpW4YAzOx5O9q/LP46uIQy/iNDpHG3fmPa6TBtvfglMCs3RBiBxAIi0Go97r8+jvTt55XMyQ==}
@@ -5360,11 +5357,7 @@ snapshots:
     dependencies:
       postcss-selector-parser: 6.1.2
 
-  '@directus/sdk@15.1.0':
-    dependencies:
-      '@directus/system-data': 1.0.2
-
-  '@directus/system-data@1.0.2': {}
+  '@directus/sdk@17.0.2': {}
 
   '@es-joy/jsdoccomment@0.46.0':
     dependencies:

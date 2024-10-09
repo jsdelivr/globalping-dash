@@ -2,7 +2,7 @@
 	<div class="grid grid-cols-2 gap-4 p-6">
 		<h1 class="page-title col-span-2 mb-2">Overview</h1>
 
-		<div class="rounded-xl border bg-surface-0 max-xl:col-span-2 dark:bg-dark-800">
+		<div class="rounded-xl border bg-surface-0 max-[1480px]:col-span-2 dark:bg-dark-800">
 			<p class="flex border-b px-6 py-3 font-bold text-bluegray-700 dark:text-dark-0">Summary</p>
 
 			<AsyncBlock :status="statusProbes">
@@ -47,7 +47,7 @@
 			</AsyncBlock>
 		</div>
 
-		<div class="rounded-xl border bg-surface-0 max-xl:col-span-2 dark:bg-dark-800">
+		<div class="rounded-xl border bg-surface-0 max-[1480px]:col-span-2 dark:bg-dark-800">
 			<p class="flex items-center border-b px-6 py-3 font-bold text-bluegray-700 dark:text-dark-0">
 				Credits<i
 					v-tooltip.top="'Credits allow you to run measurements above the hourly limits.'"
@@ -62,9 +62,19 @@
 							<BigIcon name="coin" border/>
 							<div><span class="mx-2 text-3xl font-bold">{{ total.toLocaleString('en-US') }}</span>Total</div>
 						</div>
-						<div class="ml-auto flex items-center rounded-md border px-4 py-2 max-sm:ml-0 max-sm:mt-3">
-							<span class="p-button-label mr-2 font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500 dark:text-bluegray-400': !perDay }">+{{ perDay.toLocaleString('en-US') }}</span>
-							<span>Per day</span>
+						<div class="-mb-1 -mt-3 ml-auto flex flex-col items-center rounded-md border px-4 pt-2 max-sm:ml-0 max-sm:mt-3 max-sm:py-2">
+							<div>
+								<span class="p-button-label font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500 dark:text-bluegray-400': !perDay }">+{{ perDay.toLocaleString('en-US') }}</span>
+								<span>&nbsp;/ day</span>
+							</div>
+							<div class="text-xs font-semibold text-bluegray-500">from probes</div>
+						</div>
+						<div :class="{ 'border-yellow-200 bg-yellow-50/80 dark:border-yellow-500/20 dark:bg-yellow-500/10': credits?.fromSponsorship }" class="-mb-1 -mt-3 ml-2 flex flex-col items-center rounded-md border px-4 pt-2 max-sm:mt-3 max-sm:py-2">
+							<div>
+								<span class="p-button-label font-bold" :class="{ 'text-green-500': credits?.fromSponsorship, 'text-bluegray-500 dark:text-bluegray-400': !credits?.fromSponsorship }">+{{ credits?.fromSponsorship.toLocaleString('en-US') }}</span>
+								<span>&nbsp;/ month</span>
+							</div>
+							<div :class="{'!text-yellow-500 dark:!text-yellow-500/90': credits?.fromSponsorship}" class="text-xs font-semibold text-bluegray-500">from sponsorship</div>
 						</div>
 					</div>
 					<div class="mt-6 flex items-center text-nowrap">
@@ -187,18 +197,35 @@
 
 	const { status: statusCredits, data: credits } = await useLazyAsyncData('gp_credits', async () => {
 		try {
-			const result = $directus.request(readItems('gp_credits', {
+			let fromSponsorshipPromise = Promise.resolve(0);
+
+			const totalPromise = $directus.request(readItems('gp_credits', {
 				filter: { user_id: { _eq: user.id } },
 			}));
-			return result;
+
+			if (user.user_type !== 'member') {
+				fromSponsorshipPromise = $directus.request(readItems('gp_credits_additions', {
+					filter: { github_id: { _eq: user.external_identifier || 'admin' }, comment: { _icontains: 'recurring' } },
+				})).then(additions => additions.reduce((acc, addition) => acc + addition.amount, 0));
+			}
+
+			const [
+				total,
+				fromSponsorship,
+			] = await Promise.all([
+				totalPromise,
+				fromSponsorshipPromise,
+			]);
+
+			return { total, fromSponsorship };
 		} catch (e) {
 			sendErrorToast(e);
 			throw e;
 		}
-	}, { default: () => [] });
+	}, { default: () => {} });
 
 	const total = computed(() => {
-		const creditsObj = credits.value?.find(({ user_id }) => user_id === user.id);
+		const creditsObj = credits.value?.total.find(({ user_id }) => user_id === user.id);
 		return creditsObj ? creditsObj.amount : 0;
 	});
 

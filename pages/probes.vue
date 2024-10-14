@@ -63,17 +63,7 @@
 
 						<template #body="slotProps">
 							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
-								<div v-for="{ id, allTags } in [getAllTags(slotProps.data)]" :key="id" class="flex h-full flex-wrap items-center">
-									<Tag v-for="tag in allTags.slice(0, numberOfTagsToShow)" :key="tag" class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800" severity="secondary" :value="tag"/>
-									<Tag
-										v-if="allTags.length > numberOfTagsToShow"
-										key="other"
-										v-tooltip.top="allTags.slice(numberOfTagsToShow).join(', ')"
-										class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800"
-										severity="secondary"
-										:value="`+${allTags.length - numberOfTagsToShow}`"
-									/>
-								</div>
+								<ProbesList :tags="getAllTags(slotProps.data)" :number-of-tags-to-show="numberOfTagsToShow"/>
 							</NuxtLink>
 						</template>
 					</Column>
@@ -140,6 +130,7 @@
 											<span class="mr-6 font-semibold">Version:</span>
 											<span>{{ probe.version }}</span>
 										</div>
+										<ProbesList :tags="getAllTags(probe)" :number-of-tags-to-show="numberOfTagsToShow"/>
 									</div>
 								</div>
 							</div>
@@ -303,7 +294,7 @@
 		const systemTags = probe.systemTags;
 		const userTags = probe.tags.map(({ prefix, value }) => `u-${prefix}-${value}`);
 		const allTags = userTags.concat(systemTags);
-		return { id: probe.id, allTags };
+		return allTags;
 	};
 
 	// Calculate the number of tags to show, based on the expected average tag width <= 200px (in two rows).

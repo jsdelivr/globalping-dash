@@ -63,7 +63,7 @@
 
 						<template #body="slotProps">
 							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
-								<ProbesList :tags="getAllTags(slotProps.data)" :number-of-tags-to-show="numberOfTagsToShow"/>
+								<TagsList :tags="getAllTags(slotProps.data)" :number-of-tags-to-show="numberOfTagsToShow"/>
 							</NuxtLink>
 						</template>
 					</Column>
@@ -119,7 +119,9 @@
 											<span class="mr-6 font-semibold">Version:</span>
 											<span>{{ probe.version }}</span>
 										</div>
-										<ProbesList :tags="getAllTags(probe)" :number-of-tags-to-show="numberOfTagsToShow"/>
+										<div ref="mobileTagsWrapperRef">
+											<TagsList :tags="getAllTags(probe)" :number-of-tags-to-show="numberOfTagsToShowMobile"/>
+										</div>
 									</div>
 								</NuxtLink>
 							</div>
@@ -298,8 +300,15 @@
 	// Calculate the number of tags to show, based on the expected average tag width <= 200px (in two rows).
 	const tagsHeaderContentRef = ref(null);
 	const tagsHeaderRef = useParentElement(tagsHeaderContentRef);
-	const { width: tagsColumnWidth } = useElementSize(tagsHeaderRef);
-	const numberOfTagsToShow = computed(() => Math.max(Math.floor(tagsColumnWidth.value / 100), 1));
+	const mobileTagsWrapperRef = ref(null);
+
+	const getNumberOfTagsToShow = (elem: Ref<HTMLElement | SVGElement | null | undefined>) => {
+		const { width } = useElementSize(elem);
+		return computed(() => Math.max(Math.floor(width.value / 100), 1));
+	};
+
+	const numberOfTagsToShow = getNumberOfTagsToShow(tagsHeaderRef);
+	const numberOfTagsToShowMobile = getNumberOfTagsToShow(mobileTagsWrapperRef);
 
 	// Calculate the column widths based on the table size.
 	const dataTableRef = ref(null);

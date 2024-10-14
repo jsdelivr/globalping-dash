@@ -90,15 +90,6 @@
 						</div>
 					</template>
 				</DataTable>
-				<Paginator
-					v-if="probes.length !== probesCount"
-					class="mt-9"
-					:first="first"
-					:rows="itemsPerPage"
-					:total-records="probesCount"
-					template="PrevPageLink PageLinks NextPageLink"
-					@page="page = $event.page"
-				/>
 			</div>
 			<div class="hidden max-sm:block">
 				<div class="rounded-xl border bg-surface-0 dark:bg-dark-800">
@@ -156,6 +147,15 @@
 					</div>
 				</div>
 			</div>
+			<Paginator
+				v-if="probes.length !== probesCount"
+				class="mt-7"
+				:first="first"
+				:rows="itemsPerPage"
+				:total-records="probesCount"
+				template="PrevPageLink PageLinks NextPageLink"
+				@page="page = $event.page"
+			/>
 		</div>
 		<div v-else class="flex grow flex-col overflow-hidden rounded-xl border bg-surface-0 dark:bg-dark-800">
 			<p class="flex border-b px-6 py-3 font-bold text-bluegray-700 dark:text-dark-0">List of probes</p>

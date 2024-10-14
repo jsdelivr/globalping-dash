@@ -112,13 +112,13 @@
 			</div>
 			<div class="hidden max-sm:block">
 				<div class="rounded-xl border bg-surface-0 dark:bg-dark-800">
-					<div class="flex h-10 items-center border-b px-6 font-bold text-bluegray-700 dark:text-dark-0">
+					<div class="flex h-10 items-center border-b px-4 font-bold text-bluegray-700 dark:text-dark-0">
 						List of probes
 					</div>
 					<div class="async-block">
-						<div class="px-6 py-1">
+						<div class="px-4 pb-3 pt-1">
 							<div v-if="probes.length">
-								<div v-for="probe in probes.slice(0, 10)" :key="probe.id" class="probe box-content py-4">
+								<div v-for="probe in probes.slice(0, 10)" :key="probe.id" class="probe box-content pb-2 pt-4">
 									<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
 										<BigIcon class="col-span-1 row-span-2" :name="probe.hardwareDevice ? 'gp' : 'docker'" border :status="probe.status"/>
 										<div
@@ -126,7 +126,7 @@
 										>
 											<NuxtLink class="hover:underline" :to="`/probes/${probe.id}`">{{ probe.name || probe.city }}</NuxtLink>
 										</div>
-										<p class="col-start-2 col-end-3 row-start-2 row-end-3 max-w-[185px] overflow-hidden text-ellipsis text-[13px] text-bluegray-400">{{ probe.ip }}</p>
+										<p class="col-start-2 col-end-3 max-w-full overflow-hidden text-ellipsis text-[13px] text-bluegray-400">{{ probe.ip }}</p>
 									</div>
 									<div>
 										<div class="mb-2 flex items-center text-nowrap">
@@ -142,6 +142,26 @@
 										</div>
 									</div>
 								</div>
+							</div>
+							<div class="rounded-xl bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] p-3 dark:from-dark-700 dark:to-dark-700">
+								<div class="flex items-center justify-between">
+									<span class="font-bold">Credits gained past month:</span>
+									<Tag v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="flex items-center border bg-surface-0 !text-sm" severity="success">
+										<nuxt-icon class="mr-2" name="coin"/>+{{ totalCredits.toLocaleString('en-US') }}
+									</Tag>
+								</div>
+								<div class="mt-2 flex items-center justify-between">
+									<span class="font-bold">Number of probes:</span>
+									<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ probesCount }}</Tag>
+								</div>
+								<Button
+									class="mt-2 w-full"
+									severity="secondary"
+									outlined
+									label="Start a probe"
+									icon="pi pi-question-circle"
+									@click="startProbeDialog = true"
+								/>
 							</div>
 						</div>
 					</div>
@@ -375,9 +395,6 @@
 <style scoped>
 	@media (max-width: 640px) {
 		.probe + .probe {
-
-			/* margin-top: 24px;
-			padding-top: 24px; */
 			@apply border-t;
 		}
 	}

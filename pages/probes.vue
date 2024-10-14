@@ -108,13 +108,11 @@
 					<div class="async-block">
 						<div class="px-4 pb-3 pt-1">
 							<div v-if="probes.length">
-								<div v-for="probe in probes.slice(0, 10)" :key="probe.id" class="probe box-content pb-2 pt-4">
+								<NuxtLink v-for="probe in probes" :key="probe.id" :to="`/probes/${probe.id}`" class="probe box-content block pb-2 pt-4">
 									<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
 										<BigIcon class="col-span-1 row-span-2" :name="probe.hardwareDevice ? 'gp' : 'docker'" border :status="probe.status"/>
-										<div
-											class="col-start-2 col-end-3 flex items-center font-bold"
-										>
-											<NuxtLink class="hover:underline" :to="`/probes/${probe.id}`">{{ probe.name || probe.city }}</NuxtLink>
+										<div class="col-start-2 col-end-3 flex items-center font-bold">
+											<p>{{ probe.name || probe.city }}</p>
 										</div>
 										<p class="col-start-2 col-end-3 max-w-full overflow-hidden text-ellipsis text-[13px] text-bluegray-400">{{ probe.ip }}</p>
 									</div>
@@ -132,7 +130,7 @@
 										</div>
 										<ProbesList :tags="getAllTags(probe)" :number-of-tags-to-show="numberOfTagsToShow"/>
 									</div>
-								</div>
+								</NuxtLink>
 							</div>
 							<div class="rounded-xl bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] p-3 dark:from-dark-700 dark:to-dark-700">
 								<div class="flex items-center justify-between">

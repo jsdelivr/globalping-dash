@@ -99,31 +99,33 @@
 					<AsyncBlock :status="loading ? 'pending' : 'success'">
 						<div class="px-4 pb-3 pt-1">
 							<div v-if="probes.length">
-								<NuxtLink v-for="probe in probes" :key="probe.id" :to="`/probes/${probe.id}`" class="probe box-content block pb-2 pt-4" @click="openProbeDetails(probe.id)">
-									<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
-										<BigIcon class="col-span-1 row-span-2" :name="probe.hardwareDevice ? 'gp' : 'docker'" border :status="probe.status"/>
-										<div class="col-start-2 col-end-3 flex items-center font-bold">
-											<p>{{ probe.name || probe.city }}</p>
+								<div v-for="probe in probes" :key="probe.id" class="probe box-content block pb-2 pt-4">
+									<NuxtLink :to="`/probes/${probe.id}`" @click="openProbeDetails(probe.id)">
+										<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
+											<BigIcon class="col-span-1 row-span-2" :name="probe.hardwareDevice ? 'gp' : 'docker'" border :status="probe.status"/>
+											<div class="col-start-2 col-end-3 flex items-center font-bold">
+												<p>{{ probe.name || probe.city }}</p>
+											</div>
+											<p class="col-start-2 col-end-3 max-w-full overflow-hidden text-ellipsis text-[13px] text-bluegray-400">{{ probe.ip }}</p>
 										</div>
-										<p class="col-start-2 col-end-3 max-w-full overflow-hidden text-ellipsis text-[13px] text-bluegray-400">{{ probe.ip }}</p>
-									</div>
-									<div>
-										<div class="mb-2 flex items-center text-nowrap">
-											<span class="mr-6 font-semibold">Location:</span>
-											<span class="ml-auto mr-2 flex items-center justify-end">
-												{{ probe.city }}, {{ probe.country }}
-											</span>
-											<CountryFlag :country="probe.country" size="small"/>
+										<div>
+											<div class="mb-2 flex items-center text-nowrap">
+												<span class="mr-6 font-semibold">Location:</span>
+												<span class="ml-auto mr-2 flex items-center justify-end">
+													{{ probe.city }}, {{ probe.country }}
+												</span>
+												<CountryFlag :country="probe.country" size="small"/>
+											</div>
+											<div class="mb-2 flex items-center justify-between text-nowrap">
+												<span class="mr-6 font-semibold">Version:</span>
+												<span>{{ probe.version }}</span>
+											</div>
+											<div ref="mobileTagsWrapperRef">
+												<TagsList :tags="getAllTags(probe)" :number-of-tags-to-show="numberOfTagsToShowMobile"/>
+											</div>
 										</div>
-										<div class="mb-2 flex items-center justify-between text-nowrap">
-											<span class="mr-6 font-semibold">Version:</span>
-											<span>{{ probe.version }}</span>
-										</div>
-										<div ref="mobileTagsWrapperRef">
-											<TagsList :tags="getAllTags(probe)" :number-of-tags-to-show="numberOfTagsToShowMobile"/>
-										</div>
-									</div>
-								</NuxtLink>
+									</NuxtLink>
+								</div>
 							</div>
 							<div class="rounded-xl bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] p-3 dark:from-dark-700 dark:to-dark-700">
 								<div class="flex items-center justify-between">
@@ -391,7 +393,7 @@
 </script>
 
 <style scoped>
-	@media (max-width: 640px) {
+	@media (max-width: 639px) {
 		.probe + .probe {
 			@apply border-t;
 		}

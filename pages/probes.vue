@@ -99,7 +99,7 @@
 					<AsyncBlock :status="loading ? 'pending' : 'success'">
 						<div class="px-4 pb-3 pt-1">
 							<div v-if="probes.length">
-								<NuxtLink v-for="probe in probes" :key="probe.id" :to="`/probes/${probe.id}`" class="probe box-content block pb-2 pt-4">
+								<NuxtLink v-for="probe in probes" :key="probe.id" :to="`/probes/${probe.id}`" class="probe box-content block pb-2 pt-4" @click="openProbeDetails(probe.id)">
 									<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
 										<BigIcon class="col-span-1 row-span-2" :name="probe.hardwareDevice ? 'gp' : 'docker'" border :status="probe.status"/>
 										<div class="col-start-2 col-end-3 flex items-center font-bold">

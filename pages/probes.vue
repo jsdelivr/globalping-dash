@@ -127,13 +127,13 @@
 							</div>
 							<div class="rounded-xl bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] p-3 dark:from-dark-700 dark:to-dark-700">
 								<div class="flex items-center justify-between">
-									<span class="font-bold">Credits gained past month:</span>
+									<span class="text-xs font-bold">Credits gained past month:</span>
 									<Tag v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="flex items-center border bg-surface-0 !text-sm" severity="success">
 										<nuxt-icon class="mr-2" name="coin"/>+{{ totalCredits.toLocaleString('en-US') }}
 									</Tag>
 								</div>
 								<div class="mt-2 flex items-center justify-between">
-									<span class="font-bold">Number of probes:</span>
+									<span class="text-xs font-bold">Number of probes:</span>
 									<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ probesCount }}</Tag>
 								</div>
 								<Button

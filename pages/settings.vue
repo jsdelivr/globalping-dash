@@ -38,8 +38,6 @@
 						v-model="user.github_organizations"
 						:pt="{
 							inputMultiple: { class: 'pb-1 pr-48 min-h-10' },
-							inputChip: 'hidden',
-							chipItem: 'mt-1'
 						}"
 					/>
 					<Button

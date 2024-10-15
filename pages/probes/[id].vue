@@ -83,18 +83,13 @@
 				<ReadOnlyAutoComplete
 					id="systemTags"
 					v-model="probe.systemTags"
-					:pt="{
-						inputMultiple: {class: 'pb-1 pr-10 min-h-10'},
-						inputChip: 'hidden',
-						chipItem: 'mt-1'
-					}"
 				/>
 			</div>
 			<p class="mt-2 text-xs text-bluegray-400">
 				Public tags that can be used to target the probe in measurements.
 			</p>
 
-			<label for="tags" class="mt-4 inline-block text-xs">User tags</label>
+			<label for="userTags" class="mt-4 inline-block text-xs">User tags</label>
 			<div v-if="isEditingTags" class="mt-1">
 				<div>
 					<div class="flex text-xs">
@@ -136,13 +131,8 @@
 			</div>
 			<div v-else class="relative mt-1">
 				<ReadOnlyAutoComplete
-					id="tags"
-					v-model="tagStrings"
-					:pt="{
-						inputMultiple: {class: 'pb-1 pr-24 min-h-10'},
-						inputChip: 'hidden',
-						chipItem: 'mt-1'
-					}"
+					id="userTags"
+					v-model="userTags"
 				/>
 				<Button
 					label="Edit"
@@ -266,7 +256,7 @@
 	// TAGS
 
 	const isEditingTags = ref<boolean>(false);
-	const tagStrings = computed(() => probe.value.tags.map(({ prefix, value }) => `u-${prefix}-${value}`));
+	const userTags = computed(() => probe.value.tags.map(({ prefix, value }) => `u-${prefix}-${value}`));
 	const tagsToEdit = ref<{ uPrefix: string, value: string }[]>([]);
 
 	const uPrefixes = [ user.github_username, ...user.github_organizations ].map(value => `u-${value}`);

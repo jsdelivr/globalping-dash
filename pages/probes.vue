@@ -96,7 +96,7 @@
 					<div class="flex h-10 items-center border-b px-4 font-bold text-bluegray-700 dark:text-dark-0">
 						List of probes
 					</div>
-					<div class="async-block">
+					<AsyncBlock :status="loading ? 'pending' : 'success'">
 						<div class="px-4 pb-3 pt-1">
 							<div v-if="probes.length">
 								<NuxtLink v-for="probe in probes" :key="probe.id" :to="`/probes/${probe.id}`" class="probe box-content block pb-2 pt-4">
@@ -146,7 +146,7 @@
 								/>
 							</div>
 						</div>
-					</div>
+					</AsyncBlock>
 				</div>
 			</div>
 			<Paginator

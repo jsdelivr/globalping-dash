@@ -106,28 +106,30 @@
 				<div class="p-6">
 					<div v-if="adoptedProbes.length" class="probes-wrapper flex overflow-hidden max-sm:flex-col">
 						<div v-for="probe in adoptedProbes.slice(0, 10)" :key="probe.id" class="probe box-content min-w-60 py-2">
-							<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
-								<BigIcon class="col-span-1 row-span-2" :name="probe.hardwareDevice ? 'gp' : 'docker'" border :status="probe.status"/>
-								<div
-									class="col-start-2 col-end-3 flex items-center font-bold"
-								>
-									<NuxtLink class="hover:underline" :to="`/probes/${probe.id}`">{{ probe.name || probe.city }}</NuxtLink>
+							<component :is="useWindowSize().width.value > 640 ? 'div' : NuxtLink" :to="`/probes/${probe.id}`" class="block">
+								<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
+									<BigIcon class="col-span-1 row-span-2" :name="probe.hardwareDevice ? 'gp' : 'docker'" border :status="probe.status"/>
+									<div
+										class="col-start-2 col-end-3 flex items-center font-bold"
+									>
+										<NuxtLink class="hover:underline" :to="`/probes/${probe.id}`">{{ probe.name || probe.city }}</NuxtLink>
+									</div>
+									<p class="col-start-2 col-end-3 row-start-2 row-end-3 max-w-[185px] overflow-hidden text-ellipsis text-[13px] text-bluegray-400">{{ probe.ip }}</p>
 								</div>
-								<p class="col-start-2 col-end-3 row-start-2 row-end-3 max-w-[185px] overflow-hidden text-ellipsis text-[13px] text-bluegray-400">{{ probe.ip }}</p>
-							</div>
-							<div>
-								<div class="mb-2 flex items-center text-nowrap">
-									<span class="mr-6 font-semibold">Location:</span>
-									<span class="ml-auto mr-2 flex items-center justify-end">
-										{{ probe.city }}, {{ probe.country }}
-									</span>
-									<CountryFlag :country="probe.country" size="small"/>
+								<div>
+									<div class="mb-2 flex items-center text-nowrap">
+										<span class="mr-6 font-semibold">Location:</span>
+										<span class="ml-auto mr-2 flex items-center justify-end">
+											{{ probe.city }}, {{ probe.country }}
+										</span>
+										<CountryFlag :country="probe.country" size="small"/>
+									</div>
+									<div class="mb-2 flex items-center justify-between text-nowrap">
+										<span class="mr-6 font-semibold">Version:</span>
+										<span>{{ probe.version }}</span>
+									</div>
 								</div>
-								<div class="mb-2 flex items-center justify-between text-nowrap">
-									<span class="mr-6 font-semibold">Version:</span>
-									<span>{{ probe.version }}</span>
-								</div>
-							</div>
+							</component>
 						</div>
 					</div>
 					<div v-if="!adoptedProbes.length" class="flex rounded-xl bg-surface-50 p-6 max-sm:flex-col max-sm:items-center dark:bg-dark-600">
@@ -153,6 +155,7 @@
 </template>
 
 <script setup lang="ts">
+	import { NuxtLink } from '#components';
 	import { readItems } from '@directus/sdk';
 	import countBy from 'lodash/countBy';
 	import isEmpty from 'lodash/isEmpty';
@@ -243,7 +246,7 @@
 		border-left-width: 1px;
 	}
 
-	@media (max-width: 640px) {
+	@media (max-width: 639.99px) {
 		.probe + .probe {
 			margin-left: 0;
 			padding-left: 0;

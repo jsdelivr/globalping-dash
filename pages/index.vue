@@ -246,7 +246,7 @@
 		border-left-width: 1px;
 	}
 
-	@media (max-width: 639px) {
+	@media (max-width: 639.99px) {
 		.probe + .probe {
 			margin-left: 0;
 			padding-left: 0;

@@ -1,5 +1,5 @@
 <template>
-	<div class="min-h-full p-6" :class="{'sm:min-w-[940px]': probes?.length}">
+	<div class="min-h-full p-6" :class="{'md:min-w-[940px]': probes?.length}">
 		<div class="mb-4 flex">
 			<h1 class="page-title">Probes</h1>
 			<Button class="ml-auto" @click="adoptProbeDialog = true">
@@ -8,7 +8,7 @@
 			</Button>
 		</div>
 		<div v-if="probes.length || loading">
-			<div class="max-sm:hidden">
+			<div class="max-md:hidden">
 				<DataTable
 					ref="dataTableRef"
 					:value="probes"
@@ -91,7 +91,7 @@
 					</template>
 				</DataTable>
 			</div>
-			<div class="hidden max-sm:block">
+			<div class="hidden max-md:block">
 				<div class="rounded-xl border bg-surface-0 dark:bg-dark-800">
 					<div class="flex h-10 items-center border-b px-4 font-bold text-bluegray-700 dark:text-dark-0">
 						List of probes
@@ -393,7 +393,7 @@
 </script>
 
 <style scoped>
-	@media (max-width: 639px) {
+	@media (max-width: 767.99px) {
 		.probe + .probe {
 			@apply border-t;
 		}

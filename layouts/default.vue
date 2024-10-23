@@ -140,8 +140,10 @@
 
 	const { data: notifications } = await useAsyncData('directus_notifications', async () => {
 		return $directus.request(readNotifications({
-			// @ts-ignore
 			format: 'html',
+			filter: {
+				recipient: { _eq: user.id },
+			},
 		}));
 	}, { default: () => [] });
 

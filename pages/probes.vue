@@ -364,6 +364,12 @@
 
 			probeDetails.value = probe;
 		} catch (e) {
+			const response = (e as { response?: Response } | undefined)?.response;
+
+			if (response?.status === 403) {
+				return navigateTo('/probes');
+			}
+
 			sendErrorToast(e);
 		}
 	};

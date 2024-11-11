@@ -10,15 +10,15 @@
 					<div class="flex max-sm:flex-wrap">
 						<div class="flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:bg-surface-50 max-sm:p-4 max-sm:dark:bg-dark-700">
 							<BigIcon name="gp" border/>
-							<div><span id="e2e_probes-count" class="mx-2 text-3xl font-bold">{{ adoptedProbes.length }}</span>Probes</div>
+							<div><span data-testid="probes-count" class="mx-2 text-3xl font-bold">{{ adoptedProbes.length }}</span>Probes</div>
 						</div>
 						<div class="ml-auto mr-6 flex items-center max-sm:ml-0 max-sm:mt-3">
 							<BigIcon name="point-online" filled/>
-							<div><span id="e2e_online-probes-count" class="mx-2 text-3xl font-bold">{{ onlineProbes.length }}</span>Online</div>
+							<div><span data-testid="online-probes-count" class="mx-2 text-3xl font-bold">{{ onlineProbes.length }}</span>Online</div>
 						</div>
 						<div class="flex items-center max-sm:mt-3">
 							<BigIcon name="point-offline" filled/>
-							<div><span id="e2e_offline-probes-count" class="mx-2 text-3xl font-bold">{{ offlineProbes.length }}</span>Offline</div>
+							<div><span data-testid="offline-probes-count" class="mx-2 text-3xl font-bold">{{ offlineProbes.length }}</span>Offline</div>
 						</div>
 					</div>
 					<div class="mt-6 flex items-center text-nowrap max-sm:flex-wrap">
@@ -60,18 +60,18 @@
 					<div class="flex gap-x-2 max-sm:flex-wrap">
 						<div class="flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:bg-surface-50 max-sm:p-4 max-sm:dark:bg-dark-700">
 							<BigIcon name="coin" border/>
-							<div><span id="e2e_total-credits" class="mx-2 text-3xl font-bold">{{ total.toLocaleString('en-US') }}</span>Total</div>
+							<div><span data-testid="total-credits" class="mx-2 text-3xl font-bold">{{ total.toLocaleString('en-US') }}</span>Total</div>
 						</div>
 						<div class="-mb-1 -mt-3 ml-auto flex flex-col items-center rounded-md border px-4 pt-2 max-sm:ml-0 max-sm:mt-3 max-sm:py-2">
 							<div>
-								<span id="e2e_credits-from-probes" class="p-button-label font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500 dark:text-bluegray-400': !perDay }">+{{ perDay.toLocaleString('en-US') }}</span>
+								<span data-testid="credits-from-probes" class="p-button-label font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500 dark:text-bluegray-400': !perDay }">+{{ perDay.toLocaleString('en-US') }}</span>
 								<span>&nbsp;/ day</span>
 							</div>
 							<div class="text-xs font-semibold text-bluegray-500">from probes</div>
 						</div>
 						<div :class="{ 'border-yellow-200 bg-yellow-50/80 dark:border-yellow-500/20 dark:bg-yellow-500/10': credits?.fromSponsorship }" class="-mb-1 -mt-3 ml-0 flex flex-col items-center rounded-md border px-4 pt-2 max-sm:mt-3 max-sm:py-2">
 							<div>
-								<span id="e2e_credits-from-sponsorship" class="p-button-label font-bold" :class="{ 'text-green-500': credits?.fromSponsorship, 'text-bluegray-500 dark:text-bluegray-400': !credits?.fromSponsorship }">+{{ credits?.fromSponsorship.toLocaleString('en-US') }}</span>
+								<span data-testid="credits-from-sponsorship" class="p-button-label font-bold" :class="{ 'text-green-500': credits?.fromSponsorship, 'text-bluegray-500 dark:text-bluegray-400': !credits?.fromSponsorship }">+{{ credits?.fromSponsorship.toLocaleString('en-US') }}</span>
 								<span>&nbsp;/ month</span>
 							</div>
 							<div :class="{'!text-yellow-500 dark:!text-yellow-500/90': credits?.fromSponsorship}" class="text-xs font-semibold text-bluegray-500">from sponsorship</div>

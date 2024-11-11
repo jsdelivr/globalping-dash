@@ -55,7 +55,7 @@
 						<div>
 							<p class="font-bold">Don't forget to copy your new access token.</p>
 							<p class="mt-2">You won’t be able to see it again.</p>
-							<CodeBlock id="e2e_token-value" class="mt-2" :commands="[[generatedToken!.value]]"/>
+							<CodeBlock data-testid="token-value" class="mt-2" :commands="[[generatedToken!.value]]"/>
 						</div>
 						<div class="ml-auto">
 							<Button

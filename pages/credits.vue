@@ -9,19 +9,19 @@
 		<div class="mt-2 flex">
 			<div class="mr-20">
 				<p>Total credits</p>
-				<p id="e2e_total-credits" class="text-lg font-bold">{{ credits.total.toLocaleString('en-US') }}</p>
+				<p data-testid="total-credits" class="text-lg font-bold">{{ credits.total.toLocaleString('en-US') }}</p>
 			</div>
 			<div class="mr-20">
 				<p>Generated past 30 days</p>
-				<p id="e2e_generated-credits" class="text-lg font-bold">{{ totalAdditions.toLocaleString('en-US') }}</p>
+				<p data-testid="generated-credits" class="text-lg font-bold">{{ totalAdditions.toLocaleString('en-US') }}</p>
 			</div>
 			<div class="mr-20">
 				<p>Spent past 30 days</p>
-				<p id="e2e_spent-credits" class="text-lg font-bold">{{ totalDeductions.toLocaleString('en-US') }}</p>
+				<p data-testid="spent-credits" class="text-lg font-bold">{{ totalDeductions.toLocaleString('en-US') }}</p>
 			</div>
 			<div>
 				<p>Estimated to generate per day <i v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="pi pi-info-circle"/></p>
-				<p id="e2e_estimated-credits" class="text-lg font-bold">{{ dailyAdditions.toLocaleString('en-US') }}</p>
+				<p data-testid="estimated-credits" class="text-lg font-bold">{{ dailyAdditions.toLocaleString('en-US') }}</p>
 			</div>
 		</div>
 		<div class="mt-6">

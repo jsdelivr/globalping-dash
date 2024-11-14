@@ -265,7 +265,7 @@
 			for (const addition of creditsAdditions) {
 				const { adopted_probe: adoptedProbe, sum: { amount } } = addition;
 
-				totalCredits.value += amount;
+				totalCredits.value += Number(amount);
 				creditsByProbeId[adoptedProbe] = creditsByProbeId[adoptedProbe] ? creditsByProbeId[adoptedProbe] + amount : amount;
 			}
 

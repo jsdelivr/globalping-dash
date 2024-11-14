@@ -105,7 +105,7 @@
 				})).then((additions) => {
 					return additions.map((addition) => {
 						const { sum, ...rest } = addition;
-						return { ...rest, amount: sum.amount };
+						return { ...rest, amount: Number(sum.amount) };
 					});
 				}),
 				$directus.request<[{sum: { amount: number }, date: 'datetime'}]>(aggregate('gp_credits_deductions', {
@@ -115,7 +115,7 @@
 				})).then((deduction) => {
 					return deduction.map((addition) => {
 						const { sum, ...rest } = addition;
-						return { ...rest, amount: sum.amount };
+						return { ...rest, amount: Number(sum.amount) };
 					});
 				}),
 				$directus.request<[{count: number}]>(aggregate('gp_adopted_probes', {

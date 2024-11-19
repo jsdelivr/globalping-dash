@@ -67,6 +67,21 @@
 							</NuxtLink>
 						</template>
 					</Column>
+					<Column body-class="h-16" :style="{ width: `${columnWidths.tags}px` }">
+						<template #header>
+							Version <i ref="tagsHeaderContentRef" v-tooltip.top="'The versions of the probes.'" class="pi pi-info-circle"/>
+						</template>
+
+						<template #body="slotProps">
+							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
+								<div class="px-2 py-3">
+									<div class="mb-1 flex items-center">
+										<p class="ml-2 font-normal">{{ slotProps.data.version }}, Node.js {{ slotProps.data.nodeVersion }}</p>
+									</div>
+								</div>
+							</NuxtLink>
+						</template>
+					</Column>
 					<template #footer>
 						<div class="flex h-14 items-center rounded-b-xl border-t bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] px-3 dark:from-dark-700 dark:to-dark-700">
 							<div class="flex items-center">

@@ -103,6 +103,7 @@
 						<div class="flex justify-center">
 							<InputOtp
 								v-model="code"
+								data-testid="adoption-code"
 								:length="6"
 								:invalid="!isCodeValid"
 								integer-only

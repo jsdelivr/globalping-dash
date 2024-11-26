@@ -26,7 +26,7 @@ declare global {
     amount: number;
     comment: string;
     date_created: 'datetime';
-    adopted_probe: number | null;
+    adopted_probe: string | null;
     github_id: string;
   };
 
@@ -41,7 +41,7 @@ declare global {
     date_created: string;
     comment?: string;
     amount: number;
-    adopted_probe?: number | null;
+    adopted_probe?: string | null;
   };
 
   type Probe = {

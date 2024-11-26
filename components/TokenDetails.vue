@@ -234,6 +234,8 @@
 		} catch (e) {
 			sendErrorToast(e);
 		}
+
+		regenerateTokenLoading.value = false;
 	};
 
 	const updateTokenLoading = ref(false);
@@ -258,6 +260,8 @@
 		} catch (e) {
 			sendErrorToast(e);
 		}
+
+		updateTokenLoading.value = false;
 	};
 
 	const regenerateTokenLoading = ref(false);
@@ -285,5 +289,7 @@
 		} catch (e) {
 			sendErrorToast(e);
 		}
+
+		regenerateTokenLoading.value = false;
 	};
 </script>

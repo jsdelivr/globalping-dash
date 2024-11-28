@@ -98,24 +98,24 @@
 				$directus.request<{amount: number}[]>(readItems('gp_credits', {
 					filter: { user_id: { _eq: user.id } },
 				})),
-				$directus.request<[{sum: { amount: string }, date_created: 'datetime'}]>(aggregate('gp_credits_additions', {
+				$directus.request<[{sum: { amount: number }, date_created: 'datetime'}]>(aggregate('gp_credits_additions', {
 					query: { filter: { github_id: { _eq: user.external_identifier || 'admin' }, date_created: { _gte: '$NOW(-30 day)' } } },
 					groupBy: [ 'date_created' ],
 					aggregate: { sum: 'amount' },
 				})).then((additions) => {
 					return additions.map((addition) => {
 						const { sum, ...rest } = addition;
-						return { ...rest, amount: Number(sum.amount) };
+						return { ...rest, amount: sum.amount };
 					});
 				}),
-				$directus.request<[{sum: { amount: string }, date: 'datetime'}]>(aggregate('gp_credits_deductions', {
+				$directus.request<[{sum: { amount: number }, date: 'datetime'}]>(aggregate('gp_credits_deductions', {
 					query: { filter: { user_id: { _eq: user.id }, date: { _gte: '$NOW(-30 day)' } } },
 					groupBy: [ 'date' ],
 					aggregate: { sum: 'amount' },
 				})).then((deduction) => {
 					return deduction.map((addition) => {
 						const { sum, ...rest } = addition;
-						return { ...rest, amount: Number(sum.amount) };
+						return { ...rest, amount: sum.amount };
 					});
 				}),
 				$directus.request<[{count: number}]>(aggregate('gp_adopted_probes', {

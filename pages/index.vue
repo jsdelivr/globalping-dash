@@ -78,14 +78,13 @@
 						</div>
 					</div>
 					<div class="mt-6 flex items-center text-nowrap">
-						<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank">
-							<Button
-								:severity="perDay ? 'secondary' : undefined"
-								:outlined="perDay ? true : false"
-								icon="pi pi-plus"
-								label="Add credits"
-							/>
-						</NuxtLink>
+						<Button
+							:severity="perDay ? 'secondary' : undefined"
+							:outlined="perDay ? true : false"
+							icon="pi pi-plus"
+							label="Add credits"
+							@click="addCreditsDialog = true"
+						/>
 						<NuxtLink v-if="perDay" class="ml-auto" to="/credits" tabindex="-1">
 							<Button link label="See details" icon-pos="right" icon="pi pi-chevron-right"/>
 						</NuxtLink>
@@ -150,6 +149,15 @@
 			content-class="!p-0"
 		>
 			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="refreshNuxtData"/>
+		</GPDialog>
+
+		<GPDialog
+			v-model:visible="addCreditsDialog"
+			header="Add credits"
+			content-class="!p-0"
+			class="w-[700px]"
+		>
+			<AddCredits @cancel="addCreditsDialog = false"/>
 		</GPDialog>
 	</div>
 </template>
@@ -243,6 +251,7 @@
 	// ADOPT PROBE DIALOG
 
 	const adoptProbeDialog = ref(false);
+	const addCreditsDialog = ref(false);
 </script>
 
 <style scoped>

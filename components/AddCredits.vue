@@ -2,20 +2,28 @@
 	<div class="border-t p-5 pt-7">
 		<div class="flex">
 			<div class="mr-2 flex w-10 flex-col">
-				<div class="mx-auto flex size-7 items-center justify-center rounded-full bg-primary">
+				<div v-if="step1Completed" class="mx-auto flex size-7 items-center justify-center rounded-full bg-primary">
 					<i class="pi pi-check text-surface-0"/>
 				</div>
+				<div v-else class="mx-auto flex size-7 items-center justify-center rounded-full border">1</div>
 				<div class="mt-2 grow">
-					<div class="mx-auto h-full w-px bg-primary"/>
+					<div class="mx-auto h-full w-px border-l" :class="{ 'border-primary': step1Completed }"/>
 				</div>
 			</div>
 			<div class="w-full rounded-xl border p-4 pt-3">
 				<h6 class="text-md text-base font-bold">Sign up</h6>
 				<p class="mt-1 text-bluegray-500">By creating a free account you help us fight abuse while getting access to higher limits and additional features.</p>
-				<div class="mt-1 rounded-xl bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] p-2 dark:from-dark-700 dark:to-dark-700">
+				<div
+					class="mt-1 rounded-xl p-2"
+					:class="{
+						'bg-surface-50': !step1Completed,
+						'bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] dark:from-dark-700 dark:to-dark-700': step1Completed,
+					}"
+				>
 					<div class="flex items-center justify-between">
-						<div class="ml-2">You received <span class="ml-1.5 rounded-full border bg-surface-0 px-2.5 py-1.5"><span class="mr-1 font-bold text-green-500">500 free credits</span> /hour</span></div>
+						<div class="ml-2">You received <span class="ml-1.5 rounded-full border bg-surface-0 px-2.5 py-1.5"><span class="mr-1 font-bold" :class="{'text-green-500': step1Completed}">500 free credits</span> /hour</span></div>
 						<Button
+							v-if="step1Completed"
 							size="small"
 							disabled
 							severity="secondary"
@@ -24,46 +32,106 @@
 							icon="pi pi-check"
 							class="text-primary !opacity-100"
 						/>
+						<Button
+							v-else
+							size="small"
+							label="Sign up"
+						/>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="mt-2 flex">
 			<div class="mr-2 flex w-10 flex-col">
-				<div class="mx-auto flex size-7 items-center justify-center rounded-full border">
-					2
+				<div v-if="!step1Completed" class="mx-auto flex size-7 items-center justify-center rounded-full bg-surface-50">
+					<i class="pi pi-lock"/>
 				</div>
+				<div v-else-if="step2Completed" class="mx-auto flex size-7 items-center justify-center rounded-full bg-primary">
+					<i class="pi pi-check text-surface-0"/>
+				</div>
+				<div v-else class="mx-auto flex size-7 items-center justify-center rounded-full border">2</div>
 				<div class="mt-2 grow">
-					<div class="mx-auto h-full w-px bg-surface-300"/>
+					<div class="border- mx-auto h-full w-px border-l" :class="{ 'border-primary': step2Completed }"/>
 				</div>
 			</div>
-			<div class="w-full rounded-xl border p-4 pt-3">
+			<div class="w-full rounded-xl p-4 pt-3" :class="{ 'cursor-not-allowed bg-surface-50 opacity-50': !step1Completed, 'border': step1Completed }">
 				<h6 class="text-md text-base font-bold">Host a probe</h6>
 				<p class="mt-1 text-bluegray-500">Become a member of the community by hosting a probe. For each day your probe stays online, you will get additional free credits.</p>
-				<div class="mt-1 rounded-xl bg-surface-50 p-2 dark:bg-dark-700">
+				<div
+					class="mt-1 rounded-xl bg-surface-50 p-2 dark:bg-dark-700"
+					:class="{
+						'border': !step1Completed,
+						'bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] dark:from-dark-700 dark:to-dark-700': step2Completed,
+						'bg-surface-50': !step2Completed,
+					}"
+				>
 					<div class="flex items-center justify-between">
-						<div class="ml-2">You get <span class="ml-1.5 rounded-full border bg-surface-0 px-2.5 py-1.5"><span class="mr-1 font-bold">+150 credits</span> /probe /day</span></div>
-						<Button size="small" label="Adopt probe"/>
+						<div class="ml-2">You get <span class="ml-1.5 rounded-full border bg-surface-0 px-2.5 py-1.5"><span class="mr-1 font-bold" :class="{'text-green-500': step2Completed}">+{{ creditsPerAdoptedProbePerDay }} credits</span> /probe /day</span></div>
+						<Button
+							v-if="!step1Completed"
+							size="small"
+							disabled
+							severity="secondary"
+							outlined
+							label="Adopt probe"
+						/>
+						<Button
+							v-else-if="step2Completed"
+							size="small"
+							severity="secondary"
+							outlined
+							label="Adopt probe"
+							class="text-primary !opacity-100"
+						/>
+						<Button v-else size="small" label="Adopt probe" @click="$emit('adopt-a-probe')"/>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="mt-2 flex">
 			<div class="mr-2 flex w-10 flex-col">
-				<div class="mx-auto flex size-7 items-center justify-center rounded-full border">
-					3
+				<div v-if="!step1Completed" class="mx-auto flex size-7 items-center justify-center rounded-full bg-surface-50">
+					<i class="pi pi-lock"/>
 				</div>
-				<div class="mt-2 grow">
-					<div class="mx-auto h-full w-px bg-surface-300"/>
+				<div v-else-if="step3Completed" class="mx-auto flex size-7 items-center justify-center rounded-full bg-primary">
+					<i class="pi pi-check text-surface-0"/>
 				</div>
+				<div v-else class="mx-auto flex size-7 items-center justify-center rounded-full border">3</div>
 			</div>
-			<div class="w-full rounded-xl border p-4 pt-3">
+			<div class="w-full rounded-xl p-4 pt-3" :class="{ 'cursor-not-allowed bg-surface-50 opacity-50': !step1Completed, 'border': step1Completed }">
 				<h6 class="text-md text-base font-bold">Become a sponsor</h6>
 				<p class="mt-1 text-bluegray-500">Support the active development of the project by a one-time or monthly donation.</p>
-				<div class="mt-1 rounded-xl bg-surface-50 p-2 dark:bg-dark-700">
+				<div
+					class="mt-1 rounded-xl bg-surface-50 p-2 dark:bg-dark-700"
+					:class="{
+						'border': !step1Completed,
+						'bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] dark:from-dark-700 dark:to-dark-700': step3Completed,
+						'bg-surface-50': !step3Completed,
+					}"
+				>
 					<div class="flex items-center justify-between">
-						<div class="ml-2">You get <span class="ml-1.5 rounded-full border bg-surface-0 px-2.5 py-1.5"><span class="mr-1 font-bold">+2000 credits</span> /$1</span></div>
-						<Button size="small" label="Become a sponsor"/>
+						<div class="ml-2">You get <span class="ml-1.5 rounded-full border bg-surface-0 px-2.5 py-1.5"><span class="mr-1 font-bold" :class="{'text-green-500': step3Completed}">+{{ creditsPerDollar }} credits</span> /$1</span></div>
+						<Button
+							v-if="!step1Completed"
+							size="small"
+							disabled
+							severity="secondary"
+							outlined
+							label="Become a sponsor"
+						/>
+						<NuxtLink v-else-if="step3Completed" to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank">
+							<Button
+								size="small"
+								label="You are a sponsor"
+								severity="secondary"
+								outlined
+								icon="pi pi-check"
+								class="text-primary !opacity-100"
+							/>
+						</NuxtLink>
+						<NuxtLink v-else to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank">
+							<Button size="small" label="Become a sponsor"/>
+						</NuxtLink>
 					</div>
 				</div>
 			</div>
@@ -75,5 +143,17 @@
 </template>
 
 <script setup lang="ts">
-	defineEmits([ 'cancel' ]);
+	import { useAuth } from '~/store/auth';
+
+	const config = useRuntimeConfig();
+	const auth = useAuth();
+	const user = auth.getUser as User;
+
+	defineEmits([ 'cancel', 'adopt-a-probe' ]);
+
+	const creditsPerAdoptedProbePerDay = config.public.creditsPerAdoptedProbePerDay;
+	const creditsPerDollar = config.public.creditsPerDollar;
+	const step1Completed = auth.isLoggedIn;
+	const step2Completed = true;
+	const step3Completed = user.user_type === 'sponsor' || user.user_type === 'special';
 </script>

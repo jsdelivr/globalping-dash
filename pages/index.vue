@@ -157,7 +157,7 @@
 			content-class="!p-0"
 			class="w-[700px]"
 		>
-			<AddCredits @cancel="addCreditsDialog = false"/>
+			<AddCredits @cancel="addCreditsDialog = false" @adopt-a-probe="adoptProbeDialog = true"/>
 		</GPDialog>
 	</div>
 </template>

@@ -8,6 +8,7 @@ export default defineNuxtConfig({
 			googleMapsKey: process.env.GOOGLE_MAPS_KEY,
 			itemsPerTablePage: 10,
 			creditsPerAdoptedProbePerDay: 150,
+			creditsPerDollar: 2000,
 		},
 	},
 	app: {

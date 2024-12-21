@@ -44,7 +44,13 @@ export const useAuth = defineStore('auth', {
 		getRedirectUrl () {
 			const url = new URL(location.href);
 			const redirect = url.searchParams.get('redirect') || '/';
+			const view = url.searchParams.get('view');
+
 			const redirectUrl = new URL(redirect, url.origin);
+
+			if (view && !redirectUrl.searchParams.get('view')) {
+				redirectUrl.searchParams.set('view', view);
+			}
 
 			if (redirectUrl.origin !== url.origin) {
 				return url.origin;

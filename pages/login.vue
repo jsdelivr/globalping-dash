@@ -35,6 +35,15 @@
 		</div>
 
 		<div class="bg-[url('~/assets/images/login-bg.svg')] bg-cover max-md:hidden dark:bg-[url('~/assets/images/login-bg-dark.svg')]"/>
+
+		<GPDialog
+			v-model:visible="addCreditsDialog"
+			header="Add credits"
+			content-class="!p-0"
+			class="w-[700px]"
+		>
+			<AddCredits @cancel="addCreditsDialog = false"/>
+		</GPDialog>
 	</section>
 </template>
 
@@ -50,4 +59,15 @@
 	});
 
 	const auth = useAuth();
+	const route = useRoute();
+	let redirectHasCreditsView = false;
+
+	const redirect = Array.isArray(route.query.redirect) ? route.query.redirect[0] : route.query.redirect;
+
+	if (redirect) {
+		const redirectUrl = new URL(redirect);
+		redirectHasCreditsView = redirectUrl.searchParams.get('view') === 'add-credits';
+	}
+
+	const addCreditsDialog = ref(route.query.view === 'add-credits' || redirectHasCreditsView);
 </script>

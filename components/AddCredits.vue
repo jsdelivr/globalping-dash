@@ -36,6 +36,7 @@
 							v-else
 							size="small"
 							label="Sign up"
+							@click="auth.login"
 						/>
 					</div>
 				</div>

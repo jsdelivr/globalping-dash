@@ -21,7 +21,7 @@
 					}"
 				>
 					<div class="flex items-center justify-between max-sm:flex-col max-sm:text-center">
-						<div class="ml-2">You received <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="mr-1 font-bold" :class="{'text-green-500': step1Completed}">500 free credits</span> /hour</span></div>
+						<div class="ml-2">{{ step1Completed ? 'You received' : 'You get' }} <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="mr-1 font-bold" :class="{'text-green-500': step1Completed}">500 free credits</span> /hour</span></div>
 						<Button
 							v-if="step1Completed"
 							size="small"

@@ -60,8 +60,8 @@ export default {
 			// Secondary Button
 			{
 				'text-main-900': props.severity === 'secondary' && !props.text && !props.outlined && !props.plain,
-				'bg-surface-100 dark:bg-bluegray-700': props.severity === 'secondary' && !props.text && !props.outlined && !props.plain,
-				'border border-surface-100 dark:border-bluegray-700': props.severity === 'secondary' && !props.text && !props.outlined && !props.plain,
+				'bg-surface-50 dark:bg-bluegray-700': props.severity === 'secondary' && !props.text && !props.outlined && !props.plain,
+				'border border-surface-50 dark:border-bluegray-700': props.severity === 'secondary' && !props.text && !props.outlined && !props.plain,
 			},
 			// Secondary Text Button
 			{ 'text-main-900': props.text && props.severity === 'secondary' && !props.plain },

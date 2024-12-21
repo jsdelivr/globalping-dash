@@ -137,7 +137,10 @@
 				</div>
 			</div>
 		</div>
-		<div class="mt-7 flex justify-end">
+		<div class="mt-7 flex justify-between">
+			<NuxtLink to="https://globalping.io/credits" tabindex="-1" target="_blank">
+				<Button label="Learn more about Globalping credits." severity="secondary" icon="pi pi-info-circle"/>
+			</NuxtLink>
 			<Button label="Close" severity="secondary" outlined @click="$emit('cancel')"/>
 		</div>
 	</div>

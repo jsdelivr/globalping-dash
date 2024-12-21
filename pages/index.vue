@@ -178,6 +178,7 @@
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 	const creditsPerAdoptedProbePerDay = config.public.creditsPerAdoptedProbePerDay;
+	const route = useRoute();
 
 	// SUMMARY
 
@@ -251,7 +252,7 @@
 	// ADOPT PROBE DIALOG
 
 	const adoptProbeDialog = ref(false);
-	const addCreditsDialog = ref(false);
+	const addCreditsDialog = ref(route.query.view === 'add-credits');
 </script>
 
 <style scoped>

@@ -169,7 +169,7 @@
 	const creditsPerAdoptedProbePerDay = config.public.creditsPerAdoptedProbePerDay;
 	const creditsPerDollar = config.public.creditsPerDollar;
 
-	const step1Completed = auth.isLoggedIn;
-	const step2Completed = adoptionsExists.value;
-	const step3Completed = user.user_type === 'sponsor' || user.user_type === 'special';
+	const step1Completed = computed(() => auth.isLoggedIn);
+	const step2Completed = computed(() => adoptionsExists.value);
+	const step3Completed = computed(() => user.user_type === 'sponsor' || user.user_type === 'special');
 </script>

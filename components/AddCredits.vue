@@ -20,8 +20,8 @@
 						'bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] dark:from-dark-800 dark:to-dark-800': step1Completed,
 					}"
 				>
-					<div class="flex items-center justify-between">
-						<div class="ml-2">You received <span class="ml-1.5 rounded-full border bg-surface-0 px-2.5 py-1.5 dark:bg-dark-700"><span class="mr-1 font-bold" :class="{'text-green-500': step1Completed}">500 free credits</span> /hour</span></div>
+					<div class="flex items-center justify-between max-sm:flex-col max-sm:text-center">
+						<div class="ml-2">You received <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="mr-1 font-bold" :class="{'text-green-500': step1Completed}">500 free credits</span> /hour</span></div>
 						<Button
 							v-if="step1Completed"
 							size="small"
@@ -66,8 +66,8 @@
 						'bg-surface-50 dark:bg-dark-800': !step2Completed,
 					}"
 				>
-					<div class="flex items-center justify-between">
-						<div class="ml-2">You get <span class="ml-1.5 rounded-full border bg-surface-0 px-2.5 py-1.5 dark:bg-dark-700"><span class="mr-1 font-bold" :class="{'text-green-500': step2Completed}">+{{ creditsPerAdoptedProbePerDay }} credits</span> /probe /day</span></div>
+					<div class="flex items-center justify-between max-sm:flex-col max-sm:text-center">
+						<div class="ml-2">You get <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="mr-1 font-bold" :class="{'text-green-500': step2Completed}">+{{ creditsPerAdoptedProbePerDay }} credits</span> /probe /day</span></div>
 						<Button
 							v-if="!step1Completed"
 							size="small"
@@ -111,8 +111,8 @@
 						'bg-surface-50 dark:bg-dark-800': !step3Completed,
 					}"
 				>
-					<div class="flex items-center justify-between">
-						<div class="ml-2">You get <span class="ml-1.5 rounded-full border bg-surface-0 px-2.5 py-1.5 dark:bg-dark-700"><span class="mr-1 font-bold" :class="{'text-green-500': step3Completed}">+{{ creditsPerDollar }} credits</span> /$1</span></div>
+					<div class="flex items-center justify-between max-sm:flex-col max-sm:text-center">
+						<div class="ml-2">You get <span class=" ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="mr-1 font-bold" :class="{'text-green-500': step3Completed}">+{{ creditsPerDollar }} credits</span> /$1</span></div>
 						<Button
 							v-if="!step1Completed"
 							size="small"
@@ -140,7 +140,7 @@
 		</div>
 		<div class="mt-7 flex justify-between">
 			<NuxtLink to="https://globalping.io/credits" tabindex="-1" target="_blank">
-				<Button label="Learn more about Globalping credits." severity="secondary" icon="pi pi-info-circle"/>
+				<Button label="Learn more about Globalping credits." severity="secondary" icon="pi pi-info-circle" class="mr-4"/>
 			</NuxtLink>
 			<Button label="Close" severity="secondary" outlined @click="$emit('cancel')"/>
 		</div>

@@ -83,7 +83,7 @@
 							:outlined="perDay ? true : false"
 							icon="pi pi-plus"
 							label="Add credits"
-							@click="addCreditsDialog = true"
+							@click="creditsDialog = true"
 						/>
 						<NuxtLink v-if="perDay" class="ml-auto" to="/credits" tabindex="-1">
 							<Button link label="See details" icon-pos="right" icon="pi pi-chevron-right"/>
@@ -152,12 +152,13 @@
 		</GPDialog>
 
 		<GPDialog
-			v-model:visible="addCreditsDialog"
+			v-model:visible="creditsDialog"
 			header="Add credits"
 			content-class="!p-0"
 			class="w-[700px]"
+			@after-hide="afterCreditsHide"
 		>
-			<AddCredits @cancel="addCreditsDialog = false" @adopt-a-probe="adoptProbeDialog = true"/>
+			<AddCredits @cancel="creditsDialog = false" @adopt-a-probe="adoptProbeDialog = true"/>
 		</GPDialog>
 	</div>
 </template>
@@ -179,6 +180,7 @@
 	const { $directus } = useNuxtApp();
 	const creditsPerAdoptedProbePerDay = config.public.creditsPerAdoptedProbePerDay;
 	const route = useRoute();
+	const router = useRouter();
 
 	// SUMMARY
 
@@ -252,7 +254,27 @@
 	// ADOPT PROBE DIALOG
 
 	const adoptProbeDialog = ref(false);
-	const addCreditsDialog = ref(route.query.view === 'add-credits');
+
+	// CREDITS DIALOG
+
+	const creditsDialog = ref(route.query.view === 'add-credits');
+
+	const afterCreditsHide = () => {
+		if (route.query.view === 'add-credits') {
+			const newQuery = { ...route.query };
+			delete newQuery.view;
+
+			router.push({
+				path: route.path,
+				query: newQuery,
+			});
+		}
+	};
+
+	watch(() => route.query.view, async () => {
+		creditsDialog.value = route.query.view === 'add-credits';
+	});
+
 </script>
 
 <style scoped>

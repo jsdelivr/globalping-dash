@@ -74,15 +74,7 @@
 			content-class="!p-0"
 			class="w-[700px]"
 		>
-			<AddCredits @cancel="creditsDialog = false" @adopt-a-probe="adoptProbeDialog = true"/>
-		</GPDialog>
-
-		<GPDialog
-			v-model:visible="adoptProbeDialog"
-			header="Adopt a probe"
-			content-class="!p-0"
-		>
-			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="refreshNuxtData"/>
+			<AddCredits @cancel="creditsDialog = false"/>
 		</GPDialog>
 	</div>
 </template>
@@ -203,6 +195,4 @@
 	// CREDITS DIALOG
 
 	const creditsDialog = ref(false);
-	const adoptProbeDialog = ref(false);
-
 </script>

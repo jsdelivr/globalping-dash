@@ -82,6 +82,7 @@
 							outlined
 							label="Adopt probe"
 							class="text-primary !opacity-100"
+							@click="$emit('adopt-a-probe')"
 						/>
 						<Button v-else size="small" label="Adopt probe" @click="$emit('adopt-a-probe')"/>
 					</div>
@@ -143,7 +144,9 @@
 </template>
 
 <script setup lang="ts">
+	import { readItems } from '@directus/sdk';
 	import { useAuth } from '~/store/auth';
+	const { $directus } = useNuxtApp();
 
 	const config = useRuntimeConfig();
 	const auth = useAuth();
@@ -151,9 +154,18 @@
 
 	defineEmits([ 'cancel', 'adopt-a-probe' ]);
 
+	const { data: adoptionsExists } = await useAsyncData('gp_adopted_probes_exist', async () => {
+		const adoptions = await $directus.request(readItems('gp_adopted_probes', {
+			filter: { userId: { _eq: user.id } },
+			limit: 1,
+		}));
+		return !!adoptions.length;
+	}, { default: () => false });
+
 	const creditsPerAdoptedProbePerDay = config.public.creditsPerAdoptedProbePerDay;
 	const creditsPerDollar = config.public.creditsPerDollar;
+
 	const step1Completed = auth.isLoggedIn;
-	const step2Completed = true;
+	const step2Completed = adoptionsExists.value;
 	const step3Completed = user.user_type === 'sponsor' || user.user_type === 'special';
 </script>

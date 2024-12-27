@@ -380,19 +380,29 @@
 		loadingApplications.value = true;
 
 		try {
-			const [ apps, [{ count }] ] = await Promise.all([
+			const [ gpApps, [{ count }] ] = await Promise.all([
 				$directus.request(readItems('gp_apps', {
 					offset: firstApp.value,
 					limit: itemsPerPage,
 					sort: '-date_created',
-				})).then(apps => apps.map(app => ({
-					...app,
-					owner_name: app.owner_name || 'Globalping',
-				}))),
+				})),
 				$directus.request<[{count: number}]>(aggregate('gp_apps', {
 					aggregate: { count: '*' },
 				})),
 			]);
+
+			const appTokens = await $directus.request(readItems('gp_tokens', {
+				filter: { app_id: { _in: gpApps.map(app => app.id) } },
+				sort: '-date_last_used',
+			}));
+			const apps = gpApps.map((app) => {
+				const token = appTokens.find(token => token.app_id === app.id);
+				return {
+					...app,
+					date_last_used: token ? token.date_last_used : null,
+					owner_name: app.owner_name || 'Globalping',
+				};
+			});
 
 			applications.value = apps;
 			applicationsCount.value = count;

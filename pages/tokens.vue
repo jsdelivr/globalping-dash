@@ -125,7 +125,7 @@
 		<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
 			<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
 				<p class="font-semibold">No data to show</p>
-				<p class="mt-4">Add an application to manage your API access.</p>
+				<p class="mt-4">Add an application to manage it's API access.</p>
 			</div>
 		</div>
 		<GPDialog
@@ -424,7 +424,13 @@
 
 	const revokeApp = async () => {
 		try {
-			await $directus.request(deleteItems('gp_tokens', { filter: { app_id: { _eq: appToRevoke.value!.id } } }));
+			if (appToRevoke.value && appToRevoke.value.id) {
+				await Promise.all([
+					$directus.request(deleteItems('gp_tokens', { filter: { app_id: { _eq: appToRevoke.value.id } } })),
+					$directus.request(deleteItems('gp_apps_approvals', { filter: { app: { _eq: appToRevoke.value.id } } })),
+				]);
+			}
+
 			appToRevoke.value = null;
 			revokeDialog.value = false;
 			sendToast('success', 'Done', 'Application access revoked');

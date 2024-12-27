@@ -14,6 +14,7 @@ declare global {
     gp_credits_deductions: CreditsDeduction[];
     gp_tokens: Token[];
     gp_apps: Application[];
+    gp_apps_approvals: AppAppoval[];
 
     directus_users: User;
   };
@@ -121,6 +122,15 @@ declare global {
     owner_url: string | null;
     secrets: string[];
   };
+
+  type AppAppoval = {
+    id: string;
+    date_created: string | null;
+    date_updated: string | null;
+    user: string;
+    app: string;
+    scopes: string[];
+  }
 
   type DashboardError = {
     response?: {

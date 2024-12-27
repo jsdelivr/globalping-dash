@@ -1,10 +1,11 @@
-import { readMe } from '@directus/sdk';
+import { readMe, readRolesMe } from '@directus/sdk';
 import { defineStore } from 'pinia';
 
 interface AuthState {
 	isLoggedIn: boolean,
 	expiresAt: number,
-	user: {
+		isAdmin: boolean,
+		user: {
 		id: string,
 		first_name: string | null,
 		last_name: string | null,
@@ -22,6 +23,7 @@ export const useAuth = defineStore('auth', {
 	state: (): AuthState => ({
 		isLoggedIn: false,
 		expiresAt: 0,
+		isAdmin: false,
 		user: {
 			id: '',
 			first_name: '',
@@ -76,10 +78,14 @@ export const useAuth = defineStore('auth', {
 
 			try {
 				const { expires_at } = await $directus.refresh();
-				const user = await $directus.request(readMe()) as AuthState['user'];
+				const [ user, roles ] = await Promise.all([
+					$directus.request(readMe()),
+					$directus.request(readRolesMe()),
+				]);
 				this.isLoggedIn = true;
 				this.expiresAt = Number(expires_at);
-				this.user = user;
+				this.user = user as AuthState['user'];
+				this.isAdmin = !!roles.some(role => role.name === 'Administrator');
 			} catch (error) {
 				console.error(error);
 			}

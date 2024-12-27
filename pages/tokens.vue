@@ -213,6 +213,8 @@
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
 
+	console.log('auth.isAdmin', auth.isAdmin);
+
 	const user = auth.getUser as User;
 	const itemsPerPage = config.public.itemsPerTablePage;
 	const loading = ref(false);

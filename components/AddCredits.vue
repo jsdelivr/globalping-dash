@@ -21,10 +21,9 @@
 					}"
 				>
 					<div class="flex items-center justify-between max-sm:flex-col max-sm:text-center">
-						<div class="ml-2">{{ step1Completed ? 'You received' : 'You get' }} <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="mr-1 font-bold" :class="{'text-green-500': step1Completed}">500 free credits</span> /hour</span></div>
+						<div class="ml-2">You get <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="font-bold" :class="{'text-primary': step1Completed}">500 free credits</span> / hour</span></div>
 						<Button
 							v-if="step1Completed"
-							size="small"
 							disabled
 							severity="secondary"
 							outlined
@@ -34,7 +33,6 @@
 						/>
 						<Button
 							v-else
-							size="small"
 							label="Sign up"
 							@click="auth.login"
 						/>
@@ -67,10 +65,9 @@
 					}"
 				>
 					<div class="flex items-center justify-between max-sm:flex-col max-sm:text-center">
-						<div class="ml-2">You get <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="mr-1 font-bold" :class="{'text-green-500': step2Completed}">+{{ creditsPerAdoptedProbePerDay }} credits</span> /probe /day</span></div>
+						<div class="ml-2">You get <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="font-bold" :class="{'text-primary': step2Completed}">+{{ creditsPerAdoptedProbePerDay }} credits</span> / probe / day</span></div>
 						<Button
 							v-if="!step1Completed"
-							size="small"
 							disabled
 							severity="secondary"
 							outlined
@@ -79,15 +76,14 @@
 
 						<NuxtLink v-else-if="step2Completed" to="/probes">
 							<Button
-								size="small"
 								severity="secondary"
 								outlined
-								label="Adopt probe"
+								label="Adopt another probe"
 								class="text-primary !opacity-100"
 							/>
 						</NuxtLink>
 						<NuxtLink v-else to="/probes">
-							<Button size="small" label="Adopt probe"/>
+							<Button label="Adopt probe"/>
 						</NuxtLink>
 					</div>
 				</div>
@@ -115,10 +111,9 @@
 					}"
 				>
 					<div class="flex items-center justify-between max-sm:flex-col max-sm:text-center">
-						<div class="ml-2">You get <span class=" ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="mr-1 font-bold" :class="{'text-green-500': step3Completed}">+{{ creditsPerDollar }} credits</span> /$1</span></div>
+						<div class="ml-2">You get <span class=" ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="font-bold" :class="{'text-primary': step3Completed}">+{{ creditsPerDollar }} credits</span> / $1</span></div>
 						<Button
 							v-if="!step1Completed"
-							size="small"
 							disabled
 							severity="secondary"
 							outlined
@@ -126,16 +121,15 @@
 						/>
 						<NuxtLink v-else-if="step3Completed" to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank">
 							<Button
-								size="small"
-								label="You are a sponsor"
+								label="Manage sponsorship"
 								severity="secondary"
 								outlined
-								icon="pi pi-check"
+								icon="pi pi-external-link"
 								class="text-primary !opacity-100"
 							/>
 						</NuxtLink>
 						<NuxtLink v-else to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank">
-							<Button size="small" label="Become a sponsor"/>
+							<Button label="Become a sponsor"/>
 						</NuxtLink>
 					</div>
 				</div>

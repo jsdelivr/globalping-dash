@@ -32,7 +32,7 @@
 				</Column>
 				<Column header="Last used">
 					<template #body="slotProps">
-						{{ getRelativeTimeString(slotProps.data.date_last_used) || 'Never' }}
+						{{ getRelativeTimeString(slotProps.data.date_last_used, true) || 'Never' }}
 					</template>
 				</Column>
 				<Column header="Expires">
@@ -104,7 +104,7 @@
 					<Column header="Owner" field="owner_name"/>
 					<Column header="Last used">
 						<template #body="slotProps">
-							{{ getRelativeTimeString(slotProps.data.date_last_used) || 'Never' }}
+							{{ getRelativeTimeString(slotProps.data.date_last_used, true) || 'Never' }}
 						</template>
 					</Column>
 					<Column :row-editor="true" body-class="!py-2">

@@ -73,18 +73,19 @@
 							outlined
 							label="Adopt probe"
 						/>
-
-						<NuxtLink v-else-if="step2Completed" to="/probes">
-							<Button
-								severity="secondary"
-								outlined
-								label="Adopt another probe"
-								class="text-primary !opacity-100"
-							/>
-						</NuxtLink>
-						<NuxtLink v-else to="/probes">
-							<Button label="Adopt probe"/>
-						</NuxtLink>
+						<Button
+							v-else-if="step2Completed"
+							severity="secondary"
+							outlined
+							label="Adopt another probe"
+							class="text-primary !opacity-100"
+							@click="$emit('adopt-a-probe')"
+						/>
+						<Button
+							v-else
+							label="Adopt probe"
+							@click="$emit('adopt-a-probe')"
+						/>
 					</div>
 				</div>
 			</div>
@@ -153,7 +154,7 @@
 	const auth = useAuth();
 	const user = auth.getUser as User;
 
-	defineEmits([ 'cancel' ]);
+	defineEmits([ 'cancel', 'adopt-a-probe' ]);
 
 	const { data: adoptionsExists } = await useAsyncData('gp_adopted_probes_exist', async () => {
 		const adoptions = await $directus.request(readItems('gp_adopted_probes', {

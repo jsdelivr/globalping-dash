@@ -158,7 +158,13 @@
 			class="w-[700px]"
 			@after-hide="afterCreditsHide"
 		>
-			<AddCredits @cancel="creditsDialog = false"/>
+			<AddCredits
+				@cancel="creditsDialog = false"
+				@adopt-a-probe="() => {
+					creditsDialog = false;
+					adoptProbeDialog = true;
+				}"
+			/>
 		</GPDialog>
 	</div>
 </template>

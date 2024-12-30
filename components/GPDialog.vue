@@ -5,7 +5,12 @@
 		modal
 		dismissable-mask
 		:draggable="false"
+		@after-hide="$emit('after-hide')"
 	>
 		<slot/>
 	</Dialog>
 </template>
+
+<script setup lang="ts">
+	defineEmits([ 'after-hide' ]);
+</script>

@@ -64,8 +64,32 @@
 			<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
 				<p class="font-semibold">No data to show</p>
 				<p class="mt-4">Adopt a probe or become a sponsor to track your credit usage</p>
+				<Button label="Add credits" class="mt-4" icon="pi pi-plus" @click="creditsDialog = true"/>
 			</div>
 		</div>
+
+		<GPDialog
+			v-model:visible="creditsDialog"
+			header="Add credits"
+			content-class="!p-0"
+			class="w-[700px]"
+		>
+			<AddCredits
+				@cancel="creditsDialog = false"
+				@adopt-a-probe="() => {
+					creditsDialog = false;
+					adoptProbeDialog = true;
+				}"
+			/>
+		</GPDialog>
+
+		<GPDialog
+			v-model:visible="adoptProbeDialog"
+			header="Adopt a probe"
+			content-class="!p-0"
+		>
+			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="refreshNuxtData"/>
+		</GPDialog>
 	</div>
 </template>
 
@@ -181,4 +205,9 @@
 	watch(page, async () => {
 		await loadLazyData();
 	});
+
+	// CREDITS DIALOG
+
+	const creditsDialog = ref(false);
+	const adoptProbeDialog = ref(false);
 </script>

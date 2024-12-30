@@ -86,46 +86,48 @@
 				<p class="mt-4">Generate a token and use it in your API requests to get a higher hourly measurements limit.</p>
 			</div>
 		</div>
-		<div class="mt-12">
-			<h2 class="page-title">Applications</h2>
-		</div>
-		<div v-if="applications.length || loadingApplications" class="mt-6">
-			<DataTable
-				:value="applications"
-				lazy
-				:first="firstApp"
-				:rows="itemsPerPage"
-				data-key="id"
-				:total-records="applicationsCount"
-				:loading="loadingApplications"
-			>
-				<Column header="Name" field="name"/>
-				<Column header="Owner" field="owner_name"/>
-				<Column header="Last used">
-					<template #body="slotProps">
-						{{ getRelativeTimeString(slotProps.data.date_last_used) || 'Never' }}
-					</template>
-				</Column>
-				<Column :row-editor="true" body-class="!py-2">
-					<template #body="slotProps">
-						<ApplicationOptions @revoke="openRevokeDialog(slotProps.data.id)"/>
-					</template>
-				</Column>
-			</DataTable>
-			<Paginator
-				v-if="applications.length !== applicationsCount"
-				class="mt-9"
-				:first="firstApp"
-				:rows="itemsPerPage"
-				:total-records="applicationsCount"
-				template="PrevPageLink PageLinks NextPageLink"
-				@page="appsPage = $event.page"
-			/>
-		</div>
-		<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
-			<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
-				<p class="font-semibold">No data to show</p>
-				<p class="mt-4">Add an application to manage it's API access.</p>
+		<div v-if="auth.isAdmin">
+			<div class="mt-12">
+				<h2 class="page-title">Applications</h2>
+			</div>
+			<div v-if="applications.length || loadingApplications" class="mt-6">
+				<DataTable
+					:value="applications"
+					lazy
+					:first="firstApp"
+					:rows="itemsPerPage"
+					data-key="id"
+					:total-records="applicationsCount"
+					:loading="loadingApplications"
+				>
+					<Column header="Name" field="name"/>
+					<Column header="Owner" field="owner_name"/>
+					<Column header="Last used">
+						<template #body="slotProps">
+							{{ getRelativeTimeString(slotProps.data.date_last_used) || 'Never' }}
+						</template>
+					</Column>
+					<Column :row-editor="true" body-class="!py-2">
+						<template #body="slotProps">
+							<ApplicationOptions @revoke="openRevokeDialog(slotProps.data.id)"/>
+						</template>
+					</Column>
+				</DataTable>
+				<Paginator
+					v-if="applications.length !== applicationsCount"
+					class="mt-9"
+					:first="firstApp"
+					:rows="itemsPerPage"
+					:total-records="applicationsCount"
+					template="PrevPageLink PageLinks NextPageLink"
+					@page="appsPage = $event.page"
+				/>
+			</div>
+			<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
+				<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
+					<p class="font-semibold">No data to show</p>
+					<p class="mt-4">Add an application to manage it's API access.</p>
+				</div>
 			</div>
 		</div>
 		<GPDialog
@@ -212,8 +214,6 @@
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
-
-	console.log('auth.isAdmin', auth.isAdmin);
 
 	const user = auth.getUser as User;
 	const itemsPerPage = config.public.itemsPerTablePage;
@@ -379,6 +379,10 @@
 	const { page: appsPage, first: firstApp } = usePagination({ itemsPerPage });
 
 	const loadApplications = async () => {
+		if (!auth.isAdmin) {
+			return;
+		}
+
 		loadingApplications.value = true;
 
 		try {
@@ -423,7 +427,7 @@
 		await loadApplications();
 	});
 
-	// DELETE TOKEN
+	// REVOKE APP ACCESS
 
 	const revokeDialog = ref(false);
 	const appToRevoke = ref<Application | null>(null);

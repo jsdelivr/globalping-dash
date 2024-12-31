@@ -120,7 +120,7 @@
 					:rows="itemsPerPage"
 					:total-records="applicationsCount"
 					template="PrevPageLink PageLinks NextPageLink"
-					@page="appsPage = $event.page"
+					@page="onAppsPage($event)"
 				/>
 			</div>
 			<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
@@ -202,6 +202,7 @@
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, deleteItem, deleteItems, readItems, updateItem } from '@directus/sdk';
+	import type { PageState } from 'primevue/paginator';
 	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
 	import { formatDate, getRelativeTimeString } from '~/utils/date-formatters';
@@ -222,7 +223,7 @@
 	const tokens = ref<Token[]>([]);
 	const { page: tokensPage, first: firstToken } = usePagination({ itemsPerPage });
 
-	const loadLazyData = async () => {
+	const loadTokens = async () => {
 		loading.value = true;
 
 		try {
@@ -249,14 +250,14 @@
 	};
 
 	onMounted(async () => {
-		await loadLazyData();
+		await loadTokens();
 	});
 
 	// NAVIGATION
 
 	watch(tokensPage, async () => {
 		resetState();
-		await loadLazyData();
+		await loadTokens();
 	});
 
 	// TOKEN DETAILS
@@ -284,7 +285,7 @@
 
 	const handleGenerate = async (id: number, tokenValue: string) => {
 		await navigateTo('/tokens');
-		await loadLazyData();
+		await loadTokens();
 		generatedToken.value = { id, value: tokenValue };
 		expandedTokens.value = { [id]: true };
 		tokenDetailsDialog.value = false;
@@ -293,12 +294,12 @@
 	// EDIT TOKEN
 
 	const handleSave = async () => {
-		await loadLazyData();
+		await loadTokens();
 		tokenDetailsDialog.value = false;
 	};
 
 	const handleRegenerate = async (id: number, tokenValue: string) => {
-		await loadLazyData();
+		await loadTokens();
 		generatedToken.value = { id, value: tokenValue };
 		expandedTokens.value = { [id]: true };
 		tokenDetailsDialog.value = false;
@@ -361,7 +362,7 @@
 				tokensPage.value--;
 			}
 
-			await loadLazyData();
+			await loadTokens();
 			tokenToDelete.value = null;
 			deleteDialog.value = false;
 
@@ -376,7 +377,12 @@
 	const applications = ref<Application[]>([]);
 	const applicationsCount = ref(0);
 	const loadingApplications = ref(false);
-	const { page: appsPage, first: firstApp } = usePagination({ itemsPerPage });
+	const firstApp = ref(0);
+
+	const onAppsPage = (event: PageState) => {
+		firstApp.value = event.first;
+		loadApplications();
+	};
 
 	const loadApplications = async () => {
 		if (!auth.isAdmin) {
@@ -420,10 +426,6 @@
 	};
 
 	onMounted(async () => {
-		await loadApplications();
-	});
-
-	watch(appsPage, async () => {
 		await loadApplications();
 	});
 

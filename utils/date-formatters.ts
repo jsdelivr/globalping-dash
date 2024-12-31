@@ -55,10 +55,11 @@ export function getRelativeTimeString (date: Date | string, noTime: boolean = fa
 
 	// Grab the ideal cutoff unit
 	let unitIndex = cutoffs.findIndex(cutoff => cutoff > Math.abs(deltaSeconds));
+	const dayIndex = units.findIndex(unit => unit === 'day');
 
 	// If `noTime` argument is passed, time is ignored. E.g. for all deltas <1 day ago 'Today' is returned.
-	if (noTime && unitIndex < 3) {
-		unitIndex = 3;
+	if (noTime && unitIndex < dayIndex) {
+		unitIndex = dayIndex;
 	}
 
 	// Get the divisor to divide from the seconds. E.g. if our unit is "day" our divisor

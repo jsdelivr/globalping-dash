@@ -87,9 +87,13 @@
 			</div>
 		</div>
 		<div v-if="auth.isAdmin">
-			<div class="mt-12">
-				<h2 class="page-title">Applications</h2>
+			<div class="mb-4 mt-12">
+				<h2 class="page-title">Authorized Apps</h2>
 			</div>
+			<p class="xl:w-1/2">
+				Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.
+				After reaching the hourly limit, you can keep running measurements by spending the earned credits.
+			</p>
 			<div v-if="applications.length || loadingApplications" class="mt-6">
 				<DataTable
 					:value="applications"
@@ -126,7 +130,7 @@
 			<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
 				<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
 					<p class="font-semibold">No data to show</p>
-					<p class="mt-4">Add an application to manage it's API access.</p>
+					<p class="mt-4">Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.</p>
 				</div>
 			</div>
 		</div>

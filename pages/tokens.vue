@@ -10,10 +10,10 @@
 		</p>
 		<div v-if="tokens.length || loading" class="mt-6">
 			<DataTable
-				v-model:expanded-rows="expandedRows"
+				v-model:expanded-rows="expandedTokens"
 				:value="tokens"
 				lazy
-				:first="first"
+				:first="firstToken"
 				:rows="itemsPerPage"
 				data-key="id"
 				:total-records="tokensCount"
@@ -32,7 +32,7 @@
 				</Column>
 				<Column header="Last used">
 					<template #body="slotProps">
-						{{ getRelativeTimeString(slotProps.data.date_last_used) || 'Never' }}
+						{{ getRelativeTimeString(slotProps.data.date_last_used, true) || 'Never' }}
 					</template>
 				</Column>
 				<Column header="Expires">
@@ -73,17 +73,65 @@
 			<Paginator
 				v-if="tokens.length !== tokensCount"
 				class="mt-9"
-				:first="first"
+				:first="firstToken"
 				:rows="itemsPerPage"
 				:total-records="tokensCount"
 				template="PrevPageLink PageLinks NextPageLink"
-				@page="page = $event.page"
+				@page="tokensPage = $event.page"
 			/>
 		</div>
 		<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
 			<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
 				<p class="font-semibold">No data to show</p>
 				<p class="mt-4">Generate a token and use it in your API requests to get a higher hourly measurements limit.</p>
+			</div>
+		</div>
+		<div v-if="auth.isAdmin">
+			<div class="mb-4 mt-12">
+				<h2 class="page-title">Authorized Apps</h2>
+			</div>
+			<p class="xl:w-1/2">
+				Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.
+				After reaching the hourly limit, you can keep running measurements by spending the earned credits.
+			</p>
+			<div v-if="applications.length || loadingApplications" class="mt-6">
+				<DataTable
+					:value="applications"
+					lazy
+					:first="firstApp"
+					:rows="itemsPerPage"
+					data-key="id"
+					:total-records="applicationsCount"
+					:loading="loadingApplications"
+				>
+					<Column header="Name" field="name"/>
+					<Column header="Owner" field="owner_name"/>
+					<Column header="Last used">
+						<template #body="slotProps">
+							{{ getRelativeTimeString(slotProps.data.date_last_used, true) || 'Never' }}
+						</template>
+					</Column>
+					<Column :row-editor="true" body-class="!py-2">
+						<template #body="slotProps">
+							<ApplicationOptions @revoke="openRevokeDialog(slotProps.data.id)"/>
+						</template>
+					</Column>
+				</DataTable>
+				<Paginator
+					v-if="applications.length !== applicationsCount"
+					class="mt-9"
+					:first="firstApp"
+					:rows="itemsPerPage"
+					:total-records="applicationsCount"
+					template="PrevPageLink PageLinks NextPageLink"
+					@page="onAppsPage($event)"
+				/>
+			</div>
+			<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
+				<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
+					<p class="font-semibold">No data to show</p>
+					<p class="mt-4">Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.</p>
+				</div>
 			</div>
 		</div>
 		<GPDialog
@@ -135,11 +183,30 @@
 				<Button label="Regenerate" @click="regenerateToken"/>
 			</div>
 		</GPDialog>
+		<GPDialog
+			v-model:visible="revokeDialog"
+			header="Revoke access"
+		>
+			<div class="flex items-center">
+				<div>
+					<i class="pi pi-exclamation-triangle text-xl text-primary"/>
+				</div>
+				<div class="ml-3">
+					<p>You are about to revoke access for the app <span class="font-bold">{{ appToRevoke!.name }}</span>.</p>
+					<p>Are you sure you want to proceed? You will not be able to undo this action.</p>
+				</div>
+			</div>
+			<div class="mt-7 text-right">
+				<Button class="mr-2" label="Cancel" severity="secondary" text @click="revokeDialog = false"/>
+				<Button label="Revoke access" severity="danger" @click="revokeApp"/>
+			</div>
+		</GPDialog>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
+	import { aggregate, customEndpoint, deleteItem, deleteItems, readItems, updateItem } from '@directus/sdk';
+	import type { PageState } from 'primevue/paginator';
 	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
 	import { formatDate, getRelativeTimeString } from '~/utils/date-formatters';
@@ -158,16 +225,16 @@
 	const loading = ref(false);
 	const tokensCount = ref(0);
 	const tokens = ref<Token[]>([]);
-	const { page, first } = usePagination({ itemsPerPage });
+	const { page: tokensPage, first: firstToken } = usePagination({ itemsPerPage });
 
-	const loadLazyData = async () => {
+	const loadTokens = async () => {
 		loading.value = true;
 
 		try {
 			const [ gpTokens, [{ count }] ] = await Promise.all([
 				$directus.request(readItems('gp_tokens', {
 					filter: { user_created: { _eq: user.id }, app_id: { _null: true } },
-					offset: first.value,
+					offset: firstToken.value,
 					limit: itemsPerPage,
 					sort: '-date_created',
 				})),
@@ -187,14 +254,14 @@
 	};
 
 	onMounted(async () => {
-		await loadLazyData();
+		await loadTokens();
 	});
 
 	// NAVIGATION
 
-	watch(page, async () => {
+	watch(tokensPage, async () => {
 		resetState();
-		await loadLazyData();
+		await loadTokens();
 	});
 
 	// TOKEN DETAILS
@@ -217,34 +284,34 @@
 
 	const tokenDetailsDialog = ref(false);
 
-	const expandedRows = ref({});
+	const expandedTokens = ref({});
 	const generatedToken = ref<{id: number, value: string} | null>(null);
 
 	const handleGenerate = async (id: number, tokenValue: string) => {
 		await navigateTo('/tokens');
-		await loadLazyData();
+		await loadTokens();
 		generatedToken.value = { id, value: tokenValue };
-		expandedRows.value = { [id]: true };
+		expandedTokens.value = { [id]: true };
 		tokenDetailsDialog.value = false;
 	};
 
 	// EDIT TOKEN
 
 	const handleSave = async () => {
-		await loadLazyData();
+		await loadTokens();
 		tokenDetailsDialog.value = false;
 	};
 
 	const handleRegenerate = async (id: number, tokenValue: string) => {
-		await loadLazyData();
+		await loadTokens();
 		generatedToken.value = { id, value: tokenValue };
-		expandedRows.value = { [id]: true };
+		expandedTokens.value = { [id]: true };
 		tokenDetailsDialog.value = false;
 	};
 
 	const resetState = () => {
 		generatedToken.value = null;
-		expandedRows.value = {};
+		expandedTokens.value = {};
 		tokenDetails.value = null;
 	};
 
@@ -269,7 +336,7 @@
 			}));
 
 			generatedToken.value = { id, value: token };
-			expandedRows.value = { [id]: true };
+			expandedTokens.value = { [id]: true };
 			tokenToRegenerate.value = null;
 			regenerateDialog.value = false;
 
@@ -295,15 +362,100 @@
 			await $directus.request(deleteItem('gp_tokens', tokenToDelete.value!.id));
 
 			// Go to prev page if that is last item.
-			if (tokens.value.length === 1 && page.value) {
-				page.value--;
+			if (tokens.value.length === 1 && tokensPage.value) {
+				tokensPage.value--;
 			}
 
-			await loadLazyData();
+			await loadTokens();
 			tokenToDelete.value = null;
 			deleteDialog.value = false;
 
 			sendToast('success', 'Done', 'Token was deleted');
+		} catch (e) {
+			sendErrorToast(e);
+		}
+	};
+
+	// APPLICATIONS
+
+	const applications = ref<Application[]>([]);
+	const applicationsCount = ref(0);
+	const loadingApplications = ref(false);
+	const firstApp = ref(0);
+
+	const onAppsPage = (event: PageState) => {
+		firstApp.value = event.first;
+		loadApplications();
+	};
+
+	const loadApplications = async () => {
+		if (!auth.isAdmin) {
+			return;
+		}
+
+		loadingApplications.value = true;
+
+		try {
+			const [ gpApps, [{ count }] ] = await Promise.all([
+				$directus.request(readItems('gp_apps', {
+					offset: firstApp.value,
+					limit: itemsPerPage,
+					sort: '-date_created',
+				})),
+				$directus.request<[{count: number}]>(aggregate('gp_apps', {
+					aggregate: { count: '*' },
+				})),
+			]);
+
+			const appTokens = await $directus.request(readItems('gp_tokens', {
+				filter: { app_id: { _in: gpApps.map(app => app.id) } },
+				sort: '-date_last_used',
+			}));
+			const apps = gpApps.map((app) => {
+				const token = appTokens.find(token => token.app_id === app.id);
+				return {
+					...app,
+					date_last_used: token ? token.date_last_used : null,
+					owner_name: app.owner_name || 'Globalping',
+				};
+			});
+
+			applications.value = apps;
+			applicationsCount.value = count;
+		} catch (e) {
+			sendErrorToast(e);
+		}
+
+		loadingApplications.value = false;
+	};
+
+	onMounted(async () => {
+		await loadApplications();
+	});
+
+	// REVOKE APP ACCESS
+
+	const revokeDialog = ref(false);
+	const appToRevoke = ref<Application | null>(null);
+
+	const openRevokeDialog = (id: string) => {
+		const token = applications.value.find(application => application.id === id);
+		appToRevoke.value = token!;
+		revokeDialog.value = true;
+	};
+
+	const revokeApp = async () => {
+		try {
+			if (appToRevoke.value && appToRevoke.value.id) {
+				await Promise.all([
+					$directus.request(deleteItems('gp_tokens', { filter: { app_id: { _eq: appToRevoke.value.id } } })),
+					$directus.request(deleteItems('gp_apps_approvals', { filter: { app: { _eq: appToRevoke.value.id } } })),
+				]);
+			}
+
+			appToRevoke.value = null;
+			revokeDialog.value = false;
+			sendToast('success', 'Done', 'Application access revoked');
 		} catch (e) {
 			sendErrorToast(e);
 		}

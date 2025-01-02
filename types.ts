@@ -13,6 +13,8 @@ declare global {
     gp_credits_additions: CreditsAddition[];
     gp_credits_deductions: CreditsDeduction[];
     gp_tokens: Token[];
+    gp_apps: Application[];
+    gp_apps_approvals: AppAppoval[];
 
     directus_users: User;
   };
@@ -98,7 +100,37 @@ declare global {
     value: string;
     user_created: string;
     user_updated: string | null;
+    app_id: string | null;
+    scopes: string[];
+    type: string;
+    parent: number | null;
   };
+
+  type Application = {
+    id: string;
+    user_created: string | null;
+    date_created: string | null;
+    user_updated: string | null;
+    date_updated: string | null;
+    name: string;
+    redirect_urls: string[];
+    urls: string[];
+    grants: string[];
+    access_token_lifetime: number | null;
+    refresh_token_lifetime: number | null;
+    owner_name: string | null;
+    owner_url: string | null;
+    secrets: string[];
+  };
+
+  type AppAppoval = {
+    id: string;
+    date_created: string | null;
+    date_updated: string | null;
+    user: string;
+    app: string;
+    scopes: string[];
+  }
 
   type DashboardError = {
     response?: {

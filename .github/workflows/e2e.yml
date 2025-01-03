@@ -35,15 +35,16 @@ jobs:
           cp .env.e2e.example .env.e2e
           cp .env.example .env
           perl -pi -e 's/DASH_INDEX_FILE_PATH=.*/DASH_INDEX_FILE_PATH=..\/..\/..\/.output\/server\/index.mjs/' .env
-      - name: Build Directus
+      - name: Build globalping-dash-directus
         working-directory: ./test/e2e/globalping-dash-directus
         run: |
           docker compose -f docker-compose.e2e.yml up --build -d
           pnpm run init:e2e
           docker compose -f docker-compose.e2e.yml stop
-      - name: Build dashboard repo
+      - name: Build globalping-dash
         run: |
-          pnpm run test:e2e:build:dash
+          dotenv -e test/e2e/globalping-dash-directus/.env -- pnpm build
       - name: Run tests
+        working-directory: ./test/e2e/globalping-dash-directus
         run: |
           pnpm run test:e2e:run

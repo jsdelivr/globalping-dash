@@ -11,7 +11,7 @@
 		".nuxt/**",
 		".output/**",
 		"dist/**",
-		"test/e2e/globalping-dash"
+		"test/e2e/globalping-dash-directus"
 	],
 	"plugins": [
 		"import"

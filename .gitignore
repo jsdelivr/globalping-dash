@@ -8,4 +8,4 @@ config/local*
 .nuxt/
 .output/
 dist
-/test/e2e/globalping-dash-directus/
+test/e2e/globalping-dash-directus/

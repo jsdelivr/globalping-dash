@@ -14,11 +14,7 @@
 		"lint:js:fix": "cross-env ESLINT_USE_FLAT_CONFIG=0 eslint --cache --max-warnings=0 --fix .",
 		"preview": "nuxt preview",
 		"postinstall": "nuxt prepare",
-		"prepare": "husky || echo 'Failed to install husky'",
-		"test:e2e": "npm run test:e2e:build:directus && npm run test:e2e:build:dash && npm run test:e2e:run",
-		"test:e2e:build:directus": "./scripts/build-directus.sh",
-		"test:e2e:build:dash": "dotenv -e test/e2e/globalping-dash-directus/.env -- pnpm build",
-		"test:e2e:run": "cd test/e2e/globalping-dash-directus && pnpm run test:e2e:run || E=$?; cd ../../../; exit $E;"
+		"prepare": "husky || echo 'Failed to install husky'"
 	},
 	"dependencies": {
 		"@directus/sdk": "^17.0.2",

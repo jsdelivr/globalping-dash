@@ -23,9 +23,11 @@ jobs:
           pnpm install
 
       - name: Clone globalping-dash-directus
+        env:
+          CURRENT_BRANCH: ${{ github.head_ref || github.ref_name }} 
         run: |
-          current_branch=$(git rev-parse --abbrev-ref HEAD)
-          git clone -b $current_branch https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus || git clone https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus
+          echo "Current branch: $CURRENT_BRANCH."
+          git clone -b $CURRENT_BRANCH https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus || git clone https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus
 
       - name: Install globalping-dash-directus dependencies
         working-directory: ./test/e2e/globalping-dash-directus

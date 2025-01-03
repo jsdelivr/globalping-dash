@@ -5,5 +5,8 @@
 		"types": [
 			"@types/google.maps"
 		]
-	}
+	},
+	"exclude": [
+		"test/e2e/globalping-dash-directus"
+	]
 }

@@ -16,6 +16,7 @@ cd test/e2e/globalping-dash-directus
 
 # Install dependencies and build
 pnpm i
+pnpm exec playwright install --with-deps chromium
 cp .env.e2e.example .env.e2e
 cp .env.example .env
 docker compose -f docker-compose.e2e.yml up --build -d

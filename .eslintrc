@@ -10,7 +10,8 @@
 	"ignorePatterns": [
 		".nuxt/**",
 		".output/**",
-		"dist/**"
+		"dist/**",
+		"test/e2e/globalping-dash"
 	],
 	"plugins": [
 		"import"

@@ -1,6 +1,8 @@
 #!/bin/bash
 
-CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+echo "Current branch: $current_branch."
 
 # Remove the directory if it exists
 if [ -d "test/e2e/globalping-dash-directus" ]; then
@@ -8,7 +10,7 @@ if [ -d "test/e2e/globalping-dash-directus" ]; then
 fi
 
 # Clone the repository using the current branch, fallback to default branch if it fails
-git clone -b $CURRENT_BRANCH https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus || git clone https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus
+git clone -b $current_branch https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus || git clone https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus
 
 cd test/e2e/globalping-dash-directus
 

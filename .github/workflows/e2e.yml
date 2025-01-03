@@ -22,7 +22,18 @@ jobs:
           pnpm install
       - name: Build docker compose
         run: |
-          pnpm run test:e2e:build:directus
+          current_branch=$(git rev-parse --abbrev-ref HEAD)
+          git clone -b $current_branch https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus || git clone https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus
+          cd test/e2e/globalping-dash-directus
+          pnpm i
+          pnpm exec playwright install --with-deps chromium
+          cp .env.e2e.example .env.e2e
+          cp .env.example .env
+          perl -pi -e 's/DASH_INDEX_FILE_PATH=.*/DASH_INDEX_FILE_PATH=..\/..\/..\/.output\/server\/index.mjs/' .env
+          docker compose -f docker-compose.e2e.yml up --build -d
+          pnpm run init:e2e
+          docker compose -f docker-compose.e2e.yml stop
+          cd ../../../
       - name: Build dashboard repo
         run: |
           pnpm run test:e2e:build:dash

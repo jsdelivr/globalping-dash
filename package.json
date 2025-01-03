@@ -46,6 +46,7 @@
 		"@types/google.maps": "^3.58.0",
 		"@types/lodash": "^4.17.7",
 		"cross-env": "^7.0.3",
+		"dotenv-cli": "^8.0.0",
 		"eslint": "^8.57.1",
 		"eslint-plugin-tailwindcss": "^3.17.4",
 		"husky": "^9.1.6",

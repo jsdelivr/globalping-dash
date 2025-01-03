@@ -19,6 +19,8 @@ pnpm i
 pnpm exec playwright install --with-deps chromium
 cp .env.e2e.example .env.e2e
 cp .env.example .env
+perl -pi -e 's/DASH_INDEX_FILE_PATH=.*/DASH_INDEX_FILE_PATH=..\/..\/..\/.output\/server\/index.mjs/' .env
+
 docker compose -f docker-compose.e2e.yml up --build -d
 pnpm run init:e2e
 docker compose -f docker-compose.e2e.yml stop

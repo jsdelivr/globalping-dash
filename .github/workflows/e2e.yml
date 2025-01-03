@@ -16,34 +16,41 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
+
       - name: Install dependencies
         run: |
           corepack enable
           pnpm install
+
       - name: Clone globalping-dash-directus
         run: |
           current_branch=$(git rev-parse --abbrev-ref HEAD)
           git clone -b $current_branch https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus || git clone https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus
+
       - name: Install globalping-dash-directus dependencies
         working-directory: ./test/e2e/globalping-dash-directus
         run: |
           pnpm i
           pnpm exec playwright install --with-deps chromium
+
       - name: Prepare .env files
         working-directory: ./test/e2e/globalping-dash-directus
         run: |
           cp .env.e2e.example .env.e2e
           cp .env.example .env
           perl -pi -e 's/DASH_INDEX_FILE_PATH=.*/DASH_INDEX_FILE_PATH=..\/..\/..\/.output\/server\/index.mjs/' .env
+
       - name: Build globalping-dash-directus
         working-directory: ./test/e2e/globalping-dash-directus
         run: |
           docker compose -f docker-compose.e2e.yml up --build -d
           pnpm run init:e2e
           docker compose -f docker-compose.e2e.yml stop
+
       - name: Build globalping-dash
         run: |
-          dotenv -e test/e2e/globalping-dash-directus/.env -- pnpm build
+          npx dotenv -e test/e2e/globalping-dash-directus/.env -- pnpm build
+
       - name: Run tests
         working-directory: ./test/e2e/globalping-dash-directus
         run: |

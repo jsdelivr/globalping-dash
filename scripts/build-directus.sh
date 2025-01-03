@@ -1,0 +1,23 @@
+#!/bin/bash
+
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# Remove the directory if it exists
+if [ -d "test/e2e/globalping-dash-directus" ]; then
+  rm -rf test/e2e/globalping-dash-directus
+fi
+
+# Clone the repository using the current branch, fallback to default branch if it fails
+git clone -b $CURRENT_BRANCH https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus || git clone https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus
+
+cd test/e2e/globalping-dash-directus
+
+# Install dependencies and build
+pnpm i
+cp .env.e2e.example .env.e2e
+cp .env.example .env
+docker compose -f docker-compose.e2e.yml up --build -d
+pnpm run init:e2e
+docker compose -f docker-compose.e2e.yml stop
+
+cd ../../../

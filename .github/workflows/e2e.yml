@@ -20,13 +20,18 @@ jobs:
         run: |
           corepack enable
           pnpm install
+      - name: Clone globalping-dash-directus
+        run: |
           current_branch=$(git rev-parse --abbrev-ref HEAD)
           git clone -b $current_branch https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus || git clone https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus
-      - name: Install e2e dependencies
+      - name: Install globalping-dash-directus dependencies
         working-directory: ./test/e2e/globalping-dash-directus
         run: |
           pnpm i
           pnpm exec playwright install --with-deps chromium
+      - name: Prepare .env files
+        working-directory: ./test/e2e/globalping-dash-directus
+        run: |
           cp .env.e2e.example .env.e2e
           cp .env.example .env
           perl -pi -e 's/DASH_INDEX_FILE_PATH=.*/DASH_INDEX_FILE_PATH=..\/..\/..\/.output\/server\/index.mjs/' .env

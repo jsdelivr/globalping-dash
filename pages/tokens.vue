@@ -1,129 +1,133 @@
 <template>
 	<div class="min-h-full p-6" :class="{'min-w-[640px]': tokens.length}">
-		<div class="mb-4 flex">
-			<h1 class="page-title">Tokens</h1>
-			<Button class="ml-auto" label="Generate new token" @click="openTokenDetails('generate')"/>
-		</div>
-		<p class="xl:w-1/2">
-			Generate a token and use it in your API requests to get a higher hourly measurements limit.
-			After reaching the hourly limit, you can keep running measurements by spending the earned credits.
-		</p>
-		<div v-if="tokens.length || loading" class="mt-6">
-			<DataTable
-				v-model:expanded-rows="expandedTokens"
-				:value="tokens"
-				lazy
-				:first="firstToken"
-				:rows="itemsPerPage"
-				data-key="id"
-				:total-records="tokensCount"
-				:loading="loading"
-			>
-				<Column header="Name" field="name"/>
-				<Column header="Origins">
-					<template #body="slotProps">
-						<Tag v-for="(origin, index) in slotProps.data.origins" :key="index" class="my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="origin"/>
-					</template>
-				</Column>
-				<Column header="Created">
-					<template #body="slotProps">
-						{{ getRelativeTimeString(slotProps.data.date_created) || 'Never' }}
-					</template>
-				</Column>
-				<Column header="Last used">
-					<template #body="slotProps">
-						{{ getRelativeTimeString(slotProps.data.date_last_used, true) || 'Never' }}
-					</template>
-				</Column>
-				<Column header="Expires">
-					<template #body="slotProps">
-						{{ formatDate(slotProps.data.expire) || 'Never' }}
-					</template>
-				</Column>
-				<Column :row-editor="true" body-class="!py-2">
-					<template #body="slotProps">
-						<TokenOptions
-							@edit="openTokenDetails('edit', slotProps.data.id)"
-							@regenerate="openRegenerateDialog(slotProps.data.id)"
-							@delete="openDeleteDialog(slotProps.data.id)"
-						/>
-					</template>
-				</Column>
-				<template #expansion="">
-					<div class="flex rounded-xl bg-surface-50 p-4 dark:bg-dark-600">
-						<div><i class="pi pi-info-circle mr-3 text-xl"/></div>
-						<div>
-							<p class="font-bold">Don't forget to copy your new access token.</p>
-							<p class="mt-2">You won’t be able to see it again.</p>
-							<CodeBlock data-testid="token-value" class="mt-2" :commands="[[generatedToken!.value]]"/>
-						</div>
-						<div class="ml-auto">
-							<Button
-								icon="pi pi-times"
-								severity="secondary"
-								text
-								rounded
-								aria-label="Close"
-								@click="resetState"
+		<div data-testid="tokens-table">
+			<div class="mb-4 flex">
+				<h1 class="page-title">Tokens</h1>
+				<Button class="ml-auto" label="Generate new token" @click="openTokenDetails('generate')"/>
+			</div>
+			<p class="xl:w-1/2">
+				Generate a token and use it in your API requests to get a higher hourly measurements limit.
+				After reaching the hourly limit, you can keep running measurements by spending the earned credits.
+			</p>
+			<div v-if="tokens.length || loading" class="mt-6">
+				<DataTable
+					v-model:expanded-rows="expandedTokens"
+					:value="tokens"
+					lazy
+					:first="firstToken"
+					:rows="itemsPerPage"
+					data-key="id"
+					:total-records="tokensCount"
+					:loading="loading"
+				>
+					<Column header="Name" field="name"/>
+					<Column header="Origins">
+						<template #body="slotProps">
+							<Tag v-for="(origin, index) in slotProps.data.origins" :key="index" class="my-0.5 mr-1 flex py-0.5 font-normal" severity="secondary" :value="origin"/>
+						</template>
+					</Column>
+					<Column header="Created">
+						<template #body="slotProps">
+							{{ getRelativeTimeString(slotProps.data.date_created) || 'Never' }}
+						</template>
+					</Column>
+					<Column header="Last used">
+						<template #body="slotProps">
+							{{ getRelativeTimeString(slotProps.data.date_last_used, true) || 'Never' }}
+						</template>
+					</Column>
+					<Column header="Expires">
+						<template #body="slotProps">
+							{{ formatDate(slotProps.data.expire) || 'Never' }}
+						</template>
+					</Column>
+					<Column :row-editor="true" body-class="!py-2">
+						<template #body="slotProps">
+							<TokenOptions
+								@edit="openTokenDetails('edit', slotProps.data.id)"
+								@regenerate="openRegenerateDialog(slotProps.data.id)"
+								@delete="openDeleteDialog(slotProps.data.id)"
 							/>
+						</template>
+					</Column>
+					<template #expansion="">
+						<div class="flex rounded-xl bg-surface-50 p-4 dark:bg-dark-600">
+							<div><i class="pi pi-info-circle mr-3 text-xl"/></div>
+							<div>
+								<p class="font-bold">Don't forget to copy your new access token.</p>
+								<p class="mt-2">You won’t be able to see it again.</p>
+								<CodeBlock data-testid="token-value" class="mt-2" :commands="[[generatedToken!.value]]"/>
+							</div>
+							<div class="ml-auto">
+								<Button
+									icon="pi pi-times"
+									severity="secondary"
+									text
+									rounded
+									aria-label="Close"
+									@click="resetState"
+								/>
+							</div>
 						</div>
-					</div>
-				</template>
-			</DataTable>
-			<Paginator
-				v-if="tokens.length !== tokensCount"
-				class="mt-9"
-				:first="firstToken"
-				:rows="itemsPerPage"
-				:total-records="tokensCount"
-				template="PrevPageLink PageLinks NextPageLink"
-				@page="tokensPage = $event.page"
-			/>
-		</div>
-		<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
-			<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
-				<p class="font-semibold">No data to show</p>
-				<p class="mt-4">Generate a token and use it in your API requests to get a higher hourly measurements limit.</p>
+					</template>
+				</DataTable>
+				<Paginator
+					v-if="tokens.length !== tokensCount"
+					class="mt-9"
+					:first="firstToken"
+					:rows="itemsPerPage"
+					:total-records="tokensCount"
+					template="PrevPageLink PageLinks NextPageLink"
+					@page="tokensPage = $event.page"
+				/>
+			</div>
+			<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
+				<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
+					<p class="font-semibold">No data to show</p>
+					<p class="mt-4">Generate a token and use it in your API requests to get a higher hourly measurements limit.</p>
+				</div>
 			</div>
 		</div>
-		<div class="mb-4 mt-12">
-			<h2 class="page-title">Authorized Apps</h2>
-		</div>
-		<p class="xl:w-1/2">
-			Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.
-			After reaching the hourly limit, you can keep running measurements by spending the earned credits.
-		</p>
-		<div v-if="apps.length || loadingApplications" class="mt-6">
-			<DataTable
-				:value="apps"
-				lazy
-				:rows="itemsPerPage"
-				data-key="id"
-				:loading="loadingApplications"
-			>
-				<Column header="Name" field="name"/>
-				<Column header="Owner">
-					<template #body="slotProps">
-						<a v-if="slotProps.data.owner_url" class="underline" :href="slotProps.data.owner_url" target="_blank" rel="noopener">{{ slotProps.data.owner_name }}</a>
-						<span v-else>{{ slotProps.data.owner_name }}</span>
-					</template>
-				</Column>
-				<Column header="Last used">
-					<template #body="slotProps">
-						{{ getRelativeTimeString(slotProps.data.date_last_used, true) || 'Never' }}
-					</template>
-				</Column>
-				<Column :row-editor="true" body-class="!py-2">
-					<template #body="slotProps">
-						<ApplicationOptions @revoke="openRevokeDialog(slotProps.data.id)"/>
-					</template>
-				</Column>
-			</DataTable>
-		</div>
-		<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
-			<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
-				<p class="font-semibold">No data to show</p>
-				<p class="mt-4">Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.</p>
+		<div data-testid="applications-table">
+			<div class="mb-4 mt-12">
+				<h2 class="page-title">Authorized Apps</h2>
+			</div>
+			<p class="xl:w-1/2">
+				Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.
+				After reaching the hourly limit, you can keep running measurements by spending the earned credits.
+			</p>
+			<div v-if="apps.length || loadingApplications" class="mt-6">
+				<DataTable
+					:value="apps"
+					lazy
+					:rows="itemsPerPage"
+					data-key="id"
+					:loading="loadingApplications"
+				>
+					<Column header="Name" field="name"/>
+					<Column header="Owner">
+						<template #body="slotProps">
+							<a v-if="slotProps.data.owner_url" class="underline" :href="slotProps.data.owner_url" target="_blank" rel="noopener">{{ slotProps.data.owner_name }}</a>
+							<span v-else>{{ slotProps.data.owner_name }}</span>
+						</template>
+					</Column>
+					<Column header="Last used">
+						<template #body="slotProps">
+							{{ getRelativeTimeString(slotProps.data.date_last_used, true) || 'Never' }}
+						</template>
+					</Column>
+					<Column :row-editor="true" body-class="!py-2">
+						<template #body="slotProps">
+							<ApplicationOptions @revoke="openRevokeDialog(slotProps.data.id)"/>
+						</template>
+					</Column>
+				</DataTable>
+			</div>
+			<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
+				<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
+					<p class="font-semibold">No data to show</p>
+					<p class="mt-4">Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.</p>
+				</div>
 			</div>
 		</div>
 		<GPDialog

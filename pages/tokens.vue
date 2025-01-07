@@ -86,52 +86,44 @@
 				<p class="mt-4">Generate a token and use it in your API requests to get a higher hourly measurements limit.</p>
 			</div>
 		</div>
-		<div v-if="auth.isAdmin">
-			<div class="mb-4 mt-12">
-				<h2 class="page-title">Authorized Apps</h2>
-			</div>
-			<p class="xl:w-1/2">
-				Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.
-				After reaching the hourly limit, you can keep running measurements by spending the earned credits.
-			</p>
-			<div v-if="applications.length || loadingApplications" class="mt-6">
-				<DataTable
-					:value="applications"
-					lazy
-					:first="firstApp"
-					:rows="itemsPerPage"
-					data-key="id"
-					:total-records="applicationsCount"
-					:loading="loadingApplications"
-				>
-					<Column header="Name" field="name"/>
-					<Column header="Owner" field="owner_name"/>
-					<Column header="Last used">
-						<template #body="slotProps">
-							{{ getRelativeTimeString(slotProps.data.date_last_used, true) || 'Never' }}
-						</template>
-					</Column>
-					<Column :row-editor="true" body-class="!py-2">
-						<template #body="slotProps">
-							<ApplicationOptions @revoke="openRevokeDialog(slotProps.data.id)"/>
-						</template>
-					</Column>
-				</DataTable>
-				<Paginator
-					v-if="applications.length !== applicationsCount"
-					class="mt-9"
-					:first="firstApp"
-					:rows="itemsPerPage"
-					:total-records="applicationsCount"
-					template="PrevPageLink PageLinks NextPageLink"
-					@page="onAppsPage($event)"
-				/>
-			</div>
-			<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
-				<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
-					<p class="font-semibold">No data to show</p>
-					<p class="mt-4">Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.</p>
-				</div>
+		<div class="mb-4 mt-12">
+			<h2 class="page-title">Authorized Apps</h2>
+		</div>
+		<p class="xl:w-1/2">
+			Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.
+			After reaching the hourly limit, you can keep running measurements by spending the earned credits.
+		</p>
+		<div v-if="apps.length || loadingApplications" class="mt-6">
+			<DataTable
+				:value="apps"
+				lazy
+				:rows="itemsPerPage"
+				data-key="id"
+				:loading="loadingApplications"
+			>
+				<Column header="Name" field="name"/>
+				<Column header="Owner">
+					<template #body="slotProps">
+						<a v-if="slotProps.data.owner_url" class="underline" :href="slotProps.data.owner_url" target="_blank" rel="noopener">{{ slotProps.data.owner_name }}</a>
+						<span v-else>{{ slotProps.data.owner_name }}</span>
+					</template>
+				</Column>
+				<Column header="Last used">
+					<template #body="slotProps">
+						{{ getRelativeTimeString(slotProps.data.date_last_used, true) || 'Never' }}
+					</template>
+				</Column>
+				<Column :row-editor="true" body-class="!py-2">
+					<template #body="slotProps">
+						<ApplicationOptions @revoke="openRevokeDialog(slotProps.data.id)"/>
+					</template>
+				</Column>
+			</DataTable>
+		</div>
+		<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
+			<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
+				<p class="font-semibold">No data to show</p>
+				<p class="mt-4">Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.</p>
 			</div>
 		</div>
 		<GPDialog
@@ -205,8 +197,7 @@
 </template>
 
 <script setup lang="ts">
-	import { aggregate, customEndpoint, deleteItem, deleteItems, readItems, updateItem } from '@directus/sdk';
-	import type { PageState } from 'primevue/paginator';
+	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
 	import { formatDate, getRelativeTimeString } from '~/utils/date-formatters';
@@ -378,50 +369,16 @@
 
 	// APPLICATIONS
 
-	const applications = ref<Application[]>([]);
-	const applicationsCount = ref(0);
+	const apps = ref<Application[]>([]);
 	const loadingApplications = ref(false);
-	const firstApp = ref(0);
-
-	const onAppsPage = (event: PageState) => {
-		firstApp.value = event.first;
-		loadApplications();
-	};
 
 	const loadApplications = async () => {
-		if (!auth.isAdmin) {
-			return;
-		}
-
 		loadingApplications.value = true;
 
 		try {
-			const [ gpApps, [{ count }] ] = await Promise.all([
-				$directus.request(readItems('gp_apps', {
-					offset: firstApp.value,
-					limit: itemsPerPage,
-					sort: '-date_created',
-				})),
-				$directus.request<[{count: number}]>(aggregate('gp_apps', {
-					aggregate: { count: '*' },
-				})),
-			]);
+			const { applications } = await $directus.request<{applications: Application[]}>(customEndpoint({ method: 'GET', path: '/applications' }));
 
-			const appTokens = await $directus.request(readItems('gp_tokens', {
-				filter: { app_id: { _in: gpApps.map(app => app.id) } },
-				sort: '-date_last_used',
-			}));
-			const apps = gpApps.map((app) => {
-				const token = appTokens.find(token => token.app_id === app.id);
-				return {
-					...app,
-					date_last_used: token ? token.date_last_used : null,
-					owner_name: app.owner_name || 'Globalping',
-				};
-			});
-
-			applications.value = apps;
-			applicationsCount.value = count;
+			apps.value = applications;
 		} catch (e) {
 			sendErrorToast(e);
 		}
@@ -439,20 +396,18 @@
 	const appToRevoke = ref<Application | null>(null);
 
 	const openRevokeDialog = (id: string) => {
-		const token = applications.value.find(application => application.id === id);
-		appToRevoke.value = token!;
+		const app = apps.value.find(app => app.id === id);
+		appToRevoke.value = app!;
 		revokeDialog.value = true;
 	};
 
 	const revokeApp = async () => {
 		try {
 			if (appToRevoke.value && appToRevoke.value.id) {
-				await Promise.all([
-					$directus.request(deleteItems('gp_tokens', { filter: { app_id: { _eq: appToRevoke.value.id } } })),
-					$directus.request(deleteItems('gp_apps_approvals', { filter: { app: { _eq: appToRevoke.value.id } } })),
-				]);
+				await $directus.request<{applications: Application[]}>(customEndpoint({ method: 'POST', path: '/applications/revoke', body: JSON.stringify({ id: appToRevoke.value.id }) }));
 			}
 
+			await loadApplications();
 			appToRevoke.value = null;
 			revokeDialog.value = false;
 			sendToast('success', 'Done', 'Application access revoked');

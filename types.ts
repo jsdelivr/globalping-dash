@@ -108,19 +108,10 @@ declare global {
 
   type Application = {
     id: string;
-    user_created: string | null;
-    date_created: string | null;
-    user_updated: string | null;
-    date_updated: string | null;
     name: string;
-    redirect_urls: string[];
-    urls: string[];
-    grants: string[];
-    access_token_lifetime: number | null;
-    refresh_token_lifetime: number | null;
-    owner_name: string | null;
-    owner_url: string | null;
-    secrets: string[];
+    date_last_used: string | null;
+    owner_name: string;
+    owner_url: string;
   };
 
   type AppAppoval = {

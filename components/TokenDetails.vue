@@ -254,7 +254,7 @@
 				expire: expire.value && expire.value.toISOString().split('T')[0],
 			}));
 
-			sendToast('success', 'Done', 'Token info was successfully updated');
+			sendToast('success', 'Done', 'The token settings have been updated');
 
 			emit('save');
 		} catch (e) {
@@ -283,7 +283,7 @@
 				value: token,
 			}));
 
-			sendToast('success', 'Done', 'Token was successfully regenerated');
+			sendToast('success', 'Done', 'The token has been successfully regenerated');
 
 			emit('regenerate', response.id, token);
 		} catch (e) {

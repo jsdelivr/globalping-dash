@@ -319,7 +319,7 @@
 				...(!isEqual(tags, props.probe.tags) && { tags }),
 			}));
 
-			sendToast('success', 'Done', 'Probe info was successfully updated');
+			sendToast('success', 'Done', 'The probe has been successfully updated');
 			emit('save');
 			probeDetailsDialog.value = false;
 		} catch (e) {
@@ -337,7 +337,7 @@
 		try {
 			await $directus.request(deleteItem('gp_adopted_probes', probe.value.id));
 
-			sendToast('success', 'Done', 'Probe was deleted');
+			sendToast('success', 'Done', 'The probe has been deleted');
 			emit('delete');
 			probeDetailsDialog.value = false;
 		} catch (e) {

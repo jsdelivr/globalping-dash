@@ -335,7 +335,7 @@
 			tokenToRegenerate.value = null;
 			regenerateDialog.value = false;
 
-			sendToast('success', 'Done', 'Token was successfully regenerated');
+			sendToast('success', 'Done', 'The token has been successfully regenerated');
 		} catch (e) {
 			sendErrorToast(e);
 		}
@@ -365,7 +365,7 @@
 			tokenToDelete.value = null;
 			deleteDialog.value = false;
 
-			sendToast('success', 'Done', 'Token was deleted');
+			sendToast('success', 'Done', 'The token has been deleted');
 		} catch (e) {
 			sendErrorToast(e);
 		}
@@ -414,7 +414,7 @@
 			await loadApplications();
 			appToRevoke.value = null;
 			revokeDialog.value = false;
-			sendToast('success', 'Done', 'Application access revoked');
+			sendToast('success', 'Done', 'The application access has been revoked');
 		} catch (e) {
 			sendErrorToast(e);
 		}

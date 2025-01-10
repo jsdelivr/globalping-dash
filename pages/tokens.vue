@@ -9,7 +9,7 @@
 				Generate a token and use it in your API requests to get a higher hourly measurements limit.
 				After reaching the hourly limit, you can keep running measurements by spending the earned credits.
 			</p>
-			<div v-if="tokens.length || loading" class="mt-6">
+			<div v-if="tokens.length || loadingTokens" class="mt-6">
 				<DataTable
 					v-model:expanded-rows="expandedTokens"
 					:value="tokens"
@@ -18,7 +18,7 @@
 					:rows="itemsPerPage"
 					data-key="id"
 					:total-records="tokensCount"
-					:loading="loading"
+					:loading="loadingTokens"
 				>
 					<Column header="Name" field="name"/>
 					<Column header="Origins">
@@ -100,8 +100,10 @@
 				<DataTable
 					:value="apps"
 					lazy
+					:first="firstApp"
 					:rows="itemsPerPage"
 					data-key="id"
+					:total-records="appsCount"
 					:loading="loadingApplications"
 				>
 					<Column header="Name" field="name"/>
@@ -122,6 +124,15 @@
 						</template>
 					</Column>
 				</DataTable>
+				<Paginator
+					v-if="apps.length !== appsCount"
+					class="mt-9"
+					:first="firstApp"
+					:rows="itemsPerPage"
+					:total-records="appsCount"
+					template="PrevPageLink PageLinks NextPageLink"
+					@page="appsPage = $event.page"
+				/>
 			</div>
 			<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
 				<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
@@ -217,13 +228,16 @@
 
 	const user = auth.getUser as User;
 	const itemsPerPage = config.public.itemsPerTablePage;
-	const loading = ref(false);
-	const tokensCount = ref(0);
+
+	// TOKENS
+
+	const loadingTokens = ref(false);
 	const tokens = ref<Token[]>([]);
+	const tokensCount = ref(0);
 	const { page: tokensPage, first: firstToken } = usePagination({ itemsPerPage, paramKey: 'tokensPage' });
 
 	const loadTokens = async () => {
-		loading.value = true;
+		loadingTokens.value = true;
 
 		try {
 			const [ gpTokens, [{ count }] ] = await Promise.all([
@@ -245,14 +259,12 @@
 			sendErrorToast(e);
 		}
 
-		loading.value = false;
+		loadingTokens.value = false;
 	};
 
 	onMounted(async () => {
 		await loadTokens();
 	});
-
-	// NAVIGATION
 
 	watch(tokensPage, async () => {
 		resetState();
@@ -373,16 +385,22 @@
 
 	// APPLICATIONS
 
-	const apps = ref<Application[]>([]);
 	const loadingApplications = ref(false);
+	const apps = ref<Application[]>([]);
+	const appsCount = ref(0);
+	const { page: appsPage, first: firstApp } = usePagination({ itemsPerPage, paramKey: 'appsPage' });
 
 	const loadApplications = async () => {
 		loadingApplications.value = true;
 
 		try {
-			const { applications } = await $directus.request<{applications: Application[]}>(customEndpoint({ method: 'GET', path: '/applications' }));
+			const { applications, total } = await $directus.request<{applications: Application[], total: number}>(customEndpoint({ method: 'GET', path: '/applications', params: {
+				offset: firstApp.value,
+				limit: itemsPerPage,
+			} }));
 
 			apps.value = applications;
+			appsCount.value = total;
 		} catch (e) {
 			sendErrorToast(e);
 		}
@@ -391,6 +409,11 @@
 	};
 
 	onMounted(async () => {
+		await loadApplications();
+	});
+
+	watch(appsPage, async () => {
+		resetState();
 		await loadApplications();
 	});
 
@@ -409,6 +432,11 @@
 		try {
 			if (appToRevoke.value && appToRevoke.value.id) {
 				await $directus.request<{applications: Application[]}>(customEndpoint({ method: 'POST', path: '/applications/revoke', body: JSON.stringify({ id: appToRevoke.value.id }) }));
+
+				// Go to prev page if that is last item.
+				if (apps.value.length === 1 && appsPage.value) {
+					appsPage.value--;
+				}
 			}
 
 			await loadApplications();

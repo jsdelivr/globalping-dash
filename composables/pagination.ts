@@ -3,14 +3,15 @@ const route = useRoute();
 export interface PaginationOptions {
 	active?: () => boolean;
 	itemsPerPage: number;
+	paramKey?: string;
 }
 
-export const usePagination = ({ active = () => true, itemsPerPage }: PaginationOptions) => {
+export const usePagination = ({ active = () => true, itemsPerPage, paramKey = 'page' }: PaginationOptions) => {
 	const page = ref(0);
 
-	watch(() => route.query.page, () => {
+	watch(() => route.query[paramKey], () => {
 		if (active()) {
-			page.value = route.query.page ? Number(route.query.page) - 1 : 0;
+			page.value = route.query[paramKey] ? Number(route.query[paramKey]) - 1 : 0;
 		}
 	}, { immediate: true });
 
@@ -24,7 +25,7 @@ export const usePagination = ({ active = () => true, itemsPerPage }: PaginationO
 					path: route.path,
 					query: {
 						...route.query,
-						page: newPage ? newPage + 1 : undefined,
+						[paramKey]: newPage ? newPage + 1 : undefined,
 					},
 				});
 			},

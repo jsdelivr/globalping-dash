@@ -220,7 +220,7 @@
 	const loading = ref(false);
 	const tokensCount = ref(0);
 	const tokens = ref<Token[]>([]);
-	const { page: tokensPage, first: firstToken } = usePagination({ itemsPerPage });
+	const { page: tokensPage, first: firstToken } = usePagination({ itemsPerPage, paramKey: 'tokensPage' });
 
 	const loadTokens = async () => {
 		loading.value = true;

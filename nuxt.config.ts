@@ -7,9 +7,17 @@ export default defineNuxtConfig({
 			directusUrl: process.env.DIRECTUS_URL || 'https://dash-directus.globalping.io',
 			googleMapsKey: process.env.GOOGLE_MAPS_KEY,
 			itemsPerTablePage: 10,
-			creditsPerAdoptedProbePerDay: 150,
-			creditsPerDollar: 2000,
 		},
+	},
+	$development: {
+		runtimeConfig: {
+			serverUrl: process.env.DASH_URL || 'http://localhost:13010',
+			public: {
+				gpAuthUrl: process.env.GP_API_URL || 'http://localhost:13110',
+				directusUrl: process.env.DIRECTUS_URL || 'http://localhost:18055',
+			},
+		},
+		devtools: { enabled: true },
 	},
 	app: {
 		head: {
@@ -52,15 +60,5 @@ export default defineNuxtConfig({
 	tailwindcss: {},
 	typescript: {
 		typeCheck: 'build',
-	},
-	$development: {
-		runtimeConfig: {
-			serverUrl: process.env.DASH_URL || 'http://localhost:13010',
-			public: {
-				gpAuthUrl: process.env.GP_API_URL || 'http://localhost:13110',
-				directusUrl: process.env.DIRECTUS_URL || 'http://localhost:18055',
-			},
-		},
-		devtools: { enabled: true },
 	},
 });

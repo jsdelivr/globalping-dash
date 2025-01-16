@@ -107,7 +107,7 @@
 						<div v-for="probe in adoptedProbes.slice(0, 10)" :key="probe.id" class="probe box-content min-w-60 py-2">
 							<component :is="useWindowSize().width.value > 640 ? 'div' : NuxtLink" :to="`/probes/${probe.id}`" class="block">
 								<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
-									<BigIcon class="col-span-1 row-span-2" :name="probe.hardwareDevice ? 'probe' : 'docker'" border :status="probe.status"/>
+									<BigIcon class="col-span-1 row-span-2" :name="probe.hardwareDevice ? 'probe' : 'docker'" border :status="getProbeStatus(probe)"/>
 									<div
 										class="col-start-2 col-end-3 flex items-center font-bold"
 									>
@@ -176,15 +176,16 @@
 	import isEmpty from 'lodash/isEmpty';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useAuth } from '~/store/auth';
+	import { useMetadata } from '~/store/metadata';
+	import { getProbeStatus } from '~/utils/probe-status';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	useHead({
 		title: 'Overview -',
 	});
 
-	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
-	const creditsPerAdoptedProbePerDay = config.public.creditsPerAdoptedProbePerDay;
+	const creditsPerAdoptedProbe = useMetadata().creditsPerAdoptedProbe;
 	const route = useRoute();
 	const router = useRouter();
 
@@ -255,7 +256,7 @@
 		return creditsObj ? creditsObj.amount : 0;
 	});
 
-	const perDay = computed(() => adoptedProbes.value.reduce((sum, { onlineTimesToday }) => sum += onlineTimesToday ? creditsPerAdoptedProbePerDay : 0, 0));
+	const perDay = computed(() => adoptedProbes.value.reduce((sum, { onlineTimesToday }) => sum += onlineTimesToday ? creditsPerAdoptedProbe : 0, 0));
 
 	// ADOPT PROBE DIALOG
 

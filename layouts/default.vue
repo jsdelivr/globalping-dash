@@ -86,7 +86,7 @@
 			<Popover ref="notificationsPanel">
 				<Accordion v-if="reverseNotifications.length" class="box-border w-96 max-w-[calc(100vw-16px)]" expand-icon="pi pi-chevron-right">
 					<AccordionPanel v-for="notification in reverseNotifications" :key="notification.id" :value="notification.id" @click="markNotificationAsRead(notification.id)">
-						<AccordionHeader :class="{ '!font-normal': notification.status !== 'inbox' }">{{ notification.subject }}</AccordionHeader>
+						<AccordionHeader class="text-left" :class="{ '!font-normal': notification.status !== 'inbox' }">{{ notification.subject }}</AccordionHeader>
 						<AccordionContent>
 							<!-- eslint-disable-next-line vue/no-v-html -->
 							<span v-if="notification.message" class="notification" v-html="notification.message"/>

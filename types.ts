@@ -74,6 +74,7 @@ declare global {
     uuid: string;
     version: string;
     hardwareDevice: string | null;
+    hardwareDeviceFirmware: string | null;
     nodeVersion: string;
   };
 
@@ -142,4 +143,11 @@ declare global {
       }
     };
   } | null;
+
+  type Metadata = {
+    targetNodeVersion: number,
+    targetHardwareDeviceFirmware: string,
+    creditsPerDollar: number,
+    creditsPerAdoptedProbe: number,
+  }
 }

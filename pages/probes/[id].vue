@@ -9,8 +9,8 @@
 		<div class="relative border-y">
 			<div class="flex flex-wrap justify-between gap-4 border-b px-6 py-2">
 				<div>
-					Status:<span class="ml-2 font-bold">{{ capitalize(probe.status.replaceAll('-', ' ')) }}</span>
-					<StatusIcon class="ml-2 text-3xs" :status="probe.status"/>
+					Status:<span class="ml-2 font-bold">{{ capitalize(getProbeStatus(probe).replaceAll('-', ' ')) }}</span>
+					<StatusIcon class="ml-2 text-3xs" :status="getProbeStatus(probe)"/>
 				</div>
 				<div class="flex items-center">
 					Credits per month:
@@ -197,6 +197,7 @@
 	import CountryFlag from 'vue-country-flag-next';
 	import { useAuth } from '~/store/auth';
 	import { initGoogleMap } from '~/utils/init-google-map';
+	import { getProbeStatus } from '~/utils/probe-status';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();

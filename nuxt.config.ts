@@ -11,6 +11,16 @@ export default defineNuxtConfig({
 			creditsPerDollar: 2000,
 		},
 	},
+	$development: {
+		runtimeConfig: {
+			serverUrl: process.env.DASH_URL || 'http://localhost:13010',
+			public: {
+				gpAuthUrl: process.env.GP_API_URL || 'http://localhost:13110',
+				directusUrl: process.env.DIRECTUS_URL || 'http://localhost:18055',
+			},
+		},
+		devtools: { enabled: true },
+	},
 	app: {
 		head: {
 			titleTemplate: '%s Globalping Dashboard',
@@ -52,15 +62,5 @@ export default defineNuxtConfig({
 	tailwindcss: {},
 	typescript: {
 		typeCheck: 'build',
-	},
-	$development: {
-		runtimeConfig: {
-			serverUrl: process.env.DASH_URL || 'http://localhost:13010',
-			public: {
-				gpAuthUrl: process.env.GP_API_URL || 'http://localhost:13110',
-				directusUrl: process.env.DIRECTUS_URL || 'http://localhost:18055',
-			},
-		},
-		devtools: { enabled: true },
 	},
 });

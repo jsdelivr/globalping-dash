@@ -7,8 +7,6 @@ export default defineNuxtConfig({
 			directusUrl: process.env.DIRECTUS_URL || 'https://dash-directus.globalping.io',
 			googleMapsKey: process.env.GOOGLE_MAPS_KEY,
 			itemsPerTablePage: 10,
-			creditsPerAdoptedProbePerDay: 150,
-			creditsPerDollar: 2000,
 		},
 	},
 	$development: {

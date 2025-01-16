@@ -176,15 +176,15 @@
 	import isEmpty from 'lodash/isEmpty';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useAuth } from '~/store/auth';
+	import { useMetadata } from '~/store/metadata';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	useHead({
 		title: 'Overview -',
 	});
 
-	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
-	const creditsPerAdoptedProbePerDay = config.public.creditsPerAdoptedProbePerDay;
+	const creditsPerAdoptedProbe = useMetadata().creditsPerAdoptedProbe;
 	const route = useRoute();
 	const router = useRouter();
 
@@ -255,7 +255,7 @@
 		return creditsObj ? creditsObj.amount : 0;
 	});
 
-	const perDay = computed(() => adoptedProbes.value.reduce((sum, { onlineTimesToday }) => sum += onlineTimesToday ? creditsPerAdoptedProbePerDay : 0, 0));
+	const perDay = computed(() => adoptedProbes.value.reduce((sum, { onlineTimesToday }) => sum += onlineTimesToday ? creditsPerAdoptedProbe : 0, 0));
 
 	// ADOPT PROBE DIALOG
 

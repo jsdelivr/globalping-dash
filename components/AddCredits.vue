@@ -70,7 +70,7 @@
 					}"
 				>
 					<div class="flex items-center justify-between max-sm:flex-col max-sm:text-center">
-						<div class="ml-2">You get <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="font-bold" :class="{'text-primary': step2Completed}">+{{ creditsPerAdoptedProbePerDay }} credits</span> / probe / day</span></div>
+						<div class="ml-2">You get <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="font-bold" :class="{'text-primary': step2Completed}">+{{ creditsPerAdoptedProbe }} credits</span> / probe / day</span></div>
 						<Button
 							v-if="!step1Completed"
 							disabled
@@ -156,10 +156,11 @@
 <script setup lang="ts">
 	import { readItems } from '@directus/sdk';
 	import { useAuth } from '~/store/auth';
+	import { useMetadata } from '~/store/metadata';
 	const { $directus } = useNuxtApp();
 
-	const config = useRuntimeConfig();
 	const auth = useAuth();
+	const metadata = useMetadata();
 	const user = auth.getUser as User;
 
 	defineEmits([ 'cancel', 'adopt-a-probe' ]);
@@ -172,8 +173,8 @@
 		return !!adoptions.length;
 	}, { default: () => false });
 
-	const creditsPerAdoptedProbePerDay = config.public.creditsPerAdoptedProbePerDay;
-	const creditsPerDollar = config.public.creditsPerDollar;
+	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
+	const creditsPerDollar = metadata.creditsPerDollar;
 
 	const step1Completed = computed(() => auth.isLoggedIn);
 	const step2Completed = computed(() => adoptionsExists.value);

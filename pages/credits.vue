@@ -97,6 +97,7 @@
 	import { aggregate, customEndpoint, readItems } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
+	import { useMetadata } from '~/store/metadata';
 	import { formatDateForTable } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
 
@@ -108,8 +109,9 @@
 	const auth = useAuth();
 	const user = auth.getUser as User;
 	const { $directus } = useNuxtApp();
-	const creditsPerAdoptedProbePerDay = config.public.creditsPerAdoptedProbePerDay;
+	const metadata = useMetadata();
 
+	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 	const itemsPerPage = config.public.itemsPerTablePage;
 	const loading = ref(false);
 	const creditsChangesCount = ref(0);
@@ -157,7 +159,7 @@
 
 	const totalAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + addition.amount, 0));
 	const totalDeductions = computed(() => credits.value.deductions.reduce((sum, deduction) => sum + deduction.amount, 0));
-	const dailyAdditions = computed(() => credits.value.todayOnlineProbes * creditsPerAdoptedProbePerDay);
+	const dailyAdditions = computed(() => credits.value.todayOnlineProbes * creditsPerAdoptedProbe);
 
 	const loadLazyData = async () => {
 		loading.value = true;

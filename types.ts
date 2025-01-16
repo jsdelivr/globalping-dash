@@ -145,7 +145,7 @@ declare global {
   } | null;
 
   type Metadata = {
-    targetNodeVersion: number,
+    targetNodeVersion: string,
     targetHardwareDeviceFirmware: string,
     creditsPerDollar: number,
     creditsPerAdoptedProbe: number,

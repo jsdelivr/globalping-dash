@@ -33,7 +33,7 @@ export const getProbeStatus = (probe: Probe) => {
 		&& (isOutdated(probe.hardwareDeviceFirmware, metadata.targetHardwareDeviceFirmware)
 		|| isOutdated(probe.nodeVersion, metadata.targetNodeVersion)
 		)) {
-		return 'Ready (outdated)';
+		return 'ready (outdated)';
 	}
 
 	return probe.status;

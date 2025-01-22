@@ -70,3 +70,24 @@ export function getRelativeTimeString (date: Date | string, noTime: boolean = fa
 	const rtf = new Intl.RelativeTimeFormat('en-US', { numeric: 'auto' });
 	return capitalize(rtf.format(Math.ceil(deltaSeconds / divisor), units[unitIndex]));
 }
+
+/**
+ * Convert a timestamp to a full time string, such as 18.11.2024 3:45PM
+ */
+export function formatNotificationDate (timestamp: string | null = null) {
+	if (timestamp === null) { return ''; }
+
+	const date = new Date(timestamp);
+	const day = String(date.getDate()).padStart(2, '0');
+	const month = String(date.getMonth() + 1).padStart(2, '0');
+	const year = date.getFullYear();
+	let hours = date.getHours();
+	const minutes = String(date.getMinutes()).padStart(2, '0');
+	const isPM = hours >= 12;
+
+	hours = hours % 12 || 12;
+
+	const period = isPM ? 'PM' : 'AM';
+
+	return `${day}.${month}.${year} ${hours}:${minutes}${period}`;
+}

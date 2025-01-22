@@ -1,27 +1,27 @@
 <template>
-	<div class="min-h-full flex flex-col p-6 gap-y-6">
-		<div class="flex items-center justify-between h-10">
-			<h1 class="font-bold text-2xl leading-8">Your notifications</h1>
-			<Button class="btn-mark-as-all-read flex items-center gap-x-2 h-10">
+	<div class="flex min-h-full flex-col gap-y-6 p-6">
+		<div class="flex h-10 items-center justify-between">
+			<h1 class="text-2xl font-bold leading-8">Your notifications</h1>
+			<Button class="btn-mark-as-all-read flex h-10 items-center gap-x-2">
 				<i class="pi pi-check-circle text-lg text-bluegray-900"/>
-				<span class="text-sm text-bluegray-900 font-semibold">Mark all as read</span>
+				<span class="text-sm font-semibold text-bluegray-900">Mark all as read</span>
 			</Button>
 		</div>
 
 		<div>
-			<Accordion v-if="reverseNotifications.length" class="w-full flex flex-col gap-y-2 max-w-[calc(100vw-16px)]" expand-icon="pi pi-chevron-right">
+			<Accordion v-if="reverseNotifications.length" class="flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2" expand-icon="pi pi-chevron-right">
 				<AccordionPanel
 					v-for="notification in reverseNotifications"
 					:key="notification.id"
 					:value="notification.id"
-					class="border border-surface-300 rounded-xl p-6 notification"
+					class="notification rounded-xl border border-surface-300 p-6"
 					@click="markNotificationAsRead(notification.id)"
 				>
 					<!-- <AccordionHeader :class="{ '!font-normal': notification.status !== 'inbox'}"> -->
 					<AccordionHeader>
 						<div class="flex flex-col !items-start gap-y-1">
 							<span class="n-header-subj text-xl font-bold leading-5">{{ notification.subject }}</span>
-							<span class="text-bluegray-500 flex items-center gap-x-1">
+							<span class="flex items-center gap-x-1 text-bluegray-500">
 								<i class="pi pi-clock text-lg"/>
 								<span class="text-sm leading-4">{{ formatNotificationDate(notification.timestamp) }}</span>
 							</span>

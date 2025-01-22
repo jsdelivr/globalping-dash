@@ -1,9 +1,11 @@
 <template>
 	<div class="min-h-full flex flex-col p-6 gap-y-6">
-		<div class="header flex items-center justify-between">
-			<h1 class="title">Your notifications</h1>
-			<!-- <Button label="Mark all as read" icon="pi pi-check-circle" class="bg-transparent text-blue-gray-900 dark:text-white border-surface-300 dark:border-dark-600" /> -->
-			<Button label="Mark all as read" icon="pi pi-check-circle" class="btn-mark-as-all-read"/>
+		<div class="flex items-center justify-between h-10">
+			<h1 class="font-bold text-2xl leading-8">Your notifications</h1>
+			<Button class="btn-mark-as-all-read flex items-center gap-x-2 h-10">
+				<i class="pi pi-check-circle text-lg text-bluegray-900"/>
+				<span class="text-sm text-bluegray-900 font-semibold">Mark all as read</span>
+			</Button>
 		</div>
 
 		<div>
@@ -17,10 +19,10 @@
 				>
 					<!-- <AccordionHeader :class="{ '!font-normal': notification.status !== 'inbox'}"> -->
 					<AccordionHeader>
-						<div class="n-header flex flex-col !items-start gap-y-1">
+						<div class="flex flex-col !items-start gap-y-1">
 							<span class="n-header-subj text-xl font-bold leading-5">{{ notification.subject }}</span>
-							<span class="n-header-date text-bluegray-500 flex items-center gap-x-1">
-								<i class="pi pi-clock"/>
+							<span class="text-bluegray-500 flex items-center gap-x-1">
+								<i class="pi pi-clock text-lg"/>
 								<span class="text-sm leading-4">{{ formatNotificationDate(notification.timestamp) }}</span>
 							</span>
 						</div>
@@ -85,35 +87,7 @@
 
 <style scoped>
 	.btn-mark-as-all-read {
-		@apply text-bluegray-900 border-surface-300 bg-transparent;
-		height: 40px;
-		column-gap: 7px;
-
-		> span {
-			font-weight: 600;
-			font-size: 14px;
-			line-height: 16.94px;
-		}
-	}
-
-	.btn-mark-as-all-read .pi {
-		height: 18.04px;
-		width: 18px;
-	}
-
-	.btn-mark-as-all-read .pi:before {
-		height: 100%;
-		width: 100%;
-	}
-
-	.header {
-		height: 40px;
-	}
-
-	.title {
-		font-weight: 700;
-		font-size: 24.5px;
-		line-height: 29.65px;
+		@apply border-surface-300 bg-transparent;
 	}
 
 	.notification:hover {
@@ -121,16 +95,7 @@
 		cursor: pointer;
 	}
 
-	/* .n-header {
-
-	} */
-
 	.n-header-subj {
 		color: #4b5563;
 	}
-
-	/* .n-header-date {
-		@apply text-bluegray-500
-		color: #64748b;
-	} */
 </style>

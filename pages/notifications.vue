@@ -20,7 +20,7 @@
 					<!-- <AccordionHeader :class="{ '!font-normal': notification.status !== 'inbox'}"> -->
 					<AccordionHeader class="!p-0">
 						<div class="flex flex-col !items-start gap-y-1">
-							<span class="n-header-subj text-xl font-bold leading-5">{{ notification.subject }}</span>
+							<span class="n-header-subj text-lg font-bold leading-5">{{ notification.subject }}</span>
 							<span class="flex items-center gap-x-1 text-bluegray-500">
 								<i class="pi pi-clock text-lg"/>
 								<span class="text-sm leading-4">{{ formatNotificationDate(notification.timestamp) }}</span>
@@ -87,7 +87,7 @@
 
 <style scoped>
 	.notification:hover {
-		background-color: #edfcf7;
+		@apply bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)];
 		cursor: pointer;
 	}
 

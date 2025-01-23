@@ -22,7 +22,7 @@
 						<span class="n-header-subj text-lg font-bold leading-5">{{ notification.subject }}</span>
 						<span class="flex items-center gap-x-2 text-bluegray-500">
 							<i class="pi pi-clock text-sm"/>
-							<span class="text-sm leading-4 font-normal">{{ formatNotificationDate(notification.timestamp) }}</span>
+							<span class="text-sm font-normal leading-4">{{ formatNotificationDate(notification.timestamp) }}</span>
 						</span>
 					</div>
 				</AccordionHeader>
@@ -32,17 +32,32 @@
 				</AccordionContent>
 			</AccordionPanel>
 		</Accordion>
+
+		<Paginator
+			class="mt-9"
+			:first="first"
+			:rows="itemsPerPage"
+			:total-records="notifictionsCount"
+			template="PrevPageLink PageLinks NextPageLink"
+			@page="page = $event.page"
+		/>
 	</div>
 </template>
 
 <script setup lang="ts">
 	import { readNotifications, updateNotifications } from '@directus/sdk';
+	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
 	import { formatNotificationDate } from '~/utils/date-formatters';
 
+	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
 	const user = auth.getUser as User;
+	const itemsPerPage = config.public.itemsPerTablePage;
+	const { page, first } = usePagination({ itemsPerPage });
+
+	const notifictionsCount = 100; // TODO: 43, temp value
 
 	const markNotificationAsRead = async (id: string) => {
 		const notification = notifications.value.find(notification => notification.id === id);
@@ -80,6 +95,15 @@
 
 	// TODO: 43, uncomment this line when ready
 	// const reverseNotifications = computed(() => [ ...notifications.value ].reverse());
+	const loadNotificationsData = async () => {
+		setTimeout(() => {
+			console.log('++++ loadNotificationsData called');
+		}, 1000);
+	};
+
+	watch(page, async () => {
+		await loadNotificationsData();
+	});
 </script>
 
 <style scoped>

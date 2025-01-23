@@ -8,32 +8,30 @@
 			</Button>
 		</div>
 
-		<div>
-			<Accordion v-if="reverseNotifications.length" class="flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2" expand-icon="pi pi-chevron-right">
-				<AccordionPanel
-					v-for="notification in reverseNotifications"
-					:key="notification.id"
-					:value="notification.id"
-					class="notification rounded-xl border border-surface-300 bg-white p-6"
-					@click="markNotificationAsRead(notification.id)"
-				>
-					<!-- <AccordionHeader :class="{ '!font-normal': notification.status !== 'inbox'}"> -->
-					<AccordionHeader class="!p-0">
-						<div class="flex flex-col !items-start gap-y-1">
-							<span class="n-header-subj text-lg font-bold leading-5">{{ notification.subject }}</span>
-							<span class="flex items-center gap-x-1 text-bluegray-500">
-								<i class="pi pi-clock text-lg"/>
-								<span class="text-sm leading-4">{{ formatNotificationDate(notification.timestamp) }}</span>
-							</span>
-						</div>
-					</AccordionHeader>
-					<AccordionContent>
-						<!-- eslint-disable-next-line vue/no-v-html -->
-						<span v-if="notification.message" class="notification" v-html="notification.message"/>
-					</AccordionContent>
-				</AccordionPanel>
-			</Accordion>
-		</div>
+		<Accordion v-if="reverseNotifications.length" class="flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2" expand-icon="pi pi-chevron-right">
+			<AccordionPanel
+				v-for="notification in reverseNotifications"
+				:key="notification.id"
+				:value="notification.id"
+				class="notification rounded-xl border border-surface-300 bg-white p-6"
+				@click="markNotificationAsRead(notification.id)"
+			>
+				<!-- <AccordionHeader :class="{ '!font-normal': notification.status !== 'inbox'}"> -->
+				<AccordionHeader class="!p-0">
+					<div class="flex flex-col !items-start gap-y-1">
+						<span class="n-header-subj text-lg font-bold leading-5">{{ notification.subject }}</span>
+						<span class="flex items-center gap-x-2 text-bluegray-500">
+							<i class="pi pi-clock text-sm"/>
+							<span class="text-sm leading-4">{{ formatNotificationDate(notification.timestamp) }}</span>
+						</span>
+					</div>
+				</AccordionHeader>
+				<AccordionContent class="pt-4 text-bluegray-900 font-normal text-sm leading-[18px]">
+					<!-- eslint-disable-next-line vue/no-v-html -->
+					<span v-if="notification.message" v-html="notification.message"/>
+				</AccordionContent>
+			</AccordionPanel>
+		</Accordion>
 	</div>
 </template>
 
@@ -42,9 +40,7 @@
 	import { useAuth } from '~/store/auth';
 	import { formatNotificationDate } from '~/utils/date-formatters';
 
-
 	const { $directus } = useNuxtApp();
-
 	const auth = useAuth();
 	const user = auth.getUser as User;
 
@@ -68,7 +64,7 @@
 		}));
 	}, { default: () => [] });
 
-	// temp task43 below
+	// TODO: 43, temp data below
 	const tempNotBase = notifications.value[0];
 	const tempNotOne = { ...tempNotBase, id: 101, subject: 'Notif 1', message: 'Some message for notification 1' };
 	const tempNotTwo = { ...tempNotBase, id: 102, subject: 'Notif 2', message: 'Some message for notification 2' };
@@ -80,8 +76,9 @@
 	const tempNotEight = { ...tempNotBase, id: 108, subject: 'Adopted probe country change', message: 'Globalping API detected that your adopted probe with ip: 51.158.22.211 is located at “FR”. So its country value changed from “IT” to “FR”, and custom city value “Naples” is not applied right now.' };
 	const tempNots = [ tempNotBase, tempNotOne, tempNotTwo, tempNotThree, tempNotFour, tempNotFive, tempNotSix, tempNotSeven, tempNotEight ];
 	const reverseNotifications = computed(() => tempNots.reverse());
-	// temp task43 above
+	// TODO: 43, temp data above
 
+	// TODO: 43, uncomment this line when ready
 	// const reverseNotifications = computed(() => [ ...notifications.value ].reverse());
 </script>
 

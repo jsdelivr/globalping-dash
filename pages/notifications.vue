@@ -77,7 +77,7 @@
 	const tempNotFive = { ...tempNotBase, id: 105, subject: 'Notif 5', message: 'Some message for notification 5' };
 	const tempNotSix = { ...tempNotBase, id: 106, subject: 'Notif 6', message: 'Some message for notification 6' };
 	const tempNotSeven = { ...tempNotBase, id: 107, subject: 'Notif 7', message: 'Some message for notification 7' };
-	const tempNotEight = { ...tempNotBase, id: 108, subject: 'Notif 8', message: 'Some message for notification 8' };
+	const tempNotEight = { ...tempNotBase, id: 108, subject: 'Adopted probe country change', message: 'Globalping API detected that your adopted probe with ip: 51.158.22.211 is located at “FR”. So its country value changed from “IT” to “FR”, and custom city value “Naples” is not applied right now.' };
 	const tempNots = [ tempNotBase, tempNotOne, tempNotTwo, tempNotThree, tempNotFour, tempNotFive, tempNotSix, tempNotSeven, tempNotEight ];
 	const reverseNotifications = computed(() => tempNots.reverse());
 	// temp task43 above

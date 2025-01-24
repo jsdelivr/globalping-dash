@@ -73,9 +73,10 @@
 	};
 
 	const { data: notifications } = await useAsyncData('directus_notifications', async () => {
+		// TOO: 43, check this, it seems this func is never called at all
 		return $directus.request<DirectusNotification[]>(readNotifications({
 			format: 'html',
-			limit: 10,
+			limit: itemsPerPage,
 			offset: 0,
 			filter: {
 				recipient: { _eq: user.id },
@@ -102,12 +103,10 @@
 
 	const loadNotifications = async (pageNumber: number) => {
 		try {
-			const limit = 10;
-			const offset = pageNumber * limit;
 			const data = await $directus.request<DirectusNotification[]>(readNotifications({
 				format: 'html',
-				limit,
-				offset,
+				limit: itemsPerPage,
+				offset: pageNumber * itemsPerPage,
 				filter: {
 					recipient: { _eq: user.id },
 				},
@@ -121,12 +120,6 @@
 
 	watch(page, async () => {
 		await loadNotifications(page.value);
-	});
-
-	watch(displayedNotifications, (newValue, oldValue) => {
-		console.log('++++ new', newValue);
-		console.log('++++ old', oldValue);
-		console.log('__________________________');
 	});
 </script>
 

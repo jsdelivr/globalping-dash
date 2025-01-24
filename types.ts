@@ -142,4 +142,17 @@ declare global {
       }
     };
   } | null;
+
+
+  type DirectusNotification = {
+    id: number;
+    timestamp: string;
+    status: string; // TODO: 43 "archived" etc
+    recipient: string;
+    sender: string | null;
+    subject: string;
+    message: string;
+    collection: string; // TOOD, 43 "gp_adopted_probes" etc
+    item: string;
+  };
 }

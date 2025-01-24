@@ -8,9 +8,9 @@
 			</Button>
 		</div>
 
-		<Accordion v-if="reverseNotifications.length" class="flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2" expand-icon="pi pi-chevron-right">
+		<Accordion v-if="displayedNotifications.length" class="flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2" expand-icon="pi pi-chevron-right">
 			<AccordionPanel
-				v-for="notification in reverseNotifications"
+				v-for="notification in displayedNotifications"
 				:key="notification.id"
 				:value="notification.id"
 				class="notification rounded-xl border border-surface-300 bg-white p-6"
@@ -49,6 +49,7 @@
 	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
 	import { formatNotificationDate } from '~/utils/date-formatters';
+	import { sendErrorToast } from '~/utils/send-toast';
 
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
@@ -56,10 +57,11 @@
 	const user = auth.getUser as User;
 	const itemsPerPage = config.public.itemsPerTablePage;
 	const { page, first } = usePagination({ itemsPerPage });
+	const displayedNotifications = ref<DirectusNotification[]>([]);
 
 	const notifictionsCount = 100; // TODO: 43, temp value
 
-	const markNotificationAsRead = async (id: string) => {
+	const markNotificationAsRead = async (id: number) => {
 		const notification = notifications.value.find(notification => notification.id === id);
 
 		if (!notification) {
@@ -71,8 +73,10 @@
 	};
 
 	const { data: notifications } = await useAsyncData('directus_notifications', async () => {
-		return $directus.request(readNotifications({
+		return $directus.request<DirectusNotification[]>(readNotifications({
 			format: 'html',
+			limit: 10,
+			offset: 0,
 			filter: {
 				recipient: { _eq: user.id },
 			},
@@ -80,29 +84,49 @@
 	}, { default: () => [] });
 
 	// TODO: 43, temp data below
-	const tempNotBase = notifications.value[0];
-	const tempNotOne = { ...tempNotBase, id: 101, subject: 'Notif 1', message: 'Some message for notification 1' };
-	const tempNotTwo = { ...tempNotBase, id: 102, subject: 'Notif 2', message: 'Some message for notification 2' };
-	const tempNotThree = { ...tempNotBase, id: 103, subject: 'Notif 3', message: 'Some message for notification 3' };
-	const tempNotFour = { ...tempNotBase, id: 104, subject: 'Notif 4', message: 'Some message for notification 4' };
-	const tempNotFive = { ...tempNotBase, id: 105, subject: 'Notif 5', message: 'Some message for notification 5' };
-	const tempNotSix = { ...tempNotBase, id: 106, subject: 'Notif 6', message: 'Some message for notification 6' };
-	const tempNotSeven = { ...tempNotBase, id: 107, subject: 'Notif 7', message: 'Some message for notification 7' };
-	const tempNotEight = { ...tempNotBase, id: 108, subject: 'Adopted probe country change', message: 'Globalping API detected that your adopted probe with ip: 51.158.22.211 is located at “FR”. So its country value changed from “IT” to “FR”, and custom city value “Naples” is not applied right now.' };
-	const tempNots = [ tempNotBase, tempNotOne, tempNotTwo, tempNotThree, tempNotFour, tempNotFive, tempNotSix, tempNotSeven, tempNotEight ];
-	const reverseNotifications = computed(() => tempNots.reverse());
+	// const tempNotBase = notifications.value[0];
+	// const tempNotOne = { ...tempNotBase, id: 101, subject: 'Notif 1', message: 'Some message for notification 1' };
+	// const tempNotTwo = { ...tempNotBase, id: 102, subject: 'Notif 2', message: 'Some message for notification 2' };
+	// const tempNotThree = { ...tempNotBase, id: 103, subject: 'Notif 3', message: 'Some message for notification 3' };
+	// const tempNotFour = { ...tempNotBase, id: 104, subject: 'Notif 4', message: 'Some message for notification 4' };
+	// const tempNotFive = { ...tempNotBase, id: 105, subject: 'Notif 5', message: 'Some message for notification 5' };
+	// const tempNotSix = { ...tempNotBase, id: 106, subject: 'Notif 6', message: 'Some message for notification 6' };
+	// const tempNotSeven = { ...tempNotBase, id: 107, subject: 'Notif 7', message: 'Some message for notification 7' };
+	// const tempNotEight = { ...tempNotBase, id: 108, subject: 'Adopted probe country change', message: 'Globalping API detected that your adopted probe with ip: 51.158.22.211 is located at “FR”. So its country value changed from “IT” to “FR”, and custom city value “Naples” is not applied right now.' };
+	// const tempNots = [ tempNotBase, tempNotOne, tempNotTwo, tempNotThree, tempNotFour, tempNotFive, tempNotSix, tempNotSeven, tempNotEight ];
+
+	// displayedNotifications.value = <DirectusNotification[]>tempNots.reverse();
 	// TODO: 43, temp data above
 
-	// TODO: 43, uncomment this line when ready
-	// const reverseNotifications = computed(() => [ ...notifications.value ].reverse());
-	const loadNotificationsData = async () => {
-		setTimeout(() => {
-			console.log('++++ loadNotificationsData called');
-		}, 1000);
+	displayedNotifications.value = notifications.value.reverse();
+
+	const loadNotifications = async (pageNumber: number) => {
+		try {
+			const limit = 10;
+			const offset = pageNumber * limit;
+			const data = await $directus.request<DirectusNotification[]>(readNotifications({
+				format: 'html',
+				limit,
+				offset,
+				filter: {
+					recipient: { _eq: user.id },
+				},
+			}));
+
+			displayedNotifications.value = data.reverse();
+		} catch (e) {
+			sendErrorToast(e);
+		}
 	};
 
 	watch(page, async () => {
-		await loadNotificationsData();
+		await loadNotifications(page.value);
+	});
+
+	watch(displayedNotifications, (newValue, oldValue) => {
+		console.log('++++ new', newValue);
+		console.log('++++ old', oldValue);
+		console.log('__________________________');
 	});
 </script>
 

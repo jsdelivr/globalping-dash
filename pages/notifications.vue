@@ -37,7 +37,7 @@
 			class="mt-9"
 			:first="first"
 			:rows="itemsPerPage"
-			:total-records="notifictionsCount"
+			:totalRecords="notificationsCount"
 			template="PrevPageLink PageLinks NextPageLink"
 			@page="page = $event.page"
 		/>
@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-	import { readNotifications, updateNotifications } from '@directus/sdk';
+	import { aggregate, readNotifications, updateNotifications } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
 	import { formatNotificationDate } from '~/utils/date-formatters';
@@ -58,8 +58,7 @@
 	const itemsPerPage = config.public.itemsPerTablePage;
 	const { page, first } = usePagination({ itemsPerPage });
 	const displayedNotifications = ref<DirectusNotification[]>([]);
-
-	const notifictionsCount = 100; // TODO: 43, temp value
+	const notificationsCount = ref<number>(0);
 
 	const markNotificationAsRead = async (id: number) => {
 		const notification = notifications.value.find(notification => notification.id === id);
@@ -72,6 +71,7 @@
 		await $directus.request(updateNotifications([ notification.id ], { status: notification.status }));
 	};
 
+	// get initial notifications, server side
 	const { data: notifications } = await useAsyncData('directus_notifications', async () => {
 		// TOO: 43, check this, it seems this func is never called at all
 		return $directus.request<DirectusNotification[]>(readNotifications({
@@ -84,40 +84,56 @@
 		}));
 	}, { default: () => [] });
 
-	// TODO: 43, temp data below
-	// const tempNotBase = notifications.value[0];
-	// const tempNotOne = { ...tempNotBase, id: 101, subject: 'Notif 1', message: 'Some message for notification 1' };
-	// const tempNotTwo = { ...tempNotBase, id: 102, subject: 'Notif 2', message: 'Some message for notification 2' };
-	// const tempNotThree = { ...tempNotBase, id: 103, subject: 'Notif 3', message: 'Some message for notification 3' };
-	// const tempNotFour = { ...tempNotBase, id: 104, subject: 'Notif 4', message: 'Some message for notification 4' };
-	// const tempNotFive = { ...tempNotBase, id: 105, subject: 'Notif 5', message: 'Some message for notification 5' };
-	// const tempNotSix = { ...tempNotBase, id: 106, subject: 'Notif 6', message: 'Some message for notification 6' };
-	// const tempNotSeven = { ...tempNotBase, id: 107, subject: 'Notif 7', message: 'Some message for notification 7' };
-	// const tempNotEight = { ...tempNotBase, id: 108, subject: 'Adopted probe country change', message: 'Globalping API detected that your adopted probe with ip: 51.158.22.211 is located at “FR”. So its country value changed from “IT” to “FR”, and custom city value “Naples” is not applied right now.' };
-	// const tempNots = [ tempNotBase, tempNotOne, tempNotTwo, tempNotThree, tempNotFour, tempNotFive, tempNotSix, tempNotSeven, tempNotEight ];
+	type NotificationCntResponse = {
+		count: {
+			id: number;
+		};
+	}[];
 
-	// displayedNotifications.value = <DirectusNotification[]>tempNots.reverse();
-	// TODO: 43, temp data above
+	// get the count of notifications
+	const { data: cntResponse } = await useAsyncData('directus_notifications_cnt', async () => {
+		return $directus.request(readNotifications({
+			filter: {
+				recipient: { _eq: user.id },
+			},
+			aggregate: {
+				count: ['id'],
+			},
+		}));
+	}, { default: () => [] });
 
+	notificationsCount.value = (cntResponse.value as NotificationCntResponse)?.[0]?.count?.id ?? 0;
 	displayedNotifications.value = notifications.value.reverse();
 
 	const loadNotifications = async (pageNumber: number) => {
 		try {
-			const data = await $directus.request<DirectusNotification[]>(readNotifications({
-				format: 'html',
-				limit: itemsPerPage,
-				offset: pageNumber * itemsPerPage,
-				filter: {
-					recipient: { _eq: user.id },
-				},
-			}));
+			const [ notificationsResp, notificationsCntResp ] = await Promise.all([
+				$directus.request<DirectusNotification[]>(readNotifications({
+					format: 'html',
+					limit: itemsPerPage,
+					offset: pageNumber * itemsPerPage,
+					filter: {
+						recipient: { _eq: user.id },
+					},
+				})),
+				$directus.request<NotificationCntResponse>(readNotifications({
+					filter: {
+						recipient: { _eq: user.id },
+					},
+					aggregate: {
+						count: ['id'],
+					},
+				})),
+			]);
 
-			displayedNotifications.value = data.reverse();
+			displayedNotifications.value = notificationsResp.reverse();
+			notificationsCount.value = notificationsCntResp?.[0]?.count?.id ?? 0;
 		} catch (e) {
 			sendErrorToast(e);
 		}
 	};
 
+	// get notifications depending on the selected page in Paginator
 	watch(page, async () => {
 		await loadNotifications(page.value);
 	});

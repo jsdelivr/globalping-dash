@@ -125,7 +125,7 @@
 	import { defaults } from 'chart.js';
 	import capitalize from 'lodash/capitalize';
 	import { useAuth } from '~/store/auth';
-
+	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 
 	const auth = useAuth();
@@ -148,9 +148,12 @@
 		await $directus.request(updateNotifications([ notification.id ], { status: notification.status }));
 	};
 
+	const itemsPerPage = config.public.itemsPerTablePage;
 	const { data: notifications } = await useAsyncData('directus_notifications', async () => {
 		return $directus.request(readNotifications({
 			format: 'html',
+			limit: itemsPerPage,
+			offset: 0,
 			filter: {
 				recipient: { _eq: user.id },
 			},
@@ -158,23 +161,7 @@
 	}, { default: () => [] });
 
 	const newNotifications = computed(() => notifications.value.filter(notification => notification.status === 'inbox'));
-
-	// temp task43 below, remove after
-	const tempNotBase = notifications.value[0];
-	const tempNotOne = { ...tempNotBase, id: 101, subject: 'Notif 1', message: 'Some message for notification 1' };
-	const tempNotTwo = { ...tempNotBase, id: 102, subject: 'Notif 2', message: 'Some message for notification 2' };
-	const tempNotThree = { ...tempNotBase, id: 103, subject: 'Notif 3', message: 'Some message for notification 3' };
-	const tempNotFour = { ...tempNotBase, id: 104, subject: 'Notif 4', message: 'Some message for notification 4' };
-	const tempNotFive = { ...tempNotBase, id: 105, subject: 'Notif 5', message: 'Some message for notification 5' };
-	const tempNotSix = { ...tempNotBase, id: 106, subject: 'Notif 6', message: 'Some message for notification 6' };
-	const tempNotSeven = { ...tempNotBase, id: 107, subject: 'Notif 7', message: 'Some message for notification 7' };
-	const tempNotEight = { ...tempNotBase, id: 108, subject: 'Notif 8', message: 'Some message for notification 8' };
-	const tempNots = [ tempNotBase, tempNotOne, tempNotTwo, tempNotThree, tempNotFour, tempNotFive, tempNotSix, tempNotSeven, tempNotEight ];
-
-	const reverseNotifications = computed(() => tempNots.reverse().slice(0, 5));
-	// temp task43 above
-
-	// const reverseNotifications = computed(() => [ ...notifications.value ].reverse().slice(0, 5)); // uncomment this line
+	const reverseNotifications = computed(() => [ ...notifications.value ].reverse().slice(0, 5));
 
 	// NOTIFICATIONS END
 

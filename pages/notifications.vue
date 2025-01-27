@@ -37,7 +37,7 @@
 			class="mt-9"
 			:first="first"
 			:rows="itemsPerPage"
-			:totalRecords="notificationsCount"
+			:total-records="notificationsCount"
 			template="PrevPageLink PageLinks NextPageLink"
 			@page="page = $event.page"
 		/>
@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-	import { aggregate, readNotifications, updateNotifications } from '@directus/sdk';
+	import { readNotifications, updateNotifications } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
 	import { formatNotificationDate } from '~/utils/date-formatters';
@@ -97,7 +97,7 @@
 				recipient: { _eq: user.id },
 			},
 			aggregate: {
-				count: ['id'],
+				count: [ 'id' ],
 			},
 		}));
 	}, { default: () => [] });
@@ -121,7 +121,7 @@
 						recipient: { _eq: user.id },
 					},
 					aggregate: {
-						count: ['id'],
+						count: [ 'id' ],
 					},
 				})),
 			]);

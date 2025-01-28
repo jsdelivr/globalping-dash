@@ -98,7 +98,7 @@
 							v-for="notification in reverseNotifications"
 							:key="notification.id"
 							:value="notification.id"
-							class="notification rounded-xl border border-surface-300 bg-white p-4"
+							class="notification rounded-xl border-none bg-[var(--p-surface-50)] p-4"
 							@click="markNotificationAsRead(notification.id)"
 						>
 							<AccordionHeader class="!p-0" :class="{ '!font-normal': notification.status !== 'inbox' }">

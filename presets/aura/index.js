@@ -94,7 +94,7 @@ import tieredmenu from './tieredmenu';
 // import timeline from './timeline';
 import toast from './toast';
 import togglebutton from './togglebutton';
-// import toggleswitch from './toggleswitch';
+import toggleswitch from './toggleswitch';
 // import toolbar from './toolbar';
 import tooltip from './tooltip';
 // import tree from './tree';
@@ -119,7 +119,7 @@ export default {
 	calendar: datepicker,
 	// checkbox,
 	// radiobutton,
-	// toggleswitch,
+	toggleswitch,
 	// inputswitch: toggleswitch,
 	selectbutton,
 	// slider,

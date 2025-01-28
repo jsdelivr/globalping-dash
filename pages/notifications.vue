@@ -13,7 +13,7 @@
 				v-for="notification in displayedNotifications"
 				:key="notification.id"
 				:value="notification.id"
-				class="notification rounded-xl border border-surface-300 bg-white p-6"
+				class="notification rounded-xl !border !border-surface-300 bg-white p-6"
 				@click="markNotificationAsRead(notification.id)"
 			>
 				<!-- <AccordionHeader :class="{ '!font-normal': notification.status !== 'inbox'}"> -->

@@ -84,20 +84,45 @@
 				</Drawer>
 			</div>
 			<Popover ref="notificationsPanel">
-				<Accordion v-if="reverseNotifications.length" class="box-border w-96 max-w-[calc(100vw-16px)]" expand-icon="pi pi-chevron-right">
-					<AccordionPanel v-for="notification in reverseNotifications" :key="notification.id" :value="notification.id" @click="markNotificationAsRead(notification.id)">
-						<AccordionHeader :class="{ '!font-normal': notification.status !== 'inbox' }">{{ notification.subject }}</AccordionHeader>
-						<AccordionContent>
-							<!-- eslint-disable-next-line vue/no-v-html -->
-							<span v-if="notification.message" class="notification" v-html="notification.message"/>
-						</AccordionContent>
-					</AccordionPanel>
+				<div class="flex flex-col gap-6 rounded-xl p-6">
+					<div class="flex h-10 items-center justify-between">
+						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
+						<Button class="flex h-10 items-center gap-x-2 border border-solid border-[var(--p-surface-300)] bg-white !text-bluegray-900 hover:border-[var(--p-primary-500)] hover:bg-[var(--p-primary-500)] hover:!text-white">
+							<i class="pi pi-check-circle text-lg "/>
+							<span class="text-sm font-semibold">Mark all as read</span>
+						</Button>
+					</div>
 
-					<NuxtLink to="/notifications">
+					<Accordion v-if="reverseNotifications.length" class="box-border flex w-96 max-w-[calc(100vw-16px)] flex-col gap-y-2" expand-icon="pi pi-chevron-right">
+						<AccordionPanel
+							v-for="notification in reverseNotifications"
+							:key="notification.id"
+							:value="notification.id"
+							class="notification rounded-xl border border-surface-300 bg-white p-4"
+							@click="markNotificationAsRead(notification.id)"
+						>
+							<AccordionHeader class="!p-0" :class="{ '!font-normal': notification.status !== 'inbox' }">
+								<div class="flex flex-col !items-start gap-y-1">
+									<span class="n-header-subj text-sm font-semibold leading-5">{{ notification.subject }}</span>
+									<span class="text-sm font-normal leading-4 text-bluegray-500">
+										{{ formatNotificationDate(notification.timestamp) }}
+									</span>
+								</div>
+							</AccordionHeader>
+
+							<AccordionContent>
+								<!-- eslint-disable-next-line vue/no-v-html -->
+								<span v-if="notification.message" class="notification" v-html="notification.message"/>
+							</AccordionContent>
+						</AccordionPanel>
+					</Accordion>
+
+					<p v-else class="w-80 p-4">No notifications</p>
+
+					<NuxtLink to="/notifications" class="ps-4 font-bold leading-4 text-[var(--p-primary-color)]">
 						Go to Notifications page
 					</NuxtLink>
-				</Accordion>
-				<p v-else class="w-80 p-4">No notifications</p>
+				</div>
 			</Popover>
 		</header>
 
@@ -125,6 +150,8 @@
 	import { defaults } from 'chart.js';
 	import capitalize from 'lodash/capitalize';
 	import { useAuth } from '~/store/auth';
+	import { formatNotificationDate } from '~/utils/date-formatters';
+
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 
@@ -275,5 +302,9 @@
 	.dark .sidebar-link:hover {
 		background: var(--dark-500);
 		border-color: var(--dark-400);
+	}
+
+	.n-header-subj {
+		color: #4b5563;
 	}
 </style>

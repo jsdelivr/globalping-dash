@@ -2,7 +2,7 @@
 	<div class="flex min-h-full flex-col gap-y-6 bg-surface-50 p-6">
 		<div class="flex h-10 items-center justify-between">
 			<h1 class="text-2xl font-bold leading-8">Your notifications</h1>
-			<Button class="flex h-10 items-center gap-x-2 border border-solid border-[var(--p-surface-300)] bg-white !text-bluegray-900 hover:border-[var(--p-primary-500)] hover:bg-[var(--p-primary-500)] hover:!text-white">
+			<Button class="flex h-10 items-center gap-x-2 border border-solid !border-[var(--p-surface-300)] bg-white !text-bluegray-900 hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white">
 				<i class="pi pi-check-circle text-lg "/>
 				<span class="text-sm font-semibold">Mark all as read</span>
 			</Button>

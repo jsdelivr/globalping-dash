@@ -127,7 +127,11 @@
 
 					<p v-else class="w-80 p-4">No notifications</p>
 
-					<NuxtLink to="/notifications" class="ps-4 font-bold leading-4 text-[var(--p-primary-color)]">
+					<NuxtLink
+						to="/notifications"
+						class="ps-4 font-bold leading-4 text-[var(--p-primary-color)]"
+						@click="toggleNotifications"
+					>
 						Go to Notifications page
 					</NuxtLink>
 				</div>
@@ -188,9 +192,13 @@
 		}
 	};
 	const markAllNotificationsAsRead = async () => {
-		const notificationIds = notifications.value.map(n => n.id);
+		try {
+			const notificationIds = notifications.value.map(n => n.id);
 
-		markNotificationAsRead(notificationIds);
+			await markNotificationAsRead(notificationIds);
+		} catch (error) {
+			console.error('Error updating all notifications:', error);
+		}
 	};
 
 	const itemsPerPage = config.public.itemsPerTablePage;

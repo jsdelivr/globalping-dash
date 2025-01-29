@@ -2,7 +2,10 @@
 	<div class="flex min-h-full flex-col gap-y-6 bg-surface-50 p-6">
 		<div class="flex h-10 items-center justify-between">
 			<h1 class="text-2xl font-bold leading-8">Your notifications</h1>
-			<Button class="flex h-10 items-center gap-x-2 border border-solid !border-[var(--p-surface-300)] bg-white !text-bluegray-900 hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white">
+			<Button
+				class="flex h-10 items-center gap-x-2 border border-solid !border-[var(--p-surface-300)] bg-white !text-bluegray-900 hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white"
+				@click="markAllNotificationsAsRead()"
+			>
 				<i class="pi pi-check-circle text-lg "/>
 				<span class="text-sm font-semibold">Mark all as read</span>
 			</Button>
@@ -15,7 +18,7 @@
 				:value="notification.id"
 				class="notification rounded-xl !border !border-surface-300 bg-white p-6"
 				:class="{ 'new-notification': notification.status === 'inbox' }"
-				@click="markNotificationAsRead(notification.id)"
+				@click="markNotificationAsRead([ notification.id ])"
 			>
 				<AccordionHeader class="!p-0">
 					<div class="flex flex-col !items-start gap-y-1">
@@ -60,15 +63,26 @@
 	const displayedNotifications = ref<DirectusNotification[]>([]);
 	const notificationsCount = ref<number>(0);
 
-	const markNotificationAsRead = async (id: number) => {
-		const notification = notifications.value.find(notification => notification.id === id);
+	const markNotificationAsRead = async (notificationIds: number[]) => {
+		try {
+			const updateData = { status: 'archived' };
 
-		if (!notification) {
-			return;
+			await $directus.request(updateNotifications(notificationIds, updateData));
+
+			notifications.value.forEach(notification => {
+				if (notificationIds.includes(notification.id)) {
+					notification.status = 'archived';
+				}
+			});
+		} catch (error) {
+			console.error('Error updating notifications:', error);
 		}
+	};
 
-		notification.status = 'archived';
-		await $directus.request(updateNotifications([ notification.id ], { status: notification.status }));
+	const markAllNotificationsAsRead = async () => {
+		const notificationIds = notifications.value.map(n => n.id);
+
+		markNotificationAsRead(notificationIds);
 	};
 
 	// get initial notifications, server side

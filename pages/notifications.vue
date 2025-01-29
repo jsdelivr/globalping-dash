@@ -69,7 +69,7 @@
 
 			await $directus.request(updateNotifications(notificationIds, updateData));
 
-			notifications.value.forEach(notification => {
+			notifications.value.forEach((notification) => {
 				if (notificationIds.includes(notification.id)) {
 					notification.status = 'archived';
 				}

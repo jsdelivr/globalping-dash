@@ -85,9 +85,8 @@
 		markNotificationAsRead(notificationIds);
 	};
 
-	// get initial notifications, server side
+	// get initial notifications
 	const { data: notifications } = await useAsyncData('directus_notifications', async () => {
-		// TOO: 43, check this, it seems this func is never called at all
 		return $directus.request<DirectusNotification[]>(readNotifications({
 			format: 'html',
 			limit: itemsPerPage,

@@ -147,12 +147,12 @@ declare global {
   type DirectusNotification = {
     id: string;
     timestamp: string;
-    status: string; // TODO: 43 "archived" etc
+    status: 'inbox' | 'archived';
     recipient: string;
     sender: string | null;
     subject: string;
     message: string;
-    collection: string; // TOOD, 43 "gp_adopted_probes" etc
+    collection: string;
     item: string;
   };
 }

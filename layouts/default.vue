@@ -172,7 +172,7 @@
 	const toggleNotifications = async (event: Event) => {
 		notificationsPanel.value.toggle(event);
 	};
-	const markNotificationAsRead = async (notificationIds: number[]) => {
+	const markNotificationAsRead = async (notificationIds: string[]) => {
 		try {
 			const updateData = { status: 'archived' };
 

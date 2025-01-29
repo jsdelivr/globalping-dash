@@ -145,7 +145,7 @@ declare global {
 
 
   type DirectusNotification = {
-    id: number;
+    id: string;
     timestamp: string;
     status: string; // TODO: 43 "archived" etc
     recipient: string;

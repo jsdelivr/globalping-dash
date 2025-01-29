@@ -63,7 +63,7 @@
 	const displayedNotifications = ref<DirectusNotification[]>([]);
 	const notificationsCount = ref<number>(0);
 
-	const markNotificationAsRead = async (notificationIds: number[]) => {
+	const markNotificationAsRead = async (notificationIds: string[]) => {
 		try {
 			const updateData = { status: 'archived' };
 

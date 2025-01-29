@@ -104,7 +104,11 @@
 						>
 							<AccordionHeader class="!p-0">
 								<div class="flex flex-col !items-start gap-y-1">
-									<span class="n-header-subj text-sm font-semibold leading-5">{{ notification.subject }}</span>
+									<span class="n-header-subj flex items-center text-sm font-semibold leading-5">
+										{{ notification.subject }}
+										<span v-if="notification.status === 'inbox'" class="new-notification-circle"/>
+									</span>
+
 									<span class="text-sm font-normal leading-4 text-bluegray-500">
 										{{ formatNotificationDate(notification.timestamp) }}
 									</span>
@@ -315,5 +319,14 @@
 
 	.new-notification .n-header-subj {
 		@apply !text-[var(--bluegray-900)];
+	}
+
+	.new-notification-circle {
+		display: inline-flex;
+		width: calc(.5rem + 2px);
+		height: calc(.5rem + 2px);
+		border-radius: 50%;
+		margin-left: calc(.5rem + 2px);
+		background-color: var(--p-primary-500);
 	}
 </style>

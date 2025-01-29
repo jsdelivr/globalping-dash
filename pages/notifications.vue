@@ -14,9 +14,9 @@
 				:key="notification.id"
 				:value="notification.id"
 				class="notification rounded-xl !border !border-surface-300 bg-white p-6"
+				:class="{ 'new-notification': notification.status === 'inbox' }"
 				@click="markNotificationAsRead(notification.id)"
 			>
-				<!-- <AccordionHeader :class="{ '!font-normal': notification.status !== 'inbox'}"> -->
 				<AccordionHeader class="!p-0">
 					<div class="flex flex-col !items-start gap-y-1">
 						<span class="n-header-subj text-lg font-bold leading-5">{{ notification.subject }}</span>
@@ -140,12 +140,15 @@
 </script>
 
 <style scoped>
-	.notification:hover {
-		@apply bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)];
-		cursor: pointer;
-	}
-
 	.n-header-subj {
 		color: #4b5563;
+	}
+
+	.new-notification {
+		@apply bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)];
+	}
+
+	.new-notification .n-header-subj {
+		@apply !text-[var(--bluegray-900)];
 	}
 </style>

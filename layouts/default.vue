@@ -99,9 +99,10 @@
 							:key="notification.id"
 							:value="notification.id"
 							class="notification rounded-xl border-none bg-[var(--p-surface-50)] p-4"
+							:class="{ 'new-notification': notification.status === 'inbox' }"
 							@click="markNotificationAsRead(notification.id)"
 						>
-							<AccordionHeader class="!p-0" :class="{ '!font-normal': notification.status !== 'inbox' }">
+							<AccordionHeader class="!p-0">
 								<div class="flex flex-col !items-start gap-y-1">
 									<span class="n-header-subj text-sm font-semibold leading-5">{{ notification.subject }}</span>
 									<span class="text-sm font-normal leading-4 text-bluegray-500">
@@ -306,5 +307,13 @@
 
 	.n-header-subj {
 		color: #4b5563;
+	}
+
+	.new-notification {
+		@apply bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)];
+	}
+
+	.new-notification .n-header-subj {
+		@apply !text-[var(--bluegray-900)];
 	}
 </style>

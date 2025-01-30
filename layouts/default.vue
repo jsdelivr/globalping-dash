@@ -88,6 +88,7 @@
 					<div class="flex h-10 items-center justify-between">
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
 						<Button
+							v-if="reverseNotifications.length"
 							class="flex h-10 items-center gap-x-2 border border-solid !border-[var(--p-surface-300)] bg-white !text-bluegray-900 hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white"
 							@click="markAllNotificationsAsRead()"
 						>

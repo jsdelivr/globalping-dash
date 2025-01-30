@@ -38,6 +38,8 @@
 			</AccordionPanel>
 		</Accordion>
 
+		<p v-else class="p-4 text-lg font-bold leading-5">No notifications at the moment.</p>
+
 		<Paginator
 			class="mt-9"
 			:first="first"

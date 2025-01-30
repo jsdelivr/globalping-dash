@@ -118,7 +118,7 @@
 								</div>
 							</AccordionHeader>
 
-							<AccordionContent class="pt-2 text-sm font-normal leading-[18px] text-bluegray-900">
+							<AccordionContent>
 								<!-- eslint-disable-next-line vue/no-v-html -->
 								<span v-if="notification.message" class="notification" v-html="notification.message"/>
 							</AccordionContent>

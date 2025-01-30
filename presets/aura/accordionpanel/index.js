@@ -1,7 +1,7 @@
 export default {
 	root: ({ props, context }) => ({
 		class: [
-			'flex flex-col border-b last:border-0 border-surface-200 dark:border-dark-400',
+			'flex flex-col rounded-xl',
 			{
 				'[&>[data-pc-name=accordionheader]]:select-none [&>[data-pc-name=accordionheader]]:pointer-events-none [&>[data-pc-name=accordionheader]]:cursor-default [&>[data-pc-name=accordionheader]]:opacity-60': props?.disabled,
 				'[&>[data-pc-name=accordionheader]]:text-surface-700 dark:[&>[data-pc-name=accordionheader]]:text-surface-100 hover:[&>[data-pc-name=accordionheader]]:text-surface-800 dark:hover:[&>[data-pc-name=accordionheader]]:text-surface-0': !props.disabled && context.active,

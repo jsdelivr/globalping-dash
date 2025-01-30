@@ -16,7 +16,7 @@
 				v-for="notification in displayedNotifications"
 				:key="notification.id"
 				:value="notification.id"
-				class="notification rounded-xl !border !border-surface-300 bg-white p-6"
+				class="notification border border-surface-300 bg-white p-6"
 				:class="{ 'new-notification': notification.status === 'inbox' }"
 				@click="markNotificationAsRead([ notification.id ])"
 			>

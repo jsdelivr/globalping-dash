@@ -101,7 +101,7 @@
 							v-for="notification in reverseNotifications"
 							:key="notification.id"
 							:value="notification.id"
-							class="notification rounded-xl border-none bg-[var(--p-surface-50)] p-4"
+							class="notification border-none bg-[var(--p-surface-50)] p-4"
 							:class="{ 'new-notification': notification.status === 'inbox' }"
 							@click="markNotificationAsRead([ notification.id ])"
 						>

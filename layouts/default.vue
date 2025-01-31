@@ -84,12 +84,12 @@
 				</Drawer>
 			</div>
 			<Popover ref="notificationsPanel">
-				<div class="flex flex-col gap-6 rounded-xl p-6">
-					<div class="flex h-10 items-center justify-between">
+				<div class="flex flex-col gap-6 w-[calc(100vw-32px)] sm:w-96 rounded-xl p-6">
+					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
 						<Button
 							v-if="reverseNotifications.length"
-							class="flex h-10 items-center gap-x-2 border border-solid !border-[var(--p-surface-300)] bg-white !text-bluegray-900 hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white"
+							class="btn-mark-all-as-read"
 							@click="markAllNotificationsAsRead()"
 						>
 							<i class="pi pi-check-circle text-lg "/>
@@ -97,7 +97,11 @@
 						</Button>
 					</div>
 
-					<Accordion v-if="reverseNotifications.length" class="box-border flex w-96 max-w-[calc(100vw-16px)] flex-col gap-y-2" expand-icon="pi pi-chevron-right">
+					<Accordion
+						v-if="reverseNotifications.length"
+						class="box-border flex w-full flex-col gap-y-2"
+						expand-icon="pi pi-chevron-right"
+					>
 						<AccordionPanel
 							v-for="notification in reverseNotifications"
 							:key="notification.id"
@@ -350,5 +354,13 @@
 		border-radius: 50%;
 		margin-left: calc(.5rem + 2px);
 		background-color: var(--p-primary-500);
+	}
+
+	.btn-mark-all-as-read {
+		@apply flex h-10 items-center gap-x-2;
+		@apply bg-white !text-bluegray-900;
+		@apply h-10 w-full sm:w-auto;
+		@apply border border-solid !border-[var(--p-surface-300)];
+		@apply hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white;
 	}
 </style>

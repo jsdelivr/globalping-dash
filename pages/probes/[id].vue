@@ -92,6 +92,10 @@
 			<label for="userTags" class="mt-4 inline-block text-xs">User tags</label>
 			<div v-if="isEditingTags" class="mt-1">
 				<div>
+					<Message v-if="probe.tags[0]?.format === 'v1'" severity="warn" class="mb-1 mt-2">
+						<p class="font-bold">Your tags have an outdated format</p>
+						<p class="mt-1">Format like <Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${probe.tags[0].prefix}-${probe.tags[0].value}`"/> is outdated on will be replaced by <Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${probe.tags[0].prefix}:${probe.tags[0].value}`"/> on any change of the tags for that probe. Please make sure to update your tools if they depend on that.</p>
+					</Message>
 					<div class="flex text-xs">
 						<div class="flex-1 content-center">Prefix</div>
 						<div class="mx-3"/>
@@ -100,7 +104,7 @@
 					</div>
 					<div v-for="(tag, index) in tagsToEdit" :key="index" class="mb-2 flex items-center" :class="{ 'mb-5': !isTagValid(tag.value) }">
 						<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
-						<div class="mx-2">-</div>
+						<div class="mx-2">{{ probe.tags[0]?.format === 'v1' ? '-' : ':' }}</div>
 						<div class="relative flex-1">
 							<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full" placeholder="my-tag"/>
 							<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
@@ -150,7 +154,7 @@
 				Public user-defined tags that can be used to target the probe in measurements.
 				Each tag must be prefixed by your GitHub username or organization.
 				E.g., for a user with username <code class="font-bold">jimaek</code>
-				and tag <code class="font-bold">home-1</code> the final tag would be <code class="whitespace-nowrap font-bold">u-jimaek-home-1</code>.
+				and tag <code class="font-bold">home-1</code> the final tag would be <code class="whitespace-nowrap font-bold">u-jimaek:home-1</code>.
 			</p>
 
 			<div class="mt-7 flex justify-end">
@@ -257,7 +261,7 @@
 	// TAGS
 
 	const isEditingTags = ref<boolean>(false);
-	const userTags = computed(() => probe.value.tags.map(({ prefix, value }) => `u-${prefix}-${value}`));
+	const userTags = computed(() => probe.value.tags.map(({ prefix, value, format }) => format === 'v1' ? `u-${prefix}-${value}` : `u-${prefix}:${value}`));
 	const tagsToEdit = ref<{ uPrefix: string, value: string }[]>([]);
 
 	const uPrefixes = [ user.github_username, ...user.github_organizations ].map(value => `u-${value}`);

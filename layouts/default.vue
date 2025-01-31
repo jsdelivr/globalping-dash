@@ -114,7 +114,7 @@
 									</span>
 
 									<span class="text-sm font-normal leading-4 text-bluegray-500">
-										{{ formatNotificationDate(notification.timestamp) }}
+										{{ formatDateTime(notification.timestamp) }}
 									</span>
 								</div>
 							</AccordionHeader>
@@ -163,7 +163,7 @@
 	import { defaults } from 'chart.js';
 	import capitalize from 'lodash/capitalize';
 	import { useAuth } from '~/store/auth';
-	import { formatNotificationDate } from '~/utils/date-formatters';
+	import { formatDateTime } from '~/utils/date-formatters';
 
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();

@@ -26,7 +26,7 @@
 						<span class="n-header-subj text-lg font-bold leading-5">{{ notification.subject }}</span>
 						<span class="flex items-center gap-x-2 text-bluegray-500">
 							<i class="pi pi-clock text-sm"/>
-							<span class="text-sm font-normal leading-4">{{ formatNotificationDate(notification.timestamp) }}</span>
+							<span class="text-sm font-normal leading-4">{{ formatDateTime(notification.timestamp) }}</span>
 						</span>
 					</div>
 				</AccordionHeader>
@@ -55,7 +55,7 @@
 	import { readNotifications, updateNotifications } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
-	import { formatNotificationDate } from '~/utils/date-formatters';
+	import { formatDateTime } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const config = useRuntimeConfig();

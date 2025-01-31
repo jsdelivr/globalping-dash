@@ -72,22 +72,16 @@ export function getRelativeTimeString (date: Date | string, noTime: boolean = fa
 }
 
 /**
- * Convert a timestamp to a full time string, such as 18.11.2024 3:45PM
- */
-export function formatNotificationDate (timestamp: string | null = null) {
-	if (timestamp === null) { return ''; }
+ * Convert a timestamp to a full time string, such as Jan 24, 2025, 2:00 AM
+*/
+export const formatDateTime = (dateTime: string | Date | null) => {
+	if (!dateTime) {
+		return '';
+	}
 
-	const date = new Date(timestamp);
-	const day = String(date.getDate()).padStart(2, '0');
-	const month = String(date.getMonth() + 1).padStart(2, '0');
-	const year = date.getFullYear();
-	let hours = date.getHours();
-	const minutes = String(date.getMinutes()).padStart(2, '0');
-	const isPM = hours >= 12;
+	if (typeof dateTime === 'string') {
+		dateTime = new Date(dateTime);
+	}
 
-	hours = hours % 12 || 12;
-
-	const period = isPM ? 'PM' : 'AM';
-
-	return `${day}.${month}.${year} ${hours}:${minutes}${period}`;
-}
+	return dateTime.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' });
+};

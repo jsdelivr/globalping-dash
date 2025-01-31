@@ -106,7 +106,7 @@
 							:class="{ 'new-notification': notification.status === 'inbox' }"
 							@click="markNotificationAsRead([ notification.id ])"
 						>
-							<AccordionHeader class="!p-0">
+							<AccordionHeader>
 								<div class="flex flex-col !items-start gap-y-1">
 									<span class="n-header-subj flex items-center text-sm font-semibold leading-5">
 										{{ notification.subject }}

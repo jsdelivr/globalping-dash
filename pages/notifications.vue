@@ -1,6 +1,6 @@
 <template>
 	<div class="flex min-h-full flex-col gap-y-6 bg-surface-50 p-6">
-		<div class="flex h-10 items-center justify-between">
+		<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 			<h1 class="text-2xl font-bold leading-8">Your notifications</h1>
 			<Button
 				v-if="displayedNotifications.length"
@@ -21,7 +21,7 @@
 				:class="{ 'new-notification': notification.status === 'inbox' }"
 				@click="markNotificationAsRead([ notification.id ])"
 			>
-				<AccordionHeader class="!p-0">
+				<AccordionHeader>
 					<div class="flex flex-col !items-start gap-y-1">
 						<span class="n-header-subj text-left text-lg font-bold leading-5">{{ notification.subject }}</span>
 						<span class="flex items-center gap-x-2 text-bluegray-500">
@@ -170,7 +170,9 @@
 	}
 
 	.btn-mark-all-as-read {
-		@apply flex h-10 items-center gap-x-2 bg-white !text-bluegray-900;
+		@apply flex items-center gap-x-2;
+		@apply bg-white !text-bluegray-900;
+		@apply h-10 w-full sm:w-auto;
 		@apply border border-solid !border-[var(--p-surface-300)];
 		@apply hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white;
 	}

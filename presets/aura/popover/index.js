@@ -7,7 +7,7 @@ export default {
 			'overflow-hidden',
 
 			// Position
-			'absolute left-0 top-0 mt-2',
+			'absolute ml-4 mt-2',
 			'z-40 transform origin-center',
 
 			// Color

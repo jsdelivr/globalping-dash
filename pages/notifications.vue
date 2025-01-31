@@ -23,7 +23,7 @@
 			>
 				<AccordionHeader class="!p-0">
 					<div class="flex flex-col !items-start gap-y-1">
-						<span class="n-header-subj text-lg font-bold leading-5">{{ notification.subject }}</span>
+						<span class="n-header-subj text-left text-lg font-bold leading-5">{{ notification.subject }}</span>
 						<span class="flex items-center gap-x-2 text-bluegray-500">
 							<i class="pi pi-clock text-sm"/>
 							<span class="text-sm font-normal leading-4">{{ formatDateTime(notification.timestamp) }}</span>

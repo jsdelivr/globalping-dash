@@ -84,7 +84,7 @@
 				</Drawer>
 			</div>
 			<Popover ref="notificationsPanel">
-				<div class="flex flex-col gap-6 w-[calc(100vw-32px)] sm:w-96 rounded-xl p-6">
+				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-6 sm:w-96">
 					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
 						<Button

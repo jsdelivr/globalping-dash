@@ -4,7 +4,7 @@
 			<h1 class="text-2xl font-bold leading-8">Your notifications</h1>
 			<Button
 				v-if="displayedNotifications.length"
-				class="flex h-10 items-center gap-x-2 border border-solid !border-[var(--p-surface-300)] bg-white !text-bluegray-900 hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white"
+				class="btn-mark-all-as-read"
 				@click="markAllNotificationsAsRead()"
 			>
 				<i class="pi pi-check-circle text-lg "/>
@@ -167,5 +167,11 @@
 
 	.new-notification .n-header-subj {
 		@apply !text-[var(--bluegray-900)];
+	}
+
+	.btn-mark-all-as-read {
+		@apply flex h-10 items-center gap-x-2 bg-white !text-bluegray-900;
+		@apply border border-solid !border-[var(--p-surface-300)];
+		@apply hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white;
 	}
 </style>

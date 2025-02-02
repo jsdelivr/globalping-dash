@@ -22,6 +22,9 @@ jobs:
 
       - name: Build
         run: |
+          : # Temp corepack fix: https://github.com/nodejs/corepack/issues/612
+          corepack install -g pnpm@9.15.2
+
           corepack enable
           pnpm install
           pnpm build

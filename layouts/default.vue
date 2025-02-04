@@ -88,7 +88,7 @@
 					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
 						<Button
-							v-if="reverseNotifications.length"
+							v-if="displayedNotifications.length"
 							class="btn-mark-all-as-read"
 							@click="markAllNotificationsAsRead()"
 						>
@@ -98,12 +98,12 @@
 					</div>
 
 					<Accordion
-						v-if="reverseNotifications.length"
+						v-if="displayedNotifications.length"
 						class="box-border flex w-full flex-col gap-y-2"
 						expand-icon="pi pi-chevron-right"
 					>
 						<AccordionPanel
-							v-for="notification in reverseNotifications"
+							v-for="notification in displayedNotifications"
 							:key="notification.id"
 							:value="notification.id"
 							class="notification border-none bg-[var(--p-surface-50)] p-4"
@@ -215,11 +215,12 @@
 			filter: {
 				recipient: { _eq: user.id },
 			},
+			sort: ['-timestamp'],
 		}));
 	}, { default: () => [] });
 
 	const newNotifications = computed(() => notifications.value.filter(notification => notification.status === 'inbox'));
-	const reverseNotifications = computed(() => [ ...notifications.value ].reverse().slice(0, 5));
+	const displayedNotifications = computed(() => [ ...notifications.value ].slice(0, 5));
 
 	// NOTIFICATIONS END
 

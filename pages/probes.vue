@@ -32,7 +32,7 @@
 						<template #body="slotProps">
 							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
 								<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3">
-									<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'probe' : 'docker'" border :status="slotProps.data.status"/>
+									<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'probe' : 'docker'" border :status="getProbeStatus(slotProps.data)"/>
 									<p class="col-start-2 col-end-3 flex items-center font-bold">{{ slotProps.data.name || slotProps.data.city }}</p>
 									<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-900 dark:text-bluegray-400">{{ slotProps.data.ip }}</p>
 								</div>
@@ -207,6 +207,7 @@
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
 	import { useAuth } from '~/store/auth';
+	import { getProbeStatus } from '~/utils/probe-status';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const auth = useAuth();

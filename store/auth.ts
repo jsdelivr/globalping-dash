@@ -16,6 +16,7 @@ interface AuthState {
 		external_identifier: string | null,
 		appearance: 'light' | 'dark' | null,
 		user_type: 'member' | 'sponsor' | 'special',
+		public_probes: boolean,
 	}
 }
 
@@ -35,6 +36,7 @@ export const useAuth = defineStore('auth', {
 			external_identifier: '',
 			appearance: null,
 			user_type: 'member',
+			public_probes: false,
 		},
 	}),
 

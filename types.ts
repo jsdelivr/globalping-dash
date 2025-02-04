@@ -74,6 +74,7 @@ declare global {
     uuid: string;
     version: string;
     hardwareDevice: string | null;
+    hardwareDeviceFirmware: string | null;
     nodeVersion: string;
   };
 
@@ -143,7 +144,6 @@ declare global {
     };
   } | null;
 
-
   type DirectusNotification = {
     id: string;
     timestamp: string;
@@ -155,4 +155,11 @@ declare global {
     collection: string;
     item: string;
   };
+
+  type Metadata = {
+    targetNodeVersion: string,
+    targetHardwareDeviceFirmware: string,
+    creditsPerDollar: number,
+    creditsPerAdoptedProbe: number,
+  }
 }

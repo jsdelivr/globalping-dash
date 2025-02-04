@@ -19,7 +19,7 @@
 				:value="notification.id"
 				class="notification border border-surface-300 bg-white p-6"
 				:class="{ 'new-notification': notification.status === 'inbox' }"
-				@click="markNotificationAsRead([ notification.id ])"
+				@click="markNotificationAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 			>
 				<AccordionHeader>
 					<div class="flex flex-col !items-start gap-y-1">
@@ -68,12 +68,14 @@
 	const notificationsCount = ref<number>(0);
 
 	const markNotificationAsRead = async (notificationIds: string[]) => {
+		if (notificationIds.length === 0) return;
+
 		try {
 			const updateData = { status: 'archived' };
 
 			await $directus.request(updateNotifications(notificationIds, updateData));
 
-			notifications.value.forEach((notification) => {
+			displayedNotifications.value.forEach((notification) => {
 				if (notificationIds.includes(notification.id)) {
 					notification.status = 'archived';
 				}
@@ -84,7 +86,7 @@
 	};
 
 	const markAllNotificationsAsRead = async () => {
-		const notificationIds = notifications.value.map(n => n.id);
+		const notificationIds = displayedNotifications.value.filter(n => n.status === 'inbox').map(n => n.id);
 
 		markNotificationAsRead(notificationIds);
 	};
@@ -101,6 +103,8 @@
 			sort: ['-timestamp'],
 		}));
 	}, { default: () => [] });
+
+	displayedNotifications.value = notifications.value;
 
 	type NotificationCntResponse = {
 		count: {
@@ -121,7 +125,6 @@
 	}, { default: () => [] });
 
 	notificationsCount.value = (cntResponse.value as NotificationCntResponse)?.[0]?.count?.id ?? 0;
-	displayedNotifications.value = notifications.value;
 
 	const loadNotifications = async (pageNumber: number) => {
 		try {

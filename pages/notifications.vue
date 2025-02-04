@@ -120,7 +120,7 @@
 	}, { default: () => [] });
 
 	notificationsCount.value = (cntResponse.value as NotificationCntResponse)?.[0]?.count?.id ?? 0;
-	displayedNotifications.value = notifications.value.reverse();
+	displayedNotifications.value = notifications.value;
 
 	const loadNotifications = async (pageNumber: number) => {
 		try {
@@ -132,6 +132,7 @@
 					filter: {
 						recipient: { _eq: user.id },
 					},
+					sort: ['-timestamp'],
 				})),
 				$directus.request<NotificationCntResponse>(readNotifications({
 					filter: {
@@ -143,7 +144,7 @@
 				})),
 			]);
 
-			displayedNotifications.value = notificationsResp.reverse();
+			displayedNotifications.value = notificationsResp;
 			notificationsCount.value = notificationsCntResp?.[0]?.count?.id ?? 0;
 		} catch (e) {
 			sendErrorToast(e);

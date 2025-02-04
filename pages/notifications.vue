@@ -90,14 +90,15 @@
 	};
 
 	// get initial notifications
-	const { data: notifications } = await useAsyncData('directus_notifications', async () => {
+	const { data: notifications } = await useAsyncData('directus_notifications_page', async () => {
 		return $directus.request<DirectusNotification[]>(readNotifications({
 			format: 'html',
 			limit: itemsPerPage,
-			offset: 0,
+			offset: page.value * itemsPerPage,
 			filter: {
 				recipient: { _eq: user.id },
 			},
+			sort: ['-timestamp'],
 		}));
 	}, { default: () => [] });
 

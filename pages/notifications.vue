@@ -68,7 +68,9 @@
 	const notificationsCount = ref<number>(0);
 
 	const markNotificationAsRead = async (notificationIds: string[]) => {
-		if (notificationIds.length === 0) return;
+		if (notificationIds.length === 0) {
+			return;
+		}
 
 		try {
 			const updateData = { status: 'archived' };
@@ -100,7 +102,7 @@
 			filter: {
 				recipient: { _eq: user.id },
 			},
-			sort: ['-timestamp'],
+			sort: [ '-timestamp' ],
 		}));
 	}, { default: () => [] });
 
@@ -136,7 +138,7 @@
 					filter: {
 						recipient: { _eq: user.id },
 					},
-					sort: ['-timestamp'],
+					sort: [ '-timestamp' ],
 				})),
 				$directus.request<NotificationCntResponse>(readNotifications({
 					filter: {

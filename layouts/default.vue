@@ -215,7 +215,7 @@
 			filter: {
 				recipient: { _eq: user.id },
 			},
-			sort: ['-timestamp'],
+			sort: [ '-timestamp' ],
 		}));
 	}, { default: () => [] });
 

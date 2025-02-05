@@ -178,7 +178,7 @@
 	// NOTIFICATIONS
 	const notificationBus = useEventBus<string[]>('notification-updated');
 
-	notificationBus.on(ids => {
+	notificationBus.on((ids) => {
 		displayedNotifications.value.forEach((notification) => {
 			if (ids.includes(notification.id)) {
 				notification.status = 'archived';

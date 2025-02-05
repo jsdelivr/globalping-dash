@@ -66,6 +66,15 @@
 	const { page, first } = usePagination({ itemsPerPage });
 	const displayedNotifications = ref<DirectusNotification[]>([]);
 	const notificationsCount = ref<number>(0);
+	const notificationBus = useEventBus<string[]>('notification-updated');
+
+	notificationBus.on(ids => {
+		displayedNotifications.value.forEach((notification) => {
+			if (ids.includes(notification.id)) {
+				notification.status = 'archived';
+			}
+		});
+	});
 
 	const markNotificationAsRead = async (notificationIds: string[]) => {
 		if (notificationIds.length === 0) {
@@ -77,20 +86,20 @@
 
 			await $directus.request(updateNotifications(notificationIds, updateData));
 
-			displayedNotifications.value.forEach((notification) => {
-				if (notificationIds.includes(notification.id)) {
-					notification.status = 'archived';
-				}
-			});
+			notificationBus.emit(notificationIds);
 		} catch (error) {
 			console.error('Error updating notifications:', error);
 		}
 	};
 
 	const markAllNotificationsAsRead = async () => {
-		const notificationIds = displayedNotifications.value.filter(n => n.status === 'inbox').map(n => n.id);
+		try {
+			const notificationIds = displayedNotifications.value.filter(n => n.status === 'inbox').map(n => n.id);
 
-		markNotificationAsRead(notificationIds);
+			await markNotificationAsRead(notificationIds);
+		} catch (error) {
+			console.error('Error updating all notifications:', error);
+		}
 	};
 
 	// get initial notifications

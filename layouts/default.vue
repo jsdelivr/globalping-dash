@@ -224,8 +224,8 @@
 		}));
 	}, { default: () => [] });
 
-	const newNotifications = computed(() => notifications.value.filter(notification => notification.status === 'inbox'));
 	const displayedNotifications = computed(() => [ ...notifications.value ].slice(0, 5));
+	const newNotifications = computed(() => displayedNotifications.value.filter(notification => notification.status === 'inbox'));
 
 	// NOTIFICATIONS END
 

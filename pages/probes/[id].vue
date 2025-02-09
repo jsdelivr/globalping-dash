@@ -93,9 +93,28 @@
 			<div v-if="isEditingTags" class="mt-1">
 				<div>
 					<Message v-if="probe.tags[0]?.format === 'v1'" severity="warn" class="mb-1 mt-2">
-						<p class="font-bold">Your tags have an outdated format</p>
-						<p class="mt-1">Format like <Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${probe.tags[0].prefix}-${probe.tags[0].value}`"/> is outdated on will be replaced by <Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${probe.tags[0].prefix}:${probe.tags[0].value}`"/> on any change of the tags for that probe. Please make sure to update your tools if they depend on that.</p>
+						<p class="font-bold">The tags format has changed</p>
+
+						<div class="mt-1">
+							Your tags use an outdated format and will be converted to the new format after saving.
+							Please be sure to use the updated tags in all future requests.
+							<br>
+							<br>
+
+							Outdated format:<br>
+							<span v-for="(tag, index) in probe.tags" :key="index">
+								<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${tag.prefix}-${tag.value}`"/>
+							</span>
+							<br>
+							<br>
+
+							New format:<br>
+							<span v-for="(tag, index) in probe.tags" :key="index">
+								<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${tag.prefix}:${tag.value}`"/>
+							</span>
+						</div>
 					</Message>
+
 					<div class="flex text-xs">
 						<div class="flex-1 content-center">Prefix</div>
 						<div class="mx-3"/>

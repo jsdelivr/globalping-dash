@@ -295,7 +295,7 @@
 
 	const getAllTags = (probe: Probe) => {
 		const systemTags = probe.systemTags;
-		const userTags = probe.tags.map(({ prefix, value }) => `u-${prefix}-${value}`);
+		const userTags = probe.tags.map(({ prefix, value, format }) => format === 'v1' ? `u-${prefix}-${value}` : `u-${prefix}:${value}`);
 		const allTags = userTags.concat(systemTags);
 		return allTags;
 	};

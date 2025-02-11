@@ -12,7 +12,13 @@
 			</Button>
 		</div>
 
-		<Accordion v-if="displayedNotifications.length" class="flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2" expand-icon="pi pi-chevron-right">
+		<Accordion
+			v-if="displayedNotifications.length"
+			multiple
+			class="flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2"
+			expand-icon="pi pi-chevron-right"
+			:value="expandedIndexes"
+		>
 			<AccordionPanel
 				v-for="notification in displayedNotifications"
 				:key="notification.id"
@@ -67,6 +73,7 @@
 	const displayedNotifications = ref<DirectusNotification[]>([]);
 	const notificationsCount = ref<number>(0);
 	const notificationBus = useEventBus<string[]>('notification-updated');
+	const expandedIndexes = computed(() => displayedNotifications.value.map(n => n.id));
 
 	notificationBus.on((ids) => {
 		displayedNotifications.value.forEach((notification) => {

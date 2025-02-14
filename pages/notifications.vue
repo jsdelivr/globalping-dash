@@ -213,8 +213,8 @@
 	}
 
 	.n-accordion-content {
-		padding: 0 16px 0;
-		font-weight: normal;
+		padding: 0 16px;
+		font-weight: 400;
 		line-height: 18px;
 		color: var(--bluegray-900);
 		overflow: hidden;

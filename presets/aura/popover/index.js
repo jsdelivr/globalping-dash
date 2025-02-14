@@ -21,7 +21,7 @@ export default {
 	},
 	content: {
 		// class: [ 'p-5 items-center flex', 'rounded-lg', 'border border-surface-200 dark:border-surface-700' ],
-		class: [ 'items-center flex', 'rounded-xl', 'border border-surface-200 dark:border-dark-400' ],
+		class: [ 'items-center flex', 'rounded-lg', 'border border-surface-200 dark:border-dark-400' ],
 	},
 	transition: {
 		enterFromClass: 'opacity-0 scale-y-[0.8]',

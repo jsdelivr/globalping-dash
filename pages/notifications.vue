@@ -16,7 +16,6 @@
 			v-if="displayedNotifications.length"
 			multiple
 			class="n-accordion"
-			expand-icon="pi pi-chevron-right"
 			:value="expandedIndexes"
 		>
 			<AccordionPanel
@@ -27,14 +26,19 @@
 				:class="{ 'n-accordion-panel_new': notification.status === 'inbox' }"
 				@click="markNotificationAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 			>
-				<AccordionHeader class="n-accordion-header">
-					<div class="flex flex-col !items-start gap-y-1">
+				<AccordionHeader
+					class="n-accordion-header"
+					:pt="{ toggleIcon: '!hidden' }"
+				>
+					<div class="relative flex flex-col !items-start gap-y-1">
 						<span class="n-header-subj text-left text-lg font-bold leading-5">{{ notification.subject }}</span>
 						<span class="flex items-center gap-x-2 text-bluegray-500">
 							<i class="pi pi-clock text-sm"/>
 							<span class="text-sm font-normal leading-4">{{ formatDateTime(notification.timestamp) }}</span>
 						</span>
 					</div>
+
+					<i class="pi pi-chevron-right n-expand-chevron"/>
 				</AccordionHeader>
 
 				<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-2 !text-sm !font-normal !leading-[18px] !text-bluegray-900'}">
@@ -219,5 +223,17 @@
 		color: var(--bluegray-900);
 		overflow: hidden;
 		z-index: 0;
+	}
+
+	.n-expand-chevron {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		color: var(--bluegray-900);
+		transition: all 400ms ease-out;
+	}
+
+	.n-accordion-panel [aria-expanded="true"] .n-expand-chevron {
+		transform: rotate(90deg);
 	}
 </style>

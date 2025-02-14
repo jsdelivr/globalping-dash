@@ -15,7 +15,7 @@
 		<Accordion
 			v-if="displayedNotifications.length"
 			multiple
-			class="flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2"
+			class="n-accordion"
 			expand-icon="pi pi-chevron-right"
 			:value="expandedIndexes"
 		>
@@ -23,11 +23,11 @@
 				v-for="notification in displayedNotifications"
 				:key="notification.id"
 				:value="notification.id"
-				class="notification border border-surface-300 bg-white p-6"
-				:class="{ 'new-notification': notification.status === 'inbox' }"
+				class="n-accordion-panel"
+				:class="{ 'n-accordion-panel_new': notification.status === 'inbox' }"
 				@click="markNotificationAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 			>
-				<AccordionHeader class="relative !p-0 !pr-4">
+				<AccordionHeader class="n-accordion-header">
 					<div class="flex flex-col !items-start gap-y-1">
 						<span class="n-header-subj text-left text-lg font-bold leading-5">{{ notification.subject }}</span>
 						<span class="flex items-center gap-x-2 text-bluegray-500">
@@ -37,7 +37,7 @@
 					</div>
 				</AccordionHeader>
 
-				<AccordionContent :pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden'}">
+				<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-2 !text-sm !font-normal !leading-[18px] !text-bluegray-900'}">
 					<!-- eslint-disable-next-line vue/no-v-html -->
 					<span v-if="notification.message" v-html="notification.message"/>
 				</AccordionContent>
@@ -184,19 +184,40 @@
 		color: #4b5563;
 	}
 
-	.new-notification {
-		@apply bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)];
-	}
-
-	.new-notification .n-header-subj {
-		@apply !text-[var(--bluegray-900)];
-	}
-
 	.btn-mark-all-as-read {
 		@apply flex items-center gap-x-2;
 		@apply bg-white !text-bluegray-900;
 		@apply h-10 w-full sm:w-auto;
 		@apply border border-solid !border-[var(--p-surface-300)];
 		@apply hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white;
+	}
+
+	.n-accordion {
+		@apply flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2;
+	}
+
+	.n-accordion-panel {
+		@apply border border-surface-300 bg-white !p-0 !pb-4;
+	}
+
+	.n-accordion-panel_new {
+		@apply bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)];
+	}
+
+	.n-accordion-panel_new .n-header-subj {
+		@apply !text-[var(--bluegray-900)];
+	}
+
+	.n-accordion-header {
+		@apply relative !p-4 -mb-4;
+	}
+
+	.n-accordion-content {
+		padding: 0 16px 0;
+		font-weight: normal;
+		line-height: 18px;
+		color: var(--bluegray-900);
+		overflow: hidden;
+		z-index: 0;
 	}
 </style>

@@ -37,7 +37,7 @@
 					</div>
 				</AccordionHeader>
 
-				<AccordionContent>
+				<AccordionContent :pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden'}">
 					<!-- eslint-disable-next-line vue/no-v-html -->
 					<span v-if="notification.message" v-html="notification.message"/>
 				</AccordionContent>

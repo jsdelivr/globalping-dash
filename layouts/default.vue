@@ -83,7 +83,7 @@
 					</div>
 				</Drawer>
 			</div>
-			<Popover ref="notificationsPanel" :pt="{ content: 'flex items-center rounded-xl border border-surface-200 dark:border-dark-400' }">
+			<Popover ref="notificationsPanel" :pt="{ content: 'flex items-center rounded-xl border border-surface-200 dark:border-dark-400)' }">
 				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-6 sm:w-[37rem]">
 					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
@@ -127,7 +127,7 @@
 								<i class="pi pi-chevron-right n-expand-chevron"/>
 							</AccordionHeader>
 
-							<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden'}">
+							<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden dark:text-white'}">
 								<!-- eslint-disable-next-line vue/no-v-html -->
 								<span v-if="notification.message" class="notification" v-html="notification.message"/>
 							</AccordionContent>
@@ -350,6 +350,7 @@
 	}
 
 	.n-header-subj {
+		@apply dark:!text-dark-0;
 		color: #4b5563;
 	}
 
@@ -366,7 +367,7 @@
 	}
 
 	.n-accordion-panel {
-		@apply border-none bg-[var(--p-surface-50)] !p-0 !pb-4;
+		@apply border-none bg-[var(--p-surface-50)] !p-0 !pb-4 dark:bg-dark-800 dark:border dark:border-solid dark:border-[var(--table-border)];
 	}
 
 	.n-accordion-panel_new {
@@ -400,6 +401,7 @@
 	}
 
 	.n-expand-chevron {
+		@apply dark:!text-dark-0;
 		position: absolute;
 		top: 16px;
 		right: 16px;

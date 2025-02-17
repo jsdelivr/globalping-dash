@@ -83,7 +83,7 @@
 					</div>
 				</Drawer>
 			</div>
-			<Popover ref="notificationsPanel" :pt="{ content: 'flex items-center rounded-xl border border-surface-200 dark:border-dark-400)' }">
+			<Popover ref="notificationsPanel" :pt="{ content: 'flex items-center rounded-xl border dark:border-[var(--table-border)' }">
 				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-6 sm:w-[37rem]">
 					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>

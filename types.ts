@@ -8,7 +8,7 @@ declare global {
   }
 
   type DirectusSchema = {
-    gp_adopted_probes: Probe[];
+    gp_probes: Probe[];
     gp_credits: Credits[];
     gp_credits_additions: CreditsAddition[];
     gp_credits_deductions: CreditsDeduction[];

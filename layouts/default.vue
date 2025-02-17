@@ -99,24 +99,24 @@
 
 					<Accordion
 						v-if="displayedNotifications.length"
-						class="box-border flex w-full flex-col gap-y-2"
+						class="n-accordion"
 					>
 						<AccordionPanel
 							v-for="notification in displayedNotifications"
 							:key="notification.id"
 							:value="notification.id"
-							class="n-accordion-panel notification border-none bg-[var(--p-surface-50)] p-4"
-							:class="{ 'new-notification': notification.status === 'inbox' }"
+							class="n-accordion-panel"
+							:class="{ 'n-accordion-panel_new': notification.status === 'inbox' }"
 							@click="markNotificationAsRead([ notification.id ])"
 						>
 							<AccordionHeader
-								class="relative !p-0 !pr-4"
+								class="n-accordion-header"
 								:pt="{ toggleIcon: '!hidden' }"
 							>
 								<div class="flex flex-col !items-start gap-y-1">
 									<span class="n-header-subj flex items-center text-sm font-semibold leading-5">
 										{{ notification.subject }}
-										<span v-if="notification.status === 'inbox'" class="new-notification-circle"/>
+										<span v-if="notification.status === 'inbox'" class="n-accordion-panel_new_circle"/>
 									</span>
 
 									<span class="text-sm font-normal leading-4 text-bluegray-500">
@@ -127,7 +127,7 @@
 								<i class="pi pi-chevron-right n-expand-chevron"/>
 							</AccordionHeader>
 
-							<AccordionContent :pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden'}">
+							<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden'}">
 								<!-- eslint-disable-next-line vue/no-v-html -->
 								<span v-if="notification.message" class="notification" v-html="notification.message"/>
 							</AccordionContent>
@@ -349,15 +349,31 @@
 		color: #4b5563;
 	}
 
-	.new-notification {
+	.btn-mark-all-as-read {
+		@apply flex h-10 items-center gap-x-2;
+		@apply bg-white !text-bluegray-900;
+		@apply h-10 w-full sm:w-auto;
+		@apply border border-solid !border-[var(--p-surface-300)];
+		@apply hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white;
+	}
+
+	.n-accordion {
+		@apply box-border flex w-full flex-col gap-y-2;
+	}
+
+	.n-accordion-panel {
+		@apply border-none bg-[var(--p-surface-50)] !p-0 !pb-4;
+	}
+
+	.n-accordion-panel_new {
 		@apply bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)];
 	}
 
-	.new-notification .n-header-subj {
+	.n-accordion-panel_new .n-header-subj {
 		@apply !text-[var(--bluegray-900)];
 	}
 
-	.new-notification-circle {
+	.n-accordion-panel_new-circle {
 		display: inline-flex;
 		width: calc(.5rem + 2px);
 		height: calc(.5rem + 2px);
@@ -366,12 +382,17 @@
 		background-color: var(--p-primary-500);
 	}
 
-	.btn-mark-all-as-read {
-		@apply flex h-10 items-center gap-x-2;
-		@apply bg-white !text-bluegray-900;
-		@apply h-10 w-full sm:w-auto;
-		@apply border border-solid !border-[var(--p-surface-300)];
-		@apply hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white;
+	.n-accordion-header {
+		@apply relative !p-4 -mb-4;
+	}
+
+	.n-accordion-content {
+		padding: 0 16px;
+		font-weight: 400;
+		line-height: 18px;
+		color: var(--bluegray-900);
+		overflow: hidden;
+		z-index: 0;
 	}
 
 	.n-expand-chevron {

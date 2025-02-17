@@ -1,5 +1,5 @@
 <template>
-	<div class="flex min-h-full flex-col gap-y-6 bg-surface-50 p-6">
+	<div class="flex min-h-full flex-col gap-y-6 p-6 dark:var(--main-bg)">
 		<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 			<h1 class="text-2xl font-bold leading-8">Your notifications</h1>
 			<Button
@@ -34,7 +34,7 @@
 						<span class="n-header-subj text-left text-lg font-bold leading-5">
 							{{ notification.subject }}
 						</span>
-						<span class="flex items-center gap-x-2 text-bluegray-500">
+						<span class="flex items-center gap-x-2 text-bluegray-500 dark:!text-dark-0">
 							<i class="pi pi-clock text-sm"/>
 							<span class="text-sm font-normal leading-4">
 								{{ formatDateTime(notification.timestamp) }}
@@ -45,7 +45,7 @@
 					<i class="pi pi-chevron-right n-expand-chevron"/>
 				</AccordionHeader>
 
-				<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-4 !text-sm !font-normal !leading-[18px] !text-bluegray-900'}">
+				<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-4 !text-sm !font-normal !leading-[18px] text-bluegray-900 dark:text-white'}">
 					<!-- eslint-disable-next-line vue/no-v-html -->
 					<span v-if="notification.message" v-html="notification.message"/>
 				</AccordionContent>
@@ -189,6 +189,7 @@
 
 <style scoped>
 	.n-header-subj {
+		@apply dark:!text-dark-0;
 		color: #4b5563;
 	}
 
@@ -205,7 +206,7 @@
 	}
 
 	.n-accordion-panel {
-		@apply border border-surface-300 bg-white !p-0 !pb-6;
+		@apply border border-surface-300 bg-white !p-0 !pb-6 dark:bg-dark-800 dark:border-[var(--table-border)];
 	}
 
 	.n-accordion-panel_new {
@@ -230,6 +231,7 @@
 	}
 
 	.n-expand-chevron {
+		@apply dark:!text-dark-0;
 		position: absolute;
 		top: 24px;
 		right: 24px;

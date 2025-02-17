@@ -1,5 +1,5 @@
 <template>
-	<div class="flex min-h-full flex-col gap-y-6 p-6 dark:var(--main-bg)">
+	<div class="dark:var(--main-bg) flex min-h-full flex-col gap-y-6 p-6">
 		<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 			<h1 class="text-2xl font-bold leading-8">Your notifications</h1>
 			<Button

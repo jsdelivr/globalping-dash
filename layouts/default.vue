@@ -107,7 +107,7 @@
 							:value="notification.id"
 							class="n-accordion-panel"
 							:class="{ 'n-accordion-panel_new': notification.status === 'inbox' }"
-							@click="markNotificationAsRead([ notification.id ])"
+							@click="markNotificationAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 						>
 							<AccordionHeader
 								class="n-accordion-header"
@@ -195,6 +195,10 @@
 		notificationsPanel.value.toggle(event);
 	};
 	const markNotificationAsRead = async (notificationIds: string[]) => {
+		if (notificationIds.length === 0) {
+			return;
+		}
+
 		try {
 			const updateData = { status: 'archived' };
 

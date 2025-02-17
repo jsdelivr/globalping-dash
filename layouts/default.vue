@@ -100,17 +100,19 @@
 					<Accordion
 						v-if="displayedNotifications.length"
 						class="box-border flex w-full flex-col gap-y-2"
-						expand-icon="pi pi-chevron-right"
 					>
 						<AccordionPanel
 							v-for="notification in displayedNotifications"
 							:key="notification.id"
 							:value="notification.id"
-							class="notification border-none bg-[var(--p-surface-50)] p-4"
+							class="n-accordion-panel notification border-none bg-[var(--p-surface-50)] p-4"
 							:class="{ 'new-notification': notification.status === 'inbox' }"
 							@click="markNotificationAsRead([ notification.id ])"
 						>
-							<AccordionHeader class="relative !p-0 !pr-4">
+							<AccordionHeader
+								class="relative !p-0 !pr-4"
+								:pt="{ toggleIcon: '!hidden' }"
+							>
 								<div class="flex flex-col !items-start gap-y-1">
 									<span class="n-header-subj flex items-center text-sm font-semibold leading-5">
 										{{ notification.subject }}
@@ -121,6 +123,8 @@
 										{{ formatDateTime(notification.timestamp) }}
 									</span>
 								</div>
+
+								<i class="pi pi-chevron-right n-expand-chevron"/>
 							</AccordionHeader>
 
 							<AccordionContent :pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden'}">
@@ -368,5 +372,17 @@
 		@apply h-10 w-full sm:w-auto;
 		@apply border border-solid !border-[var(--p-surface-300)];
 		@apply hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white;
+	}
+
+	.n-expand-chevron {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		color: var(--bluegray-900);
+		transition: all 400ms ease-out;
+	}
+
+	.n-accordion-panel [aria-expanded="true"] .n-expand-chevron {
+		transform: rotate(90deg);
 	}
 </style>

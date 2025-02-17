@@ -31,17 +31,21 @@
 					:pt="{ toggleIcon: '!hidden' }"
 				>
 					<div class="relative flex flex-col !items-start gap-y-1">
-						<span class="n-header-subj text-left text-lg font-bold leading-5">{{ notification.subject }}</span>
+						<span class="n-header-subj text-left text-lg font-bold leading-5">
+							{{ notification.subject }}
+						</span>
 						<span class="flex items-center gap-x-2 text-bluegray-500">
 							<i class="pi pi-clock text-sm"/>
-							<span class="text-sm font-normal leading-4">{{ formatDateTime(notification.timestamp) }}</span>
+							<span class="text-sm font-normal leading-4">
+								{{ formatDateTime(notification.timestamp) }}
+							</span>
 						</span>
 					</div>
 
 					<i class="pi pi-chevron-right n-expand-chevron"/>
 				</AccordionHeader>
 
-				<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-2 !text-sm !font-normal !leading-[18px] !text-bluegray-900'}">
+				<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-4 !text-sm !font-normal !leading-[18px] !text-bluegray-900'}">
 					<!-- eslint-disable-next-line vue/no-v-html -->
 					<span v-if="notification.message" v-html="notification.message"/>
 				</AccordionContent>
@@ -201,7 +205,7 @@
 	}
 
 	.n-accordion-panel {
-		@apply border border-surface-300 bg-white !p-0 !pb-4;
+		@apply border border-surface-300 bg-white !p-0 !pb-6;
 	}
 
 	.n-accordion-panel_new {
@@ -213,11 +217,11 @@
 	}
 
 	.n-accordion-header {
-		@apply relative !p-4 -mb-4;
+		@apply relative !p-6 -mb-6;
 	}
 
 	.n-accordion-content {
-		padding: 0 16px;
+		padding: 0 24px;
 		font-weight: 400;
 		line-height: 18px;
 		color: var(--bluegray-900);
@@ -227,8 +231,8 @@
 
 	.n-expand-chevron {
 		position: absolute;
-		top: 16px;
-		right: 16px;
+		top: 24px;
+		right: 24px;
 		color: var(--bluegray-900);
 		transition: all 400ms ease-out;
 	}

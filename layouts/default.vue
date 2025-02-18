@@ -362,7 +362,7 @@
 		@apply border border-solid !border-[var(--p-surface-300)];
 		@apply hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white;
 		@apply dark:text-white dark:bg-primary dark:!border-primary;
-  	@apply dark:hover:!bg-[#14b48e] dark:hover:!border-[#14b48e];
+		@apply dark:hover:!bg-[#14b48e] dark:hover:!border-[#14b48e];
 	}
 
 	.n-accordion {

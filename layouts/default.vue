@@ -173,9 +173,9 @@
 	import { readNotifications, updateNotifications } from '@directus/sdk';
 	import { defaults } from 'chart.js';
 	import capitalize from 'lodash/capitalize';
+	import { useInboxNotificationIds } from '~/composables/useInboxNotificationIds';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
-	import { useInboxNotificationIds } from '~/composables/useInboxNotificationIds';
 
 	const { $directus } = useNuxtApp();
 

@@ -68,10 +68,10 @@
 <script setup lang="ts">
 	import { readNotifications, updateNotifications } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
+	import { useInboxNotificationIds } from '~/composables/useInboxNotificationIds';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
-	import { useInboxNotificationIds } from '~/composables/useInboxNotificationIds';
 
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();

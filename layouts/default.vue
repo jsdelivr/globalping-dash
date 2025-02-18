@@ -356,10 +356,13 @@
 
 	.btn-mark-all-as-read {
 		@apply flex h-10 items-center gap-x-2;
-		@apply bg-white !text-bluegray-900;
+		@apply bg-white;
+		@apply text-bluegray-900;
 		@apply h-10 w-full sm:w-auto;
 		@apply border border-solid !border-[var(--p-surface-300)];
 		@apply hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white;
+		@apply dark:text-white dark:bg-primary dark:!border-primary;
+  	@apply dark:hover:!bg-[#14b48e] dark:hover:!border-[#14b48e];
 	}
 
 	.n-accordion {

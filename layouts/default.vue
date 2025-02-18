@@ -175,6 +175,7 @@
 	import capitalize from 'lodash/capitalize';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
+	import { useInboxNotificationIds } from '~/composables/useInboxNotificationIds';
 
 	const { $directus } = useNuxtApp();
 
@@ -191,6 +192,7 @@
 			}
 		});
 
+		// update inbox notifications IDs for a counter, mark-all-as-read btn
 		inboxNotifIds.value = inboxNotifIds.value.filter(id => !ids.includes(id));
 	});
 
@@ -215,9 +217,7 @@
 	};
 	const markAllNotificationsAsRead = async () => {
 		try {
-			const notificationIds = notifications.value.filter(n => n.status === 'inbox').map(n => n.id);
-
-			await markNotificationAsRead(notificationIds);
+			await markNotificationAsRead(inboxNotifIds.value);
 		} catch (error) {
 			console.error('Error updating all notifications:', error);
 		}
@@ -226,7 +226,7 @@
 	// fetch at the start all inbox notifications
 	// to use these IDs for the mark-all-as-read btn
 	// also for the unread notifications counter
-	const inboxNotifIds = ref<string[]>([]);
+	const inboxNotifIds = useInboxNotificationIds();
 	const fetchInboxNotifIds = async () => {
 		try {
 			const notifications = await $directus.request<{ id: string }[]>(readNotifications({
@@ -239,7 +239,6 @@
 			}));
 
 			inboxNotifIds.value = notifications.map(n => n.id);
-			console.log('Fetched Notification IDs:', inboxNotifIds.value);
 		} catch (error) {
 			console.error('Error fetching notification IDs:', error);
 		}

@@ -71,6 +71,7 @@
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
+	import { useInboxNotificationIds } from '~/composables/useInboxNotificationIds';
 
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
@@ -109,9 +110,9 @@
 
 	const markAllNotificationsAsRead = async () => {
 		try {
-			const notificationIds = displayedNotifications.value.filter(n => n.status === 'inbox').map(n => n.id);
+			const inboxNotifIds = useInboxNotificationIds();
 
-			await markNotificationAsRead(notificationIds);
+			await markNotificationAsRead(inboxNotifIds.value);
 		} catch (error) {
 			console.error('Error updating all notifications:', error);
 		}

@@ -87,6 +87,9 @@
 				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-6 sm:w-[37rem]">
 					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
+						<span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">
+							Unread: {{ inboxNotifIds.length }}
+						</span>
 						<Button
 							v-if="displayedNotifications.length"
 							class="btn-mark-all-as-read"
@@ -173,7 +176,6 @@
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
 
-	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 
 	const auth = useAuth();
@@ -188,6 +190,8 @@
 				notification.status = 'archived';
 			}
 		});
+
+		inboxNotifIds.value = inboxNotifIds.value.filter(id => !ids.includes(id));
 	});
 
 	const notificationsPanel = ref();
@@ -219,11 +223,35 @@
 		}
 	};
 
-	const itemsPerPage = config.public.itemsPerTablePage;
+	// fetch at the start all inbox notifications
+	// to use these IDs for the mark-all-as-read btn
+	// also for the unread notifications counter
+	const inboxNotifIds = ref<string[]>([]);
+	const fetchInboxNotifIds = async () => {
+		try {
+			const notifications = await $directus.request<{ id: string }[]>(readNotifications({
+				filter: {
+					recipient: { _eq: user.id },
+					status: { _eq: 'inbox' },
+				},
+				fields: [ 'id' ],
+				limit: -1,
+			}));
+
+			inboxNotifIds.value = notifications.map(n => n.id);
+			console.log('Fetched Notification IDs:', inboxNotifIds.value);
+		} catch (error) {
+			console.error('Error fetching notification IDs:', error);
+		}
+	};
+
+	fetchInboxNotifIds();
+
+	const DD_ITEMS_LIMIT = 5;
 	const { data: notifications } = await useAsyncData('directus_notifications', async () => {
 		return $directus.request(readNotifications({
 			format: 'html',
-			limit: itemsPerPage,
+			limit: DD_ITEMS_LIMIT,
 			offset: 0,
 			filter: {
 				recipient: { _eq: user.id },
@@ -232,7 +260,7 @@
 		}));
 	}, { default: () => [] });
 
-	const displayedNotifications = computed(() => [ ...notifications.value ].slice(0, 5));
+	const displayedNotifications = computed(() => [ ...notifications.value ].slice(0, DD_ITEMS_LIMIT));
 	const newNotifications = computed(() => displayedNotifications.value.filter(notification => notification.status === 'inbox'));
 
 	// NOTIFICATIONS END

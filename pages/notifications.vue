@@ -45,7 +45,7 @@
 					<i class="pi pi-chevron-right n-expand-chevron"/>
 				</AccordionHeader>
 
-				<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-4 !text-sm !font-normal !leading-[18px] text-bluegray-900 dark:text-white'}">
+				<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-4 !text-sm !font-normal !leading-[18px] text-bluegray-900 dark:text-[var(--bluegray-0)]'}">
 					<!-- eslint-disable-next-line vue/no-v-html -->
 					<span v-if="notification.message" v-html="notification.message"/>
 				</AccordionContent>
@@ -199,9 +199,9 @@
 		@apply text-bluegray-900;
 		@apply h-10 w-full sm:w-auto;
 		@apply border border-solid !border-[var(--p-surface-300)];
-		@apply hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-white;
-		@apply dark:text-white dark:bg-primary dark:!border-primary;
-		@apply dark:hover:!bg-[#14b48e] dark:hover:!border-[#14b48e];
+		@apply hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-[var(--bluegray-0)];
+		@apply dark:text-[var(--bluegray-0)] dark:bg-primary dark:!border-primary;
+		@apply dark:hover:!bg-[var(--p-primary-hover-color)] dark:hover:!border-[var(--p-primary-hover-color)];
 	}
 
 	.n-accordion {
@@ -214,10 +214,12 @@
 
 	.n-accordion-panel_new {
 		@apply bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)];
+		@apply dark:bg-none dark:!bg-[var(--dark-700)];
 	}
 
 	.n-accordion-panel_new .n-header-subj {
 		@apply !text-[var(--bluegray-900)];
+		@apply dark:!text-[var(--bluegray-0)];
 	}
 
 	.n-accordion-header {

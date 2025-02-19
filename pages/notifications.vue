@@ -210,7 +210,13 @@
 	}
 
 	.n-accordion-panel {
-		@apply border border-surface-300 bg-white !p-0 !pb-6 dark:bg-dark-800 dark:border-[var(--table-border)];
+		@apply border border-surface-300 dark:border-[var(--table-border)];
+		@apply bg-white dark:bg-dark-800;
+		@apply !p-0 !pb-6;
+	}
+
+	.n-accordion-panel[data-pc-name="accordionpanel"] {
+		@apply !rounded-xl;
 	}
 
 	.n-accordion-panel_new {

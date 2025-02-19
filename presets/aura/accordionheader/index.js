@@ -7,5 +7,5 @@ export default {
 			},
 		],
 	}),
-	toggleIcon: 'absolute top-1 right-1 text-bluegray-900 dark:text-surface-0 w-4 h-4',
+	toggleIcon: 'inline-block text-bluegray-900 dark:text-surface-0 w-4 h-4',
 };

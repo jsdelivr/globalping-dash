@@ -144,6 +144,18 @@ declare global {
     };
   } | null;
 
+  type DirectusNotification = {
+    id: string;
+    timestamp: string;
+    status: 'inbox' | 'archived';
+    recipient: string;
+    sender: string | null;
+    subject: string;
+    message: string;
+    collection: string;
+    item: string;
+  };
+
   type Metadata = {
     targetNodeVersion: string,
     targetHardwareDeviceFirmware: string,

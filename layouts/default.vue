@@ -83,17 +83,70 @@
 					</div>
 				</Drawer>
 			</div>
-			<Popover ref="notificationsPanel">
-				<Accordion v-if="reverseNotifications.length" class="box-border w-96 max-w-[calc(100vw-16px)]" expand-icon="pi pi-chevron-right">
-					<AccordionPanel v-for="notification in reverseNotifications" :key="notification.id" :value="notification.id" @click="markNotificationAsRead(notification.id)">
-						<AccordionHeader class="text-left" :class="{ '!font-normal': notification.status !== 'inbox' }">{{ notification.subject }}</AccordionHeader>
-						<AccordionContent>
-							<!-- eslint-disable-next-line vue/no-v-html -->
-							<span v-if="notification.message" class="notification" v-html="notification.message"/>
-						</AccordionContent>
-					</AccordionPanel>
-				</Accordion>
-				<p v-else class="w-80 p-4">No notifications</p>
+			<Popover ref="notificationsPanel" class="n-popover">
+				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-6 sm:w-[37rem]">
+					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
+						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
+						<span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold text-[var(--bluegray-0)]">
+							Unread: {{ inboxNotifIds.length }}
+						</span>
+						<Button
+							v-if="displayedNotifications.length"
+							class="btn-mark-all-as-read"
+							@click="markAllNotificationsAsRead()"
+						>
+							<i class="pi pi-check-circle text-lg "/>
+							<span class="text-sm font-semibold">Mark all as read</span>
+						</Button>
+					</div>
+
+					<Accordion
+						v-if="displayedNotifications.length"
+						class="n-accordion"
+					>
+						<AccordionPanel
+							v-for="notification in displayedNotifications"
+							:key="notification.id"
+							:value="notification.id"
+							class="n-accordion-panel"
+							:class="{ 'n-accordion-panel_new': notification.status === 'inbox' }"
+							@click="markNotificationAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
+						>
+							<AccordionHeader
+								class="n-accordion-header"
+								:pt="{ toggleIcon: '!hidden' }"
+							>
+								<div class="flex flex-col !items-start gap-y-1">
+									<span class="n-header-subj flex items-center text-sm font-semibold leading-5">
+										{{ notification.subject }}
+										<span v-if="notification.status === 'inbox'" class="n-accordion-panel_new_circle"/>
+									</span>
+
+									<span class="text-sm font-normal leading-4 text-bluegray-500">
+										{{ formatDateTime(notification.timestamp) }}
+									</span>
+								</div>
+
+								<i class="pi pi-chevron-right n-expand-chevron"/>
+							</AccordionHeader>
+
+							<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden dark:text-[var(--bluegray-0)]'}">
+								<!-- eslint-disable-next-line vue/no-v-html -->
+								<span v-if="notification.message" class="n-accordion-content_msg" v-html="notification.message"/>
+							</AccordionContent>
+						</AccordionPanel>
+					</Accordion>
+
+					<p v-else class="w-80 p-4">No notifications</p>
+
+					<NuxtLink
+						to="/notifications"
+						class="ps-4 font-bold leading-4 text-[var(--p-primary-color)]"
+						@click="toggleNotifications"
+					>
+						Go to Notifications page
+					</NuxtLink>
+				</div>
 			</Popover>
 		</header>
 
@@ -120,7 +173,9 @@
 	import { readNotifications, updateNotifications } from '@directus/sdk';
 	import { defaults } from 'chart.js';
 	import capitalize from 'lodash/capitalize';
+	import { useInboxNotificationIds } from '~/composables/useInboxNotificationIds';
 	import { useAuth } from '~/store/auth';
+	import { formatDateTime } from '~/utils/date-formatters';
 
 	const { $directus } = useNuxtApp();
 
@@ -128,34 +183,84 @@
 	const user = auth.getUser as User;
 
 	// NOTIFICATIONS
+	const notificationBus = useEventBus<string[]>('notification-updated');
+
+	notificationBus.on((ids) => {
+		displayedNotifications.value.forEach((notification) => {
+			if (ids.includes(notification.id)) {
+				notification.status = 'archived';
+			}
+		});
+
+		// update inbox notifications IDs for a counter, mark-all-as-read btn
+		inboxNotifIds.value = inboxNotifIds.value.filter(id => !ids.includes(id));
+	});
 
 	const notificationsPanel = ref();
 	const toggleNotifications = async (event: Event) => {
 		notificationsPanel.value.toggle(event);
 	};
-	const markNotificationAsRead = async (id: string) => {
-		const notification = notifications.value.find(notification => notification.id === id);
-
-		if (!notification) {
+	const markNotificationAsRead = async (notificationIds: string[]) => {
+		if (notificationIds.length === 0) {
 			return;
 		}
 
-		notification.status = 'archived';
-		await $directus.request(updateNotifications([ notification.id ], { status: notification.status }));
+		try {
+			const updateData = { status: 'archived' };
+
+			await $directus.request(updateNotifications(notificationIds, updateData));
+
+			notificationBus.emit(notificationIds);
+		} catch (error) {
+			console.error('Error updating notifications:', error);
+		}
+	};
+	const markAllNotificationsAsRead = async () => {
+		try {
+			await markNotificationAsRead(inboxNotifIds.value);
+		} catch (error) {
+			console.error('Error updating all notifications:', error);
+		}
 	};
 
+	// fetch at the start all inbox notifications
+	// to use these IDs for the mark-all-as-read btn
+	// also for the unread notifications counter
+	const inboxNotifIds = useInboxNotificationIds();
+	const fetchInboxNotifIds = async () => {
+		try {
+			const notifications = await $directus.request<{ id: string }[]>(readNotifications({
+				filter: {
+					recipient: { _eq: user.id },
+					status: { _eq: 'inbox' },
+				},
+				fields: [ 'id' ],
+				limit: -1,
+			}));
+
+			inboxNotifIds.value = notifications.map(n => n.id);
+		} catch (error) {
+			console.error('Error fetching notification IDs:', error);
+		}
+	};
+
+	fetchInboxNotifIds();
+
+	const DD_ITEMS_LIMIT = 5;
 	const { data: notifications } = await useAsyncData('directus_notifications', async () => {
 		return $directus.request(readNotifications({
 			format: 'html',
+			limit: DD_ITEMS_LIMIT,
+			offset: 0,
 			filter: {
 				recipient: { _eq: user.id },
 			},
+			sort: [ '-timestamp' ],
 		}));
 	}, { default: () => [] });
 
-	const newNotifications = computed(() => notifications.value.filter(notification => notification.status === 'inbox'));
-
-	const reverseNotifications = computed(() => [ ...notifications.value ].reverse());
+	const displayedNotifications = computed(() => [ ...notifications.value ].slice(0, DD_ITEMS_LIMIT));
+	const newNotifications = computed(() => displayedNotifications.value.filter(notification => notification.status === 'inbox'));
 
 	// NOTIFICATIONS END
 
@@ -198,17 +303,34 @@
 </script>
 
 <style>
-	.notification p {
+	.n-accordion-content_msg p {
 		margin-bottom: 18px;
+		word-break: break-all;
 	}
 
-	.notification p:last-child {
+	.n-accordion-content_msg p strong {
+		word-break: break-all;
+	}
+
+	.n-accordion-content_msg p:last-child {
 		margin-bottom: 0;
 	}
 
-	.notification a {
+	.n-accordion-content_msg a {
 		color: var(--p-primary-color);
 		font-weight: 600;
+	}
+
+	.n-popover[data-pc-name="popover"] {
+		@apply !rounded-xl;
+		@apply !overflow-hidden;
+		@apply absolute !ml-4 !mt-2;
+	}
+
+	.n-popover[data-pc-name="popover"] *[data-pc-section="content"] {
+		@apply flex items-center;
+		@apply !rounded-xl;
+		@apply border dark:border-[var(--table-border)];
 	}
 </style>
 
@@ -269,5 +391,80 @@
 	.dark .sidebar-link:hover {
 		background: var(--dark-500);
 		border-color: var(--dark-400);
+	}
+
+	.n-header-subj {
+		@apply dark:!text-dark-0;
+		color: #4b5563;
+	}
+
+	.btn-mark-all-as-read {
+		@apply flex h-10 items-center gap-x-2;
+		@apply bg-white;
+		@apply text-bluegray-900;
+		@apply h-10 w-full sm:w-auto;
+		@apply border border-solid !border-[var(--p-surface-300)];
+		@apply hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-[var(--bluegray-0)];
+		@apply dark:text-[var(--bluegray-0)] dark:bg-primary dark:!border-primary;
+		@apply dark:hover:!bg-[var(--p-primary-hover-color)] dark:hover:!border-[var(--p-primary-hover-color)];
+	}
+
+	.n-accordion {
+		@apply box-border flex w-full flex-col gap-y-2;
+	}
+
+	.n-accordion-panel {
+		@apply border-none dark:border dark:border-solid dark:border-[var(--table-border)];
+		@apply bg-[var(--p-surface-50)] dark:bg-dark-800;
+		@apply !p-0 !pb-4;
+	}
+
+	.n-accordion-panel[data-pc-name="accordionpanel"] {
+		@apply !rounded-xl;
+	}
+
+	.n-accordion-panel_new {
+		@apply bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)];
+		@apply dark:bg-none dark:!bg-[var(--dark-700)];
+	}
+
+	.n-accordion-panel_new .n-header-subj {
+		@apply !text-[var(--bluegray-900)];
+		@apply dark:!text-[var(--bluegray-0)];
+	}
+
+	.n-accordion-panel_new-circle {
+		display: inline-flex;
+		width: calc(.5rem + 2px);
+		height: calc(.5rem + 2px);
+		border-radius: 50%;
+		margin-left: calc(.5rem + 2px);
+		background-color: var(--p-primary-500);
+	}
+
+	.n-accordion-header {
+		@apply relative !p-4 !pr-8 -mb-4 text-left;
+	}
+
+	.n-accordion-content {
+		padding: 0 16px;
+		font-weight: 400;
+		line-height: 18px;
+		color: var(--bluegray-900);
+		overflow: hidden;
+		z-index: 0;
+	}
+
+	.n-expand-chevron {
+		@apply dark:!text-dark-0;
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		color: var(--bluegray-900);
+		transition: all 400ms ease-out;
+	}
+
+	.n-accordion-panel [aria-expanded="true"] .n-expand-chevron {
+		transform: rotate(90deg);
 	}
 </style>

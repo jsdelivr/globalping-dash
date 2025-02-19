@@ -230,7 +230,7 @@
 	}
 
 	.n-accordion-header {
-		@apply relative !p-6 -mb-6;
+		@apply relative !p-6 !pr-10 -mb-6;
 	}
 
 	.n-accordion-content {

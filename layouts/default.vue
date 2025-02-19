@@ -443,7 +443,7 @@
 	}
 
 	.n-accordion-header {
-		@apply relative !p-4 -mb-4;
+		@apply relative !p-4 !pr-8 -mb-4 text-left;
 	}
 
 	.n-accordion-content {

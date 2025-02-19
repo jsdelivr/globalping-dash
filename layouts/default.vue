@@ -83,7 +83,7 @@
 					</div>
 				</Drawer>
 			</div>
-			<Popover ref="notificationsPanel" :pt="{ content: 'flex items-center rounded-xl border dark:border-[var(--table-border)' }">
+			<Popover ref="notificationsPanel" class="n-popover">
 				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-6 sm:w-[37rem]">
 					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
@@ -132,7 +132,7 @@
 
 							<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden dark:text-[var(--bluegray-0)]'}">
 								<!-- eslint-disable-next-line vue/no-v-html -->
-								<span v-if="notification.message" class="notification" v-html="notification.message"/>
+								<span v-if="notification.message" class="n-accordion-content_msg" v-html="notification.message"/>
 							</AccordionContent>
 						</AccordionPanel>
 					</Accordion>
@@ -303,17 +303,34 @@
 </script>
 
 <style>
-	.notification p {
+	.n-accordion-content_msg p {
 		margin-bottom: 18px;
+		word-break: break-all;
 	}
 
-	.notification p:last-child {
+	.n-accordion-content_msg p strong {
+		word-break: break-all;
+	}
+
+	.n-accordion-content_msg p:last-child {
 		margin-bottom: 0;
 	}
 
-	.notification a {
+	.n-accordion-content_msg a {
 		color: var(--p-primary-color);
 		font-weight: 600;
+	}
+
+	.n-popover[data-pc-name="popover"] {
+		@apply !rounded-xl;
+		@apply !overflow-hidden;
+		@apply absolute !ml-4 !mt-2;
+	}
+
+	.n-popover[data-pc-section="content"] {
+		@apply flex items-center;
+		@apply !rounded-xl;
+		@apply border dark:border-[var(--table-border)];
 	}
 </style>
 

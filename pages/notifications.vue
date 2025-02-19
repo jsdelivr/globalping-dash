@@ -47,7 +47,7 @@
 
 				<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-4 !text-sm !font-normal !leading-[18px] text-bluegray-900 dark:text-[var(--bluegray-0)]'}">
 					<!-- eslint-disable-next-line vue/no-v-html -->
-					<span v-if="notification.message" v-html="notification.message"/>
+					<span v-if="notification.message" class="n-accordion-content_msg" v-html="notification.message"/>
 				</AccordionContent>
 			</AccordionPanel>
 		</Accordion>

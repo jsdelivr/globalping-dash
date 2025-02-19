@@ -2,12 +2,10 @@ export default {
 	root: {
 		class: [
 			// Shape
-			'rounded-xl shadow-lg',
-
-			'overflow-hidden',
+			'rounded-md shadow-lg',
 
 			// Position
-			'absolute ml-4 mt-2',
+			'absolute left-0 top-0 mt-2',
 			'z-40 transform origin-center',
 
 			// Color

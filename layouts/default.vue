@@ -132,7 +132,7 @@
 
 							<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden dark:text-[var(--bluegray-0)]'}">
 								<!-- eslint-disable-next-line vue/no-v-html -->
-								<span v-if="notification.message" class="n-accordion-content_msg" v-html="notification.message"/>
+								<span v-if="notification.message" class="notification-content-msg" v-html="notification.message"/>
 							</AccordionContent>
 						</AccordionPanel>
 					</Accordion>
@@ -303,20 +303,20 @@
 </script>
 
 <style>
-	.n-accordion-content_msg p {
+	.notification-content-msg p {
 		margin-bottom: 18px;
 		word-break: break-all;
 	}
 
-	.n-accordion-content_msg p strong {
+	.notification-content-msg p strong {
 		word-break: break-all;
 	}
 
-	.n-accordion-content_msg p:last-child {
+	.notification-content-msg p:last-child {
 		margin-bottom: 0;
 	}
 
-	.n-accordion-content_msg a {
+	.notification-content-msg a {
 		color: var(--p-primary-color);
 		font-weight: 600;
 	}

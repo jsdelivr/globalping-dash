@@ -37,7 +37,7 @@
 
 				<div class="n-list_item_content">
 					<!-- eslint-disable-next-line vue/no-v-html -->
-					<span v-if="notification.message" class="n-accordion-content_msg" v-html="notification.message"/>
+					<span v-if="notification.message" class="notification-content-msg" v-html="notification.message"/>
 				</div>
 			</div>
 		</div>

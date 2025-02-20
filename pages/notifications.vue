@@ -12,25 +12,17 @@
 			</Button>
 		</div>
 
-		<Accordion
-			v-if="displayedNotifications.length"
-			multiple
-			class="n-accordion"
-			:value="expandedIndexes"
-		>
-			<AccordionPanel
+		<div v-if="displayedNotifications.length" class="n-list">
+			<div
 				v-for="notification in displayedNotifications"
 				:key="notification.id"
 				:value="notification.id"
-				class="n-accordion-panel"
-				:class="{ 'n-accordion-panel_new': notification.status === 'inbox' }"
+				class="n-list_item"
+				:class="{ 'n-list_item_new': notification.status === 'inbox' }"
 				@click="markNotificationAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 			>
-				<AccordionHeader
-					class="n-accordion-header"
-					:pt="{ toggleIcon: '!hidden' }"
-				>
-					<div class="relative flex flex-col !items-start gap-y-1">
+				<div class="n-list_item_header">
+					<div class="relative flex flex-col items-start gap-y-1">
 						<span class="n-header-subj text-left text-lg font-bold leading-5">
 							{{ notification.subject }}
 						</span>
@@ -41,16 +33,14 @@
 							</span>
 						</span>
 					</div>
+				</div>
 
-					<i class="pi pi-chevron-right n-expand-chevron"/>
-				</AccordionHeader>
-
-				<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-4 !text-sm !font-normal !leading-[18px] text-bluegray-900 dark:text-[var(--bluegray-0)]'}">
+				<div class="n-list_item_content">
 					<!-- eslint-disable-next-line vue/no-v-html -->
 					<span v-if="notification.message" class="n-accordion-content_msg" v-html="notification.message"/>
-				</AccordionContent>
-			</AccordionPanel>
-		</Accordion>
+				</div>
+			</div>
+		</div>
 
 		<p v-else class="p-4 text-lg font-bold leading-5">No notifications at the moment.</p>
 
@@ -82,7 +72,6 @@
 	const displayedNotifications = ref<DirectusNotification[]>([]);
 	const notificationsCount = ref<number>(0);
 	const notificationBus = useEventBus<string[]>('notification-updated');
-	const expandedIndexes = computed(() => displayedNotifications.value.map(n => n.id));
 
 	notificationBus.on((ids) => {
 		displayedNotifications.value.forEach((notification) => {
@@ -190,7 +179,7 @@
 
 <style scoped>
 	.n-header-subj {
-		@apply dark:!text-dark-0;
+		@apply dark:text-dark-0;
 		color: #4b5563;
 	}
 
@@ -199,59 +188,42 @@
 		@apply bg-white;
 		@apply text-bluegray-900;
 		@apply h-10 w-full sm:w-auto;
-		@apply border border-solid !border-[var(--p-surface-300)];
-		@apply hover:!border-[var(--p-primary-500)] hover:!bg-[var(--p-primary-500)] hover:!text-[var(--bluegray-0)];
-		@apply dark:text-[var(--bluegray-0)] dark:bg-primary dark:!border-primary;
-		@apply dark:hover:!bg-[var(--p-primary-hover-color)] dark:hover:!border-[var(--p-primary-hover-color)];
+		@apply border border-solid border-[var(--p-surface-300)];
+		@apply hover:border-[var(--p-primary-500)] hover:bg-[var(--p-primary-500)] hover:text-[var(--bluegray-0)];
+		@apply dark:text-[var(--bluegray-0)] dark:bg-primary dark:border-primary;
+		@apply dark:hover:bg-[var(--p-primary-hover-color)] dark:hover:border-[var(--p-primary-hover-color)];
 	}
 
-	.n-accordion {
+	.n-list {
 		@apply flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2;
 	}
 
-	.n-accordion-panel {
+	.n-list_item {
 		@apply border border-surface-300 dark:border-[var(--table-border)];
 		@apply bg-white dark:bg-dark-800;
-		@apply !p-0 !pb-6;
+		@apply p-0;
+		@apply rounded-xl;
 	}
 
-	.n-accordion-panel[data-pc-name="accordionpanel"] {
-		@apply !rounded-xl;
-	}
-
-	.n-accordion-panel_new {
+	.n-list_item_new {
 		@apply bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)];
-		@apply dark:bg-none dark:!bg-[var(--dark-700)];
+		@apply dark:bg-none dark:bg-[var(--dark-700)];
+		@apply cursor-pointer;
 	}
 
-	.n-accordion-panel_new .n-header-subj {
-		@apply !text-[var(--bluegray-900)];
-		@apply dark:!text-[var(--bluegray-0)];
+	.n-list_item_new .n-header-subj {
+		@apply text-[var(--bluegray-900)];
+		@apply dark:text-[var(--bluegray-0)];
 	}
 
-	.n-accordion-header {
-		@apply relative !p-6 !pr-10 -mb-6;
+	.n-list_item_header {
+		@apply relative p-6 pb-4;
 	}
 
-	.n-accordion-content {
-		padding: 0 24px;
-		font-weight: 400;
-		line-height: 18px;
-		color: var(--bluegray-900);
-		overflow: hidden;
-		z-index: 0;
-	}
-
-	.n-expand-chevron {
-		@apply dark:!text-dark-0;
-		position: absolute;
-		top: 24px;
-		right: 24px;
-		color: var(--bluegray-900);
-		transition: all 400ms ease-out;
-	}
-
-	.n-accordion-panel [aria-expanded="true"] .n-expand-chevron {
-		transform: rotate(90deg);
+	.n-list_item_content {
+		@apply px-6 pb-6;
+		@apply text-sm font-normal leading-[18px];
+		@apply text-bluegray-900 dark:text-[var(--bluegray-0)];
+		@apply overflow-hidden;
 	}
 </style>

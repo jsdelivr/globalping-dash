@@ -327,7 +327,7 @@
 		@apply absolute !ml-4 !mt-2;
 	}
 
-	.n-popover[data-pc-name="popover"] *[data-pc-section="content"] {
+	.n-popover[data-pc-name="popover"] > *[data-pc-section="content"] {
 		@apply flex items-center;
 		@apply !rounded-xl;
 		@apply border dark:border-[var(--table-border)];

@@ -179,8 +179,11 @@
 
 <style scoped>
 	.n-header-subj {
-		@apply dark:text-dark-0;
-		color: #4b5563;
+		@apply text-[#4b5563] dark:text-dark-0;
+	}
+
+	.n-list_item_new .n-header-subj {
+		@apply text-[var(--bluegray-900)] dark:text-[var(--bluegray-0)];
 	}
 
 	.btn-mark-all-as-read {
@@ -209,11 +212,6 @@
 		@apply bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)];
 		@apply dark:bg-none dark:bg-[var(--dark-700)];
 		@apply cursor-pointer;
-	}
-
-	.n-list_item_new .n-header-subj {
-		@apply text-[var(--bluegray-900)];
-		@apply dark:text-[var(--bluegray-0)];
 	}
 
 	.n-list_item_header {

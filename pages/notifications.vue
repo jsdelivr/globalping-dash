@@ -12,18 +12,21 @@
 			</Button>
 		</div>
 
-		<div v-if="displayedNotifications.length" class="n-list">
+		<div v-if="displayedNotifications.length" class="flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2">
 			<div
 				v-for="notification in displayedNotifications"
 				:key="notification.id"
 				:value="notification.id"
-				class="n-list_item"
-				:class="{ 'n-list_item_new': notification.status === 'inbox' }"
+				class="rounded-xl border border-surface-300 bg-white p-0 dark:border-[var(--table-border)] dark:bg-dark-800"
+				:class="{ 'cursor-pointer bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:bg-[var(--dark-700)] dark:bg-none': notification.status === 'inbox' }"
 				@click="markNotificationAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 			>
-				<div class="n-list_item_header">
+				<div class="relative p-6 pb-4">
 					<div class="relative flex flex-col items-start gap-y-1">
-						<span class="n-header-subj text-left text-lg font-bold leading-5">
+						<span
+							class="n-header-subj text-left text-lg font-bold leading-5 text-[#4b5563] dark:text-dark-0"
+							:class="{ 'text-[var(--bluegray-900)] dark:text-[var(--bluegray-0)]': notification.status === 'inbox' }"
+						>
 							{{ notification.subject }}
 						</span>
 						<span class="flex items-center gap-x-2 text-bluegray-500">
@@ -35,7 +38,7 @@
 					</div>
 				</div>
 
-				<div class="n-list_item_content">
+				<div class="overflow-hidden px-6 pb-6 text-sm font-normal leading-[18px] text-bluegray-900 dark:text-[var(--bluegray-0)]">
 					<!-- eslint-disable-next-line vue/no-v-html -->
 					<span v-if="notification.message" class="notification-content-msg" v-html="notification.message"/>
 				</div>
@@ -178,14 +181,6 @@
 </script>
 
 <style scoped>
-	.n-header-subj {
-		@apply text-[#4b5563] dark:text-dark-0;
-	}
-
-	.n-list_item_new .n-header-subj {
-		@apply text-[var(--bluegray-900)] dark:text-[var(--bluegray-0)];
-	}
-
 	.btn-mark-all-as-read {
 		@apply flex items-center gap-x-2;
 		@apply bg-white;
@@ -195,33 +190,5 @@
 		@apply hover:border-[var(--p-primary-500)] hover:bg-[var(--p-primary-500)] hover:text-[var(--bluegray-0)];
 		@apply dark:text-[var(--bluegray-0)] dark:bg-primary dark:border-primary;
 		@apply dark:hover:bg-[var(--p-primary-hover-color)] dark:hover:border-[var(--p-primary-hover-color)];
-	}
-
-	.n-list {
-		@apply flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2;
-	}
-
-	.n-list_item {
-		@apply border border-surface-300 dark:border-[var(--table-border)];
-		@apply bg-white dark:bg-dark-800;
-		@apply p-0;
-		@apply rounded-xl;
-	}
-
-	.n-list_item_new {
-		@apply bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)];
-		@apply dark:bg-none dark:bg-[var(--dark-700)];
-		@apply cursor-pointer;
-	}
-
-	.n-list_item_header {
-		@apply relative p-6 pb-4;
-	}
-
-	.n-list_item_content {
-		@apply px-6 pb-6;
-		@apply text-sm font-normal leading-[18px];
-		@apply text-bluegray-900 dark:text-[var(--bluegray-0)];
-		@apply overflow-hidden;
 	}
 </style>

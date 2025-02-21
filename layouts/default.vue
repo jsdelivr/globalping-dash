@@ -394,7 +394,7 @@
 
 	.n-header-subj {
 		@apply dark:!text-dark-0;
-		color: #4b5563;
+		@apply text-[#4b5563];
 	}
 
 	.btn-mark-all-as-read {
@@ -432,13 +432,13 @@
 		@apply dark:!text-[var(--bluegray-0)];
 	}
 
-	.n-accordion-panel_new-circle {
-		display: inline-flex;
-		width: calc(.5rem + 2px);
-		height: calc(.5rem + 2px);
+	.n-accordion-panel_new_circle {
+		@apply inline-flex;
+		@apply bg-[var(--p-primary-500)];
+		@apply ml-2;
+		width: 8px;
+		height: 8px;
 		border-radius: 50%;
-		margin-left: calc(.5rem + 2px);
-		background-color: var(--p-primary-500);
 	}
 
 	.n-accordion-header {
@@ -446,20 +446,16 @@
 	}
 
 	.n-accordion-content {
-		padding: 0 16px;
-		font-weight: 400;
-		line-height: 18px;
-		color: var(--bluegray-900);
-		overflow: hidden;
-		z-index: 0;
+		@apply py-0 px-4;
+		@apply font-normal text-[var(--bluegray-900)] leading-[18px];
+		@apply overflow-hidden;
+		@apply z-0;
 	}
 
 	.n-expand-chevron {
 		@apply dark:!text-dark-0;
-		position: absolute;
-		top: 16px;
-		right: 16px;
-		color: var(--bluegray-900);
+		@apply absolute top-4 right-4;
+		@apply text-[var(--bluegray-900)];
 		transition: all 400ms ease-out;
 	}
 

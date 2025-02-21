@@ -117,8 +117,8 @@
 								:pt="{ toggleIcon: '!hidden' }"
 							>
 								<div class="flex flex-col !items-start gap-y-1">
-									<span class="n-header-subj flex items-center text-sm font-semibold leading-5">
-										{{ notification.subject }}
+									<span class="n-header-subj text-sm font-semibold leading-5">
+										<span>{{ notification.subject }}</span>
 										<span v-if="notification.status === 'inbox'" class="n-accordion-panel_new_circle"/>
 									</span>
 
@@ -433,9 +433,9 @@
 	}
 
 	.n-accordion-panel_new_circle {
-		@apply inline-flex;
+		@apply inline-block;
 		@apply bg-[var(--p-primary-500)];
-		@apply ml-2;
+		@apply ml-2 mb-px;
 		width: 8px;
 		height: 8px;
 		border-radius: 50%;

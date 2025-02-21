@@ -4,12 +4,12 @@
 			<h1 class="text-2xl font-bold leading-8">Your notifications</h1>
 			<Button
 				v-if="displayedNotifications.length"
-				class="btn-mark-all-as-read"
+				severity="secondary"
+				outlined
+				label="Mark all as read"
+				icon="pi pi-check-circle text-lg"
 				@click="markAllNotificationsAsRead()"
-			>
-				<i class="pi pi-check-circle text-lg "/>
-				<span class="text-sm font-semibold">Mark all as read</span>
-			</Button>
+			/>
 		</div>
 
 		<div v-if="displayedNotifications.length" class="flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2">
@@ -179,16 +179,3 @@
 		await loadNotifications(page.value);
 	});
 </script>
-
-<style scoped>
-	.btn-mark-all-as-read {
-		@apply flex items-center gap-x-2;
-		@apply bg-white;
-		@apply text-bluegray-900;
-		@apply h-10 w-full sm:w-auto;
-		@apply border border-solid border-[var(--p-surface-300)];
-		@apply hover:border-[var(--p-primary-500)] hover:bg-[var(--p-primary-500)] hover:text-[var(--bluegray-0)];
-		@apply dark:text-[var(--bluegray-0)] dark:bg-primary dark:border-primary;
-		@apply dark:hover:bg-[var(--p-primary-hover-color)] dark:hover:border-[var(--p-primary-hover-color)];
-	}
-</style>

@@ -102,24 +102,30 @@
 
 					<Accordion
 						v-if="displayedNotifications.length"
-						class="n-accordion"
+						class="n-accordion box-border flex w-full flex-col gap-y-2"
 					>
 						<AccordionPanel
 							v-for="notification in displayedNotifications"
 							:key="notification.id"
 							:value="notification.id"
-							class="n-accordion-panel"
-							:class="{ 'n-accordion-panel_new': notification.status === 'inbox' }"
+							class="n-accordion-panel border-none bg-[var(--p-surface-50)] !p-0 !pb-4 dark:!border dark:!border-solid dark:!border-[var(--table-border)] dark:bg-dark-800"
+							:class="{ 'bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:!bg-[var(--dark-700)] dark:bg-none': notification.status === 'inbox' }"
 							@click="markNotificationAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 						>
 							<AccordionHeader
-								class="n-accordion-header"
+								class="relative -mb-4 !p-4 !pr-8 text-left"
 								:pt="{ toggleIcon: '!hidden' }"
 							>
 								<div class="flex flex-col !items-start gap-y-1">
-									<span class="n-header-subj text-sm font-semibold leading-5">
+									<span
+										class="text-sm font-semibold leading-5 text-[#4b5563] dark:!text-dark-0"
+										:class="{ '!text-[var(--bluegray-900)] dark:!text-[var(--bluegray-0)]': notification.status === 'inbox' }"
+									>
 										<span>{{ notification.subject }}</span>
-										<span v-if="notification.status === 'inbox'" class="n-accordion-panel_new_circle"/>
+										<span
+											v-if="notification.status === 'inbox'"
+											class="notification-new-icon mb-px ml-2 inline-block bg-[var(--p-primary-500)]"
+										/>
 									</span>
 
 									<span class="text-sm font-normal leading-4 text-bluegray-500">
@@ -127,10 +133,13 @@
 									</span>
 								</div>
 
-								<i class="pi pi-chevron-right n-expand-chevron"/>
+								<i class="pi pi-chevron-right n-expand-chevron absolute right-4 top-4 text-[var(--bluegray-900)] dark:!text-dark-0"/>
 							</AccordionHeader>
 
-							<AccordionContent class="n-accordion-content" :pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden dark:text-[var(--bluegray-0)]'}">
+							<AccordionContent
+								class="z-0 overflow-hidden px-4 py-0 font-normal leading-[18px] text-[var(--bluegray-900)]"
+								:pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden dark:text-[var(--bluegray-0)]'}"
+							>
 								<!-- eslint-disable-next-line vue/no-v-html -->
 								<span v-if="notification.message" class="notification-content-msg" v-html="notification.message"/>
 							</AccordionContent>
@@ -392,11 +401,6 @@
 		border-color: var(--dark-400);
 	}
 
-	.n-header-subj {
-		@apply dark:!text-dark-0;
-		@apply text-[#4b5563];
-	}
-
 	.btn-mark-all-as-read {
 		@apply flex h-10 items-center gap-x-2;
 		@apply bg-white;
@@ -408,54 +412,17 @@
 		@apply dark:hover:!bg-[var(--p-primary-hover-color)] dark:hover:!border-[var(--p-primary-hover-color)];
 	}
 
-	.n-accordion {
-		@apply box-border flex w-full flex-col gap-y-2;
-	}
-
-	.n-accordion-panel {
-		@apply border-none dark:border dark:border-solid dark:border-[var(--table-border)];
-		@apply bg-[var(--p-surface-50)] dark:bg-dark-800;
-		@apply !p-0 !pb-4;
+	.notification-new-icon {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
 	}
 
 	.n-accordion-panel[data-pc-name="accordionpanel"] {
 		@apply !rounded-xl;
 	}
 
-	.n-accordion-panel_new {
-		@apply bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)];
-		@apply dark:bg-none dark:!bg-[var(--dark-700)];
-	}
-
-	.n-accordion-panel_new .n-header-subj {
-		@apply !text-[var(--bluegray-900)];
-		@apply dark:!text-[var(--bluegray-0)];
-	}
-
-	.n-accordion-panel_new_circle {
-		@apply inline-block;
-		@apply bg-[var(--p-primary-500)];
-		@apply ml-2 mb-px;
-		width: 8px;
-		height: 8px;
-		border-radius: 50%;
-	}
-
-	.n-accordion-header {
-		@apply relative !p-4 !pr-8 -mb-4 text-left;
-	}
-
-	.n-accordion-content {
-		@apply py-0 px-4;
-		@apply font-normal text-[var(--bluegray-900)] leading-[18px];
-		@apply overflow-hidden;
-		@apply z-0;
-	}
-
 	.n-expand-chevron {
-		@apply dark:!text-dark-0;
-		@apply absolute top-4 right-4;
-		@apply text-[var(--bluegray-900)];
 		transition: all 400ms ease-out;
 	}
 

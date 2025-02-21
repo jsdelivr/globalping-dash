@@ -24,7 +24,7 @@
 				<div class="relative p-6 pb-4">
 					<div class="relative flex flex-col items-start gap-y-1">
 						<span
-							class="n-header-subj text-left text-lg font-bold leading-5 text-[#4b5563] dark:text-dark-0"
+							class="text-left text-lg font-bold leading-5 text-[#4b5563] dark:text-dark-0"
 							:class="{ 'text-[var(--bluegray-900)] dark:text-[var(--bluegray-0)]': notification.status === 'inbox' }"
 						>
 							{{ notification.subject }}

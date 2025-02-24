@@ -89,7 +89,7 @@
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
 						<span
 							v-if="inboxNotifIds.length"
-							class="rounded-full bg-[#35425A] px-3 py-2 font-semibold text-[var(--bluegray-0)]"
+							class="rounded-full bg-[var(--p-primary-color)] px-2 py-1 text-sm font-bold leading-[17px] text-[var(--bluegray-0)] sm:ml-2 sm:mr-auto"
 						>
 							{{ inboxNotifIds.length }} unread
 						</span>

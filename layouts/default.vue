@@ -87,11 +87,14 @@
 				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-6 sm:w-[37rem]">
 					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
-						<span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold text-[var(--bluegray-0)]">
+						<span
+							v-if="inboxNotifIds.length"
+							class="rounded-full bg-[#35425A] px-3 py-2 font-semibold text-[var(--bluegray-0)]"
+						>
 							Unread: {{ inboxNotifIds.length }}
 						</span>
 						<Button
-							v-if="displayedNotifications.length"
+							v-if="inboxNotifIds.length"
 							severity="secondary"
 							outlined
 							label="Mark all as read"

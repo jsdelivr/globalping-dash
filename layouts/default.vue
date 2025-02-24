@@ -194,15 +194,15 @@
 	// NOTIFICATIONS
 	const notificationBus = useEventBus<string[]>('notification-updated');
 
-	notificationBus.on((ids) => {
+	notificationBus.on((idsToArchive) => {
 		displayedNotifications.value.forEach((notification) => {
-			if (ids.includes(notification.id)) {
+			if (idsToArchive.includes(notification.id)) {
 				notification.status = 'archived';
 			}
 		});
 
 		// update inbox notifications IDs for a counter, mark-all-as-read btn
-		inboxNotifIds.value = inboxNotifIds.value.filter(id => !ids.includes(id));
+		inboxNotifIds.value = inboxNotifIds.value.filter(id => !idsToArchive.includes(id));
 	});
 
 	const notificationsPanel = ref();

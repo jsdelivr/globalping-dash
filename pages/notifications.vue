@@ -76,9 +76,9 @@
 	const notificationsCount = ref<number>(0);
 	const notificationBus = useEventBus<string[]>('notification-updated');
 
-	notificationBus.on((ids) => {
+	notificationBus.on((idsToArchive) => {
 		displayedNotifications.value.forEach((notification) => {
-			if (ids.includes(notification.id)) {
+			if (idsToArchive.includes(notification.id)) {
 				notification.status = 'archived';
 			}
 		});

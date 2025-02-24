@@ -17,12 +17,12 @@
 				v-for="notification in displayedNotifications"
 				:key="notification.id"
 				:value="notification.id"
-				class="rounded-xl border border-surface-300 bg-white p-0 dark:border-[var(--table-border)] dark:bg-dark-800"
+				class="group rounded-xl border border-surface-300 bg-white p-0 dark:border-[var(--table-border)] dark:bg-dark-800"
 				:class="{ 'cursor-pointer bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:bg-[var(--dark-700)] dark:bg-none': notification.status === 'inbox' }"
 				@click="markNotificationAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 			>
 				<div class="relative p-6 pb-4">
-					<div class="relative flex flex-col items-start gap-y-1">
+					<div class="relative flex flex-col items-start gap-y-1 pr-10">
 						<span
 							class="text-left text-lg font-bold leading-5 text-[#4b5563] dark:text-dark-0"
 							:class="{ 'text-[var(--bluegray-900)] dark:text-[var(--bluegray-0)]': notification.status === 'inbox' }"
@@ -30,12 +30,17 @@
 							{{ notification.subject }}
 						</span>
 						<span class="flex items-center gap-x-2 text-bluegray-500">
-							<i class="pi pi-clock text-sm"/>
+							<i class="pi pi-clock text-xs"/>
 							<span class="text-sm font-normal leading-4">
 								{{ formatDateTime(notification.timestamp) }}
 							</span>
 						</span>
 					</div>
+
+					<i
+						v-if="notification.status === 'inbox'"
+						class="pi pi-check-circle invisible !absolute right-5 top-5 text-lg group-hover:visible"
+					/>
 				</div>
 
 				<div class="overflow-hidden px-6 pb-6 text-sm font-normal leading-[18px] text-bluegray-900 dark:text-[var(--bluegray-0)]">

@@ -20,7 +20,7 @@
 				<p class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(user.user_type) }}</span></p>
 				<Button class="relative mr-8 text-surface-0 hover:bg-transparent" text rounded aria-label="Notifications" @click="toggleNotifications">
 					<i class="pi pi-bell text-[1.3rem]"/>
-					<i v-if="inboxNotifIds.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.3rem] text-primary"/>
+					<i v-if="inboxNotificationIds.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.3rem] text-primary"/>
 				</Button>
 				<Button class="flex items-center !px-2 text-surface-0 hover:bg-transparent" text rounded aria-label="Profile" @click="toggleProfile">
 					<i class="pi pi-user rounded-full border-1.5 border-surface-0 p-2" style="font-size: 1.1rem;"/>
@@ -47,7 +47,7 @@
 			<div class="hidden max-lg:flex">
 				<Button class="relative mr-4 text-surface-0 hover:bg-transparent" text aria-label="Notifications" @click="toggleNotifications">
 					<i class="pi pi-bell text-[1.3rem]"/>
-					<i v-if="inboxNotifIds.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.3rem] text-primary"/>
+					<i v-if="inboxNotificationIds.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.3rem] text-primary"/>
 				</Button>
 				<Button class="text-[1.5rem] text-surface-0 hover:bg-transparent" icon="pi pi-bars" aria-label="Menu" text @click="mobileSidebar = true"/>
 				<Drawer v-model:visible="mobileSidebar" class="border bg-surface-100 pt-4">
@@ -88,13 +88,13 @@
 					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
 						<span
-							v-if="inboxNotifIds.length"
+							v-if="inboxNotificationIds.length"
 							class="rounded-full bg-[var(--p-primary-color)] px-2 py-1 text-sm font-bold leading-[17px] text-[var(--bluegray-0)] sm:ml-2 sm:mr-auto"
 						>
-							{{ inboxNotifIds.length }} unread
+							{{ inboxNotificationIds.length }} unread
 						</span>
 						<Button
-							v-if="inboxNotifIds.length"
+							v-if="inboxNotificationIds.length"
 							severity="secondary"
 							outlined
 							label="Mark all as read"
@@ -205,7 +205,7 @@
 		});
 
 		// update inbox notifications IDs for a counter, mark-all-as-read btn
-		inboxNotifIds.value = inboxNotifIds.value.filter(id => !idsToArchive.includes(id));
+		inboxNotificationIds.value = inboxNotificationIds.value.filter(id => !idsToArchive.includes(id));
 	});
 
 	const notificationsPanel = ref();
@@ -229,7 +229,7 @@
 	};
 	const markAllNotificationsAsRead = async () => {
 		try {
-			await markNotificationAsRead(inboxNotifIds.value);
+			await markNotificationAsRead(inboxNotificationIds.value);
 		} catch (error) {
 			console.error('Error updating all notifications:', error);
 		}
@@ -238,8 +238,8 @@
 	// fetch at the start all inbox notifications
 	// to use these IDs for the mark-all-as-read btn
 	// also for the unread notifications counter
-	const inboxNotifIds = useInboxNotificationIds();
-	const fetchInboxNotifIds = async () => {
+	const inboxNotificationIds = useInboxNotificationIds();
+	const fetchInboxNotificationIds = async () => {
 		try {
 			const notifications = await $directus.request<{ id: string }[]>(readNotifications({
 				filter: {
@@ -250,13 +250,13 @@
 				limit: -1,
 			}));
 
-			inboxNotifIds.value = notifications.map(n => n.id);
+			inboxNotificationIds.value = notifications.map(n => n.id);
 		} catch (error) {
 			console.error('Error fetching notification IDs:', error);
 		}
 	};
 
-	fetchInboxNotifIds();
+	fetchInboxNotificationIds();
 
 	const DD_ITEMS_LIMIT = 5;
 	const { data: notifications } = await useAsyncData('directus_notifications', async () => {

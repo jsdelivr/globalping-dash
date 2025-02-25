@@ -109,7 +109,7 @@
 
 					<Accordion
 						v-if="displayedNotifications.length"
-						class="n-accordion box-border flex w-full flex-col gap-y-2"
+						class="box-border flex w-full flex-col gap-y-2"
 					>
 						<AccordionPanel
 							v-for="notification in displayedNotifications"

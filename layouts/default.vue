@@ -85,8 +85,8 @@
 			</div>
 			<Popover
 				ref="notificationsPanel"
-				class="n-popover"
-				:pt="{ root: { class: '!rounded-xl !overflow-hidden absolute !ml-4 !mt-2 bg-[var(--p-surface-0)] dark:bg-[var(--main-bg)]' }, content: { class: 'flex items-center !rounded-xl border dark:border-[var(--table-border)]'} }"
+				class="absolute !ml-4 !mt-2 !overflow-hidden !rounded-xl bg-[var(--p-surface-0)] dark:bg-[var(--main-bg)]"
+				:pt:content="{ class: 'flex items-center !rounded-xl border dark:border-[var(--table-border)]'}"
 			>
 				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-6 sm:w-[37rem]">
 					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">

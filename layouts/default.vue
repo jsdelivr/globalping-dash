@@ -140,7 +140,7 @@
 									</span>
 								</div>
 
-								<i class="pi pi-chevron-right n-expand-chevron absolute right-4 top-4 text-[var(--bluegray-900)] transition-all duration-[400] ease-in-out dark:!text-dark-0"/>
+								<i class="pi pi-chevron-right absolute right-4 top-4 text-[var(--bluegray-900)] transition-all duration-[400] ease-in-out dark:!text-dark-0"/>
 							</AccordionHeader>
 
 							<AccordionContent

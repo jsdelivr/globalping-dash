@@ -120,7 +120,7 @@
 							@click="markNotificationAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 						>
 							<AccordionHeader
-								class="relative -mb-4 !p-4 !pr-8 text-left"
+								class="relative -mb-4 !p-4 !pr-8 text-left [&[aria-expanded='true']>i]:rotate-90"
 								:pt="{ toggleIcon: '!hidden' }"
 							>
 								<div class="flex flex-col !items-start gap-y-1">
@@ -398,9 +398,5 @@
 
 	.n-accordion-panel[data-pc-name="accordionpanel"] {
 		@apply !rounded-xl;
-	}
-
-	.n-accordion-panel [aria-expanded="true"] .n-expand-chevron {
-		transform: rotate(90deg);
 	}
 </style>

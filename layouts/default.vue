@@ -131,7 +131,7 @@
 										<span>{{ notification.subject }}</span>
 										<span
 											v-if="notification.status === 'inbox'"
-											class="notification-new-icon mb-px ml-2 inline-block bg-[var(--p-primary-500)]"
+											class="mb-px ml-2 inline-block size-2 rounded-full bg-[var(--p-primary-500)]"
 										/>
 									</span>
 
@@ -394,12 +394,6 @@
 	.dark .sidebar-link:hover {
 		background: var(--dark-500);
 		border-color: var(--dark-400);
-	}
-
-	.notification-new-icon {
-		width: 8px;
-		height: 8px;
-		border-radius: 50%;
 	}
 
 	.n-accordion-panel[data-pc-name="accordionpanel"] {

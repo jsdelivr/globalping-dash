@@ -140,7 +140,7 @@
 									</span>
 								</div>
 
-								<i class="pi pi-chevron-right n-expand-chevron absolute right-4 top-4 text-[var(--bluegray-900)] dark:!text-dark-0"/>
+								<i class="pi pi-chevron-right n-expand-chevron absolute right-4 top-4 text-[var(--bluegray-900)] transition-all duration-[400] ease-in-out dark:!text-dark-0"/>
 							</AccordionHeader>
 
 							<AccordionContent
@@ -398,10 +398,6 @@
 
 	.n-accordion-panel[data-pc-name="accordionpanel"] {
 		@apply !rounded-xl;
-	}
-
-	.n-expand-chevron {
-		transition: all 400ms ease-out;
 	}
 
 	.n-accordion-panel [aria-expanded="true"] .n-expand-chevron {

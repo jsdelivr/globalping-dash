@@ -115,7 +115,7 @@
 							v-for="notification in displayedNotifications"
 							:key="notification.id"
 							:value="notification.id"
-							class="n-accordion-panel border-none bg-[var(--p-surface-50)] !p-0 !pb-4 dark:!border dark:!border-solid dark:!border-[var(--table-border)] dark:bg-dark-800"
+							class="!rounded-xl border-none bg-[var(--p-surface-50)] !p-0 !pb-4 dark:!border dark:!border-solid dark:!border-[var(--table-border)] dark:bg-dark-800"
 							:class="{ 'bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:!bg-[var(--dark-700)] dark:bg-none': notification.status === 'inbox' }"
 							@click="markNotificationAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 						>
@@ -394,9 +394,5 @@
 	.dark .sidebar-link:hover {
 		background: var(--dark-500);
 		border-color: var(--dark-400);
-	}
-
-	.n-accordion-panel[data-pc-name="accordionpanel"] {
-		@apply !rounded-xl;
 	}
 </style>

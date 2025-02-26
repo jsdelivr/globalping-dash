@@ -68,6 +68,7 @@ declare global {
     tags: {
         value: string;
         prefix: string;
+        format?: string;
       }[],
     systemTags: string[],
     userId: string;

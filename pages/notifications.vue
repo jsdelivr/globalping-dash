@@ -51,7 +51,7 @@
 
 				<div class="overflow-hidden px-6 pb-6 text-sm font-normal leading-[18px] text-bluegray-900 dark:text-[var(--bluegray-0)]">
 					<!-- eslint-disable-next-line vue/no-v-html -->
-					<span v-if="notification.message" class="notification-content-msg" v-html="notification.message"/>
+					<span v-if="notification.message" class="[&_a]:font-semibold [&_a]:text-[var(--p-primary-color)] [&_p:last-child]:mb-0 [&_p]:mb-[18px] [&_p_strong]:break-all" v-html="notification.message"/>
 				</div>
 			</div>
 		</div>

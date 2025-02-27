@@ -148,7 +148,7 @@
 								:pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden dark:text-[var(--bluegray-0)]'}"
 							>
 								<!-- eslint-disable-next-line vue/no-v-html -->
-								<span v-if="notification.message" class="notification-content-msg" v-html="notification.message"/>
+								<span v-if="notification.message" class="[&_a]:font-semibold [&_a]:text-[var(--p-primary-color)] [&_p:last-child]:mb-0 [&_p]:mb-[18px] [&_p_strong]:break-all" v-html="notification.message"/>
 							</AccordionContent>
 						</AccordionPanel>
 					</Accordion>
@@ -316,26 +316,6 @@
 	};
 	// DEFAULT CHART STYLES END
 </script>
-
-<style>
-	.notification-content-msg p {
-		margin-bottom: 18px;
-		word-break: break-all;
-	}
-
-	.notification-content-msg p strong {
-		word-break: break-all;
-	}
-
-	.notification-content-msg p:last-child {
-		margin-bottom: 0;
-	}
-
-	.notification-content-msg a {
-		color: var(--p-primary-color);
-		font-weight: 600;
-	}
-</style>
 
 <style scoped>
 	.sidebar-link {

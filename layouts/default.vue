@@ -20,7 +20,7 @@
 				<p class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(user.user_type) }}</span></p>
 				<Button class="relative mr-8 text-surface-0 hover:bg-transparent" text rounded aria-label="Notifications" @click="toggleNotifications">
 					<i class="pi pi-bell text-[1.3rem]"/>
-					<i v-if="newNotifications.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.3rem] text-primary"/>
+					<i v-if="inboxNotificationIds.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.3rem] text-primary"/>
 				</Button>
 				<Button class="flex items-center !px-2 text-surface-0 hover:bg-transparent" text rounded aria-label="Profile" @click="toggleProfile">
 					<i class="pi pi-user rounded-full border-1.5 border-surface-0 p-2" style="font-size: 1.1rem;"/>
@@ -47,7 +47,7 @@
 			<div class="hidden max-lg:flex">
 				<Button class="relative mr-4 text-surface-0 hover:bg-transparent" text aria-label="Notifications" @click="toggleNotifications">
 					<i class="pi pi-bell text-[1.3rem]"/>
-					<i v-if="newNotifications.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.3rem] text-primary"/>
+					<i v-if="inboxNotificationIds.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.3rem] text-primary"/>
 				</Button>
 				<Button class="text-[1.5rem] text-surface-0 hover:bg-transparent" icon="pi pi-bars" aria-label="Menu" text @click="mobileSidebar = true"/>
 				<Drawer v-model:visible="mobileSidebar" class="border bg-surface-100 pt-4">
@@ -83,17 +83,86 @@
 					</div>
 				</Drawer>
 			</div>
-			<Popover ref="notificationsPanel">
-				<Accordion v-if="reverseNotifications.length" class="box-border w-96 max-w-[calc(100vw-16px)]" expand-icon="pi pi-chevron-right">
-					<AccordionPanel v-for="notification in reverseNotifications" :key="notification.id" :value="notification.id" @click="markNotificationAsRead(notification.id)">
-						<AccordionHeader class="text-left" :class="{ '!font-normal': notification.status !== 'inbox' }">{{ notification.subject }}</AccordionHeader>
-						<AccordionContent>
-							<!-- eslint-disable-next-line vue/no-v-html -->
-							<span v-if="notification.message" class="notification" v-html="notification.message"/>
-						</AccordionContent>
-					</AccordionPanel>
-				</Accordion>
-				<p v-else class="w-80 p-4">No notifications</p>
+			<Popover
+				ref="notificationsPanel"
+				class="absolute !ml-4 !mt-2 !overflow-hidden !rounded-xl bg-[var(--p-surface-0)] dark:bg-[var(--main-bg)]"
+				:pt:content="{ class: 'flex items-center !rounded-xl border dark:border-[var(--table-border)]'}"
+			>
+				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-6 sm:w-[37rem]">
+					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
+						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
+						<span
+							v-if="inboxNotificationIds.length"
+							class="rounded-full bg-[var(--p-primary-color)] px-2 py-1 text-sm font-bold leading-[17px] text-[var(--bluegray-0)] sm:ml-2 sm:mr-auto"
+						>
+							{{ inboxNotificationIds.length }} unread
+						</span>
+						<Button
+							v-if="inboxNotificationIds.length"
+							severity="secondary"
+							outlined
+							label="Mark all as read"
+							icon="pi pi-check-circle text-lg"
+							@click="markAllNotificationsAsRead()"
+						/>
+					</div>
+
+					<Accordion
+						v-if="displayedNotifications.length"
+						class="box-border flex w-full flex-col gap-y-2"
+					>
+						<AccordionPanel
+							v-for="notification in displayedNotifications"
+							:key="notification.id"
+							:value="notification.id"
+							class="!rounded-xl border-none bg-[var(--p-surface-50)] !p-0 !pb-4 dark:!border dark:!border-solid dark:!border-[var(--table-border)] dark:bg-dark-800"
+							:class="{ 'bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:!bg-[var(--dark-700)] dark:bg-none': notification.status === 'inbox' }"
+							@click="markNotificationAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
+						>
+							<AccordionHeader
+								class="relative -mb-4 !p-4 !pr-8 text-left [&[aria-expanded='true']>i]:rotate-90"
+								:pt="{ toggleIcon: '!hidden' }"
+							>
+								<div class="flex flex-col !items-start gap-y-1">
+									<span
+										class="text-sm font-semibold leading-5 text-[#4b5563] dark:!text-dark-0"
+										:class="{ '!text-[var(--bluegray-900)] dark:!text-[var(--bluegray-0)]': notification.status === 'inbox' }"
+									>
+										<span>{{ notification.subject }}</span>
+										<span
+											v-if="notification.status === 'inbox'"
+											class="mb-px ml-2 inline-block size-2 rounded-full bg-[var(--p-primary-500)]"
+										/>
+									</span>
+
+									<span class="text-sm font-normal leading-4 text-bluegray-500">
+										{{ formatDateTime(notification.timestamp) }}
+									</span>
+								</div>
+
+								<i class="pi pi-chevron-right absolute right-4 top-4 text-[var(--bluegray-900)] transition-all duration-[400] ease-in-out dark:!text-dark-0"/>
+							</AccordionHeader>
+
+							<AccordionContent
+								class="z-0 overflow-hidden px-4 py-0 font-normal leading-[18px] text-[var(--bluegray-900)]"
+								:pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden dark:text-[var(--bluegray-0)]'}"
+							>
+								<!-- eslint-disable-next-line vue/no-v-html -->
+								<span v-if="notification.message" class="[&_a]:font-semibold [&_a]:text-[var(--p-primary-color)] [&_p:last-child]:mb-0 [&_p]:mb-[18px] [&_p_strong]:break-all" v-html="notification.message"/>
+							</AccordionContent>
+						</AccordionPanel>
+					</Accordion>
+
+					<p v-else class="w-80 p-4">No notifications</p>
+
+					<NuxtLink
+						to="/notifications"
+						class="ps-4 font-bold leading-4 text-[var(--p-primary-color)]"
+						@click="toggleNotifications"
+					>
+						Go to Notifications page
+					</NuxtLink>
+				</div>
 			</Popover>
 		</header>
 
@@ -120,7 +189,9 @@
 	import { readNotifications, updateNotifications } from '@directus/sdk';
 	import { defaults } from 'chart.js';
 	import capitalize from 'lodash/capitalize';
+	import { useInboxNotificationIds } from '~/composables/useInboxNotificationIds';
 	import { useAuth } from '~/store/auth';
+	import { formatDateTime } from '~/utils/date-formatters';
 
 	const { $directus } = useNuxtApp();
 
@@ -128,34 +199,83 @@
 	const user = auth.getUser as User;
 
 	// NOTIFICATIONS
+	const notificationBus = useEventBus<string[]>('notification-updated');
+
+	notificationBus.on((idsToArchive) => {
+		displayedNotifications.value.forEach((notification) => {
+			if (idsToArchive.includes(notification.id)) {
+				notification.status = 'archived';
+			}
+		});
+
+		// update inbox notifications IDs for a counter, mark-all-as-read btn
+		inboxNotificationIds.value = inboxNotificationIds.value.filter(id => !idsToArchive.includes(id));
+	});
 
 	const notificationsPanel = ref();
 	const toggleNotifications = async (event: Event) => {
 		notificationsPanel.value.toggle(event);
 	};
-	const markNotificationAsRead = async (id: string) => {
-		const notification = notifications.value.find(notification => notification.id === id);
-
-		if (!notification) {
+	const markNotificationAsRead = async (notificationIds: string[]) => {
+		if (notificationIds.length === 0) {
 			return;
 		}
 
-		notification.status = 'archived';
-		await $directus.request(updateNotifications([ notification.id ], { status: notification.status }));
+		try {
+			const updateData = { status: 'archived' };
+
+			await $directus.request(updateNotifications(notificationIds, updateData));
+
+			notificationBus.emit(notificationIds);
+		} catch (error) {
+			console.error('Error updating notifications:', error);
+		}
+	};
+	const markAllNotificationsAsRead = async () => {
+		try {
+			await markNotificationAsRead(inboxNotificationIds.value);
+		} catch (error) {
+			console.error('Error updating all notifications:', error);
+		}
 	};
 
+	// fetch at the start all inbox notifications
+	// to use these IDs for the mark-all-as-read btn
+	// also for the unread notifications counter
+	const inboxNotificationIds = useInboxNotificationIds();
+	const fetchInboxNotificationIds = async () => {
+		try {
+			const notifications = await $directus.request<{ id: string }[]>(readNotifications({
+				filter: {
+					recipient: { _eq: user.id },
+					status: { _eq: 'inbox' },
+				},
+				fields: [ 'id' ],
+				limit: -1,
+			}));
+
+			inboxNotificationIds.value = notifications.map(n => n.id);
+		} catch (error) {
+			console.error('Error fetching notification IDs:', error);
+		}
+	};
+
+	fetchInboxNotificationIds();
+
+	const DD_ITEMS_LIMIT = 5;
 	const { data: notifications } = await useAsyncData('directus_notifications', async () => {
 		return $directus.request(readNotifications({
 			format: 'html',
+			limit: DD_ITEMS_LIMIT,
+			offset: 0,
 			filter: {
 				recipient: { _eq: user.id },
 			},
+			sort: [ '-timestamp' ],
 		}));
 	}, { default: () => [] });
 
-	const newNotifications = computed(() => notifications.value.filter(notification => notification.status === 'inbox'));
-
-	const reverseNotifications = computed(() => [ ...notifications.value ].reverse());
+	const displayedNotifications = computed(() => [ ...notifications.value ].slice(0, DD_ITEMS_LIMIT));
 
 	// NOTIFICATIONS END
 
@@ -196,21 +316,6 @@
 	};
 	// DEFAULT CHART STYLES END
 </script>
-
-<style>
-	.notification p {
-		margin-bottom: 18px;
-	}
-
-	.notification p:last-child {
-		margin-bottom: 0;
-	}
-
-	.notification a {
-		color: var(--p-primary-color);
-		font-weight: 600;
-	}
-</style>
 
 <style scoped>
 	.sidebar-link {

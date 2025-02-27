@@ -70,3 +70,18 @@ export function getRelativeTimeString (date: Date | string, noTime: boolean = fa
 	const rtf = new Intl.RelativeTimeFormat('en-US', { numeric: 'auto' });
 	return capitalize(rtf.format(Math.ceil(deltaSeconds / divisor), units[unitIndex]));
 }
+
+/**
+ * Convert a timestamp to a full time string, such as Jan 24, 2025, 2:00 AM
+*/
+export const formatDateTime = (dateTime: string | Date | null) => {
+	if (!dateTime) {
+		return '';
+	}
+
+	if (typeof dateTime === 'string') {
+		dateTime = new Date(dateTime);
+	}
+
+	return dateTime.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' });
+};

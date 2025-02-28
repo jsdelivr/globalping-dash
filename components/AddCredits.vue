@@ -166,7 +166,7 @@
 	defineEmits([ 'cancel', 'adopt-a-probe' ]);
 
 	const { data: adoptionsExists } = await useLazyAsyncData('gp_adopted_probes_exist', async () => {
-		const adoptions = await $directus.request(readItems('gp_adopted_probes', {
+		const adoptions = await $directus.request(readItems('gp_probes', {
 			filter: { userId: { _eq: user.id } },
 			limit: 1,
 		}));

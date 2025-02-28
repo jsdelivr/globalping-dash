@@ -144,7 +144,7 @@
 						return { ...rest, amount: sum.amount };
 					});
 				}),
-				$directus.request<[{count: number}]>(aggregate('gp_adopted_probes', {
+				$directus.request<[{count: number}]>(aggregate('gp_probes', {
 					query: { filter: { userId: { _eq: user.id }, onlineTimesToday: { _gt: 0 } } },
 					aggregate: { count: '*' },
 				})),

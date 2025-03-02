@@ -337,7 +337,7 @@
 		}
 
 		try {
-			await $directus.request(updateItem('gp_adopted_probes', probe.value.id, {
+			await $directus.request(updateItem('gp_probes', probe.value.id, {
 				...(probe.value.name !== props.probe.name && { name: probe.value.name }),
 				...(probe.value.city !== props.probe.city && { city: probe.value.city }),
 				...(!isEqual(tags, props.probe.tags) && { tags }),
@@ -359,7 +359,7 @@
 		deleteProbeLoading.value = true;
 
 		try {
-			await $directus.request(deleteItem('gp_adopted_probes', probe.value.id));
+			await $directus.request(deleteItem('gp_probes', probe.value.id));
 
 			sendToast('success', 'Done', 'The probe has been deleted');
 			emit('delete');

@@ -191,9 +191,9 @@
 
 	// SUMMARY
 
-	const { status: statusProbes, data: adoptedProbes } = await useLazyAsyncData('gp_adopted_probes', async () => {
+	const { status: statusProbes, data: adoptedProbes } = await useLazyAsyncData('gp_probes', async () => {
 		try {
-			const result = await $directus.request(readItems('gp_adopted_probes', {
+			const result = await $directus.request(readItems('gp_probes', {
 				filter: { userId: { _eq: user.id } },
 				sort: [ 'status', 'name' ],
 			}));

@@ -30,7 +30,8 @@
 						</template>
 
 						<template #body="slotProps">
-							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
+							<!-- <NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)"> -->
+							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
 								<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3">
 									<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'probe' : 'docker'" border :status="getProbeStatus(slotProps.data)"/>
 									<p class="col-start-2 col-end-3 flex items-center font-bold">{{ slotProps.data.name || slotProps.data.city }}</p>
@@ -45,7 +46,8 @@
 						</template>
 
 						<template #body="slotProps">
-							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
+							<!-- <NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)"> -->
+							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
 								<div class="px-2 py-3">
 									<div class="mb-1 flex items-center">
 										<CountryFlag :country="slotProps.data.country" size="small"/>
@@ -62,7 +64,8 @@
 						</template>
 
 						<template #body="slotProps">
-							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
+							<!-- <NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)"> -->
+							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
 								<TagsList :tags="getAllTags(slotProps.data)" :number-of-tags-to-show="numberOfTagsToShow"/>
 							</NuxtLink>
 						</template>
@@ -100,7 +103,8 @@
 						<div class="px-4 pb-3 pt-1">
 							<div v-if="probes.length">
 								<div v-for="probe in probes" :key="probe.id" class="probe box-content block pb-2 pt-4">
-									<NuxtLink :to="`/probes/${probe.id}`" @click="openProbeDetails(probe.id)">
+									<!-- <NuxtLink :to="`/probes/${probe.id}`" @click="openProbeDetails(probe.id)"> -->
+									<NuxtLink :to="`/probes/${probe.id}`">
 										<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
 											<BigIcon class="col-span-1 row-span-2" :name="probe.hardwareDevice ? 'probe' : 'docker'" border :status="probe.status"/>
 											<div class="col-start-2 col-end-3 flex items-center font-bold">
@@ -175,7 +179,7 @@
 				<Button class="mt-6" label="Start a probe" @click="startProbeDialog = true"/>
 			</div>
 		</div>
-		<div v-if="probeDetails">
+		<!-- <div v-if="probeDetails">
 			<NuxtPage
 				:credits="credits[probeDetails!.id] || 0"
 				:probe="probeDetails"
@@ -184,7 +188,7 @@
 				@hide="onHide"
 				@delete="onDelete"
 			/>
-		</div>
+		</div> -->
 		<GPDialog
 			v-model:visible="startProbeDialog"
 			header="Start a probe"
@@ -397,6 +401,10 @@
 
 		await loadLazyData();
 	};
+
+	// const router = useRouter();
+	// console.log('ROUTES:', router.getRoutes());
+	// console.log('PARAMS:', route.params);
 </script>
 
 <style scoped>

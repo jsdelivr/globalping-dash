@@ -213,7 +213,7 @@
 
 <script setup lang="ts">
 	/* eslint-disable no-extra-parens */
-	import { deleteItem, updateItem } from '@directus/sdk';
+	import { updateItem } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
 	import isEqual from 'lodash/isEqual';
 	import memoize from 'lodash/memoize';
@@ -359,7 +359,9 @@
 		deleteProbeLoading.value = true;
 
 		try {
-			await $directus.request(deleteItem('gp_probes', probe.value.id));
+			await $directus.request(updateItem('gp_probes', probe.value.id, {
+				userId: null,
+			}));
 
 			sendToast('success', 'Done', 'The probe has been deleted');
 			emit('delete');

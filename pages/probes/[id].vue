@@ -65,6 +65,23 @@
 					Show more
 				</span>
 			</div>
+
+			<Tabs value="0">
+				<TabList class="!border-b !border-surface-300">
+					<Tab value="0" class="border-none !px-6 !py-2 !text-[14px] !font-bold">Details</Tab>
+					<Tab value="1" class="border-none !px-6 !py-2 !text-[14px] !font-bold">Logs</Tab>
+				</TabList>
+
+				<TabPanels class="mt-6 !bg-transparent">
+					<TabPanel value="0">
+						PROBE DETAILS
+					</TabPanel>
+
+					<TabPanel value="1">
+						NO LOGS FOR NOW
+					</TabPanel>
+				</TabPanels>
+			</Tabs>
 		</div>
 	</div>
 </template>

@@ -8,7 +8,7 @@
 				</NuxtLink>
 			</div>
 
-			<div v-if="probeDetails" class="flex gap-4">
+			<div v-if="probeDetails" class="flex items-center gap-4">
 				<div class="flex items-center gap-3">
 					<img class="h-10" src="~/assets/icons/gp-white.svg" alt="Globalping White logo">
 
@@ -17,7 +17,7 @@
 					<i class="pi pi-pencil text-lg"/>
 				</div>
 
-				<div class="flex items-center gap-1 rounded-full border border-surface-300">
+				<div class="flex h-8 items-center gap-1 rounded-full border border-surface-300">
 					<span class="flex items-center gap-2 pl-3">
 						<i class="pi pi-circle-fill text-[8px] text-green-500"/>
 
@@ -26,13 +26,20 @@
 						</span>
 					</span>
 
-					<span class="mx-1 rounded-full bg-surface-200 px-2 py-1 text-[14px] font-bold text-bluegray-900">
+					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 text-[14px] font-bold text-bluegray-900">
 						v{{ probeDetails.version }}
 					</span>
 				</div>
 
-				<div class="ml-auto">
-					Credits per month
+				<div class="ml-auto flex items-center gap-2">
+					<span class="text-[14px] text-bluegray-900">
+						Credits per month
+					</span>
+
+					<span class="flex h-[30px] items-center gap-2 rounded-md border border-surface-300 px-2">
+						<i class="pi pi-bullseye text-[14px] text-green-500"/>
+						<span class="text-[14px] font-bold text-green-500">+{{ 400 }}</span>
+					</span>
 				</div>
 			</div>
 		</div>

@@ -72,9 +72,47 @@
 					<Tab value="1" class="border-none !px-6 !py-2 !text-[14px] !font-bold">Logs</Tab>
 				</TabList>
 
-				<TabPanels class="mt-6 !bg-transparent">
+				<TabPanels class="mt-6 !bg-transparent !p-0">
 					<TabPanel value="0">
-						PROBE DETAILS
+						<div>
+							<div class="flex gap-4">
+								<div class="flex grow basis-0 flex-col rounded-xl border border-surface-300 bg-white">
+									<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">Location</h3>
+
+									<div class="p-6">
+										<p class="text-sm text-bluegray-600">
+											City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
+										</p>
+									</div>
+								</div>
+
+								<div class="flex grow basis-0 flex-col gap-4">
+									<div class="flex grow basis-0 flex-col rounded-xl border border-surface-300 bg-white">
+										<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">
+											User tags
+										</h3>
+
+										<div class="p-6">
+											<p class="text-sm text-bluegray-600">
+												Public user-defined tags that can be used to target the probe in measurements. Each tag must be prefixed by your GitHub username or organization. E.g., for a user with username jimaek and tag home-1 the final tag would be u-jimaek-home-1.
+											</p>
+										</div>
+									</div>
+
+									<div class="flex grow basis-0 flex-col rounded-xl border border-surface-300 bg-white">
+										<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">
+											System tags
+										</h3>
+
+										<div class="p-6">
+											<p class="text-sm text-bluegray-600">
+												Public tags that can be used to target the probe in measurements.
+											</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 					</TabPanel>
 
 					<TabPanel value="1">

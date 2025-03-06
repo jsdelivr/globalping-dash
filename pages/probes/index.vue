@@ -202,7 +202,7 @@
 </template>
 
 <script setup lang="ts">
-	import { aggregate, readItem, readItems } from '@directus/sdk';
+	import { aggregate, readItems } from '@directus/sdk';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
@@ -339,68 +339,6 @@
 			tags: columns[2].width,
 		};
 	});
-
-	// PROBE DETAILS
-	onMounted(async () => {
-		const probeId = route.params.id as string;
-
-		if (probeId) {
-			await loadProbeData(probeId);
-		}
-	});
-
-	watch(() => route.path, async () => {
-		const probeId = route.params.id as string;
-
-		if (probeId) {
-			await loadProbeData(probeId);
-		} else {
-			probeDetails.value = null;
-		}
-	});
-
-	const loadProbeData = async (id: string) => {
-		try {
-			const probe = await $directus.request(readItem('gp_adopted_probes', id));
-
-			probeDetails.value = probe;
-		} catch (e) {
-			const response = (e as { response?: Response } | undefined)?.response;
-
-			if (response?.status === 403) {
-				return navigateTo('/probes');
-			}
-
-			sendErrorToast(e);
-		}
-	};
-
-	const probeDetails = ref<Probe | null>(null);
-
-	const openProbeDetails = (id: string) => {
-		const probe = probes.value.find(probe => probe.id === id);
-
-		if (probe) {
-			probeDetails.value = probe;
-		}
-	};
-
-	const onHide = async () => {
-		await navigateTo(page.value ? `/probes?page=${page.value + 1}` : '/probes');
-	};
-
-	const onDelete = async () => {
-		// Go to prev page if that is last item.
-		if (probes.value.length === 1 && page.value) {
-			page.value--;
-		}
-
-		await loadLazyData();
-	};
-
-	// const router = useRouter();
-	// console.log('ROUTES:', router.getRoutes());
-	// console.log('PARAMS:', route.params);
 </script>
 
 <style scoped>

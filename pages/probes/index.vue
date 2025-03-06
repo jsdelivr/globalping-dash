@@ -30,7 +30,6 @@
 						</template>
 
 						<template #body="slotProps">
-							<!-- <NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)"> -->
 							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
 								<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3">
 									<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'probe' : 'docker'" border :status="getProbeStatus(slotProps.data)"/>
@@ -46,7 +45,6 @@
 						</template>
 
 						<template #body="slotProps">
-							<!-- <NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)"> -->
 							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
 								<div class="px-2 py-3">
 									<div class="mb-1 flex items-center">
@@ -64,7 +62,6 @@
 						</template>
 
 						<template #body="slotProps">
-							<!-- <NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)"> -->
 							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
 								<TagsList :tags="getAllTags(slotProps.data)" :number-of-tags-to-show="numberOfTagsToShow"/>
 							</NuxtLink>
@@ -103,7 +100,6 @@
 						<div class="px-4 pb-3 pt-1">
 							<div v-if="probes.length">
 								<div v-for="probe in probes" :key="probe.id" class="probe box-content block pb-2 pt-4">
-									<!-- <NuxtLink :to="`/probes/${probe.id}`" @click="openProbeDetails(probe.id)"> -->
 									<NuxtLink :to="`/probes/${probe.id}`">
 										<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
 											<BigIcon class="col-span-1 row-span-2" :name="probe.hardwareDevice ? 'probe' : 'docker'" border :status="probe.status"/>

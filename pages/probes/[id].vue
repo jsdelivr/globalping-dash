@@ -80,7 +80,7 @@
 									<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">Location</h3>
 
 									<div class="flex flex-col gap-3 p-6">
-										<p class="text-sm text-bluegray-600">
+										<p class="text-sm leading-[100%] text-bluegray-600">
 											City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
 										</p>
 
@@ -95,7 +95,7 @@
 										</h3>
 
 										<div class="flex flex-col gap-3 p-6">
-											<p class="text-sm text-bluegray-600">
+											<p class="text-sm leading-[100%] text-bluegray-600">
 												Public user-defined tags that can be used to target the probe in measurements. Each tag must be prefixed by your GitHub username or organization. E.g., for a user with username jimaek and tag home-1 the final tag would be u-jimaek-home-1.
 											</p>
 
@@ -126,7 +126,7 @@
 										</h3>
 
 										<div class="flex flex-col gap-3 p-6">
-											<p class="text-sm text-bluegray-600">
+											<p class="text-sm leading-[100%] text-bluegray-600">
 												Public tags that can be used to target the probe in measurements.
 											</p>
 

@@ -92,10 +92,18 @@
 											User tags
 										</h3>
 
-										<div class="p-6">
+										<div class="flex flex-col gap-3 p-6">
 											<p class="text-sm text-bluegray-600">
 												Public user-defined tags that can be used to target the probe in measurements. Each tag must be prefixed by your GitHub username or organization. E.g., for a user with username jimaek and tag home-1 the final tag would be u-jimaek-home-1.
 											</p>
+
+											<div>
+												<div/>
+												<Button class="h-6 border-none bg-surface-200 !px-3 !py-0 hover:bg-surface-200">
+													<i class="pi pi-pencil text-sm text-dark-800"/>
+													<span class="text-xs text-dark-800">Edit</span>
+												</Button>
+											</div>
 										</div>
 									</div>
 
@@ -108,6 +116,14 @@
 											<p class="text-sm text-bluegray-600">
 												Public tags that can be used to target the probe in measurements.
 											</p>
+
+											<div>
+												<div/>
+												<Button class="h-6 border-none bg-surface-200 !px-3 !py-0 hover:bg-surface-200">
+													<i class="pi pi-pencil text-sm text-dark-800"/>
+													<span class="text-xs text-dark-800">Edit</span>
+												</Button>
+											</div>
 										</div>
 									</div>
 								</div>

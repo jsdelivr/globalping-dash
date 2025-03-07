@@ -79,10 +79,12 @@
 								<div class="flex w-1/2 flex-col rounded-xl border border-surface-300 bg-white">
 									<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">Location</h3>
 
-									<div class="p-6">
+									<div class="flex flex-col gap-3 p-6">
 										<p class="text-sm text-bluegray-600">
 											City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
 										</p>
+
+										<div class="TODO_MAP h-[197px] w-full rounded-md bg-surface-200"/>
 									</div>
 								</div>
 
@@ -99,13 +101,13 @@
 
 											<div class="flex gap-1">
 												<div class="flex flex-wrap gap-1">
-													<span class="flex h-6 items-center whitespace-nowrap rounded-lg border border-surface-300 px-2 text-xs text-bluegray-900">
+													<span class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900">
 														u-MartinKolarik-probe
 													</span>
-													<span class="flex h-6 items-center whitespace-nowrap rounded-lg border border-surface-300 px-2 text-xs text-bluegray-900">
+													<span class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900">
 														du-MartinKolarik-online
 													</span>
-													<span class="flex h-6 items-center whitespace-nowrap rounded-lg border border-surface-300 px-2 text-xs text-bluegray-900">
+													<span class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900">
 														du-MartinKolarik-de
 													</span>
 												</div>
@@ -130,7 +132,7 @@
 
 											<div class="flex gap-1">
 												<div class="flex flex-wrap gap-1">
-													<span class="flex h-6 items-center whitespace-nowrap rounded-lg border border-surface-300 px-2 text-xs text-bluegray-900">
+													<span class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900">
 														datacenter-network
 													</span>
 												</div>

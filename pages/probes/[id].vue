@@ -76,7 +76,7 @@
 					<TabPanel value="0">
 						<div>
 							<div class="flex gap-4">
-								<div class="flex grow basis-0 flex-col rounded-xl border border-surface-300 bg-white">
+								<div class="flex w-1/2 flex-col rounded-xl border border-surface-300 bg-white">
 									<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">Location</h3>
 
 									<div class="p-6">
@@ -86,7 +86,7 @@
 									</div>
 								</div>
 
-								<div class="flex grow basis-0 flex-col gap-4">
+								<div class="flex w-1/2 flex-col gap-4">
 									<div class="flex grow basis-0 flex-col rounded-xl border border-surface-300 bg-white">
 										<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">
 											User tags
@@ -98,7 +98,7 @@
 											</p>
 
 											<div class="flex gap-1">
-												<div class="flex gap-1">
+												<div class="flex flex-wrap gap-1">
 													<span class="flex h-6 items-center whitespace-nowrap rounded-lg border border-surface-300 px-2 text-xs text-bluegray-900">
 														u-MartinKolarik-probe
 													</span>
@@ -129,7 +129,7 @@
 											</p>
 
 											<div class="flex gap-1">
-												<div class="flex gap-1">
+												<div class="flex flex-wrap gap-1">
 													<span class="flex h-6 items-center whitespace-nowrap rounded-lg border border-surface-300 px-2 text-xs text-bluegray-900">
 														datacenter-network
 													</span>

@@ -97,8 +97,19 @@
 												Public user-defined tags that can be used to target the probe in measurements. Each tag must be prefixed by your GitHub username or organization. E.g., for a user with username jimaek and tag home-1 the final tag would be u-jimaek-home-1.
 											</p>
 
-											<div>
-												<div/>
+											<div class="flex gap-1">
+												<div class="flex gap-1">
+													<span class="flex h-6 items-center whitespace-nowrap rounded-lg border border-surface-300 px-2 text-xs text-bluegray-900">
+														u-MartinKolarik-probe
+													</span>
+													<span class="flex h-6 items-center whitespace-nowrap rounded-lg border border-surface-300 px-2 text-xs text-bluegray-900">
+														du-MartinKolarik-online
+													</span>
+													<span class="flex h-6 items-center whitespace-nowrap rounded-lg border border-surface-300 px-2 text-xs text-bluegray-900">
+														du-MartinKolarik-de
+													</span>
+												</div>
+
 												<Button class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent">
 													<i class="pi pi-pencil text-sm text-dark-800"/>
 													<span class="text-xs text-dark-800">Edit</span>
@@ -117,8 +128,12 @@
 												Public tags that can be used to target the probe in measurements.
 											</p>
 
-											<div>
-												<div/>
+											<div class="flex gap-1">
+												<div class="flex gap-1">
+													<span class="flex h-6 items-center whitespace-nowrap rounded-lg border border-surface-300 px-2 text-xs text-bluegray-900">
+														datacenter-network
+													</span>
+												</div>
 												<Button class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent">
 													<i class="pi pi-pencil text-sm text-dark-800"/>
 													<span class="text-xs text-dark-800">Edit</span>

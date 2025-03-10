@@ -150,6 +150,18 @@
 								<h3 class="flex h-10 items-center border-b border-surface-300 pl-6 text-[14px] font-bold text-dark-800">Tests (last 24h)</h3>
 								<div class="h-[228px]">chart</div>
 							</div>
+
+							<div class="flex h-[68px] items-center justify-between rounded-xl bg-surface-100 px-6">
+								<span class="flex gap-2">
+									<i class="pi pi-info-circle text-lg text-bluegray-900"/>
+									<span class="text-[14px] text-bluegray-900">Removing the probe will result in data loss.</span>
+								</span>
+
+								<Button class="h-9 !border-surface-300 bg-white px-6">
+									<i class="pi pi-trash text-sm text-dark-800"/>
+									<span class="text-[14px] text-bluegray-900">Remove probe</span>
+								</Button>
+							</div>
 						</div>
 					</TabPanel>
 

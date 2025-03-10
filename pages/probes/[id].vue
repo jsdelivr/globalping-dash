@@ -74,7 +74,7 @@
 
 				<TabPanels class="mt-6 !bg-transparent !p-0">
 					<TabPanel value="0">
-						<div>
+						<div class="flex flex-col gap-6">
 							<div class="flex gap-4">
 								<div class="flex w-1/2 flex-col rounded-xl border border-surface-300 bg-white">
 									<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">Location</h3>
@@ -144,6 +144,11 @@
 										</div>
 									</div>
 								</div>
+							</div>
+
+							<div class="flex flex-col rounded-xl border border-surface-300">
+								<h3 class="flex h-10 items-center border-b border-surface-300 pl-6 text-[14px] font-bold text-dark-800">Tests (last 24h)</h3>
+								<div class="h-[228px]">chart</div>
 							</div>
 						</div>
 					</TabPanel>

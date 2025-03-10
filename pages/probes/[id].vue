@@ -37,7 +37,7 @@
 					</span>
 
 					<span class="flex h-[30px] items-center gap-2 rounded-md border border-surface-300 px-2">
-						<i class="pi pi-bullseye text-[14px] text-green-500"/>
+						<nuxt-icon class="text-[14px] text-green-500" name="coin"/>
 						<span class="text-[14px] font-bold text-green-500">+{{ 400 }}</span>
 					</span>
 				</div>

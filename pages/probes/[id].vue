@@ -157,10 +157,14 @@
 									<span class="text-[14px] text-bluegray-900">Removing the probe will result in data loss.</span>
 								</span>
 
-								<Button class="h-9 !border-surface-300 bg-white px-6">
-									<i class="pi pi-trash text-sm text-dark-800"/>
-									<span class="text-[14px] text-bluegray-900">Remove probe</span>
-								</Button>
+								<Button
+									class="!h-9"
+									severity="secondary"
+									outlined
+									label="Remove probe"
+									icon="pi pi-trash"
+									@click="() => {}"
+								/>
 							</div>
 						</div>
 					</TabPanel>

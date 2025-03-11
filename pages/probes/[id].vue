@@ -4,7 +4,7 @@
 			<div class="flex gap-2">
 				<NuxtLink to="/probes" class="mr-auto flex items-center gap-2">
 					<i class="pi pi-arrow-left text-bluegray-500"/>
-					<span class="text-[14px] font-bold text-bluegray-500">Back to probes</span>
+					<span class="font-bold text-bluegray-500">Back to probes</span>
 				</NuxtLink>
 			</div>
 
@@ -21,24 +21,24 @@
 					<span class="flex items-center gap-2 pl-3">
 						<i class="pi pi-circle-fill text-[8px] text-green-500"/>
 
-						<span class="text-[14px] font-bold text-bluegray-900">
+						<span class="font-bold text-bluegray-900">
 							{{ capitalize(probeDetails.status) }}
 						</span>
 					</span>
 
-					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 text-[14px] font-bold text-bluegray-900">
+					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900">
 						v{{ probeDetails.version }}
 					</span>
 				</div>
 
 				<div class="ml-auto flex items-center gap-2">
-					<span class="text-[14px] text-bluegray-900">
+					<span class="text-bluegray-900">
 						Credits per month
 					</span>
 
 					<span class="flex h-[30px] items-center gap-2 rounded-md border border-surface-300 px-2">
-						<nuxt-icon class="text-[14px] text-green-500" name="coin"/>
-						<span class="text-[14px] font-bold text-green-500">+{{ 400 }}</span>
+						<nuxt-icon class="text-green-500" name="coin"/>
+						<span class="font-bold text-green-500">+{{ 400 }}</span>
 					</span>
 				</div>
 			</div>
@@ -46,7 +46,7 @@
 			<div class="flex items-center justify-start gap-2 rounded-xl bg-surface-100 p-4">
 				<div class="flex items-center gap-2">
 					<span>Primary IP:</span>
-					<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 text-[14px] font-bold text-dark-800">
+					<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800">
 						2001:1000:130f:2000:3000:09c0:876a:130c
 						<i class="pi pi-copy absolute right-3 cursor-pointer text-lg"/>
 					</span>
@@ -54,14 +54,14 @@
 
 				<div class="flex items-center gap-2">
 					<span>Alternative IPs:</span>
-					<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 text-[14px] font-bold text-dark-800">
+					<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800">
 						1000:2001:130f:2000:3000:876a:130c
 
 						<i class="pi pi-copy absolute right-3 cursor-pointer text-lg"/>
 					</span>
 				</div>
 
-				<span class="flex h-[38px] w-28 cursor-pointer items-center justify-center text-[14px] font-bold text-bluegray-900">
+				<span class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900">
 					Show more
 				</span>
 			</div>
@@ -147,14 +147,23 @@
 							</div>
 
 							<div class="flex flex-col rounded-xl border border-surface-300">
-								<h3 class="flex h-10 items-center border-b border-surface-300 pl-6 text-[14px] font-bold text-dark-800">Tests (last 24h)</h3>
-								<div class="h-[228px]">chart</div>
+								<h3 class="flex h-10 items-center border-b border-surface-300 pl-6 font-bold text-dark-800">Tests (last 24h)</h3>
+								<div class="flex flex-col gap-6 p-6">
+									<div>
+										<span class="text-bluegray-900">Total: </span>
+										<span class="font-bold text-bluegray-900">{{ '347,530' }} tests</span>
+									</div>
+
+									<div class="h-36">
+										<ProbeTestsChart/>
+									</div>
+								</div>
 							</div>
 
 							<div class="flex h-[68px] items-center justify-between rounded-xl bg-surface-100 px-6">
 								<span class="flex gap-2">
 									<i class="pi pi-info-circle text-lg text-bluegray-900"/>
-									<span class="text-[14px] text-bluegray-900">Removing the probe will result in data loss.</span>
+									<span class="text-bluegray-900">Removing the probe will result in data loss.</span>
 								</span>
 
 								<Button

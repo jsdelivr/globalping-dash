@@ -181,6 +181,7 @@
 <script setup lang="ts">
 	import { readItem } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
+	import { useGoogleMaps } from '~/composables/maps';
 	import { initGoogleMap } from '~/utils/init-google-map';
 	import { sendErrorToast } from '~/utils/send-toast';
 
@@ -192,11 +193,13 @@
 	let removeWatcher: (() => void) | undefined;
 
 	onMounted(() => {
-		const stopWatching = watchEffect(async () => {
-			if (probeDetails.value) {
-				removeWatcher = await initGoogleMap(probeDetails.value);
-				stopWatching();
-			}
+		useGoogleMaps(() => {
+			const stopWatching = watchEffect(async () => {
+				if (probeDetails.value) {
+					removeWatcher = await initGoogleMap(probeDetails.value);
+					stopWatching();
+				}
+			});
 		});
 	});
 

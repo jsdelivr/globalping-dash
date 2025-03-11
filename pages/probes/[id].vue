@@ -84,7 +84,7 @@
 											City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
 										</p>
 
-										<div class="TODO_MAP h-[197px] w-full rounded-md bg-surface-200"/>
+										<div id="gp-map" class="TODO_MAP h-[197px] w-full rounded-md bg-surface-200"/>
 									</div>
 								</div>
 
@@ -181,6 +181,7 @@
 <script setup lang="ts">
 	import { readItem } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
+	import { initGoogleMap } from '~/utils/init-google-map';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();
@@ -188,10 +189,21 @@
 	const probeId = route.params.id as string;
 	const probeDetails = ref<Probe | null>(null);
 
-	useHead(() => {
-		return {
-			title: `${probeId}`,
-		};
+	let removeWatcher: (() => void) | undefined;
+
+	onMounted(() => {
+		const stopWatching = watchEffect(async () => {
+			if (probeDetails.value) {
+				removeWatcher = await initGoogleMap(probeDetails.value);
+				stopWatching();
+			}
+		});
+	});
+
+	onUnmounted(() => {
+		if (removeWatcher) {
+			removeWatcher();
+		}
 	});
 
 	useHead(() => {

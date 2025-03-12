@@ -100,15 +100,13 @@
 											</p>
 
 											<div class="flex gap-1">
-												<div class="flex flex-wrap gap-1">
-													<span class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900">
-														u-MartinKolarik-probe
-													</span>
-													<span class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900">
-														du-MartinKolarik-online
-													</span>
-													<span class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900">
-														du-MartinKolarik-de
+												<div v-if="probeDetails" class="flex flex-wrap gap-1">
+													<span
+														v-for="(tag, index) in probeDetails.tags"
+														:key="index"
+														class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900"
+													>
+														{{ `u-${tag.prefix}-${tag.value}` }}
 													</span>
 												</div>
 
@@ -131,9 +129,13 @@
 											</p>
 
 											<div class="flex gap-1">
-												<div class="flex flex-wrap gap-1">
-													<span class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900">
-														datacenter-network
+												<div v-if="probeDetails" class="flex flex-wrap gap-1">
+													<span
+														v-for="(tag, index) in probeDetails.systemTags"
+														:key="index"
+														class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900"
+													>
+														{{ tag }}
 													</span>
 												</div>
 												<Button class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent">

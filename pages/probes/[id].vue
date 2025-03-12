@@ -44,20 +44,24 @@
 			</div>
 
 			<div class="flex items-center justify-start gap-2 rounded-xl bg-surface-100 p-4">
-				<div class="flex items-center gap-2">
+				<div v-if="probeDetails" class="flex items-center gap-2">
 					<span>Primary IP:</span>
 					<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800">
-						2001:1000:130f:2000:3000:09c0:876a:130c
-						<i class="pi pi-copy absolute right-3 cursor-pointer text-lg"/>
+						{{ probeDetails.ip }}
+						<CopyButton :content="probeDetails.ip" class="absolute right-3 cursor-pointer text-lg"/>
 					</span>
 				</div>
 
-				<div class="flex items-center gap-2">
+				<div v-if="probeDetails" class="flex items-center gap-2">
 					<span>Alternative IPs:</span>
-					<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800">
-						1000:2001:130f:2000:3000:876a:130c
 
-						<i class="pi pi-copy absolute right-3 cursor-pointer text-lg"/>
+					<span
+						v-for="(altIp, index) in probeDetails.altIps"
+						:key="index"
+						class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800"
+					>
+						{{ altIp }}
+						<CopyButton :content="altIp" class="absolute right-3 cursor-pointer text-lg"/>
 					</span>
 				</div>
 

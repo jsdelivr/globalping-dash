@@ -172,7 +172,8 @@
 									outlined
 									label="Remove probe"
 									icon="pi pi-trash"
-									@click="() => {}"
+									:loading="deleteProbeLoading"
+									@click="deleteDialog = true"
 								/>
 							</div>
 						</div>
@@ -184,20 +185,44 @@
 				</TabPanels>
 			</Tabs>
 		</div>
+
+		<GPDialog
+			v-if="probeDetails"
+			v-model:visible="deleteDialog"
+			header="Delete probe"
+		>
+			<div class="flex items-center">
+				<div>
+					<i class="pi pi-exclamation-triangle text-xl text-primary"/>
+				</div>
+				<div class="ml-3">
+					<p>You are about to delete probe <span class="font-bold">{{ probeDetails.name || probeDetails.city }}</span> ({{ probeDetails.ip }}).</p>
+					<p>Are you sure you want to delete this probe? You will not be able to undo this action.</p>
+				</div>
+			</div>
+			<div class="mt-7 text-right">
+				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
+				<Button label="Delete probe" severity="danger" @click="deleteProbe"/>
+			</div>
+		</GPDialog>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import { readItem } from '@directus/sdk';
+	import { readItem, deleteItem } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { initGoogleMap } from '~/utils/init-google-map';
-	import { sendErrorToast } from '~/utils/send-toast';
+	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();
 	const route = useRoute();
+	const router = useRouter();
 	const probeId = route.params.id as string;
 	const probeDetails = ref<Probe | null>(null);
+	const deleteDialog = ref(false);
+	const deleteProbeLoading = ref(false);
+	const emit = defineEmits([ 'save', 'hide', 'delete' ]);
 
 	let removeWatcher: (() => void) | undefined;
 
@@ -239,6 +264,23 @@
 
 			sendErrorToast(e);
 		}
+	};
+
+	const deleteProbe = async () => {
+		deleteProbeLoading.value = true;
+
+		try {
+			if (probeDetails.value) {
+				await $directus.request(deleteItem('gp_adopted_probes', probeDetails.value.id));
+				sendToast('success', 'Done', 'The probe has been deleted');
+				emit('delete');
+				router.push('/probes');
+			}
+		} catch (e) {
+			sendErrorToast(e);
+		}
+
+		deleteProbeLoading.value = false;
 	};
 
 	loadProbeData(probeId);

@@ -14,7 +14,7 @@ import buttongroup from './buttongroup';
 // import card from './card';
 // import carousel from './carousel';
 // import cascadeselect from './cascadeselect';
-// import checkbox from './checkbox';
+import checkbox from './checkbox';
 import chip from './chip';
 // import colorpicker from './colorpicker';
 // import confirmdialog from './confirmdialog';
@@ -117,7 +117,7 @@ export default {
 	inputtext,
 	datepicker,
 	calendar: datepicker,
-	// checkbox,
+	checkbox,
 	// radiobutton,
 	toggleswitch,
 	// inputswitch: toggleswitch,

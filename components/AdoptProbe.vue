@@ -73,9 +73,33 @@
 		</StepList>
 		<StepPanels ref="stepPanels" class="box-content overflow-hidden transition-[height] duration-500">
 			<StepPanel v-slot="{ activateCallback }" value="0">
-				<div class="p-5 pt-2 text-right">
-					<Button label="Software probe" @click="() => { probeType = 'software'; activateCallback('1'); }"/>
-					<Button label="Hardware probe" @click="() => { probeType = 'hardware'; activateCallback('3'); }"/>
+				<div class="flex justify-evenly gap-4 p-5 pt-7">
+					<button class="relative overflow-hidden rounded-xl border bg-surface-100 hover:border-[#17d4a7] hover:bg-[#E5FCF6]" @click="() => { probeType = 'software'; activateCallback('1'); }">
+						<div class="ml-14 h-full w-64 bg-surface-0 p-6 text-left">
+							<Checkbox
+								:pt="{ box: '!border-surface-400' }"
+								:pt-options="{ mergeProps: true }"
+								class="!absolute left-5"
+								size="large"
+							/>
+							<p class="font-bold">Software probe</p>
+							<p class="mt-2">Docker container that runs on your hardware.</p>
+							<nuxt-icon class="mt-2 inline-block text-6xl text-[#099CEC]" name="docker"/>
+						</div>
+					</button>
+					<button class="relative overflow-hidden rounded-xl border bg-surface-100 hover:border-[#17d4a7] hover:bg-[#E5FCF6]" @click="() => { probeType = 'software'; activateCallback('3'); }">
+						<div class="ml-14 h-full w-72 bg-surface-0 p-6 text-left">
+							<Checkbox
+								:pt="{ box: '!border-surface-400' }"
+								:pt-options="{ mergeProps: true }"
+								class="!absolute left-5"
+								size="large"
+							/>
+							<p class="font-bold">Hardware probe</p>
+							<p class="mt-2">Physical mini computer connected to your network.</p>
+							<img class="mt-4 w-14" src="~/assets/images/hw-probe-small.png" alt="Hardware probe">
+						</div>
+					</button>
 				</div>
 			</StepPanel>
 			<StepPanel v-slot="{ activateCallback }" value="1">

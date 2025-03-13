@@ -133,8 +133,14 @@
 				</div>
 			</StepPanel>
 			<StepPanel v-slot="{ activateCallback }" value="3">
-				<p>Make sure your probe is running, connected to the network, and the green LED is on.</p>
+				<div class="p-5">
+					<p class="mb-4 mt-2 text-lg font-bold">Set up your probe</p>
+					<p class="mt-4">Make sure your probe is running, connected to the network, and the green LED is on.</p>
+				</div>
 				<div class="p-5 pt-2 text-right">
+					<NuxtLink to="https://github.com/jsdelivr/globalping-probe#hardware-probes" tabindex="-1" target="_blank" class="float-left">
+						<Button label="Learn more about hardware probes" severity="secondary" icon="pi pi-info-circle" class="mr-4"/>
+					</NuxtLink>
 					<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('0')"/>
 					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="activateCallback('4')"/>
 				</div>

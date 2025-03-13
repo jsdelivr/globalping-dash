@@ -261,7 +261,7 @@
 		useGoogleMaps(() => {
 			const stopWatching = watchEffect(async () => {
 				if (probeDetails.value) {
-					removeWatcher = await initGoogleMap(probeDetails.value);
+					removeWatcher = await initGoogleMap(probeDetails.value, true);
 					stopWatching();
 				}
 			});

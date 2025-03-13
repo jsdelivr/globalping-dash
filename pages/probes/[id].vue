@@ -88,7 +88,11 @@
 											City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
 										</p>
 
-										<div id="gp-map" class="h-[197px] w-full rounded-md bg-surface-200"/>
+										<div id="gp-map" class="relative h-[197px] w-full rounded-md bg-surface-200">
+											<span v-if="probeDetails" class="absolute right-4 top-4 rounded-xl border border-surface-300 bg-white px-2 py-1 font-bold leading-none text-dark-800">
+												{{ probeDetails.network }} {{ probeDetails.asn }}
+											</span>
+										</div>
 									</div>
 								</div>
 

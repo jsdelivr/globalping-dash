@@ -48,7 +48,7 @@
 					<span>Primary IP:</span>
 					<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800">
 						{{ probeDetails.ip }}
-						<CopyButton :content="probeDetails.ip" class="absolute right-3 cursor-pointer text-lg"/>
+						<CopyButton :content="probeDetails.ip" class="!top-[7px] size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
 					</span>
 				</div>
 
@@ -61,7 +61,7 @@
 						class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800"
 					>
 						{{ altIp }}
-						<CopyButton :content="altIp" class="absolute right-3 cursor-pointer text-lg"/>
+						<CopyButton :content="altIp" class="!top-[7px] mb-px size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
 					</span>
 				</div>
 

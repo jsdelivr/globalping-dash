@@ -88,10 +88,30 @@
 											City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
 										</p>
 
-										<div id="gp-map" class="relative h-[197px] w-full rounded-md bg-surface-200">
-											<span v-if="probeDetails" class="absolute right-4 top-4 rounded-xl border border-surface-300 bg-white px-2 py-1 font-bold leading-none text-dark-800">
+										<div class="relative h-[197px] w-full overflow-hidden rounded-md bg-surface-200">
+											<div id="gp-map" class="size-full rounded-md"/>
+
+											<span
+												v-if="probeDetails"
+												class="absolute right-4 top-4 rounded-xl border border-surface-300 bg-white px-2 py-1 font-bold leading-none text-dark-800"
+											>
 												{{ probeDetails.network }} {{ probeDetails.asn }}
 											</span>
+
+											<div
+												v-if="probeDetails"
+												class="absolute bottom-9 left-4 flex h-[38px] overflow-hidden rounded-md border border-[#D1D5DB]"
+											>
+												<span class="flex w-[38px] items-center justify-center border-r border-r-[#D1D5DB] bg-[#E5E7EB]">
+													<CountryFlag :country="probeDetails.country" size="small"/>
+												</span>
+
+												<span class="relative flex w-[404px] items-center bg-white px-3 text-bluegray-900">
+													<span>{{ probeDetails.city }}</span>
+
+													<i class="pi pi-pencil text-md absolute right-3 top-3"/>
+												</span>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -221,6 +241,7 @@
 <script setup lang="ts">
 	import { readItem, deleteItem } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
+	import CountryFlag from 'vue-country-flag-next';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { initGoogleMap } from '~/utils/init-google-map';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';

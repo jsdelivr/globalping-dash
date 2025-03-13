@@ -1,27 +1,31 @@
 <template>
 	<Stepper v-model:value="activeStep" linear @update:value="onChangeStep">
-		<StepList>
-			<Step v-slot="{ active, value }" as-child value="0">
+		<div v-if="Number(activeStep) === 0" class="border-t bg-surface-50 p-7 text-center dark:bg-surface-800">
+			<h3 class="text-lg font-bold">Select the type of probe</h3>
+			<p>Please select the probe type first before proceeding</p>
+		</div>
+		<StepList v-else-if="Number(activeStep) > 0 && Number(activeStep) <= 2">
+			<Step v-slot="{ active }" as-child value="0">
 				<StepHeader
-					:button-text="value.toString()"
-					header-text="Set up your probe"
+					:button-text="'0'"
+					header-text="Select the probe type"
 					:active="active"
 					:highlighted="Number(activeStep) > 0"
 					:is-success="isSuccess"
 				/>
 			</Step>
-			<Step v-slot="{ active, value }" as-child value="1">
+			<Step v-slot="{ active }" as-child value="1">
 				<StepHeader
-					:button-text="value.toString()"
-					header-text="Send adoption code"
+					:button-text="'1'"
+					header-text="Set up your probe"
 					:active="active"
 					:highlighted="Number(activeStep) > 1"
 					:is-success="isSuccess"
 				/>
 			</Step>
-			<Step v-slot="{ active, value }" as-child value="2">
+			<Step v-slot="{ active }" as-child value="2">
 				<StepHeader
-					:button-text="value.toString()"
+					:button-text="'2'"
 					header-text="Verify"
 					:active="active"
 					:highlighted="Number(activeStep) > 2"
@@ -29,8 +33,52 @@
 				/>
 			</Step>
 		</StepList>
+		<StepList v-else>
+			<Step v-slot="{ active }" as-child value="0">
+				<StepHeader
+					:button-text="'0'"
+					header-text="Select the probe type"
+					:active="active"
+					:highlighted="Number(activeStep) > 0"
+					:is-success="isSuccess"
+				/>
+			</Step>
+			<Step v-slot="{ active }" as-child value="3">
+				<StepHeader
+					:button-text="'1'"
+					header-text="Set up your probe"
+					:active="active"
+					:highlighted="Number(activeStep) > 3"
+					:is-success="isSuccess"
+				/>
+			</Step>
+			<Step v-slot="{ active }" as-child value="4">
+				<StepHeader
+					:button-text="'2'"
+					header-text="Send adoption code"
+					:active="active"
+					:highlighted="Number(activeStep) > 4"
+					:is-success="isSuccess"
+				/>
+			</Step>
+			<Step v-slot="{ active }" as-child value="5">
+				<StepHeader
+					:button-text="'3'"
+					header-text="Verify"
+					:active="active"
+					:highlighted="Number(activeStep) > 5"
+					:is-success="isSuccess"
+				/>
+			</Step>
+		</StepList>
 		<StepPanels ref="stepPanels" class="box-content overflow-hidden transition-[height] duration-500">
 			<StepPanel v-slot="{ activateCallback }" value="0">
+				<div class="p-5 pt-2 text-right">
+					<Button label="Software probe" @click="() => { probeType = 'software'; activateCallback('1'); }"/>
+					<Button label="Hardware probe" @click="() => { probeType = 'hardware'; activateCallback('3'); }"/>
+				</div>
+			</StepPanel>
+			<StepPanel v-slot="{ activateCallback }" value="1">
 				<Tabs v-model:value="activeTab" :pt="{ inkbar: {class: 'hidden'}}" class="border-t dark:border-dark-400" @update:value="onChangeTab">
 					<TabList>
 						<Tab value="0" :class="{ grow: true }"><i class="pi pi-check mr-2"/>I'm already running a probe</Tab>
@@ -50,11 +98,24 @@
 					</TabPanels>
 				</Tabs>
 				<div class="p-5 pt-2 text-right">
-					<Button class="mr-2" label="Cancel" severity="secondary" text @click="$emit('cancel')"/>
-					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="activateCallback('1')"/>
+					<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('0')"/>
+					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="activateCallback('2')"/>
 				</div>
 			</StepPanel>
-			<StepPanel v-slot="{ activateCallback }" value="1">
+			<StepPanel v-slot="{ activateCallback }" value="2">
+				<p>Spinner goes here.</p>
+				<div class="p-5 pt-2 text-right">
+					<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('1')"/>
+				</div>
+			</StepPanel>
+			<StepPanel v-slot="{ activateCallback }" value="3">
+				<p>Make sure your probe is running, connected to the network, and the green LED is on.</p>
+				<div class="p-5 pt-2 text-right">
+					<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('0')"/>
+					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="activateCallback('4')"/>
+				</div>
+			</StepPanel>
+			<StepPanel v-slot="{ activateCallback }" value="4">
 				<div class="p-5">
 					<p class="mb-4 mt-2 text-lg font-bold">Send adoption code</p>
 					<p>Enter your probe's public IP address and we will send it a verification code.</p>
@@ -71,12 +132,12 @@
 						<p v-if="!isIpValid" class="absolute text-red-500">{{ invalidIpMessage }}</p>
 					</div>
 					<div class="mt-6 text-right">
-						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('0')"/>
+						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('3')"/>
 						<Button label="Send adoption code" :loading="sendAdoptionCodeLoading" :disabled="!ip.length" @click="sendAdoptionCode(activateCallback)"/>
 					</div>
 				</div>
 			</StepPanel>
-			<StepPanel v-slot="{ activateCallback }" value="2">
+			<StepPanel v-slot="{ activateCallback }" value="5">
 				<div v-if="!isSuccess" class="p-5">
 					<p class="mb-4 mt-2 text-lg font-bold">Verify</p>
 					<p>The adoption code has been sent to <span class="font-semibold">your probe with IP address {{ ip }}</span>.</p>
@@ -97,7 +158,7 @@
 						</SelectButton>
 					</div>
 					<p class="mt-4">Now you need to check the probe's log output to find the verification code. If you're running it inside a Docker container then you can quickly find it by running this command:</p>
-					<CodeBlock class="mt-3" :commands="probeType === 'docker' ? [['docker logs -f --tail 25 globalping-probe']] : [['ssh logs@IP-ADDRESS']]"/>
+					<CodeBlock class="mt-3" :commands="probeType === 'software' ? [['docker logs -f --tail 25 globalping-probe']] : [['ssh logs@IP-ADDRESS']]"/>
 					<p class="mt-3">Find the code in the logs and enter it below to verify ownership.</p>
 					<div class="mt-6 rounded-xl bg-surface-50 py-10 text-center dark:bg-dark-600 ">
 						<div class="flex justify-center">
@@ -115,7 +176,7 @@
 						<Button class="mt-3" label="Resend code" severity="secondary" text @click="resendCode"/>
 					</div>
 					<div class="mt-6 text-right">
-						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('1')"/>
+						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('4')"/>
 						<Button label="Verify the code" :loading="verifyCodeLoading" :disabled="code.length < 6" @click="verifyCode"/>
 					</div>
 				</div>
@@ -155,6 +216,7 @@
 	let prevStep = '0';
 	const activeStep = ref('0');
 	const stepPanels = ref();
+	const probeType = ref<'software' | 'hardware'>('software');
 
 	watchEffect(() => { prevStep = activeStep.value; });
 
@@ -184,7 +246,7 @@
 		[ 'docker pull globalping/globalping-probe' ],
 		[ 'docker stop globalping-probe' ],
 		[ 'docker rm globalping-probe' ],
-		[ 'docker run -d --log-driver local --network host --restart=always --name globalping-probe globalping/globalping-probe' ],
+		[ `docker run -d --log-driver local --network host --restart=always --name globalping-probe -e ADOPTION_TOKEN=${'alo'} globalping/globalping-probe` ],
 	];
 
 	// STEP 2
@@ -212,7 +274,7 @@
 
 		try {
 			await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/send-code', body: JSON.stringify({ ip: ip.value }) }));
-			activateCallback('2');
+			activateCallback('5');
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';
 			isIpValid.value = false;
@@ -224,7 +286,6 @@
 
 	// STEP 3
 
-	const probeType = ref('docker');
 	const code = ref('');
 	const isCodeValid = ref(true);
 	const invalidCodeMessage = ref('');

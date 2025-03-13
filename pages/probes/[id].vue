@@ -88,7 +88,7 @@
 											City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
 										</p>
 
-										<div id="gp-map" class="TODO_MAP h-[197px] w-full rounded-md bg-surface-200"/>
+										<div id="gp-map" class="h-[197px] w-full rounded-md bg-surface-200"/>
 									</div>
 								</div>
 

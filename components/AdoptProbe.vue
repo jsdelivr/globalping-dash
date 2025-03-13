@@ -229,11 +229,15 @@
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
 	import CountryFlag from 'vue-country-flag-next';
+	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 	import { smoothResize } from '~/utils/smooth-resize';
 	import { validateIp } from '~/utils/validate-ip';
 
 	const { $directus } = useNuxtApp();
+	const auth = useAuth();
+
+	const user = auth.getUser as User;
 
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 
@@ -270,7 +274,7 @@
 		[ 'docker pull globalping/globalping-probe' ],
 		[ 'docker stop globalping-probe' ],
 		[ 'docker rm globalping-probe' ],
-		[ `docker run -d --log-driver local --network host --restart=always --name globalping-probe -e ADOPTION_TOKEN=${'alo'} globalping/globalping-probe` ],
+		[ `docker run -d --log-driver local --network host --restart=always --name globalping-probe -e ADOPTION_TOKEN=${user.adoption_token} globalping/globalping-probe` ],
 	];
 
 	// STEP 2

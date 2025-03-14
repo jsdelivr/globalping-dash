@@ -123,11 +123,11 @@
 				</Tabs>
 				<div class="p-5 pt-2 text-right">
 					<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('0')"/>
-					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="activateCallback('2')"/>
+					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="searchNewProbes(activateCallback)"/>
 				</div>
 			</StepPanel>
 			<StepPanel value="2">
-				<div class="px-5 py-7">
+				<div v-if="!isSuccess" class="px-5 py-7">
 					<div class="rounded-xl bg-surface-50 p-7 text-center dark:bg-dark-600">
 						<p class="text-lg font-bold">Waiting for the probe to connect...</p>
 						<p class="mt-2">This shouldn't take more than a few seconds.</p>
@@ -136,6 +136,7 @@
 						</div>
 					</div>
 				</div>
+				<ProbeAdoptedContent v-else :probes="newProbes" @cancel="$emit('cancel')"/>
 			</StepPanel>
 			<StepPanel v-slot="{ activateCallback }" value="3">
 				<div class="p-5">
@@ -199,31 +200,14 @@
 						<Button label="Verify the code" :loading="verifyCodeLoading" :disabled="code.length < 6" @click="verifyCode"/>
 					</div>
 				</div>
-				<div v-else class="p-5">
-					<div class="rounded-xl bg-green-400/10 p-6">
-						<p class="flex items-center justify-center text-center text-lg font-bold">
-							<i class="pi pi-verified mr-2 text-green-600"/>
-							Congratulations!
-						</p>
-						<p class="mt-4 text-center">You are now the owner of the following probe:</p>
-						<div v-if="probe" class="mt-4 rounded-xl border bg-surface-0 p-3 text-center dark:border-dark-400 dark:bg-dark-800">
-							<p class="flex items-center justify-center font-bold"><CountryFlag :country="probe.country" size="small"/><span class="ml-2">{{ probe.city }}</span></p>
-							<p>{{ probe.network }}</p>
-						</div>
-					</div>
-					<p class="mt-4">The probe will generate credits that you can use to run more tests. We also recommend you verify and correct the probe's location.</p>
-					<div class="mt-7 flex justify-end">
-						<Button label="Finish" @click="$emit('cancel')"/>
-					</div>
-				</div>
+				<ProbeAdoptedContent v-else :probes="newProbes" @cancel="$emit('cancel')"/>
 			</StepPanel>
 		</StepPanels>
 	</Stepper>
 </template>
 
 <script setup lang="ts">
-	import { customEndpoint } from '@directus/sdk';
-	import CountryFlag from 'vue-country-flag-next';
+	import { customEndpoint, readItems } from '@directus/sdk';
 	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 	import { smoothResize } from '~/utils/smooth-resize';
@@ -274,6 +258,68 @@
 
 	// STEP 2
 
+	const { data: initialProbes } = await useLazyAsyncData('initial_user_probes', async () => {
+		const result = await $directus.request(readItems('gp_probes', {
+			filter: { userId: { _eq: user.id } },
+		}));
+
+		return result;
+	}, { default: () => [] });
+
+	const searchNewProbes = async (activateCallback: Function) => {
+		activateCallback('2');
+		const startTime = Date.now();
+
+		try {
+			await new Promise<void>((resolve) => {
+				const checkProbes = async () => {
+					const currentProbes = await $directus.request(readItems('gp_probes', {
+						filter: { userId: { _eq: user.id } },
+					}));
+
+					if (currentProbes.length > initialProbes.value.length) {
+						newProbesFound(currentProbes);
+						resolve();
+						return;
+					}
+
+					if (Date.now() - startTime > 10_000) {
+						newProbesNotFound();
+						resolve();
+						return;
+					}
+
+					setTimeout(checkProbes, 1000);
+				};
+
+				checkProbes();
+			});
+		} catch (e: any) {
+			const detail = e.errors ?? 'Request failed';
+			isIpValid.value = false;
+			invalidIpMessage.value = detail;
+		}
+
+		sendAdoptionCodeLoading.value = false;
+	};
+
+	const newProbesFound = (currentProbes: Probe[]) => {
+		const initialProbesIds = new Set(initialProbes.value.map(probe => probe.id));
+		newProbes.value = currentProbes.filter(probe => !initialProbesIds.has(probe.id));
+		isSuccess.value = true;
+
+		const wrapper = stepPanels.value.$el;
+		const currentChild = wrapper.children[Number(activeStep.value)];
+		smoothResize(wrapper, currentChild, currentChild);
+		emit('adopted');
+	};
+
+	const newProbesNotFound = () => {
+		console.log('newProbesNotFound');
+	};
+
+	// STEP 4
+
 	const ip = ref('');
 	const isIpValid = ref(true);
 	const invalidIpMessage = ref('');
@@ -307,12 +353,13 @@
 		sendAdoptionCodeLoading.value = false;
 	};
 
-	// STEP 3
+	// STEP 5
 
 	const code = ref('');
 	const isCodeValid = ref(true);
 	const invalidCodeMessage = ref('');
-	const probe = ref<Probe | null>(null);
+	const newProbes = ref<Probe[]>([]);
+	const isSuccess = ref(false);
 
 	const resetIsCodeValid = () => {
 		isCodeValid.value = true;
@@ -340,7 +387,7 @@
 
 		try {
 			const response = await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/verify-code', body: JSON.stringify({ code: code.value.substring(0, 6) }) })) as Probe;
-			probe.value = response;
+			newProbes.value = [ response ];
 			isSuccess.value = true;
 
 			const wrapper = stepPanels.value.$el;
@@ -362,8 +409,4 @@
 			await verifyCode();
 		}
 	};
-
-	// SUCCESS STEP
-
-	const isSuccess = ref(false);
 </script>

@@ -87,7 +87,7 @@
 							<nuxt-icon class="mt-2 inline-block text-6xl text-[#099CEC]" name="docker"/>
 						</div>
 					</button>
-					<button class="relative overflow-hidden rounded-xl border bg-surface-100 hover:border-[#17d4a7] hover:bg-[#E5FCF6]" @click="() => { probeType = 'software'; activateCallback('3'); }">
+					<button class="relative overflow-hidden rounded-xl border bg-surface-100 hover:border-[#17d4a7] hover:bg-[#E5FCF6]" @click="() => { probeType = 'hardware'; activateCallback('3'); }">
 						<div class="ml-14 h-full w-72 bg-surface-0 p-6 text-left">
 							<Checkbox
 								:pt="{ box: '!border-surface-400' }"
@@ -171,24 +171,8 @@
 				<div v-if="!isSuccess" class="p-5">
 					<p class="mb-4 mt-2 text-lg font-bold">Verify</p>
 					<p>The adoption code has been sent to <span class="font-semibold">your probe with IP address {{ ip }}</span>.</p>
-					<div class="my-4">
-						<SelectButton
-							v-model="probeType"
-							:options="probeTypes"
-							:allow-empty="false"
-							aria-labelledby="basic"
-							option-label="name"
-							option-value="value"
-							severity="primary"
-						>
-							<template #option="slotProps">
-								<nuxt-icon :name="slotProps.option.icon"/>
-								<span class="font-bold">{{ slotProps.option.name }}</span>
-							</template>
-						</SelectButton>
-					</div>
-					<p class="mt-4">Now you need to check the probe's log output to find the verification code. If you're running it inside a Docker container then you can quickly find it by running this command:</p>
-					<CodeBlock class="mt-3" :commands="probeType === 'software' ? [['docker logs -f --tail 25 globalping-probe']] : [['ssh logs@IP-ADDRESS']]"/>
+					<p class="mt-4">Now you need to check the probe's log output to find the verification code. You can quickly find it by running this command:</p>
+					<CodeBlock class="mt-3" :commands="probeType === 'software' ? [['docker logs -f --tail 25 globalping-probe']] : [['ssh logs@LOCAL-IP-ADDRESS']]"/>
 					<p class="mt-3">Find the code in the logs and enter it below to verify ownership.</p>
 					<div class="mt-6 rounded-xl bg-surface-50 py-10 text-center dark:bg-dark-600 ">
 						<div class="flex justify-center">
@@ -324,11 +308,6 @@
 	const isCodeValid = ref(true);
 	const invalidCodeMessage = ref('');
 	const probe = ref<Probe | null>(null);
-
-	const probeTypes = [
-		{ name: 'Docker probes', value: 'docker', icon: 'docker' },
-		{ name: 'Hardware probes', value: 'hardware', icon: 'probe' },
-	];
 
 	const resetIsCodeValid = () => {
 		isCodeValid.value = true;

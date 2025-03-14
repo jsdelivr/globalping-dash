@@ -230,11 +230,14 @@
 
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 
-	let prevStep = '0';
 	const activeStep = ref('0');
-	const stepPanels = ref();
 	const probeType = ref<'software' | 'hardware'>('software');
+	const newProbes = ref<Probe[]>([]);
+	const isSuccess = ref(false);
+	const isFailed = ref(false);
 
+	const stepPanels = ref();
+	let prevStep = '0';
 	watchEffect(() => { prevStep = activeStep.value; });
 
 	const onChangeStep = (i: string | number) => {
@@ -293,7 +296,7 @@
 						return;
 					}
 
-					if (Date.now() - startTime > 3_000) {
+					if (Date.now() - startTime > 10_000) {
 						newProbesNotFound();
 						resolve();
 						return;
@@ -371,9 +374,6 @@
 	const code = ref('');
 	const isCodeValid = ref(true);
 	const invalidCodeMessage = ref('');
-	const newProbes = ref<Probe[]>([]);
-	const isSuccess = ref(false);
-	const isFailed = ref(false);
 
 	const resetIsCodeValid = () => {
 		isCodeValid.value = true;

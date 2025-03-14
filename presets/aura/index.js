@@ -60,7 +60,7 @@ import paginator from './paginator';
 // import picklist from './picklist';
 import popover from './popover';
 // import progressbar from './progressbar';
-import progressspinner from './progressspinner';
+// import progressspinner from './progressspinner';
 // import radiobutton from './radiobutton';
 // import rating from './rating';
 // import ripple from './ripple';
@@ -230,5 +230,5 @@ export default {
 	// blockui,
 	// metergroup,
 	// inplace,
-	progressspinner,
+	// progressspinner,
 };

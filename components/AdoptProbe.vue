@@ -126,10 +126,15 @@
 					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="activateCallback('2')"/>
 				</div>
 			</StepPanel>
-			<StepPanel v-slot="{ activateCallback }" value="2">
-				<p>Spinner goes here.</p>
-				<div class="p-5 pt-2 text-right">
-					<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('1')"/>
+			<StepPanel value="2">
+				<div class="px-5 py-7">
+					<div class="rounded-xl bg-surface-50 p-7 text-center dark:bg-dark-600">
+						<p class="text-lg font-bold">Waiting for the probe to connect...</p>
+						<p class="mt-2">This shouldn't take more than a few seconds.</p>
+						<div class="mt-4">
+							<span class="pi pi-spinner animate-spin text-4xl text-primary-500"/>
+						</div>
+					</div>
 				</div>
 			</StepPanel>
 			<StepPanel v-slot="{ activateCallback }" value="3">
@@ -174,7 +179,7 @@
 					<p class="mt-4">Now you need to check the probe's log output to find the verification code. You can quickly find it by running this command:</p>
 					<CodeBlock class="mt-3" :commands="probeType === 'software' ? [['docker logs -f --tail 25 globalping-probe']] : [['ssh logs@LOCAL-IP-ADDRESS']]"/>
 					<p class="mt-3">Find the code in the logs and enter it below to verify ownership.</p>
-					<div class="mt-6 rounded-xl bg-surface-50 py-10 text-center dark:bg-dark-600 ">
+					<div class="mt-6 rounded-xl bg-surface-50 py-10 text-center dark:bg-dark-600">
 						<div class="flex justify-center">
 							<InputOtp
 								v-model="code"

@@ -73,9 +73,9 @@
 		</StepList>
 		<StepPanels ref="stepPanels" class="box-content overflow-hidden transition-[height] duration-500">
 			<StepPanel v-slot="{ activateCallback }" value="0">
-				<div class="flex justify-evenly gap-4 p-5 pt-7">
-					<button class="group relative flex flex-row overflow-hidden rounded-xl border hover:border-[#17d4a7] dark:bg-dark-900" @click="() => { probeType = 'software'; activateCallback('1'); }">
-						<div class="h-full w-14 bg-surface-100 group-hover:bg-[#E5FCF6] dark:bg-dark-600 dark:group-hover:bg-dark-600">
+				<div class="flex justify-evenly gap-4 p-5 pt-7 max-sm:flex-col">
+					<button class="group relative flex flex-row items-stretch overflow-hidden rounded-xl border hover:border-[#17d4a7] dark:bg-dark-900" @click="() => { probeType = 'software'; activateCallback('1'); }">
+						<div class="w-14 bg-surface-100 group-hover:bg-[#E5FCF6] dark:bg-dark-600 dark:group-hover:bg-dark-600">
 							<Checkbox
 								:pt="{ box: '!border-surface-400' }"
 								:pt-options="{ mergeProps: true }"
@@ -83,14 +83,14 @@
 								size="large"
 							/>
 						</div>
-						<div class="h-full w-64 p-6 text-left">
+						<div class="w-64 p-6 text-left">
 							<p class="font-bold">Software probe</p>
 							<p class="mt-2">Docker container that runs on your hardware.</p>
 							<nuxt-icon class="mt-2 inline-block text-6xl text-[#099CEC]" name="docker"/>
 						</div>
 					</button>
-					<button class="group relative flex flex-row overflow-hidden rounded-xl border hover:border-[#17d4a7] dark:bg-dark-900" @click="() => { probeType = 'software'; activateCallback('1'); }">
-						<div class="h-full w-14 bg-surface-100 group-hover:bg-[#E5FCF6] dark:bg-dark-600 dark:group-hover:bg-dark-600">
+					<button class="group relative flex flex-row items-stretch overflow-hidden rounded-xl border hover:border-[#17d4a7] dark:bg-dark-900" @click="() => { probeType = 'software'; activateCallback('3'); }">
+						<div class="w-14 bg-surface-100 group-hover:bg-[#E5FCF6] dark:bg-dark-600 dark:group-hover:bg-dark-600">
 							<Checkbox
 								:pt="{ box: '!border-surface-400' }"
 								:pt-options="{ mergeProps: true }"
@@ -98,7 +98,7 @@
 								size="large"
 							/>
 						</div>
-						<div class="h-full w-64 p-6 text-left">
+						<div class="w-64 p-6 text-left">
 							<p class="font-bold">Hardware probe</p>
 							<p class="mt-2">Physical mini computer connected to your network.</p>
 							<img class="mt-4 w-14" src="~/assets/images/hw-probe-small.png" alt="Hardware probe">
@@ -142,7 +142,7 @@
 				</div>
 				<ProbeAdoptedContent v-else-if="isSuccess" :probes="newProbes" @cancel="$emit('cancel')"/>
 				<div v-else class="p-5">
-					<div class="rounded-xl bg-[#FFF5F5] px-24 py-6 text-center dark:bg-red-400/10">
+					<div class="rounded-xl bg-[#FFF5F5] px-24 py-6 text-center max-sm:px-4 dark:bg-red-400/10">
 						<p class="flex items-center justify-center text-center text-lg font-bold">
 							<i class="pi pi-times-circle mr-2 text-[#E24C4C]"/>
 							Adoption failed

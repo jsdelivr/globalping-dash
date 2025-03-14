@@ -11,7 +11,7 @@
 				<p>{{ probe.network }}</p>
 			</div>
 		</div>
-		<div v-if="!user.public_probes" class="mt-4 rounded-xl bg-surface-50 p-6 text-center">
+		<div v-if="!user.public_probes" class="mt-4 rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
 			<ToggleSwitch v-model="publicProbes" :input-id="`public-probes-${getCurrentInstance()?.uid}`"/>
 			<label :for="`public-probes-${getCurrentInstance()?.uid}`" class="block cursor-pointer font-bold">Make your probes public</label>
 			<p class="mt-3 text-xs">If enabled, your probes will be automatically tagged by <Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.github_username}`"/>, allowing you to select them in measurements. A list of your active probes will also be available at <NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${user.github_username}`" target="_blank" rel="noopener">https://globalping.io/users/{{ user.github_username }}</NuxtLink> (once this feature is live).</p>

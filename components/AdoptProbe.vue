@@ -1,6 +1,6 @@
 <template>
 	<Stepper v-model:value="activeStep" linear @update:value="onChangeStep">
-		<div v-if="Number(activeStep) === 0" class="border-t bg-surface-50 p-7 text-center dark:bg-surface-800">
+		<div v-if="Number(activeStep) === 0" class="border-t bg-surface-50 p-7 text-center dark:bg-dark-600">
 			<h3 class="text-lg font-bold">Select the type of probe</h3>
 			<p>Please select the probe type first before proceeding</p>
 		</div>
@@ -74,27 +74,31 @@
 		<StepPanels ref="stepPanels" class="box-content overflow-hidden transition-[height] duration-500">
 			<StepPanel v-slot="{ activateCallback }" value="0">
 				<div class="flex justify-evenly gap-4 p-5 pt-7">
-					<button class="relative overflow-hidden rounded-xl border bg-surface-100 hover:border-[#17d4a7] hover:bg-[#E5FCF6]" @click="() => { probeType = 'software'; activateCallback('1'); }">
-						<div class="ml-14 h-full w-64 bg-surface-0 p-6 text-left">
+					<button class="group relative flex flex-row overflow-hidden rounded-xl border hover:border-[#17d4a7] dark:bg-dark-900" @click="() => { probeType = 'software'; activateCallback('1'); }">
+						<div class="h-full w-14 bg-surface-100 group-hover:bg-[#E5FCF6] dark:bg-dark-600 dark:group-hover:bg-dark-600">
 							<Checkbox
 								:pt="{ box: '!border-surface-400' }"
 								:pt-options="{ mergeProps: true }"
-								class="!absolute left-5"
+								class="mt-6"
 								size="large"
 							/>
+						</div>
+						<div class="h-full w-64 p-6 text-left">
 							<p class="font-bold">Software probe</p>
 							<p class="mt-2">Docker container that runs on your hardware.</p>
 							<nuxt-icon class="mt-2 inline-block text-6xl text-[#099CEC]" name="docker"/>
 						</div>
 					</button>
-					<button class="relative overflow-hidden rounded-xl border bg-surface-100 hover:border-[#17d4a7] hover:bg-[#E5FCF6]" @click="() => { probeType = 'hardware'; activateCallback('3'); }">
-						<div class="ml-14 h-full w-72 bg-surface-0 p-6 text-left">
+					<button class="group relative flex flex-row overflow-hidden rounded-xl border hover:border-[#17d4a7] dark:bg-dark-900" @click="() => { probeType = 'software'; activateCallback('1'); }">
+						<div class="h-full w-14 bg-surface-100 group-hover:bg-[#E5FCF6] dark:bg-dark-600 dark:group-hover:bg-dark-600">
 							<Checkbox
 								:pt="{ box: '!border-surface-400' }"
 								:pt-options="{ mergeProps: true }"
-								class="!absolute left-5"
+								class="mt-6"
 								size="large"
 							/>
+						</div>
+						<div class="h-full w-64 p-6 text-left">
 							<p class="font-bold">Hardware probe</p>
 							<p class="mt-2">Physical mini computer connected to your network.</p>
 							<img class="mt-4 w-14" src="~/assets/images/hw-probe-small.png" alt="Hardware probe">
@@ -138,7 +142,7 @@
 				</div>
 				<ProbeAdoptedContent v-else-if="isSuccess" :probes="newProbes" @cancel="$emit('cancel')"/>
 				<div v-else class="p-5">
-					<div class="rounded-xl bg-[#FFF5F5] px-24 py-6 text-center">
+					<div class="rounded-xl bg-[#FFF5F5] px-24 py-6 text-center dark:bg-red-400/10">
 						<p class="flex items-center justify-center text-center text-lg font-bold">
 							<i class="pi pi-times-circle mr-2 text-[#E24C4C]"/>
 							Adoption failed

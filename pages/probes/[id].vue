@@ -52,7 +52,7 @@
 					</span>
 				</div>
 
-				<div v-if="probeDetails" class="flex items-center gap-2">
+				<div v-if="probeDetails && probeDetails.altIps" class="flex items-center gap-2">
 					<span>Alternative IPs:</span>
 
 					<span
@@ -65,7 +65,7 @@
 					</span>
 				</div>
 
-				<span class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900">
+				<span v-if="(probeDetails?.altIps?.length || 0) > 1" class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900">
 					Show more
 				</span>
 			</div>

@@ -126,8 +126,8 @@
 					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="searchNewProbes(activateCallback)"/>
 				</div>
 			</StepPanel>
-			<StepPanel value="2">
-				<div v-if="!isSuccess" class="px-5 py-7">
+			<StepPanel v-slot="{ activateCallback }" value="2">
+				<div v-if="!isSuccess && !isFailed" class="px-5 py-7">
 					<div class="rounded-xl bg-surface-50 p-7 text-center dark:bg-dark-600">
 						<p class="text-lg font-bold">Waiting for the probe to connect...</p>
 						<p class="mt-2">This shouldn't take more than a few seconds.</p>
@@ -136,7 +136,17 @@
 						</div>
 					</div>
 				</div>
-				<ProbeAdoptedContent v-else :probes="newProbes" @cancel="$emit('cancel')"/>
+				<ProbeAdoptedContent v-else-if="isSuccess" :probes="newProbes" @cancel="$emit('cancel')"/>
+				<div v-else class="p-5">
+					<div class="rounded-xl bg-[#FFF5F5] px-24 py-6 text-center">
+						<p class="flex items-center justify-center text-center text-lg font-bold">
+							<i class="pi pi-times-circle mr-2 text-[#E24C4C]"/>
+							Adoption failed
+						</p>
+						<p class="mt-4">We haven't detected any new probes under your account. If your probe is up and running, please try manual adoption instead.</p>
+						<Button class="mt-4" label="Adopt the probe manually" severity="contrast" @click="() => { activateCallback('4'); isFailed = false; }"/>
+					</div>
+				</div>
 			</StepPanel>
 			<StepPanel v-slot="{ activateCallback }" value="3">
 				<div class="p-5">
@@ -168,7 +178,7 @@
 						<p v-if="!isIpValid" class="absolute text-red-500">{{ invalidIpMessage }}</p>
 					</div>
 					<div class="mt-6 text-right">
-						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('3')"/>
+						<Button class="mr-2" label="Back" severity="secondary" text @click="probeType === 'software' ? activateCallback('0') : activateCallback('3')"/>
 						<Button label="Send adoption code" :loading="sendAdoptionCodeLoading" :disabled="!ip.length" @click="sendAdoptionCode(activateCallback)"/>
 					</div>
 				</div>
@@ -283,7 +293,7 @@
 						return;
 					}
 
-					if (Date.now() - startTime > 10_000) {
+					if (Date.now() - startTime > 3_000) {
 						newProbesNotFound();
 						resolve();
 						return;
@@ -315,7 +325,10 @@
 	};
 
 	const newProbesNotFound = () => {
-		console.log('newProbesNotFound');
+		isFailed.value = true;
+		const wrapper = stepPanels.value.$el;
+		const currentChild = wrapper.children[Number(activeStep.value)];
+		smoothResize(wrapper, currentChild, currentChild);
 	};
 
 	// STEP 4
@@ -360,6 +373,7 @@
 	const invalidCodeMessage = ref('');
 	const newProbes = ref<Probe[]>([]);
 	const isSuccess = ref(false);
+	const isFailed = ref(false);
 
 	const resetIsCodeValid = () => {
 		isCodeValid.value = true;

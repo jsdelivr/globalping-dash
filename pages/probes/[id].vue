@@ -83,12 +83,12 @@
 								<div class="flex w-1/2 flex-col rounded-xl border border-surface-300 bg-white">
 									<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">Location</h3>
 
-									<div class="flex flex-col gap-3 p-6">
+									<div class="flex grow flex-col gap-3 p-6">
 										<p class="text-sm leading-[100%] text-bluegray-600">
 											City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
 										</p>
 
-										<div class="relative h-[197px] w-full overflow-hidden rounded-md bg-surface-200">
+										<div class="relative w-full grow overflow-hidden rounded-md bg-surface-200">
 											<div id="gp-map" class="size-full rounded-md"/>
 
 											<span

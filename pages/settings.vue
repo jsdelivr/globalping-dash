@@ -57,6 +57,20 @@
 					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
 					<InputText id="userType" v-model="user.user_type" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
+
+				<label for="adoption-token" class="mt-6 block font-bold">Adoption Token</label>
+				<div class="relative mt-2">
+					<Button
+						severity="contrast"
+						text
+						label="Regenerate"
+						:icon="loadingIconId === 3 ? 'pi pi-sync pi-spin' : 'pi pi-sync'"
+						class="!absolute right-8 top-[5px] h-6 bg-transparent !px-1 hover:bg-transparent"
+						@click="regenerateAdoptionToken(3)"
+					/>
+					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
+					<InputText id="adoption-token" v-model="adoptionToken" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
+				</div>
 			</div>
 		</div>
 
@@ -154,6 +168,7 @@
 	const appearance = ref(user.appearance);
 	const email = ref(user.email);
 	const publicProbes = ref(user.public_probes);
+	const adoptionToken = ref(user.adoption_token);
 
 	const themeOptions = [
 		{ name: 'Auto', value: null, icon: 'pi pi-cog' },
@@ -174,6 +189,7 @@
 				appearance: appearance.value,
 				email: email.value,
 				public_probes: publicProbes.value,
+				...user.adoption_token !== adoptionToken.value ? { adoption_token: adoptionToken.value } : {},
 			}));
 
 			lastSavedAppearance = appearance.value;
@@ -196,9 +212,9 @@
 	// SYNC WITH GITHUB
 
 	const loadingIconId = ref<number | null>(null);
-	const syncFromGithub = async (id: number) => {
+	const syncFromGithub = async (iconId: number) => {
 		try {
-			loadingIconId.value = id;
+			loadingIconId.value = iconId;
 
 			await $directus.request(updateMe({
 				first_name: firstName.value,
@@ -219,6 +235,21 @@
 			await auth.refresh();
 
 			sendToast('success', 'Synced', 'GitHub data synced');
+		} catch (e) {
+			sendErrorToast(e);
+		}
+
+		loadingIconId.value = null;
+	};
+
+	// REGENERATE ADOPTION TOKEN
+
+	const regenerateAdoptionToken = async (iconId: number) => {
+		try {
+			loadingIconId.value = iconId;
+
+			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/bytes' }));
+			adoptionToken.value = token;
 		} catch (e) {
 			sendErrorToast(e);
 		}

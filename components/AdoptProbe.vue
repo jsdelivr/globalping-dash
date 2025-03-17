@@ -272,7 +272,7 @@
 		[ 'docker pull globalping/globalping-probe' ],
 		[ 'docker stop globalping-probe' ],
 		[ 'docker rm globalping-probe' ],
-		[ `docker run -d --log-driver local --network host --restart=always --name globalping-probe -e ADOPTION_TOKEN=${user.adoption_token} globalping/globalping-probe` ],
+		[ `docker run -d --log-driver local --network host --restart=always --name globalping-probe -e GP_ADOPTION_TOKEN=${user.adoption_token} globalping/globalping-probe` ],
 	];
 
 	// STEP 2

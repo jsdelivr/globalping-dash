@@ -39,7 +39,7 @@ export default {
 			{ 'border-red-500 dark:border-red-400': props.invalid },
 
 			// States
-			{ 'peer-hover:bg-surface-400 dark:peer-hover:bg-dark-700': !(props.modelValue === props.trueValue) && !props.disabled && !props.invalid },
+			{ 'peer-hover:bg-surface-400 dark:peer-hover:bg-dark-700 dark:peer-hover:border-dark-950': !(props.modelValue === props.trueValue) && !props.disabled && !props.invalid },
 			{ 'peer-hover:bg-primary-hover': props.modelValue === props.trueValue && !props.disabled && !props.invalid },
 			'peer-focus-visible:ring-1 peer-focus-visible:ring-primary-500 dark:peer-focus-visible:ring-primary-400',
 

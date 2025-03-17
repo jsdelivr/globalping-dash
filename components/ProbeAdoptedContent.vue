@@ -31,10 +31,6 @@
 	import CountryFlag from 'vue-country-flag-next';
 	import { useAuth } from '~/store/auth';
 
-	useHead({
-		title: 'Credits -',
-	});
-
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
 	const user = auth.getUser;

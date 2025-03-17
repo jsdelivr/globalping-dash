@@ -189,6 +189,7 @@
 				appearance: appearance.value,
 				email: email.value,
 				public_probes: publicProbes.value,
+				// Adoption token values are generated on BE and stored there for a limited time. So we are sending 'adoption_token' only if it is really changed.
 				...user.adoption_token !== adoptionToken.value ? { adoption_token: adoptionToken.value } : {},
 			}));
 

@@ -147,7 +147,10 @@
 							<i class="pi pi-times-circle mr-2 text-[#E24C4C]"/>
 							Adoption failed
 						</p>
-						<p class="mt-4">We haven't detected any new probes under your account. If your probe is up and running, please try manual adoption instead.</p>
+						<p class="mt-4">
+							We haven't detected any new probes under your account.<br>
+							If your probe is up and running, please try manual adoption instead.
+						</p>
 						<Button class="mt-4" label="Adopt the probe manually" severity="contrast" @click="() => { activateCallback('4'); isFailed = false; }"/>
 					</div>
 				</div>
@@ -155,7 +158,10 @@
 			<StepPanel v-slot="{ activateCallback }" value="3">
 				<div class="p-5">
 					<p class="mb-4 mt-2 text-lg font-bold">Set up your probe</p>
-					<p class="mt-4">Make sure your probe is running, connected to the network, and the green LED is on.</p>
+					<p class="mt-4">
+						Make sure your probe is running, connected to the network, and the green LED is on.
+						The probe usually takes about 4 minutes to start after being turned on.
+					</p>
 				</div>
 				<div class="p-5 pt-2 text-right">
 					<NuxtLink to="https://github.com/jsdelivr/globalping-probe#hardware-probes" tabindex="-1" target="_blank" class="float-left">

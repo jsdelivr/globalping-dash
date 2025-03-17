@@ -1,8 +1,8 @@
 <template>
 	<Stepper v-model:value="activeStep" linear @update:value="onChangeStep">
 		<div v-if="Number(activeStep) === 0" class="border-t bg-surface-50 p-7 text-center dark:bg-dark-600">
-			<h3 class="text-lg font-bold">Select the type of probe</h3>
-			<p>Please select the probe type first before proceeding</p>
+			<h3 class="text-lg font-bold">Select the probe type</h3>
+			<p>Please select the type of your probe before proceeding</p>
 		</div>
 		<StepList v-else-if="Number(activeStep) > 0 && Number(activeStep) <= 2">
 			<Step v-slot="{ active }" as-child value="0">
@@ -83,9 +83,9 @@
 								size="large"
 							/>
 						</div>
-						<div class="w-64 p-6 text-left">
+						<div class="w-80 p-6 text-left">
 							<p class="font-bold">Software probe</p>
-							<p class="mt-2">Docker container that runs on your hardware.</p>
+							<p class="mt-2">A Docker container that runs on your own hardware.</p>
 							<nuxt-icon class="mt-2 inline-block text-6xl text-[#099CEC]" name="docker"/>
 						</div>
 					</button>
@@ -98,9 +98,9 @@
 								size="large"
 							/>
 						</div>
-						<div class="w-64 p-6 text-left">
+						<div class="w-80 p-6 text-left">
 							<p class="font-bold">Hardware probe</p>
-							<p class="mt-2">Physical mini computer connected to your network.</p>
+							<p class="mt-2">A dedicated device that you received from us or one of our partners.</p>
 							<img class="mt-4 w-14" src="~/assets/images/hw-probe-small.png" alt="Hardware probe">
 						</div>
 					</button>
@@ -115,13 +115,13 @@
 					<TabPanels ref="tabPanels" class="box-content overflow-hidden transition-[height] duration-500">
 						<TabPanel value="0">
 							<!-- inline-block is required so mt-2 is not collapsed -->
-							<p class="mb-4 mt-2 inline-block text-lg font-bold">Set up your probe</p>
-							<p>First, update your container by running the following commands:</p>
-							<CodeBlock :commands="setUpCommands" class="mt-4"/>
+							<p class="mb-4 mt-2 inline-block text-lg font-bold">Configure the probe</p>
+							<p>Recreate the container by running the following commands. The new container will be automatically bound to your account.</p>
+							<StartProbeCommands :adopt="true" :recreate="true"/>
 						</TabPanel>
 						<TabPanel value="1">
 							<p class="mb-4 mt-2 inline-block text-lg font-bold">Join the network</p>
-							<StartProbe/>
+							<StartProbe :adopt="true"/>
 						</TabPanel>
 					</TabPanels>
 				</Tabs>
@@ -267,13 +267,6 @@
 		const newChild = wrapper.children[Number(i)];
 		smoothResize(wrapper, currentChild, newChild);
 	};
-
-	const setUpCommands = [
-		[ 'docker pull globalping/globalping-probe' ],
-		[ 'docker stop globalping-probe' ],
-		[ 'docker rm globalping-probe' ],
-		[ `docker run -d --log-driver local --network host --restart=always --name globalping-probe -e GP_ADOPTION_TOKEN=${user.adoption_token} globalping/globalping-probe` ],
-	];
 
 	// STEP 2
 

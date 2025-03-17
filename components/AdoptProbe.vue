@@ -74,7 +74,7 @@
 		<StepPanels ref="stepPanels" class="box-content overflow-hidden transition-[height] duration-500">
 			<StepPanel v-slot="{ activateCallback }" value="0">
 				<div class="flex justify-evenly gap-4 p-5 pt-7 max-sm:flex-col">
-					<button class="group relative flex flex-row items-stretch overflow-hidden rounded-xl border hover:border-[#17d4a7] dark:bg-dark-900" @click="() => { probeType = 'software'; activateCallback('1'); }">
+					<button class="group relative flex flex-row items-stretch overflow-hidden rounded-xl border hover:border-[#17d4a7] dark:bg-dark-900" @click="() => { probeType = 'software'; activateCallback('1'); fixTabListUnderline(); }">
 						<div class="w-14 bg-surface-100 group-hover:bg-[#E5FCF6] dark:bg-dark-600 dark:group-hover:bg-dark-600">
 							<Checkbox
 								:pt="{ box: '!border-surface-400' }"
@@ -253,8 +253,10 @@
 
 	// STEP 1
 
+	const fixTabListUnderline = () => { setTimeout(() => { activeTab.value = '0'; }); };
+
 	let prevTab = '0';
-	const activeTab = ref('0');
+	const activeTab = ref('1');
 	const tabPanels = ref();
 
 	watchEffect(() => { prevTab = activeTab.value; });

@@ -1,6 +1,6 @@
 <template>
 	<div :class="props.class">
-		<div class="mt-4 flex items-center">
+		<div class="mt-4 flex flex-wrap items-center gap-4">
 			<SelectButton
 				v-model="platform"
 				:options="platformOptions"

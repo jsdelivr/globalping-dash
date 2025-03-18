@@ -5,7 +5,7 @@
 				<i class="pi pi-verified mr-2 text-green-600"/>
 				Congratulations!
 			</p>
-			<p class="mt-4">You are now the owner of the following probe:</p>
+			<p class="mt-4">You are now the owner of the following {{ pluralize('probe', probes.length) }}:</p>
 			<div v-for="probe in probes" :key="probe.id" class="mt-4 rounded-xl border bg-surface-0 p-3 dark:border-dark-400 dark:bg-dark-800">
 				<p class="flex items-center justify-center font-bold"><CountryFlag :country="probe.country" size="small"/><span class="ml-2">{{ probe.city }}</span></p>
 				<p>{{ probe.network }}</p>
@@ -26,8 +26,7 @@
 		</div>
 
 		<div class="mt-4 text-center">
-			<p>The probe will generate credits that you can use to run more tests.<br>We also recommend you verify and correct the probe's location if needed.</p>
-			<p class="mt-3">The probe can be found on the <NuxtLink rel="noopener" target="_blank" class="font-bold" to="/probes">adopted probes</NuxtLink> page.</p>
+			<p>Each probe generates credits that you can use to run more tests.<br>We also recommend you verify and correct the probe's location if needed.</p>
 		</div>
 		<div class="mt-7 flex justify-end">
 			<Button label="Finish" @click="$emit('cancel')"/>
@@ -39,6 +38,7 @@
 	import { updateMe } from '@directus/sdk';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useAuth } from '~/store/auth';
+	import { pluralize } from '~/utils/pluralize';
 
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();

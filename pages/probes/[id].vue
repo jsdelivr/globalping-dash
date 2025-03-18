@@ -11,7 +11,7 @@
 			<div v-if="probeDetails" class="flex items-center gap-4">
 				<div
 					v-if="probeDetails"
-					class="flex cursor-pointer items-center gap-3"
+					class="relative flex cursor-pointer items-center gap-3"
 					@click="enableNameEditing"
 				>
 					<img class="h-10" src="~/assets/icons/gp-white.svg" alt="Globalping White logo">
@@ -20,7 +20,7 @@
 						v-if="isEditingName"
 						ref="inputNameRef"
 						v-model="editedName"
-						class="rounded-xl border border-gray-300 px-2 py-1 text-2xl font-bold focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)]"
+						class="rounded-xl border border-gray-300 px-2 py-1 pr-16 text-xl font-bold focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)]"
 						@keyup.enter="saveName"
 						@blur="cancelNameEditing"
 					>
@@ -31,13 +31,13 @@
 
 					<button
 						v-if="isEditingName && editedName !== originalName"
-						class="rounded bg-[var(--p-primary-color)] px-2 py-1 text-sm text-white"
+						class="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-[var(--p-primary-color)] px-2 py-1 text-sm font-bold text-white"
 						@click.stop="saveName"
 					>
 						Save
 					</button>
 
-					<i v-else class="pi pi-pencil text-lg"/>
+					<i v-if="!isEditingName" class="pi pi-pencil text-lg"/>
 				</div>
 
 				<div class="flex h-8 items-center gap-1 rounded-full border border-surface-300">

@@ -9,12 +9,35 @@
 			</div>
 
 			<div v-if="probeDetails" class="flex items-center gap-4">
-				<div class="flex items-center gap-3">
+				<div
+					v-if="probeDetails"
+					class="flex cursor-pointer items-center gap-3"
+					@click="enableNameEditing"
+				>
 					<img class="h-10" src="~/assets/icons/gp-white.svg" alt="Globalping White logo">
 
-					<span class="text-2xl font-bold">{{ probeDetails.city }} {{ probeDetails.country }}{{ probeDetails.asn }}</span>
+					<input
+						v-if="isEditingName"
+						ref="inputNameRef"
+						v-model="editedName"
+						class="rounded-xl border border-gray-300 px-2 py-1 text-2xl font-bold focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)]"
+						@keyup.enter="saveName"
+						@blur="cancelNameEditing"
+					>
 
-					<i class="pi pi-pencil text-lg"/>
+					<span v-else class="text-2xl font-bold">
+						{{ name }}
+					</span>
+
+					<button
+						v-if="isEditingName && editedName !== originalName"
+						class="rounded bg-[var(--p-primary-color)] px-2 py-1 text-sm text-white"
+						@click.stop="saveName"
+					>
+						Save
+					</button>
+
+					<i v-else class="pi pi-pencil text-lg"/>
 				</div>
 
 				<div class="flex h-8 items-center gap-1 rounded-full border border-surface-300">
@@ -283,9 +306,6 @@
 	const loadProbeData = async (id: string) => {
 		try {
 			probeDetails.value = await $directus.request(readItem('gp_adopted_probes', id));
-
-			console.log('+++++ probeDetails.value', probeDetails.value);
-			console.log('_________________________');
 		} catch (e) {
 			const response = (e as { response?: Response } | undefined)?.response;
 
@@ -315,4 +335,55 @@
 	};
 
 	loadProbeData(probeId);
+
+	// HANDLE RPOBE NAME
+	const isEditingName = ref(false);
+	const editedName = ref('');
+	const originalName = ref('');
+	const inputNameRef = ref<HTMLInputElement | null>(null);
+
+	const name = computed(() => {
+		if (probeDetails.value) {
+			if (probeDetails.value.name) {
+				return probeDetails.value.name;
+			}
+
+			return `${probeDetails.value.city} ${probeDetails.value.country} ${probeDetails.value.asn}`;
+		}
+
+		return '';
+	});
+
+	watch(name, (newName) => {
+		originalName.value = newName;
+		editedName.value = newName;
+	}, { immediate: true });
+
+	const enableNameEditing = async () => {
+		isEditingName.value = true;
+
+		await nextTick();
+
+		if (inputNameRef.value) {
+			inputNameRef.value.focus();
+			inputNameRef.value.select();
+		}
+	};
+
+	const cancelNameEditing = () => {
+		editedName.value = originalName.value;
+		isEditingName.value = false;
+	};
+
+	const saveName = () => {
+		if (!probeDetails.value) { return; }
+
+		originalName.value = editedName.value;
+		isEditingName.value = false;
+
+		console.log('+++++ editedName.value', editedName.value);
+		console.log('___________________________');
+
+		// TODO: save the data on the server side
+	};
 </script>

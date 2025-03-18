@@ -21,7 +21,7 @@
 						ref="inputNameRef"
 						v-model="editedName"
 						class="rounded-xl border border-gray-300 px-2 py-1 pr-16 text-xl font-bold focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)]"
-						@keyup.enter="saveName"
+						@keyup.enter="updateProbeName"
 						@blur="cancelNameEditing"
 					>
 
@@ -32,7 +32,7 @@
 					<button
 						v-if="isEditingName && editedName !== originalName"
 						class="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-[var(--p-primary-color)] px-2 py-1 text-sm font-bold text-white"
-						@click.stop="saveName"
+						@click.stop="updateProbeName"
 					>
 						Save
 					</button>
@@ -262,7 +262,7 @@
 </template>
 
 <script setup lang="ts">
-	import { readItem, deleteItem } from '@directus/sdk';
+	import { readItem, deleteItem, updateItem } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useGoogleMaps } from '~/composables/maps';
@@ -375,15 +375,20 @@
 		isEditingName.value = false;
 	};
 
-	const saveName = () => {
-		if (!probeDetails.value) { return; }
+	const updateProbeName = async () => {
+		if (!probeDetails.value || editedName.value === originalName.value) { return; }
 
-		originalName.value = editedName.value;
-		isEditingName.value = false;
+		try {
+			await $directus.request(updateItem('gp_adopted_probes', probeDetails.value.id, { name: editedName.value }));
 
-		console.log('+++++ editedName.value', editedName.value);
-		console.log('___________________________');
+			sendToast('success', 'Done', 'The probe has been successfully updated');
+			emit('save');
 
-		// TODO: save the data on the server side
+			originalName.value = editedName.value;
+			isEditingName.value = false;
+			probeDetails.value.name = editedName.value;
+		} catch (e) {
+			sendErrorToast(e);
+		}
 	};
 </script>

@@ -151,7 +151,11 @@
 							We haven't detected any new probes under your account.<br>
 							If your probe is up and running, please try manual adoption instead.
 						</p>
-						<Button class="mt-4" label="Adopt the probe manually" severity="contrast" @click="() => { activateCallback('4'); isFailed = false; }"/>
+
+						<div class="mt-4 flex flex-wrap justify-center gap-2">
+							<Button label="Adopt the probe manually" severity="contrast" @click="() => { activateCallback('4'); isFailed = false; }"/>
+							<Button label="Retry automated adoption" severity="secondary" @click="() => { activateCallback('1'); isFailed = false; }"/>
+						</div>
 					</div>
 				</div>
 			</StepPanel>
@@ -163,12 +167,15 @@
 						The probe usually takes about 4 minutes to start after being turned on.
 					</p>
 				</div>
-				<div class="p-5 pt-2 text-right">
-					<NuxtLink to="https://github.com/jsdelivr/globalping-probe#hardware-probes" tabindex="-1" target="_blank" class="float-left">
-						<Button label="Learn more about hardware probes" severity="secondary" icon="pi pi-info-circle" class="mr-4"/>
+				<div class="flex flex-wrap justify-end gap-8 p-5 pt-2 text-right">
+					<NuxtLink to="https://github.com/jsdelivr/globalping-probe#hardware-probes" tabindex="-1" target="_blank" class="mr-auto max-sm:w-full">
+						<Button label="Learn more about hardware probes" severity="secondary" icon="pi pi-info-circle" class="mr-4 w-full"/>
 					</NuxtLink>
-					<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('0')"/>
-					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="activateCallback('4')"/>
+
+					<div>
+						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('0')"/>
+						<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="activateCallback('4')"/>
+					</div>
 				</div>
 			</StepPanel>
 			<StepPanel v-slot="{ activateCallback }" value="4">

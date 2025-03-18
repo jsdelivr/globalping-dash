@@ -13,7 +13,7 @@
 			</div>
 			<div class="h-px w-full bg-surface-300 dark:bg-dark-400" :class="{'!bg-primary': highlighted || isSuccess}"/>
 		</div>
-		<div class="mt-2 text-center text-bluegray-500 dark:text-dark-0" :class="{'font-bold text-bluegray-700 dark:text-surface-0': active && !isSuccess}">{{ headerText }}</div>
+		<div class="mx-1 mt-2 text-center text-bluegray-500 dark:text-dark-0" :class="{'font-bold text-bluegray-700 dark:text-surface-0': active && !isSuccess}">{{ headerText }}</div>
 	</div>
 </template>
 

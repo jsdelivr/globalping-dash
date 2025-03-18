@@ -370,13 +370,23 @@
 		}
 	};
 
-	const cancelNameEditing = () => {
+	const cancelNameEditing = (event: FocusEvent) => {
+		const target = event.relatedTarget as HTMLElement | null;
+
+		if (target?.tagName === 'BUTTON') { return; }
+
 		editedName.value = originalName.value;
 		isEditingName.value = false;
 	};
 
 	const updateProbeName = async () => {
-		if (!probeDetails.value || editedName.value === originalName.value) { return; }
+		if (!probeDetails.value) { return; }
+
+		if (editedName.value === originalName.value) {
+			isEditingName.value = false;
+
+			return;
+		}
 
 		try {
 			await $directus.request(updateItem('gp_adopted_probes', probeDetails.value.id, { name: editedName.value }));

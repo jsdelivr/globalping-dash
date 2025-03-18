@@ -12,7 +12,7 @@
 				<div
 					v-if="probeDetails"
 					class="relative flex cursor-pointer items-center gap-3"
-					@click="enableNameEditing"
+					@click="!isEditingName && enableNameEditing()"
 				>
 					<img class="h-10" src="~/assets/icons/gp-white.svg" alt="Globalping White logo">
 

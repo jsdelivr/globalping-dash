@@ -11,14 +11,23 @@
 				<p>{{ probe.network }}</p>
 			</div>
 		</div>
+
 		<div v-if="!user.public_probes" class="mt-4 rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
 			<ToggleSwitch v-model="publicProbes" :input-id="`public-probes-${getCurrentInstance()?.uid}`" @update:model-value="updatePublicProbes"/>
 			<label :for="`public-probes-${getCurrentInstance()?.uid}`" class="block cursor-pointer font-bold">Make your probes public</label>
-			<p class="mt-3 text-xs">If enabled, your probes will be automatically tagged by <Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.github_username}`"/>, allowing you to select them in measurements. A list of your active probes will also be available at <NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${user.github_username}`" target="_blank" rel="noopener">https://globalping.io/users/{{ user.github_username }}</NuxtLink> (once this feature is live).</p>
+			<p class="mt-3 text-xs">
+				When enabled, your probes are automatically tagged by
+				<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.github_username}`"/>,
+				allowing you to select them in measurements.<br>
+				A list of your active probes will also be available at
+				<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${user.github_username}`" target="_blank" rel="noopener">https://globalping.io/users/{{ user.github_username }}</NuxtLink>
+				once this feature is live.
+			</p>
 		</div>
+
 		<div class="mt-4 text-center">
-			<p>The probe will generate credits that you can use to run more tests. We also recommend you verify and correct the probe's location.</p>
-			<p class="mt-3">Probe can be found on the <NuxtLink rel="noopener" target="_blank" class="font-bold" to="/probes">adopted probes</NuxtLink> page.</p>
+			<p>The probe will generate credits that you can use to run more tests.<br>We also recommend you verify and correct the probe's location if needed.</p>
+			<p class="mt-3">The probe can be found on the <NuxtLink rel="noopener" target="_blank" class="font-bold" to="/probes">adopted probes</NuxtLink> page.</p>
 		</div>
 		<div class="mt-7 flex justify-end">
 			<Button label="Finish" @click="$emit('cancel')"/>

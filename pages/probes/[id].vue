@@ -121,19 +121,41 @@
 												{{ probeDetails.network }} {{ probeDetails.asn }}
 											</span>
 
+											<!-- here -->
 											<div
 												v-if="probeDetails"
-												class="absolute bottom-9 left-4 flex h-[38px] overflow-hidden rounded-md border border-[#D1D5DB]"
+												class="absolute bottom-9 left-4 flex h-[38px] w-[86%] overflow-hidden rounded-md border border-[#D1D5DB]"
+												@click="!isEditingCity && enableCityEditing()"
 											>
 												<span class="flex w-[38px] items-center justify-center border-r border-r-[#D1D5DB] bg-[#E5E7EB]">
 													<CountryFlag :country="probeDetails.country" size="small"/>
 												</span>
 
-												<span class="relative flex w-[404px] items-center bg-white px-3 text-bluegray-900">
-													<span>{{ probeDetails.city }}</span>
+												<input
+													v-if="true"
+													ref="inputCityRef"
+													v-model="editedCity"
+													class="flex w-full border-0 border-gray-300 pl-3 pr-16 text-bluegray-900 shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0"
+													@keyup.enter="updateProbeCity"
+													@blur="cancelCityEditing"
+												>
 
-													<i class="pi pi-pencil text-md absolute right-3 top-3"/>
+												<span
+													v-else
+													class="flex w-[86%] items-center bg-white px-3 text-bluegray-900"
+												>
+													{{ city }}
 												</span>
+
+												<button
+													v-if="isEditingCity && editedCity !== originalCity"
+													class="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-[var(--p-primary-color)] px-2 py-1 text-sm font-bold text-white"
+													@click.stop="updateProbeCity"
+												>
+													Save
+												</button>
+
+												<i v-if="!isEditingCity" class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2"/>
 											</div>
 										</div>
 									</div>
@@ -336,7 +358,7 @@
 
 	loadProbeData(probeId);
 
-	// HANDLE RPOBE NAME
+	// HANDLE PROBE NAME
 	const isEditingName = ref(false);
 	const editedName = ref('');
 	const originalName = ref('');
@@ -397,6 +419,64 @@
 			originalName.value = editedName.value;
 			isEditingName.value = false;
 			probeDetails.value.name = editedName.value;
+		} catch (e) {
+			sendErrorToast(e);
+		}
+	};
+
+	// HANDLE PROBE CITY
+	const isEditingCity = ref(false);
+	const editedCity = ref('');
+	const originalCity = ref('');
+	const inputCityRef = ref<HTMLInputElement | null>(null);
+
+	const city = computed(() => {
+		return probeDetails.value ? probeDetails.value.city : '';
+	});
+
+	watch(city, (newCity) => {
+		originalCity.value = newCity;
+		editedCity.value = newCity;
+	}, { immediate: true });
+
+	const enableCityEditing = async () => {
+		isEditingCity.value = true;
+
+		await nextTick();
+
+		if (inputCityRef.value) {
+			inputCityRef.value.focus();
+			inputCityRef.value.select();
+		}
+	};
+
+	const cancelCityEditing = (event: FocusEvent) => {
+		const target = event.relatedTarget as HTMLElement | null;
+
+		if (target?.tagName === 'BUTTON') { return; }
+
+		editedCity.value = originalCity.value;
+		isEditingCity.value = false;
+	};
+
+	const updateProbeCity = async () => {
+		if (!probeDetails.value) { return; }
+
+		if (editedCity.value === originalCity.value) {
+			isEditingCity.value = false;
+
+			return;
+		}
+
+		try {
+			await $directus.request(updateItem('gp_adopted_probes', probeDetails.value.id, { city: editedCity.value }));
+
+			sendToast('success', 'Done', 'The probe has been successfully updated');
+			emit('save');
+
+			originalCity.value = editedCity.value;
+			isEditingCity.value = false;
+			probeDetails.value.name = editedCity.value;
 		} catch (e) {
 			sendErrorToast(e);
 		}

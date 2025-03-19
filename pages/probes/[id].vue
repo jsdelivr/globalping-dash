@@ -127,22 +127,22 @@
 												class="absolute bottom-9 left-4 flex h-[38px] w-[86%] overflow-hidden rounded-md border border-[#D1D5DB]"
 												@click="!isEditingCity && enableCityEditing()"
 											>
-												<span class="flex w-[38px] items-center justify-center border-r border-r-[#D1D5DB] bg-[#E5E7EB]">
+												<span class="flex w-[38px] shrink-0 items-center justify-center border-r border-r-[#D1D5DB] bg-[#E5E7EB]">
 													<CountryFlag :country="probeDetails.country" size="small"/>
 												</span>
 
 												<input
-													v-if="true"
+													v-if="isEditingCity"
 													ref="inputCityRef"
 													v-model="editedCity"
-													class="flex w-full border-0 border-gray-300 pl-3 pr-16 text-bluegray-900 shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0"
+													class="flex w-full border-0 pl-3 pr-16 text-bluegray-900 shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0"
 													@keyup.enter="updateProbeCity"
 													@blur="cancelCityEditing"
 												>
 
 												<span
 													v-else
-													class="flex w-[86%] items-center bg-white px-3 text-bluegray-900"
+													class="flex w-full items-center bg-white px-3 text-bluegray-900"
 												>
 													{{ city }}
 												</span>

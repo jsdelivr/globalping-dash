@@ -66,14 +66,19 @@
 				</div>
 			</div>
 
-			<div v-if="probeDetails" class="flex flex-wrap items-center gap-2 rounded-xl bg-surface-100 p-4">
-				<span class="whitespace-nowrap">Primary IP:</span>
+			<div
+				v-if="probeDetails"
+				ref="ipsContentRef"
+				class="flex flex-wrap items-start gap-2 overflow-hidden rounded-xl bg-surface-100 p-4 transition-[height] duration-500 ease-in-out"
+				:style="{ height: ipsContentHeight }"
+			>
+				<span class="flex h-[38px] items-center whitespace-nowrap">Primary IP:</span>
 				<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800">
 					{{ probeDetails.ip }}
 					<CopyButton :content="probeDetails.ip" class="!top-[7px] size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
 				</span>
 
-				<span class="whitespace-nowrap">Alternative IPs:</span>
+				<span class="flex h-[38px] items-center whitespace-nowrap">Alternative IPs:</span>
 				<span
 					v-for="(altIp, index) in limitIpsToShow()"
 					:key="index"
@@ -484,10 +489,15 @@
 
 	// ALT IPS
 	const showMoreIps = ref(false);
+	const ipsContentRef = ref<HTMLDivElement | null>(null);
+	const ipsContentHeight = ref('auto');
+	let initialIpsContentHeight = 'auto';
 	const testIPs = [ '2800:2502:7:2a2f:1::c423:60a', '2800:2502:7:2a2f:1::c423:70b', '2800:2502:7:2a2f:1::c423:80c', '2800:2502:7:2a2f:1::c423:90d' ];
 
 	const showHideMoreIps = () => {
 		showMoreIps.value = !showMoreIps.value;
+
+		nextTick(updateIpsContentHeight);
 	};
 
 	const limitIpsToShow = () => {
@@ -499,4 +509,23 @@
 		// return probeDetails?.value?.altIps.slice(0, 1);
 		return testIPs.slice(0, 1);
 	};
+
+	const updateIpsContentHeight = () => {
+		if (!ipsContentRef.value) { return; }
+
+		if (showMoreIps.value) {
+			ipsContentHeight.value = `${ipsContentRef.value.scrollHeight}px`;
+		} else {
+			ipsContentHeight.value = initialIpsContentHeight;
+		}
+	};
+
+	watch(probeDetails, async () => {
+		await nextTick();
+
+		if (ipsContentRef.value) {
+			initialIpsContentHeight = `${ipsContentRef.value.scrollHeight}px`;
+			ipsContentHeight.value = initialIpsContentHeight;
+		}
+	});
 </script>

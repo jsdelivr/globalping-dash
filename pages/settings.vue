@@ -8,10 +8,10 @@
 				<h5 class="text-lg font-bold">Account details</h5>
 			</div>
 			<div class="grow sm:w-3/5">
-				<label for="firstName" class="block font-bold">First Name</label>
+				<label for="firstName" class="block font-bold">First name</label>
 				<InputText id="firstName" v-model="firstName" class="mt-2 w-full"/>
 
-				<label for="lastName" class="mt-6 block font-bold">Last Name</label>
+				<label for="lastName" class="mt-6 block font-bold">Last name</label>
 				<InputText id="lastName" v-model="lastName" class="mt-2 w-full"/>
 
 				<label for="email" class="mt-6 block font-bold">Email</label>
@@ -58,7 +58,9 @@
 					<InputText id="userType" v-model="user.user_type" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 
-				<label for="adoption-token" class="mt-6 block font-bold">Adoption Token</label>
+				<label for="adoption-token" class="mt-6 flex items-center font-bold">
+					Probe adoption token <i v-tooltip.top="'Allows adopting probes by simply setting an GP_ADOPTION_TOKEN environment variable.'" class="pi pi-info-circle ml-2"/>
+				</label>
 				<div class="relative mt-2">
 					<Button
 						severity="contrast"

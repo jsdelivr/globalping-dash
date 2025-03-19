@@ -76,12 +76,7 @@
 				<div class="flex justify-evenly gap-4 p-5 pt-7 max-sm:flex-col">
 					<button class="group relative flex flex-row items-stretch overflow-hidden rounded-xl border hover:border-[#17d4a7] dark:bg-dark-900" @click="() => { probeType = 'software'; activateCallback('1'); fixTabListUnderline(); }">
 						<div class="w-14 bg-surface-100 group-hover:bg-[#E5FCF6] dark:bg-dark-600 dark:group-hover:bg-dark-600">
-							<Checkbox
-								:pt="{ box: '!border-surface-400' }"
-								:pt-options="{ mergeProps: true }"
-								class="mt-6"
-								size="large"
-							/>
+							<Checkbox class="mt-6" size="large"/>
 						</div>
 						<div class="w-80 p-6 text-left">
 							<p class="font-bold">Software probe</p>
@@ -91,12 +86,7 @@
 					</button>
 					<button class="group relative flex flex-row items-stretch overflow-hidden rounded-xl border hover:border-[#17d4a7] dark:bg-dark-900" @click="() => { probeType = 'software'; activateCallback('3'); }">
 						<div class="w-14 bg-surface-100 group-hover:bg-[#E5FCF6] dark:bg-dark-600 dark:group-hover:bg-dark-600">
-							<Checkbox
-								:pt="{ box: '!border-surface-400' }"
-								:pt-options="{ mergeProps: true }"
-								class="mt-6"
-								size="large"
-							/>
+							<Checkbox class="mt-6" size="large"/>
 						</div>
 						<div class="w-80 p-6 text-left">
 							<p class="font-bold">Hardware probe</p>

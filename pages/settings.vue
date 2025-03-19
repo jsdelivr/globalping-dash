@@ -72,6 +72,9 @@
 					/>
 					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
 					<InputText id="adoption-token" v-model="adoptionToken" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
+					<CopyOnClick :content="adoptionToken">
+						<div class="absolute left-0 top-0 h-full w-[calc(100%-176px)] cursor-pointer"/>
+					</CopyOnClick>
 				</div>
 			</div>
 		</div>

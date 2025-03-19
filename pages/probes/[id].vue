@@ -66,36 +66,31 @@
 				</div>
 			</div>
 
-			<div class="flex items-center justify-start gap-2 rounded-xl bg-surface-100 p-4">
-				<div v-if="probeDetails" class="flex items-center gap-2">
-					<span class="whitespace-nowrap">Primary IP:</span>
-					<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800">
-						{{ probeDetails.ip }}
-						<CopyButton :content="probeDetails.ip" class="!top-[7px] size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
-					</span>
-				</div>
+			<div v-if="probeDetails" class="flex flex-wrap items-center gap-2 rounded-xl bg-surface-100 p-4">
+				<span class="whitespace-nowrap">Primary IP:</span>
+				<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800">
+					{{ probeDetails.ip }}
+					<CopyButton :content="probeDetails.ip" class="!top-[7px] size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
+				</span>
 
-				<div v-if="probeDetails && probeDetails.altIps" class="flex flex-wrap items-center gap-2">
-					<span class="whitespace-nowrap">Alternative IPs:</span>
+				<span class="whitespace-nowrap">Alternative IPs:</span>
+				<span
+					v-for="(altIp, index) in limitIpsToShow()"
+					:key="index"
+					class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800"
+				>
+					{{ altIp }}
+					<CopyButton :content="altIp" class="!top-[7px] mb-px size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
+				</span>
 
-					<span
-						v-for="(altIp, index) in limitIpsToShow()"
-						:key="index"
-						class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800"
-					>
-						{{ altIp }}
-						<CopyButton :content="altIp" class="!top-[7px] mb-px size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
-					</span>
-
-					<!-- v-if="(probeDetails?.altIps?.length || 0) > 1" -->
-					<span
-						v-if="testIPs.length > 1"
-						class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900"
-						@click="showHideMoreIps"
-					>
-						{{ showMoreIps ? 'Show less' : 'Show more' }}
-					</span>
-				</div>
+				<!-- v-if="(probeDetails?.altIps?.length || 0) > 1" -->
+				<span
+					v-if="testIPs.length > 1"
+					class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900"
+					@click="showHideMoreIps"
+				>
+					{{ showMoreIps ? 'Show less' : 'Show more' }}
+				</span>
 			</div>
 
 			<Tabs value="0">

@@ -88,9 +88,8 @@
 					<CopyButton :content="altIp" class="!top-[7px] mb-px size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
 				</span>
 
-				<!-- v-if="(probeDetails?.altIps?.length || 0) > 1" -->
 				<span
-					v-if="testIPs.length > 1"
+					v-if="(probeDetails?.altIps?.length || 0) > 1"
 					class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900"
 					@click="showHideMoreIps"
 				>
@@ -492,7 +491,6 @@
 	const ipsContentRef = ref<HTMLDivElement | null>(null);
 	const ipsContentHeight = ref('auto');
 	let initialIpsContentHeight = 'auto';
-	const testIPs = [ '2800:2502:7:2a2f:1::c423:60a', '2800:2502:7:2a2f:1::c423:70b', '2800:2502:7:2a2f:1::c423:80c', '2800:2502:7:2a2f:1::c423:90d' ];
 
 	const showHideMoreIps = () => {
 		showMoreIps.value = !showMoreIps.value;
@@ -502,12 +500,10 @@
 
 	const limitIpsToShow = () => {
 		if (showMoreIps.value) {
-			// return probeDetails?.value?.altIps;
-			return testIPs;
+			return probeDetails?.value?.altIps;
 		}
 
-		// return probeDetails?.value?.altIps.slice(0, 1);
-		return testIPs.slice(0, 1);
+		return probeDetails?.value?.altIps.slice(0, 1);
 	};
 
 	const updateIpsContentHeight = () => {

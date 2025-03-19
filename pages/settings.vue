@@ -92,7 +92,12 @@
 					</div>
 
 					<div class="flex-1">
-						<label class="cursor-text">When enabled, your probes will be automatically tagged by <Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.github_username}`"/>, allowing you to select them in measurements. A list of your active probes will also be available at <NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${user.github_username}`" target="_blank" rel="noopener">https://globalping.io/users/{{ user.github_username }}</NuxtLink> (once this feature is live).</label>
+						<label class="cursor-text">
+							When enabled, your probes are automatically tagged by
+							<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.github_username}`"/>,
+							allowing you to select them in measurements,
+							and a list of your active probes is also be available at
+							<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${user.github_username}`" target="_blank" rel="noopener">https://globalping.io/users/{{ user.github_username }}</NuxtLink>.</label>
 					</div>
 				</div>
 			</div>

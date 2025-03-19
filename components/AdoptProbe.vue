@@ -132,7 +132,7 @@
 				</div>
 				<ProbeAdoptedContent v-else-if="isSuccess" :probes="newProbes" @cancel="$emit('cancel')"/>
 				<div v-else class="p-5">
-					<div class="rounded-xl bg-[#FFF5F5] px-24 py-6 text-center max-sm:px-4 dark:bg-red-400/10">
+					<div class="rounded-xl bg-red-100/70 px-24 py-6 text-center max-sm:px-4 dark:bg-red-500/20">
 						<p class="flex items-center justify-center text-center text-lg font-bold">
 							<i class="pi pi-times-circle mr-2 text-[#E24C4C]"/>
 							Adoption failed

@@ -181,16 +181,27 @@
 													<span
 														v-for="(tag, index) in probeDetails.tags"
 														:key="index"
-														class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900"
+														class="flex h-6 cursor-pointer items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900"
+														@click="openPopover($event, tag)"
 													>
 														{{ `u-${tag.prefix}-${tag.value}` }}
 													</span>
 												</div>
 
-												<Button class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent">
+												<Button
+													class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent"
+													@click="openPopover($event)"
+												>
 													<i class="pi pi-pencil text-sm text-dark-800"/>
 													<span class="text-xs text-dark-800">Edit</span>
 												</Button>
+
+												<Popover ref="tagPopoverRef">
+													<div class="p-4">
+														<p v-if="selectedTag">Tag content: {{ selectedTag }}</p>
+														<p v-else><strong>Edit all tags mode</strong></p>
+													</div>
+												</Popover>
 											</div>
 										</div>
 									</div>
@@ -486,7 +497,7 @@
 		}
 	};
 
-	// ALT IPS
+	// HANDLE PRIMARY, ALT IPS
 	const showMoreIps = ref(false);
 	const ipsContentRef = ref<HTMLDivElement | null>(null);
 	const ipsContentHeight = ref('auto');
@@ -524,4 +535,27 @@
 			ipsContentHeight.value = initialIpsContentHeight;
 		}
 	});
+
+	// HANDLE TAGS EDITING
+	type Popover = { toggle: (event: Event) => void; visible: boolean };
+	type Tag = {
+		value: string;
+		prefix: string;
+		format?: string;
+	};
+
+	const tagPopoverRef = ref<Popover | null>(null);
+	const selectedTag = ref<Tag | null>(null);
+
+	const openPopover = (event: Event, tag?: Tag) => {
+		if (tag) {
+			selectedTag.value = tag;
+		}
+
+		if (tagPopoverRef.value?.visible) {
+			selectedTag.value = null;
+		}
+
+		tagPopoverRef.value?.toggle(event);
+	};
 </script>

@@ -181,8 +181,7 @@
 													<span
 														v-for="(tag, index) in probeDetails.tags"
 														:key="index"
-														class="flex h-6 cursor-pointer items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900"
-														@click="openPopover($event, tag)"
+														class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900"
 													>
 														{{ `u-${tag.prefix}-${tag.value}` }}
 													</span>
@@ -190,16 +189,47 @@
 
 												<Button
 													class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent"
-													@click="openPopover($event)"
+													@click="openEditTagsPopover($event)"
 												>
 													<i class="pi pi-pencil text-sm text-dark-800"/>
 													<span class="text-xs text-dark-800">Edit</span>
 												</Button>
 
 												<Popover ref="tagPopoverRef">
-													<div class="p-4">
-														<p v-if="selectedTag">Tag content: {{ selectedTag }}</p>
-														<p v-else><strong>Edit all tags mode</strong></p>
+													<div v-if="probeDetails" class="p-4">
+														<div class="flex text-xs">
+															<div class="flex-1 content-center">Prefix</div>
+															<div class="mx-3"/>
+															<div class="flex-1 content-center">Your tag</div>
+															<Button icon="pi pi-trash" text class="invisible"/>
+														</div>
+														<div v-for="(tag, index) in tagsToEdit" :key="index" class="mb-2 flex items-center" :class="{ 'mb-5': !isTagValid(tag.value) }">
+															<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
+															<div class="mx-2">{{ probeDetails.tags[0]?.format === 'v1' ? '-' : ':' }}</div>
+															<div class="relative flex-1">
+																<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full" placeholder="my-tag"/>
+																<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
+															</div>
+															<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900 dark:text-surface-0" @click="removeTag(index)"/>
+															<Button icon="pi pi-plus" text aria-label="Add tag" class="text-surface-900 dark:text-surface-0" @click="addTag()"/>
+														</div>
+
+														<div class="mt-1 flex justify-between">
+															<Button
+																label="Cancel"
+																severity="secondary"
+																class="dark:!bg-dark-800"
+																outlined
+																@click="closeEditTagsPopover"
+															/>
+															<Button
+																label="Save"
+																severity="secondary"
+																class="dark:!bg-dark-800"
+																outlined
+																@click="updateProbeTags"
+															/>
+														</div>
 													</div>
 												</Popover>
 											</div>
@@ -301,8 +331,10 @@
 <script setup lang="ts">
 	import { readItem, deleteItem, updateItem } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
+	import memoize from 'lodash/memoize';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useGoogleMaps } from '~/composables/maps';
+	import { useAuth } from '~/store/auth';
 	import { initGoogleMap } from '~/utils/init-google-map';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
@@ -314,6 +346,8 @@
 	const deleteDialog = ref(false);
 	const deleteProbeLoading = ref(false);
 	const emit = defineEmits([ 'save', 'hide', 'delete' ]);
+	const auth = useAuth();
+	const user = auth.getUser as User;
 
 	let removeWatcher: (() => void) | undefined;
 
@@ -537,25 +571,59 @@
 	});
 
 	// HANDLE TAGS EDITING
-	type Popover = { toggle: (event: Event) => void; visible: boolean };
-	type Tag = {
-		value: string;
-		prefix: string;
-		format?: string;
+	type Popover = {
+		toggle: (event: Event) => void;
+		show: (event: Event) => void;
+		hide: (event: Event) => void;
+		visible: boolean;
+	};
+	const uPrefixes = [ user.github_username, ...user.github_organizations ].map(value => `u-${value}`);
+	const tagPopoverRef = ref<Popover | null>(null);
+	const tagsToEdit = ref<{ uPrefix: string, value: string }[]>([]);
+	const isEditingTags = ref<boolean>(false);
+
+	const openEditTagsPopover = (event: Event) => {
+		editTags();
+
+		tagPopoverRef.value?.show(event);
 	};
 
-	const tagPopoverRef = ref<Popover | null>(null);
-	const selectedTag = ref<Tag | null>(null);
+	const closeEditTagsPopover = (event: Event) => {
+		tagPopoverRef.value?.hide(event);
+	};
 
-	const openPopover = (event: Event, tag?: Tag) => {
-		if (tag) {
-			selectedTag.value = tag;
-		}
+	const tagRegex = /^[a-zA-Z0-9-]+$/;
+	const isTagValid = memoize((value: string) => {
+		return value === '' || (value.length <= 32 && tagRegex.test(value));
+	});
 
-		if (tagPopoverRef.value?.visible) {
-			selectedTag.value = null;
-		}
+	const editTags = () => {
+		isEditingTags.value = true;
 
-		tagPopoverRef.value?.toggle(event);
+		tagsToEdit.value = probeDetails && probeDetails.value ? probeDetails.value.tags.map(({ prefix, value }) => ({
+			uPrefix: `u-${prefix}`,
+			value,
+		})) : [];
+	};
+
+	const addTag = () => {
+		isEditingTags.value = true;
+		tagsToEdit.value.push({ uPrefix: `u-${user.github_username}`, value: '' });
+	};
+
+	const removeTag = (index: number) => {
+		tagsToEdit.value?.splice(index, 1);
+	};
+
+	const convertTags = (tagsToEdit: { uPrefix: string, value: string }[]) => tagsToEdit.map(({ uPrefix, value }) => ({
+		prefix: uPrefix.replace('u-', ''),
+		value,
+	}));
+
+	const updateProbeTags = async () => {
+		const tags = isEditingTags.value ? convertTags(tagsToEdit.value) : probeDetails?.value?.tags;
+
+		console.log('++++ UPD TAGS VALUE', tags);
+		console.log('________________________________');
 	};
 </script>

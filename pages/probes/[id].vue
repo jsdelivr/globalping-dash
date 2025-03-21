@@ -210,8 +210,25 @@
 																<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full" placeholder="my-tag"/>
 																<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
 															</div>
-															<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900 dark:text-surface-0" @click="removeTag(index)"/>
-															<Button icon="pi pi-plus" text aria-label="Add tag" class="text-surface-900 dark:text-surface-0" @click="addTag()"/>
+
+															<Button
+																icon="pi pi-trash"
+																text
+																aria-label="Remove"
+																class="text-surface-900 dark:text-surface-0"
+																@click="removeTag(index)"
+															/>
+
+															<Button
+																icon="pi pi-plus"
+																text
+																aria-label="Add tag"
+																class="text-surface-900 dark:text-surface-0"
+																:class="{
+																	'pointer-events-none opacity-0': index + 1 !== tagsToEdit.length,
+																}"
+																@click="addTag()"
+															/>
 														</div>
 
 														<div class="mt-1 flex justify-between">

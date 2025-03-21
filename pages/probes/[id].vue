@@ -198,11 +198,12 @@
 												<Popover ref="tagPopoverRef">
 													<div v-if="probeDetails" class="p-4">
 														<div class="flex text-xs">
-															<div class="flex-1 content-center">Prefix</div>
+															<div class="flex-1 content-center font-bold text-dark-800">Prefix</div>
 															<div class="mx-3"/>
-															<div class="flex-1 content-center">Your tag</div>
+															<div class="flex-1 content-center font-bold text-dark-800">Your tag</div>
 															<Button icon="pi pi-trash" text class="invisible"/>
 														</div>
+
 														<div v-for="(tag, index) in tagsToEdit" :key="index" class="mb-2 flex items-center" :class="{ 'mb-5': !isTagValid(tag.value) }">
 															<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
 															<div class="mx-2">{{ probeDetails.tags[0]?.format === 'v1' ? '-' : ':' }}</div>
@@ -211,27 +212,29 @@
 																<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
 															</div>
 
-															<Button
-																icon="pi pi-trash"
-																text
-																aria-label="Remove"
-																class="text-surface-900 dark:text-surface-0"
-																@click="removeTag(index)"
-															/>
+															<div class="ml-2 flex gap-1">
+																<Button
+																	icon="pi pi-trash"
+																	text
+																	aria-label="Remove"
+																	class="text-surface-900 dark:text-surface-0"
+																	@click="removeTag(index)"
+																/>
 
-															<Button
-																icon="pi pi-plus"
-																text
-																aria-label="Add tag"
-																class="text-surface-900 dark:text-surface-0"
-																:class="{
-																	'pointer-events-none opacity-0': index + 1 !== tagsToEdit.length,
-																}"
-																@click="addTag()"
-															/>
+																<Button
+																	icon="pi pi-plus"
+																	text
+																	aria-label="Add tag"
+																	class="text-surface-900 dark:text-surface-0"
+																	:class="{
+																		'pointer-events-none opacity-0': index + 1 !== tagsToEdit.length,
+																	}"
+																	@click="addTag()"
+																/>
+															</div>
 														</div>
 
-														<div class="mt-1 flex justify-between">
+														<div class="mt-4 flex justify-between">
 															<Button
 																label="Cancel"
 																severity="secondary"
@@ -242,7 +245,6 @@
 															<Button
 																label="Save"
 																severity="secondary"
-																class="dark:!bg-dark-800"
 																outlined
 																@click="updateProbeTags"
 															/>

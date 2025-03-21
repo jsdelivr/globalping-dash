@@ -196,15 +196,15 @@
 												</Button>
 
 												<Popover ref="tagPopoverRef">
-													<div v-if="probeDetails" class="p-4">
-														<div class="flex text-xs">
-															<div class="flex-1 content-center font-bold text-dark-800">Prefix</div>
+													<div v-if="probeDetails" class="grid w-[500px] flex-1 grid-rows-[auto_1fr] p-4">
+														<div class="mb-2 grid grid-cols-[3fr_auto_3fr_1fr] text-xs">
+															<div class="content-center font-bold text-dark-800">Prefix</div>
 															<div class="mx-3"/>
-															<div class="flex-1 content-center font-bold text-dark-800">Your tag</div>
-															<Button icon="pi pi-trash" text class="invisible"/>
+															<div class="content-center font-bold text-dark-800">Your tag</div>
+															<div/>
 														</div>
 
-														<div v-for="(tag, index) in tagsToEdit" :key="index" class="mb-2 flex items-center" :class="{ 'mb-5': !isTagValid(tag.value) }">
+														<div v-for="(tag, index) in tagsToEdit" :key="index" class="mb-5 grid flex-1 grid-cols-[3fr_auto_3fr_1fr] items-center">
 															<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
 															<div class="mx-2">{{ probeDetails.tags[0]?.format === 'v1' ? '-' : ':' }}</div>
 															<div class="relative flex-1">
@@ -244,8 +244,6 @@
 															/>
 															<Button
 																label="Save"
-																severity="secondary"
-																outlined
 																@click="updateProbeTags"
 															/>
 														</div>
@@ -604,7 +602,7 @@
 	const openEditTagsPopover = (event: Event) => {
 		editTags();
 
-		tagPopoverRef.value?.show(event);
+		tagPopoverRef.value?.toggle(event);
 	};
 
 	const closeEditTagsPopover = (event: Event) => {

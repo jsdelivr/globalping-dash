@@ -14,7 +14,7 @@ import buttongroup from './buttongroup';
 // import card from './card';
 // import carousel from './carousel';
 // import cascadeselect from './cascadeselect';
-// import checkbox from './checkbox';
+import checkbox from './checkbox';
 import chip from './chip';
 // import colorpicker from './colorpicker';
 // import confirmdialog from './confirmdialog';
@@ -60,7 +60,7 @@ import paginator from './paginator';
 // import picklist from './picklist';
 import popover from './popover';
 // import progressbar from './progressbar';
-import progressspinner from './progressspinner';
+// import progressspinner from './progressspinner';
 // import radiobutton from './radiobutton';
 // import rating from './rating';
 // import ripple from './ripple';
@@ -117,7 +117,7 @@ export default {
 	inputtext,
 	datepicker,
 	calendar: datepicker,
-	// checkbox,
+	checkbox,
 	// radiobutton,
 	toggleswitch,
 	// inputswitch: toggleswitch,
@@ -230,5 +230,5 @@ export default {
 	// blockui,
 	// metergroup,
 	// inplace,
-	progressspinner,
+	// progressspinner,
 };

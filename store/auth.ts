@@ -17,6 +17,7 @@ interface AuthState {
 		appearance: 'light' | 'dark' | null,
 		user_type: 'member' | 'sponsor' | 'special',
 		public_probes: boolean,
+		adoption_token: string,
 	}
 }
 
@@ -37,6 +38,7 @@ export const useAuth = defineStore('auth', {
 			appearance: null,
 			user_type: 'member',
 			public_probes: false,
+			adoption_token: '',
 		},
 	}),
 

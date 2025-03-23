@@ -10,7 +10,7 @@
 					<div class="flex max-sm:flex-wrap">
 						<div class="flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:bg-surface-50 max-sm:p-4 max-sm:dark:bg-dark-700">
 							<BigIcon name="gp" border/>
-							<div><span data-testid="probes-count" class="mx-2 text-3xl font-bold">{{ adoptedProbes.length }}</span>Probes</div>
+							<div><span data-testid="probes-count" class="mx-2 text-3xl font-bold">{{ adoptedProbes.length }}</span>{{ pluralize('Probe', adoptedProbes.length) }}</div>
 						</div>
 						<div class="ml-auto mr-6 flex items-center max-sm:ml-0 max-sm:mt-3">
 							<BigIcon name="point-online" filled/>
@@ -177,6 +177,7 @@
 	import CountryFlag from 'vue-country-flag-next';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
+	import { pluralize } from '~/utils/pluralize';
 	import { getProbeStatus } from '~/utils/probe-status';
 	import { sendErrorToast } from '~/utils/send-toast';
 

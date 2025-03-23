@@ -31,7 +31,9 @@
 					<InputText id="username" v-model="user.github_username" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 
-				<label for="organizations" class="mt-6 block font-bold">Organizations</label>
+				<label for="organizations" class="mt-6 flex items-center font-bold">
+					Organizations <i v-tooltip.top="'You must be a public member for the organization to appear here.'" class="pi pi-info-circle ml-2"/>
+				</label>
 				<div class="relative mt-2">
 					<ReadOnlyAutoComplete
 						id="tags"

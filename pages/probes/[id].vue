@@ -244,6 +244,8 @@
 															/>
 															<Button
 																label="Save"
+																:loading="probeDetailsUpdating"
+																:disabled="probeDetailsUpdating"
 																@click="updateProbeTags"
 															/>
 														</div>
@@ -366,6 +368,7 @@
 	const emit = defineEmits([ 'save', 'hide', 'delete' ]);
 	const auth = useAuth();
 	const user = auth.getUser as User;
+	const probeDetailsUpdating = ref(false);
 
 	let removeWatcher: (() => void) | undefined;
 
@@ -638,19 +641,27 @@
 	}));
 
 	const updateProbeTags = async () => {
-		if (!probeDetails || !probeDetails.value) { return; }
+		probeDetailsUpdating.value = true;
+
+		if (!probeDetails || !probeDetails.value) {
+			probeDetailsUpdating.value = false;
+
+			return;
+		}
 
 		const updTags = isEditingTags.value ? convertTags(tagsToEdit.value) : probeDetails?.value?.tags;
 
 		// check if the tags are filled
 		if (!updTags || updTags.some(({ prefix, value }) => !prefix || !value)) {
 			sendToast('error', 'Tags are invalid', 'Some tag values are empty');
+			probeDetailsUpdating.value = false;
 
 			return;
 		}
 
 		// close the Popover if tags are left the same
 		if (isEqual(updTags, probeDetails.value.tags)) {
+			probeDetailsUpdating.value = false;
 			closeEditTagsPopover();
 
 			return;
@@ -665,6 +676,8 @@
 			closeEditTagsPopover();
 		} catch (e) {
 			sendErrorToast(e);
+		} finally {
+			probeDetailsUpdating.value = false;
 		}
 	};
 </script>

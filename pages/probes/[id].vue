@@ -502,6 +502,10 @@
 			probeDetails.value.name = editedName.value;
 		} catch (e) {
 			sendErrorToast(e);
+
+			if (inputNameRef.value) {
+				inputNameRef.value.focus();
+			}
 		} finally {
 			probeDetailsUpdating.value = false;
 		}

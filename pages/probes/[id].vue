@@ -348,6 +348,7 @@
 <script setup lang="ts">
 	import { readItem, deleteItem, updateItem } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
+	import isEqual from 'lodash/isEqual';
 	import memoize from 'lodash/memoize';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useGoogleMaps } from '~/composables/maps';
@@ -590,8 +591,7 @@
 	// HANDLE TAGS EDITING
 	type Popover = {
 		toggle: (event: Event) => void;
-		show: (event: Event) => void;
-		hide: (event: Event) => void;
+		hide: () => void;
 		visible: boolean;
 	};
 	const uPrefixes = [ user.github_username, ...user.github_organizations ].map(value => `u-${value}`);
@@ -605,8 +605,8 @@
 		tagPopoverRef.value?.toggle(event);
 	};
 
-	const closeEditTagsPopover = (event: Event) => {
-		tagPopoverRef.value?.hide(event);
+	const closeEditTagsPopover = () => {
+		tagPopoverRef.value?.hide();
 	};
 
 	const tagRegex = /^[a-zA-Z0-9-]+$/;
@@ -638,9 +638,33 @@
 	}));
 
 	const updateProbeTags = async () => {
-		const tags = isEditingTags.value ? convertTags(tagsToEdit.value) : probeDetails?.value?.tags;
+		if (!probeDetails || !probeDetails.value) { return; }
 
-		console.log('++++ UPD TAGS VALUE', tags);
-		console.log('________________________________');
+		const updTags = isEditingTags.value ? convertTags(tagsToEdit.value) : probeDetails?.value?.tags;
+
+		// check if the tags are filled
+		if (!updTags || updTags.some(({ prefix, value }) => !prefix || !value)) {
+			sendToast('error', 'Tags are invalid', 'Some tag values are empty');
+
+			return;
+		}
+
+		// close the Popover if tags are left the same
+		if (isEqual(updTags, probeDetails.value.tags)) {
+			closeEditTagsPopover();
+
+			return;
+		}
+
+		try {
+			await $directus.request(updateItem('gp_adopted_probes', probeDetails.value.id, { tags: updTags }));
+
+			sendToast('success', 'Done', 'The probe has been successfully updated');
+			emit('save');
+			probeDetails.value.tags = updTags;
+			closeEditTagsPopover();
+		} catch (e) {
+			sendErrorToast(e);
+		}
 	};
 </script>

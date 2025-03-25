@@ -29,15 +29,14 @@
 						{{ name }}
 					</span>
 
-					<button
+					<Button
 						v-if="isEditingName && editedName !== originalName"
-						class="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-[var(--p-primary-color)] px-2 py-1 text-sm font-bold text-white"
+						label="Save"
+						class="!absolute !right-2 !top-1/2 !h-7 !-translate-y-1/2 !rounded-lg !px-2 !py-1 !text-sm !font-bold text-white"
 						:loading="probeDetailsUpdating"
 						:disabled="probeDetailsUpdating"
-						@click.stop="updateProbeName"
-					>
-						Save
-					</button>
+						@click="updateProbeName"
+					/>
 
 					<i v-if="!isEditingName" class="pi pi-pencil text-lg"/>
 				</div>
@@ -153,15 +152,14 @@
 													{{ city }}
 												</span>
 
-												<button
+												<Button
 													v-if="isEditingCity && editedCity !== originalCity"
-													class="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-[var(--p-primary-color)] px-2 py-1 text-sm font-bold text-white"
+													label="Save"
+													class="!absolute !right-2 !top-1/2 !h-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold text-white"
 													:loading="probeDetailsUpdating"
 													:disabled="probeDetailsUpdating"
 													@click.stop="updateProbeCity"
-												>
-													Save
-												</button>
+												/>
 
 												<i v-if="!isEditingCity" class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2"/>
 											</div>
@@ -475,7 +473,9 @@
 		isEditingName.value = false;
 	};
 
-	const updateProbeName = async () => {
+	const updateProbeName = async (event: Event) => {
+		event.stopPropagation();
+
 		probeDetailsUpdating.value = true;
 
 		if (!probeDetails.value) {
@@ -542,7 +542,9 @@
 		isEditingCity.value = false;
 	};
 
-	const updateProbeCity = async () => {
+	const updateProbeCity = async (event: Event) => {
+		event.stopPropagation();
+
 		probeDetailsUpdating.value = true;
 
 		if (!probeDetails.value) {

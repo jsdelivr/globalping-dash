@@ -107,8 +107,8 @@
 				<TabPanels class="mt-6 !bg-transparent !p-0">
 					<TabPanel value="0">
 						<div class="flex flex-col gap-6">
-							<div class="flex gap-4">
-								<div class="flex w-1/2 flex-col rounded-xl border border-surface-300 bg-white">
+							<div class="flex flex-col gap-4 sm:flex-row">
+								<div class="flex flex-col rounded-xl border border-surface-300 bg-white sm:w-1/2">
 									<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">Location</h3>
 
 									<div class="flex grow flex-col gap-3 p-6">
@@ -116,7 +116,7 @@
 											City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
 										</p>
 
-										<div class="relative w-full grow overflow-hidden rounded-md bg-surface-200">
+										<div class="relative h-80 w-full grow overflow-hidden rounded-md bg-surface-200 sm:h-auto">
 											<div id="gp-map" class="size-full rounded-md"/>
 
 											<span
@@ -167,7 +167,7 @@
 									</div>
 								</div>
 
-								<div class="flex w-1/2 flex-col gap-4">
+								<div class="flex flex-col gap-4 sm:w-1/2">
 									<div class="flex grow basis-0 flex-col rounded-xl border border-surface-300 bg-white">
 										<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">
 											User tags

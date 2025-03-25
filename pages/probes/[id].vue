@@ -476,10 +476,17 @@
 	};
 
 	const updateProbeName = async () => {
-		if (!probeDetails.value) { return; }
+		probeDetailsUpdating.value = true;
+
+		if (!probeDetails.value) {
+			probeDetailsUpdating.value = false;
+
+			return;
+		}
 
 		if (editedName.value === originalName.value) {
 			isEditingName.value = false;
+			probeDetailsUpdating.value = false;
 
 			return;
 		}
@@ -495,6 +502,8 @@
 			probeDetails.value.name = editedName.value;
 		} catch (e) {
 			sendErrorToast(e);
+		} finally {
+			probeDetailsUpdating.value = false;
 		}
 	};
 

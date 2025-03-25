@@ -571,6 +571,10 @@
 			probeDetails.value.name = editedCity.value;
 		} catch (e) {
 			sendErrorToast(e);
+
+			if (inputCityRef.value) {
+				inputCityRef.value.focus();
+			}
 		} finally {
 			probeDetailsUpdating.value = false;
 		}

@@ -301,7 +301,7 @@
 								</div>
 							</div>
 
-							<div class="flex h-[68px] items-center justify-between rounded-xl bg-surface-100 px-6">
+							<div class="flex flex-col gap-4 rounded-xl bg-surface-100 px-6 py-4 sm:h-[68px] sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-0">
 								<span class="flex gap-2">
 									<i class="pi pi-info-circle text-lg text-bluegray-900"/>
 									<span class="text-bluegray-900">Removing the probe will result in data loss.</span>

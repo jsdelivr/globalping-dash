@@ -32,6 +32,8 @@
 					<button
 						v-if="isEditingName && editedName !== originalName"
 						class="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-[var(--p-primary-color)] px-2 py-1 text-sm font-bold text-white"
+						:loading="probeDetailsUpdating"
+						:disabled="probeDetailsUpdating"
 						@click.stop="updateProbeName"
 					>
 						Save
@@ -154,6 +156,8 @@
 												<button
 													v-if="isEditingCity && editedCity !== originalCity"
 													class="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-[var(--p-primary-color)] px-2 py-1 text-sm font-bold text-white"
+													:loading="probeDetailsUpdating"
+													:disabled="probeDetailsUpdating"
 													@click.stop="updateProbeCity"
 												>
 													Save
@@ -530,10 +534,17 @@
 	};
 
 	const updateProbeCity = async () => {
-		if (!probeDetails.value) { return; }
+		probeDetailsUpdating.value = true;
+
+		if (!probeDetails.value) {
+			probeDetailsUpdating.value = false;
+
+			return;
+		}
 
 		if (editedCity.value === originalCity.value) {
 			isEditingCity.value = false;
+			probeDetailsUpdating.value = false;
 
 			return;
 		}
@@ -549,6 +560,8 @@
 			probeDetails.value.name = editedCity.value;
 		} catch (e) {
 			sendErrorToast(e);
+		} finally {
+			probeDetailsUpdating.value = false;
 		}
 	};
 

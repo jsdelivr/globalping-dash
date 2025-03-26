@@ -6,9 +6,23 @@
 					<i class="pi pi-arrow-left text-bluegray-500"/>
 					<span class="font-bold text-bluegray-500">Back to probes</span>
 				</NuxtLink>
+
+				<div v-if="probeDetails" class="flex h-8 items-center gap-1 rounded-full border border-surface-300 sm:hidden">
+					<span class="flex items-center gap-2 pl-3">
+						<i class="pi pi-circle-fill text-[8px] text-green-500"/>
+
+						<span class="font-bold text-bluegray-900">
+							{{ capitalize(probeDetails.status) }}
+						</span>
+					</span>
+
+					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900">
+						v{{ probeDetails.version }}
+					</span>
+				</div>
 			</div>
 
-			<div v-if="probeDetails" class="flex items-center gap-4">
+			<div v-if="probeDetails" class="flex flex-col items-center gap-4 sm:flex-row">
 				<div
 					v-if="probeDetails"
 					class="relative flex cursor-pointer items-center gap-3"
@@ -41,7 +55,7 @@
 					<i v-if="!isEditingName" class="pi pi-pencil text-lg"/>
 				</div>
 
-				<div class="flex h-8 items-center gap-1 rounded-full border border-surface-300">
+				<div class="hidden h-8 items-center gap-1 rounded-full border border-surface-300 sm:flex">
 					<span class="flex items-center gap-2 pl-3">
 						<i class="pi pi-circle-fill text-[8px] text-green-500"/>
 
@@ -55,7 +69,7 @@
 					</span>
 				</div>
 
-				<div class="ml-auto flex items-center gap-2">
+				<div class="ml-auto w-full justify-between flex items-center gap-2 sm:w-auto sm:justify-normal">
 					<span class="text-bluegray-900">
 						Credits per month
 					</span>

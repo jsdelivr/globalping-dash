@@ -53,7 +53,7 @@ const stylesByTheme = {
 
 let map: google.maps.Map, marker: google.maps.Marker, infoWindow: google.maps.InfoWindow;
 
-export const initGoogleMap = async (probe: Probe, showPulse: boolean = false) => {
+export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, showIW: boolean = true) => {
 	if (!probe) {
 		return;
 	}
@@ -83,10 +83,13 @@ export const initGoogleMap = async (probe: Probe, showPulse: boolean = false) =>
 		gestureHandling: 'cooperative',
 	});
 
-	createMapMarker(probe, showPulse);
+	createMapMarker(probe, showPulse, showIW);
 
 	map.addListener('zoom_changed', () => {
-		infoWindow && infoWindow.close();
+		if (showIW) {
+			infoWindow && infoWindow.close();
+		}
+
 		updateStyles(map, appearance.theme);
 	});
 
@@ -109,7 +112,7 @@ const updateStyles = (map: google.maps.Map, theme: 'light' | 'dark') => {
 	}
 };
 
-function createMapMarker (probe: Probe, showPulse: boolean = false) {
+function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: boolean = true) {
 	// create svg to use as a Marker icon
 	const svgFillColor = DEFAULT_MARKER_COLOR;
 	let svg;
@@ -188,13 +191,15 @@ function createMapMarker (probe: Probe, showPulse: boolean = false) {
 		};
 	}
 
-	// create an Info Window
-	infoWindow = new google.maps.InfoWindow({
-		content: `<div class="mt-3">
-				<div class="font-semibold">${probe.network}</div>
-				<div class="font-semibold">(${probe.city}, ${probe.country})</div>
-			</div>`,
-	});
+	if (showIW) {
+		// create an Info Window
+		infoWindow = new google.maps.InfoWindow({
+			content: `<div class="mt-3">
+					<div class="font-semibold">${probe.network}</div>
+					<div class="font-semibold">(${probe.city}, ${probe.country})</div>
+				</div>`,
+		});
+	}
 
 	// create the Marker
 	marker = new google.maps.Marker({
@@ -204,13 +209,19 @@ function createMapMarker (probe: Probe, showPulse: boolean = false) {
 		optimized: false,
 	});
 
-	google.maps.event.addListener(marker, 'click', () => {
-		infoWindow.open(map, marker);
-	});
+	if (showIW === false) {
+		marker.setOptions({ cursor: "default" });
+	}
 
-	google.maps.event.addListener(map, 'click', () => {
-		infoWindow.close();
-	});
+	if (showIW) {
+		google.maps.event.addListener(marker, 'click', () => {
+			infoWindow.open(map, marker);
+		});
+
+		google.maps.event.addListener(map, 'click', () => {
+			infoWindow.close();
+		});
+	}
 
 	return marker;
 }

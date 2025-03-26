@@ -22,10 +22,10 @@
 				</div>
 			</div>
 
-			<div v-if="probeDetails" class="flex flex-col items-center gap-4 sm:flex-row">
+			<div v-if="probeDetails" class="flex w-full flex-col items-center gap-4 sm:flex-row">
 				<div
 					v-if="probeDetails"
-					class="relative flex cursor-pointer items-center gap-3"
+					class="relative flex w-full cursor-pointer items-center gap-3 sm:w-auto"
 					@click="!isEditingName && enableNameEditing()"
 				>
 					<img class="h-10" src="~/assets/icons/gp-white.svg" alt="Globalping White logo">
@@ -34,7 +34,8 @@
 						v-if="isEditingName"
 						ref="inputNameRef"
 						v-model="editedName"
-						class="rounded-xl border border-gray-300 px-2 py-1 pr-16 text-xl font-bold focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)]"
+						class="flex w-[calc(100%-52px)] rounded-xl border border-gray-300 px-2 py-1 text-xl font-bold focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)]"
+						:class="{ 'pr-16': isEditingName && editedName !== originalName }"
 						@keyup.enter="updateProbeName"
 						@blur="cancelNameEditing"
 					>

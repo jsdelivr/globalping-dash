@@ -69,7 +69,7 @@
 					</span>
 				</div>
 
-				<div class="ml-auto w-full justify-between flex items-center gap-2 sm:w-auto sm:justify-normal">
+				<div class="ml-auto flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-normal">
 					<span class="text-bluegray-900">
 						Credits per month
 					</span>

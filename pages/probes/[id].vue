@@ -212,8 +212,14 @@
 													<span class="text-xs text-dark-800">Edit</span>
 												</Button>
 
-												<Popover ref="tagPopoverRef">
-													<div v-if="probeDetails" class="grid w-[500px] flex-1 grid-rows-[auto_1fr] p-4">
+												<Popover
+													ref="tagPopoverRef"
+													class="w-[95%] sm:w-[500px]"
+													:class="{
+														'!left-1/2 !-translate-x-1/2 !transform': screenWidth < 768
+													}"
+												>
+													<div v-if="probeDetails" class="grid w-full flex-1 grid-rows-[auto_1fr] p-4">
 														<div class="mb-2 grid grid-cols-[3fr_auto_3fr_1fr] text-xs">
 															<div class="content-center font-bold text-dark-800">Prefix</div>
 															<div class="mx-3"/>
@@ -444,6 +450,25 @@
 	};
 
 	loadProbeData(probeId);
+
+	// HANDLE SCREEN SIZE
+	const screenWidth = ref(window.innerWidth);
+
+	const updateScreenWidth = () => {
+		screenWidth.value = window.innerWidth;
+	};
+
+	onMounted(() => {
+		window.addEventListener('resize', updateScreenWidth);
+	});
+
+	onBeforeUnmount(() => {
+		window.removeEventListener('resize', updateScreenWidth);
+	});
+
+	watch(screenWidth, (newWidth) => {
+		screenWidth.value = newWidth;
+	});
 
 	// HANDLE PROBE NAME
 	const isEditingName = ref(false);

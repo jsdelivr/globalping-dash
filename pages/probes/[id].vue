@@ -86,7 +86,6 @@
 				v-if="probeDetails"
 				ref="ipsContentRef"
 				class="flex flex-wrap items-start gap-2 overflow-hidden rounded-xl bg-surface-100 p-4 transition-[height] duration-500 ease-in-out"
-				:style="{ height: ipsContentHeight }"
 			>
 				<span class="flex h-[38px] items-center whitespace-nowrap">Primary IP:</span>
 				<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800">
@@ -627,13 +626,9 @@
 	// HANDLE PRIMARY, ALT IPS
 	const showMoreIps = ref(false);
 	const ipsContentRef = ref<HTMLDivElement | null>(null);
-	const ipsContentHeight = ref('auto');
-	let initialIpsContentHeight = 'auto';
 
 	const showHideMoreIps = () => {
 		showMoreIps.value = !showMoreIps.value;
-
-		nextTick(updateIpsContentHeight);
 	};
 
 	const limitIpsToShow = () => {
@@ -643,25 +638,6 @@
 
 		return probeDetails?.value?.altIps.slice(0, 1);
 	};
-
-	const updateIpsContentHeight = () => {
-		if (!ipsContentRef.value) { return; }
-
-		if (showMoreIps.value) {
-			ipsContentHeight.value = `${ipsContentRef.value.scrollHeight}px`;
-		} else {
-			ipsContentHeight.value = initialIpsContentHeight;
-		}
-	};
-
-	watch(probeDetails, async () => {
-		await nextTick();
-
-		if (ipsContentRef.value) {
-			initialIpsContentHeight = `${ipsContentRef.value.scrollHeight}px`;
-			ipsContentHeight.value = initialIpsContentHeight;
-		}
-	});
 
 	// HANDLE TAGS EDITING
 	type Popover = {

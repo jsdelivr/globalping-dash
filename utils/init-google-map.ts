@@ -210,7 +210,7 @@ function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: bool
 	});
 
 	if (showIW === false) {
-		marker.setOptions({ cursor: "default" });
+		marker.setOptions({ cursor: 'default' });
 	}
 
 	if (showIW) {

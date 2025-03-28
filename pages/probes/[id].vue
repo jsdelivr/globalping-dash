@@ -657,7 +657,7 @@
 		await nextTick();
 
 		if (ipsContentRef.value) {
-			let initialHeight = `${ipsContentRef.value.scrollHeight}px`;
+			const initialHeight = `${ipsContentRef.value.scrollHeight}px`;
 			initialIpsContentHeight.value = initialHeight;
 			ipsContentHeight.value = initialHeight;
 		}

@@ -470,7 +470,7 @@
 
 		nextTick(() => {
 			updateIpsContentHeight(true);
-		})
+		});
 	});
 
 	// HANDLE PROBE NAME

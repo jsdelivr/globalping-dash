@@ -301,10 +301,6 @@
 														{{ tag }}
 													</span>
 												</div>
-												<Button class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent">
-													<i class="pi pi-pencil text-sm text-dark-800"/>
-													<span class="text-xs text-dark-800">Edit</span>
-												</Button>
 											</div>
 										</div>
 									</div>

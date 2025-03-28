@@ -467,6 +467,10 @@
 
 	watch(screenWidth, (newWidth) => {
 		screenWidth.value = newWidth;
+
+		nextTick(() => {
+			updateIpsContentHeight(true);
+		})
 	});
 
 	// HANDLE PROBE NAME
@@ -643,8 +647,18 @@
 		return probeDetails?.value?.altIps.slice(0, 1);
 	};
 
-	const updateIpsContentHeight = () => {
+	const updateIpsContentHeight = async (onResize: boolean = false) => {
 		if (!ipsContentRef.value) { return; }
+
+		if (onResize) {
+			showMoreIps.value = false;
+			initialIpsContentHeight.value = 'auto';
+			ipsContentHeight.value = 'auto';
+
+			await nextTick();
+
+			initialIpsContentHeight.value = `${ipsContentRef.value.scrollHeight}px`;
+		}
 
 		if (showMoreIps.value) {
 			ipsContentHeight.value = `${ipsContentRef.value.scrollHeight}px`;

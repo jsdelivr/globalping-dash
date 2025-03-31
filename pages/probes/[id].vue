@@ -40,7 +40,7 @@
 						@blur="cancelNameEditing"
 					>
 
-					<span v-else class="text-2xl font-bold">
+					<span v-else class="text-2xl font-bold text-ellipsis overflow-hidden whitespace-nowrap">
 						{{ name }}
 					</span>
 

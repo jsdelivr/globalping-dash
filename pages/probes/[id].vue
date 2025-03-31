@@ -71,7 +71,7 @@
 				</div>
 
 				<div v-if="probeCreditsPerMonth" class="ml-auto flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-normal">
-					<span class="text-bluegray-900">
+					<span class="whitespace-nowrap text-bluegray-900">
 						Credits per month
 					</span>
 

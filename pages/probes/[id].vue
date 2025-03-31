@@ -7,7 +7,7 @@
 					<span class="font-bold text-bluegray-500">Back to probes</span>
 				</NuxtLink>
 
-				<div v-if="probeDetails" class="flex h-8 items-center gap-1 rounded-full border border-surface-300 sm:hidden">
+				<div v-if="probeDetails" class="flex h-8 items-center gap-1 rounded-full border border-surface-300 md:hidden">
 					<span class="flex items-center gap-2 pl-3">
 						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails.status)"/>
 
@@ -22,7 +22,7 @@
 				</div>
 			</div>
 
-			<div v-if="probeDetails" class="flex w-full flex-col items-center gap-4 sm:flex-row">
+			<div v-if="probeDetails" class="flex w-full flex-col items-center gap-4 sm:flex-row sm:flex-wrap">
 				<div
 					v-if="probeDetails"
 					class="relative flex w-full cursor-pointer items-center gap-3 sm:w-auto"
@@ -56,7 +56,7 @@
 					<i v-if="!isEditingName" class="pi pi-pencil text-lg"/>
 				</div>
 
-				<div class="hidden h-8 items-center gap-1 rounded-full border border-surface-300 sm:flex">
+				<div class="hidden h-8 items-center gap-1 rounded-full border border-surface-300 md:flex">
 					<span class="flex items-center gap-2 pl-3">
 						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails.status)"/>
 

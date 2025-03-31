@@ -91,13 +91,13 @@
 					height: ipsContentHeight,
 				}"
 			>
-				<span class="flex h-[38px] items-center whitespace-nowrap">Primary IP:</span>
+				<span class="flex h-[38px] w-full items-center whitespace-nowrap sm:w-auto">Primary IP:</span>
 				<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800">
 					{{ probeDetails.ip }}
 					<CopyButton :content="probeDetails.ip" class="!top-[7px] size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
 				</span>
 
-				<span class="flex h-[38px] items-center whitespace-nowrap">Alternative IPs:</span>
+				<span class="flex h-[38px] w-full items-center whitespace-nowrap sm:w-auto">Alternative IPs:</span>
 				<span
 					v-for="(altIp, index) in limitIpsToShow()"
 					:key="index"

@@ -9,7 +9,7 @@
 
 				<div v-if="probeDetails" class="flex h-8 items-center gap-1 rounded-full border border-surface-300 sm:hidden">
 					<span class="flex items-center gap-2 pl-3">
-						<i class="pi pi-circle-fill text-[8px] text-green-500"/>
+						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails.status)"/>
 
 						<span class="font-bold text-bluegray-900">
 							{{ capitalize(probeDetails.status) }}
@@ -58,7 +58,7 @@
 
 				<div class="hidden h-8 items-center gap-1 rounded-full border border-surface-300 sm:flex">
 					<span class="flex items-center gap-2 pl-3">
-						<i class="pi pi-circle-fill text-[8px] text-green-500"/>
+						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails.status)"/>
 
 						<span class="font-bold text-bluegray-900">
 							{{ capitalize(probeDetails.status) }}
@@ -765,5 +765,15 @@
 		} finally {
 			probeDetailsUpdating.value = false;
 		}
+	};
+
+	const getProbeStatusColor = (status: string) => {
+		switch (status.toLowerCase()) {
+			case 'ready':
+				return 'text-green-500';
+
+			default:
+				return 'text-red-500';
+		};
 	};
 </script>

@@ -767,13 +767,14 @@
 		}
 	};
 
+	// HANDLE STATUS COLORS
 	const getProbeStatusColor = (status: string) => {
 		switch (status.toLowerCase()) {
-			case 'ready':
-				return 'text-green-500';
+		case 'ready':
+			return 'text-green-500';
 
-			default:
-				return 'text-red-500';
-		};
+		default:
+			return 'text-red-500';
+		}
 	};
 </script>

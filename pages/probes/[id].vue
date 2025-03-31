@@ -70,14 +70,14 @@
 					</span>
 				</div>
 
-				<div class="ml-auto flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-normal">
+				<div v-if="probeCreditsPerMonth" class="ml-auto flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-normal">
 					<span class="text-bluegray-900">
 						Credits per month
 					</span>
 
 					<span class="flex h-[30px] items-center gap-2 rounded-md border border-surface-300 px-2">
 						<nuxt-icon class="text-green-500" name="coin"/>
-						<span class="font-bold text-green-500">+{{ 400 }}</span>
+						<span class="font-bold text-green-500">+{{ probeCreditsPerMonth }}</span>
 					</span>
 				</div>
 			</div>
@@ -370,7 +370,7 @@
 </template>
 
 <script setup lang="ts">
-	import { readItem, deleteItem, updateItem } from '@directus/sdk';
+	import { readItem, deleteItem, updateItem, aggregate } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
 	import isEqual from 'lodash/isEqual';
 	import memoize from 'lodash/memoize';
@@ -777,4 +777,31 @@
 			return 'text-red-500';
 		}
 	};
+
+	// HANDLE CREDITS
+	const probeCreditsPerMonth = ref<number | null>(null);
+
+	const loadCreditsData = async () => {
+		try {
+			const creditsResponse = await $directus.request<[{ sum: { amount: number }, adopted_probe: string}]>(aggregate('gp_credits_additions', {
+				query: {
+					filter: {
+						github_id: { _eq: user.external_identifier || 'admin' },
+						adopted_probe: { _eq: probeDetails?.value?.id },
+						date_created: { _gte: '$NOW(-30 day)' },
+					},
+				},
+				groupBy: [ 'adopted_probe' ],
+				aggregate: { sum: 'amount' },
+			}));
+
+			probeCreditsPerMonth.value = creditsResponse[0].sum.amount;
+		} catch (e) {
+			sendErrorToast(e);
+		}
+	};
+
+	watch(probeDetails, async () => {
+		loadCreditsData();
+	});
 </script>

@@ -85,7 +85,8 @@
 			<div
 				v-if="probeDetails"
 				ref="ipsContentRef"
-				class="flex flex-wrap content-start gap-2 overflow-hidden rounded-xl bg-surface-100 p-4 transition-all duration-500 ease-in-out"
+				class="flex flex-wrap content-start gap-2 rounded-xl bg-surface-100 p-4 transition-all ease-in-out"
+				:class="getIpsOpeningClass()"
 				:style="{
 					maxHeight: ipsContentHeight,
 					height: ipsContentHeight,
@@ -638,6 +639,8 @@
 	const ipsContentRef = ref<HTMLDivElement | null>(null);
 	const ipsContentHeight = ref('auto');
 	const initialIpsContentHeight = ref('auto');
+	const ipsOpening = ref(false);
+	const ipsOpeningDuration = ref(500);
 
 	const showHideMoreIps = () => {
 		showMoreIps.value = !showMoreIps.value;
@@ -682,6 +685,18 @@
 			ipsContentHeight.value = initialHeight;
 		}
 	});
+
+	watch(showMoreIps, () => {
+		ipsOpening.value = true;
+
+		setTimeout(() => {
+			ipsOpening.value = false;
+		}, ipsOpeningDuration.value);
+	});
+
+	const getIpsOpeningClass = () => {
+		return `duration-${ipsOpeningDuration.value} ${ipsOpening.value ? 'overflow-hidden' : ''}`;
+	};
 
 	// HANDLE TAGS EDITING
 	type Popover = {

@@ -226,7 +226,6 @@
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
 
-	const user = auth.getUser as User;
 	const itemsPerPage = config.public.itemsPerTablePage;
 
 	// TOKENS
@@ -242,13 +241,13 @@
 		try {
 			const [ gpTokens, [{ count }] ] = await Promise.all([
 				$directus.request(readItems('gp_tokens', {
-					filter: { user_created: { _eq: user.id }, app_id: { _null: true } },
+					filter: { user_created: { _eq: auth.user.id }, app_id: { _null: true } },
 					offset: firstToken.value,
 					limit: itemsPerPage,
 					sort: '-date_created',
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_tokens', {
-					query: { filter: { user_created: { _eq: user.id }, app_id: { _null: true } } },
+					query: { filter: { user_created: { _eq: auth.user.id }, app_id: { _null: true } } },
 					aggregate: { count: '*' },
 				})),
 			]);

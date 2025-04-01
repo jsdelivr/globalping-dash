@@ -107,7 +107,6 @@
 
 	const config = useRuntimeConfig();
 	const auth = useAuth();
-	const user = auth.getUser as User;
 	const { $directus } = useNuxtApp();
 	const metadata = useMetadata();
 
@@ -122,10 +121,10 @@
 		try {
 			const [ total, additions, deductions, todayOnlineProbes ] = await Promise.all([
 				$directus.request<{amount: number}[]>(readItems('gp_credits', {
-					filter: { user_id: { _eq: user.id } },
+					filter: { user_id: { _eq: auth.user.id } },
 				})),
 				$directus.request<[{sum: { amount: number }, date_created: 'datetime'}]>(aggregate('gp_credits_additions', {
-					query: { filter: { github_id: { _eq: user.external_identifier || 'admin' }, date_created: { _gte: '$NOW(-30 day)' } } },
+					query: { filter: { github_id: { _eq: auth.user.external_identifier || 'admin' }, date_created: { _gte: '$NOW(-30 day)' } } },
 					groupBy: [ 'date_created' ],
 					aggregate: { sum: 'amount' },
 				})).then((additions) => {
@@ -135,7 +134,7 @@
 					});
 				}),
 				$directus.request<[{sum: { amount: number }, date: 'datetime'}]>(aggregate('gp_credits_deductions', {
-					query: { filter: { user_id: { _eq: user.id }, date: { _gte: '$NOW(-30 day)' } } },
+					query: { filter: { user_id: { _eq: auth.user.id }, date: { _gte: '$NOW(-30 day)' } } },
 					groupBy: [ 'date' ],
 					aggregate: { sum: 'amount' },
 				})).then((deduction) => {
@@ -145,7 +144,7 @@
 					});
 				}),
 				$directus.request<[{count: number}]>(aggregate('gp_probes', {
-					query: { filter: { userId: { _eq: user.id }, onlineTimesToday: { _gt: 0 } } },
+					query: { filter: { userId: { _eq: auth.user.id }, onlineTimesToday: { _gt: 0 } } },
 					aggregate: { count: '*' },
 				})),
 			]);
@@ -176,11 +175,11 @@
 				} })),
 				$directus.request<[{count: number}]>(aggregate('gp_credits_additions', {
 					aggregate: { count: '*' },
-					query: { filter: { github_id: { _eq: user.external_identifier || 'admin' } } },
+					query: { filter: { github_id: { _eq: auth.user.external_identifier || 'admin' } } },
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_credits_deductions', {
 					aggregate: { count: '*' },
-					query: { filter: { user_id: { _eq: user.id } } },
+					query: { filter: { user_id: { _eq: auth.user.id } } },
 				})),
 			]);
 

@@ -243,7 +243,6 @@
 	const emit = defineEmits([ 'save', 'hide', 'delete' ]);
 
 	const auth = useAuth();
-	const user = auth.getUser as User;
 
 	// ROOT
 
@@ -283,7 +282,7 @@
 	const userTags = computed(() => probe.value.tags.map(({ prefix, value, format }) => format === 'v1' ? `u-${prefix}-${value}` : `u-${prefix}:${value}`));
 	const tagsToEdit = ref<{ uPrefix: string, value: string }[]>([]);
 
-	const uPrefixes = [ user.github_username, ...user.github_organizations ].map(value => `u-${value}`);
+	const uPrefixes = [ auth.user.github_username, ...auth.user.github_organizations ].map(value => `u-${value}`);
 
 	const editTags = () => {
 		isEditingTags.value = true;
@@ -296,7 +295,7 @@
 
 	const addTag = () => {
 		isEditingTags.value = true;
-		tagsToEdit.value.push({ uPrefix: `u-${user.github_username}`, value: '' });
+		tagsToEdit.value.push({ uPrefix: `u-${auth.user.github_username}`, value: '' });
 	};
 
 	const removeTag = (index: number) => {

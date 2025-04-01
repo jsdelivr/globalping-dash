@@ -71,7 +71,6 @@
 
 	const auth = useAuth();
 
-	const user = auth.getUser as User;
 	const codeWrapperElem = ref<HTMLElement>();
 	const codeElem = ref<HTMLElement>();
 	const adopt = ref(props.adopt ?? true);
@@ -92,11 +91,11 @@
 	const commands = computed(() => {
 		return {
 			docker: {
-				compact: `${props.recreate ? `${updateCommands.docker.map(c => c[0]).join('; ')};\n` : ''}docker run -d ${adopt.value ? `-e GP_ADOPTION_TOKEN=${user.adoption_token} ` : ''}--log-driver local --network host --restart=always --name globalping-probe globalping/globalping-probe`,
+				compact: `${props.recreate ? `${updateCommands.docker.map(c => c[0]).join('; ')};\n` : ''}docker run -d ${adopt.value ? `-e GP_ADOPTION_TOKEN=${auth.user.adoption_token} ` : ''}--log-driver local --network host --restart=always --name globalping-probe globalping/globalping-probe`,
 				expanded: [
 					...props.recreate ? updateCommands.docker : [],
 					[ 'docker run -d \\', ' # Make sure the container runs on boot' ],
-					...adopt.value ? [ [ `-e GP_ADOPTION_TOKEN=${user.adoption_token} \\`, ' # Automatically add the probe to your account' ] ] : [],
+					...adopt.value ? [ [ `-e GP_ADOPTION_TOKEN=${auth.user.adoption_token} \\`, ' # Automatically add the probe to your account' ] ] : [],
 					[ '--log-driver local \\', ' # Use the modern logging driver to ensure old logs are deleted' ],
 					[ '--network host \\', ' # Bypass overlay and mesh networking to ensure they dont impact latency tests' ],
 					[ '--restart=always \\', ' # Restart the container in case it crashes' ],
@@ -104,12 +103,12 @@
 				],
 			},
 			podman: {
-				compact: `${props.recreate ? `${updateCommands.podman.map(c => c[0]).join('; ')};\n` : ''}sudo podman run -d ${adopt.value ? `-e GP_ADOPTION_TOKEN=${user.adoption_token} ` : ''}--cap-add=NET_RAW --network host --restart=always --name globalping-probe globalping/globalping-probe`,
+				compact: `${props.recreate ? `${updateCommands.podman.map(c => c[0]).join('; ')};\n` : ''}sudo podman run -d ${adopt.value ? `-e GP_ADOPTION_TOKEN=${auth.user.adoption_token} ` : ''}--cap-add=NET_RAW --network host --restart=always --name globalping-probe globalping/globalping-probe`,
 				expanded: [
 					...props.recreate ? updateCommands.podman : [],
 					[ 'sudo \\', ' # Allows the --cap-add=NET_RAW option to work properly' ],
 					[ 'podman run -d \\', ' # The container will NOT start on boot. You need to create a systemd service first.' ],
-					...adopt.value ? [ [ `-e GP_ADOPTION_TOKEN=${user.adoption_token} \\`, ' # Automatically add the probe to your account' ] ] : [],
+					...adopt.value ? [ [ `-e GP_ADOPTION_TOKEN=${auth.user.adoption_token} \\`, ' # Automatically add the probe to your account' ] ] : [],
 					[ '--cap-add=NET_RAW \\', ' # Network permissions to run ping' ],
 					[ '--network host \\', ' # Bypass overlay and mesh networking to ensure they dont impact latency tests' ],
 					[ '--restart=always \\', ' # Restart the container in case it crashes' ],

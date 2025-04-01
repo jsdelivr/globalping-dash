@@ -233,8 +233,6 @@
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
 
-	const user = auth.getUser as User;
-
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 
 	const activeStep = ref('0');
@@ -275,7 +273,7 @@
 
 	const { data: initialProbes } = await useLazyAsyncData('initial_user_probes', async () => {
 		const result = await $directus.request(readItems('gp_probes', {
-			filter: { userId: { _eq: user.id } },
+			filter: { userId: { _eq: auth.user.id } },
 		}));
 
 		return result;
@@ -289,7 +287,7 @@
 			await new Promise<void>((resolve) => {
 				const checkProbes = async () => {
 					const currentProbes = await $directus.request(readItems('gp_probes', {
-						filter: { userId: { _eq: user.id } },
+						filter: { userId: { _eq: auth.user.id } },
 					}));
 
 					if (currentProbes.length > initialProbes.value.length) {

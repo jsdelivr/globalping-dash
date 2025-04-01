@@ -161,13 +161,12 @@
 
 	const auth = useAuth();
 	const metadata = useMetadata();
-	const user = auth.getUser as User;
 
 	defineEmits([ 'cancel', 'adopt-a-probe' ]);
 
 	const { data: adoptionsExists } = await useLazyAsyncData('gp_adopted_probes_exist', async () => {
 		const adoptions = await $directus.request(readItems('gp_probes', {
-			filter: { userId: { _eq: user.id } },
+			filter: { userId: { _eq: auth.user.id } },
 			limit: 1,
 		}));
 		return !!adoptions.length;
@@ -178,5 +177,5 @@
 
 	const step1Completed = computed(() => auth.isLoggedIn);
 	const step2Completed = computed(() => adoptionsExists.value);
-	const step3Completed = computed(() => user.user_type === 'sponsor' || user.user_type === 'special');
+	const step3Completed = computed(() => auth.user.user_type === 'sponsor' || auth.user.user_type === 'special');
 </script>

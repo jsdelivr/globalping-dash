@@ -195,7 +195,7 @@
 	const { status: statusProbes, data: adoptedProbes } = await useLazyAsyncData('gp_probes', async () => {
 		try {
 			const result = await $directus.request(readItems('gp_probes', {
-				filter: { userId: { _eq: user.id } },
+				filter: { userId: { _eq: auth.user.id } },
 				sort: [ 'status', 'name' ],
 			}));
 
@@ -215,20 +215,19 @@
 	// CREDITS
 
 	const auth = useAuth();
-	const user = auth.getUser;
 
 	const { status: statusCredits, data: credits } = await useLazyAsyncData('gp_credits', async () => {
 		try {
 			let fromSponsorshipPromise = Promise.resolve(0);
 
 			const totalPromise = $directus.request(readItems('gp_credits', {
-				filter: { user_id: { _eq: user.id } },
+				filter: { user_id: { _eq: auth.user.id } },
 			}));
 
-			if (user.user_type !== 'member') {
+			if (auth.user.user_type !== 'member') {
 				fromSponsorshipPromise = $directus.request(readItems('gp_credits_additions', {
 					filter: {
-						github_id: { _eq: user.external_identifier || 'admin' },
+						github_id: { _eq: auth.user.external_identifier || 'admin' },
 						comment: { _icontains: 'recurring' },
 						date_created: { _gte: '$NOW(-35 day)' },
 					},
@@ -253,7 +252,7 @@
 	}, { default: () => {} });
 
 	const total = computed(() => {
-		const creditsObj = credits.value?.total.find(({ user_id }) => user_id === user.id);
+		const creditsObj = credits.value?.total.find(({ user_id }) => user_id === auth.user.id);
 		return creditsObj ? creditsObj.amount : 0;
 	});
 

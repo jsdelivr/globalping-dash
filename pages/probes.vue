@@ -211,8 +211,6 @@
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const auth = useAuth();
-	const user = auth.getUser as User;
-
 	const config = useRuntimeConfig();
 
 	const { $directus } = useNuxtApp();
@@ -243,17 +241,17 @@
 		try {
 			const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
 				$directus.request(readItems('gp_probes', {
-					filter: { userId: { _eq: user.id } },
+					filter: { userId: { _eq: auth.user.id } },
 					sort: [ 'status', 'name' ],
 					offset: first.value,
 					limit: itemsPerPage,
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_probes', {
-					query: { filter: { userId: { _eq: user.id } } },
+					query: { filter: { userId: { _eq: auth.user.id } } },
 					aggregate: { count: '*' },
 				})),
 				$directus.request<[{ sum: { amount: number }, adopted_probe: string}]>(aggregate('gp_credits_additions', {
-					query: { filter: { github_id: { _eq: user.external_identifier || 'admin' }, adopted_probe: { _null: false }, date_created: { _gte: '$NOW(-30 day)' } } },
+					query: { filter: { github_id: { _eq: auth.user.external_identifier || 'admin' }, adopted_probe: { _null: false }, date_created: { _gte: '$NOW(-30 day)' } } },
 					groupBy: [ 'adopted_probe' ],
 					aggregate: { sum: 'amount' },
 				})),

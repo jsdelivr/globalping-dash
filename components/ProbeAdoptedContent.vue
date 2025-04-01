@@ -12,15 +12,15 @@
 			</div>
 		</div>
 
-		<div v-if="!user.public_probes" class="mt-4 rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
+		<div v-if="!auth.user.public_probes" class="mt-4 rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
 			<ToggleSwitch v-model="publicProbes" :input-id="`public-probes-${getCurrentInstance()?.uid}`" @update:model-value="updatePublicProbes"/>
 			<label :for="`public-probes-${getCurrentInstance()?.uid}`" class="block cursor-pointer font-bold">Make your probes public</label>
 			<p class="mt-3 text-xs">
 				When enabled, your probes are automatically tagged by
-				<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.github_username}`"/>,
+				<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${auth.user.github_username}`"/>,
 				allowing you to select them in measurements,
 				and a list of your active probes is also be available at
-				<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${user.github_username}`" target="_blank" rel="noopener">https://globalping.io/users/{{ user.github_username }}</NuxtLink>.
+				<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${auth.user.github_username}`" target="_blank" rel="noopener">https://globalping.io/users/{{ auth.user.github_username }}</NuxtLink>.
 			</p>
 		</div>
 
@@ -41,7 +41,6 @@
 
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
-	const user = auth.getUser;
 
 	defineProps({
 		probes: {
@@ -52,7 +51,7 @@
 
 	defineEmits([ 'cancel' ]);
 
-	const publicProbes = ref(user.public_probes);
+	const publicProbes = ref(auth.user.public_probes);
 	const updatePublicProbes = async () => {
 		await $directus.request(updateMe({
 			public_probes: publicProbes.value,

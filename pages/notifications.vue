@@ -80,7 +80,6 @@
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
-	const user = auth.getUser as User;
 	const itemsPerPage = config.public.itemsPerTablePage;
 	const { page, first } = usePagination({ itemsPerPage });
 	const displayedNotifications = ref<DirectusNotification[]>([]);
@@ -127,7 +126,7 @@
 			limit: itemsPerPage,
 			offset: page.value * itemsPerPage,
 			filter: {
-				recipient: { _eq: user.id },
+				recipient: { _eq: auth.user.id },
 			},
 			sort: [ '-timestamp' ],
 		}));
@@ -145,7 +144,7 @@
 	const { data: cntResponse } = await useAsyncData('directus_notifications_cnt', async () => {
 		return $directus.request(readNotifications({
 			filter: {
-				recipient: { _eq: user.id },
+				recipient: { _eq: auth.user.id },
 			},
 			aggregate: {
 				count: [ 'id' ],
@@ -163,13 +162,13 @@
 					limit: itemsPerPage,
 					offset: pageNumber * itemsPerPage,
 					filter: {
-						recipient: { _eq: user.id },
+						recipient: { _eq: auth.user.id },
 					},
 					sort: [ '-timestamp' ],
 				})),
 				$directus.request<NotificationCntResponse>(readNotifications({
 					filter: {
-						recipient: { _eq: user.id },
+						recipient: { _eq: auth.user.id },
 					},
 					aggregate: {
 						count: [ 'id' ],

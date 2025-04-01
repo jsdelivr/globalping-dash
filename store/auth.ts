@@ -31,11 +31,6 @@ export const useAuth = defineStore('auth', {
 			last_page: '',
 		},
 	}),
-
-	getters: {
-		getUser: state => state.user,
-	},
-
 	actions: {
 		getRedirectUrl () {
 			const url = new URL(location.href);

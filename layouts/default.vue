@@ -196,8 +196,7 @@
 	const { $directus } = useNuxtApp();
 
 	const auth = useAuth();
-	const user = auth.getUser as User;
-
+	const { user } = storeToRefs(auth);
 	// NOTIFICATIONS
 	const notificationBus = useEventBus<string[]>('notification-updated');
 
@@ -247,7 +246,7 @@
 		try {
 			const notifications = await $directus.request<{ id: string }[]>(readNotifications({
 				filter: {
-					recipient: { _eq: user.id },
+					recipient: { _eq: user.value.id },
 					status: { _eq: 'inbox' },
 				},
 				fields: [ 'id' ],
@@ -269,7 +268,7 @@
 			limit: DD_ITEMS_LIMIT,
 			offset: 0,
 			filter: {
-				recipient: { _eq: user.id },
+				recipient: { _eq: user.value.id },
 			},
 			sort: [ '-timestamp' ],
 		}));

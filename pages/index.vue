@@ -189,13 +189,15 @@
 	const creditsPerAdoptedProbe = useMetadata().creditsPerAdoptedProbe;
 	const route = useRoute();
 	const router = useRouter();
+	const auth = useAuth();
+	const { user } = storeToRefs(auth);
 
 	// SUMMARY
 
 	const { status: statusProbes, data: adoptedProbes } = await useLazyAsyncData('gp_probes', async () => {
 		try {
 			const result = await $directus.request(readItems('gp_probes', {
-				filter: { userId: { _eq: user.id } },
+				filter: { userId: { _eq: user.value.id } },
 				sort: [ 'status', 'name' ],
 			}));
 
@@ -214,21 +216,18 @@
 
 	// CREDITS
 
-	const auth = useAuth();
-	const user = auth.getUser;
-
 	const { status: statusCredits, data: credits } = await useLazyAsyncData('gp_credits', async () => {
 		try {
 			let fromSponsorshipPromise = Promise.resolve(0);
 
 			const totalPromise = $directus.request(readItems('gp_credits', {
-				filter: { user_id: { _eq: user.id } },
+				filter: { user_id: { _eq: user.value.id } },
 			}));
 
-			if (user.user_type !== 'member') {
+			if (user.value.user_type !== 'member') {
 				fromSponsorshipPromise = $directus.request(readItems('gp_credits_additions', {
 					filter: {
-						github_id: { _eq: user.external_identifier || 'admin' },
+						github_id: { _eq: user.value.external_identifier || 'admin' },
 						comment: { _icontains: 'recurring' },
 						date_created: { _gte: '$NOW(-35 day)' },
 					},
@@ -253,7 +252,7 @@
 	}, { default: () => {} });
 
 	const total = computed(() => {
-		const creditsObj = credits.value?.total.find(({ user_id }) => user_id === user.id);
+		const creditsObj = credits.value?.total.find(({ user_id }) => user_id === user.value.id);
 		return creditsObj ? creditsObj.amount : 0;
 	});
 

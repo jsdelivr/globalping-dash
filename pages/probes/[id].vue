@@ -419,7 +419,7 @@
 
 	const loadProbeData = async (id: string) => {
 		try {
-			probeDetails.value = await $directus.request(readItem('gp_adopted_probes', id));
+			probeDetails.value = await $directus.request(readItem('gp_probes', id));
 		} catch (e) {
 			const response = (e as { response?: Response } | undefined)?.response;
 
@@ -436,7 +436,7 @@
 
 		try {
 			if (probeDetails.value) {
-				await $directus.request(deleteItem('gp_adopted_probes', probeDetails.value.id));
+				await $directus.request(deleteItem('gp_probes', probeDetails.value.id));
 				sendToast('success', 'Done', 'The probe has been deleted');
 				emit('delete');
 				router.push('/probes');
@@ -535,7 +535,7 @@
 		}
 
 		try {
-			await $directus.request(updateItem('gp_adopted_probes', probeDetails.value.id, { name: editedName.value }));
+			await $directus.request(updateItem('gp_probes', probeDetails.value.id, { name: editedName.value }));
 
 			sendToast('success', 'Done', 'The probe has been successfully updated');
 			emit('save');
@@ -608,7 +608,7 @@
 		}
 
 		try {
-			await $directus.request(updateItem('gp_adopted_probes', probeDetails.value.id, { city: editedCity.value }));
+			await $directus.request(updateItem('gp_probes', probeDetails.value.id, { city: editedCity.value }));
 
 			sendToast('success', 'Done', 'The probe has been successfully updated');
 			emit('save');
@@ -754,7 +754,7 @@
 		}
 
 		try {
-			await $directus.request(updateItem('gp_adopted_probes', probeDetails.value.id, { tags: updTags }));
+			await $directus.request(updateItem('gp_probes', probeDetails.value.id, { tags: updTags }));
 
 			sendToast('success', 'Done', 'The probe has been successfully updated');
 			emit('save');

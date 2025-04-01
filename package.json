@@ -67,5 +67,6 @@
 			"@primevue/nuxt-module@4.0.7": "patches/@primevue__nuxt-module@4.0.4.patch",
 			"primevue@4.0.7": "patches/primevue@4.0.7.patch"
 		}
-	}
+	},
+	"packageManager": "pnpm@9.15.2"
 }

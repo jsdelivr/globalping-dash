@@ -242,13 +242,13 @@
 
 		try {
 			const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
-				$directus.request(readItems('gp_adopted_probes', {
+				$directus.request(readItems('gp_probes', {
 					filter: { userId: { _eq: user.id } },
 					sort: [ 'status', 'name' ],
 					offset: first.value,
 					limit: itemsPerPage,
 				})),
-				$directus.request<[{count: number}]>(aggregate('gp_adopted_probes', {
+				$directus.request<[{count: number}]>(aggregate('gp_probes', {
 					query: { filter: { userId: { _eq: user.id } } },
 					aggregate: { count: '*' },
 				})),

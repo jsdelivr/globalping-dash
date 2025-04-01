@@ -8,10 +8,10 @@
 				<h5 class="text-lg font-bold">Account details</h5>
 			</div>
 			<div class="grow sm:w-3/5">
-				<label for="firstName" class="block font-bold">First Name</label>
+				<label for="firstName" class="block font-bold">First name</label>
 				<InputText id="firstName" v-model="firstName" class="mt-2 w-full"/>
 
-				<label for="lastName" class="mt-6 block font-bold">Last Name</label>
+				<label for="lastName" class="mt-6 block font-bold">Last name</label>
 				<InputText id="lastName" v-model="lastName" class="mt-2 w-full"/>
 
 				<label for="email" class="mt-6 block font-bold">Email</label>
@@ -31,7 +31,9 @@
 					<InputText id="username" v-model="user.github_username" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 
-				<label for="organizations" class="mt-6 block font-bold">Organizations</label>
+				<label for="organizations" class="mt-6 flex items-center font-bold">
+					Organizations <i v-tooltip.top="'You must be a public member for the organization to appear here.'" class="pi pi-info-circle ml-2"/>
+				</label>
 				<div class="relative mt-2">
 					<ReadOnlyAutoComplete
 						id="tags"
@@ -57,6 +59,25 @@
 					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
 					<InputText id="userType" v-model="user.user_type" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
+
+				<label for="adoption-token" class="mt-6 flex items-center font-bold">
+					Probe adoption token <i v-tooltip.top="'Allows adopting probes by simply setting an GP_ADOPTION_TOKEN environment variable.'" class="pi pi-info-circle ml-2"/>
+				</label>
+				<div class="relative mt-2">
+					<Button
+						severity="contrast"
+						text
+						label="Regenerate"
+						:icon="loadingIconId === 3 ? 'pi pi-sync pi-spin' : 'pi pi-sync'"
+						class="!absolute right-8 top-[5px] h-6 bg-transparent !px-1 hover:bg-transparent"
+						@click="regenerateAdoptionToken(3)"
+					/>
+					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
+					<InputText id="adoption-token" v-model="adoptionToken" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
+					<CopyOnClick :content="adoptionToken">
+						<div class="absolute left-0 top-0 h-full w-[calc(100%-176px)] cursor-pointer"/>
+					</CopyOnClick>
+				</div>
 			</div>
 		</div>
 
@@ -69,11 +90,16 @@
 
 				<div class="mt-3 flex">
 					<div class="w-12">
-						<ToggleSwitch v-model="publicProbes" input-id="publicProbes"/>
+						<ToggleSwitch v-model="publicProbes"/>
 					</div>
 
 					<div class="flex-1">
-						<label for="publicProbes" class="cursor-pointer">When enabled, your probes will be automatically tagged by <Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.github_username}`"/>, allowing you to select them in measurements. A list of your active probes will also be available at <NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${user.github_username}`" target="_blank" rel="noopener">https://globalping.io/users/{{ user.github_username }}</NuxtLink> (once this feature is live).</label>
+						<label class="cursor-text">
+							When enabled, your probes are automatically tagged by
+							<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.github_username}`"/>,
+							allowing you to select them in measurements,
+							and a list of your active probes is also be available at
+							<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${user.github_username}`" target="_blank" rel="noopener">https://globalping.io/users/{{ user.github_username }}</NuxtLink>.</label>
 					</div>
 				</div>
 			</div>
@@ -154,6 +180,7 @@
 	const appearance = ref(user.appearance);
 	const email = ref(user.email);
 	const publicProbes = ref(user.public_probes);
+	const adoptionToken = ref(user.adoption_token);
 
 	const themeOptions = [
 		{ name: 'Auto', value: null, icon: 'pi pi-cog' },
@@ -174,6 +201,8 @@
 				appearance: appearance.value,
 				email: email.value,
 				public_probes: publicProbes.value,
+				// Adoption token values are generated on BE and stored there for a limited time. So we are sending 'adoption_token' only if it is really changed.
+				...user.adoption_token !== adoptionToken.value ? { adoption_token: adoptionToken.value } : {},
 			}));
 
 			lastSavedAppearance = appearance.value;
@@ -196,9 +225,9 @@
 	// SYNC WITH GITHUB
 
 	const loadingIconId = ref<number | null>(null);
-	const syncFromGithub = async (id: number) => {
+	const syncFromGithub = async (iconId: number) => {
 		try {
-			loadingIconId.value = id;
+			loadingIconId.value = iconId;
 
 			await $directus.request(updateMe({
 				first_name: firstName.value,
@@ -219,6 +248,21 @@
 			await auth.refresh();
 
 			sendToast('success', 'Synced', 'GitHub data synced');
+		} catch (e) {
+			sendErrorToast(e);
+		}
+
+		loadingIconId.value = null;
+	};
+
+	// REGENERATE ADOPTION TOKEN
+
+	const regenerateAdoptionToken = async (iconId: number) => {
+		try {
+			loadingIconId.value = iconId;
+
+			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/bytes' }));
+			adoptionToken.value = token;
 		} catch (e) {
 			sendErrorToast(e);
 		}

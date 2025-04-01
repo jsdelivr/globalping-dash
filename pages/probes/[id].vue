@@ -776,8 +776,11 @@
 		case 'offline':
 			return 'text-bluegray-500';
 
-		default:
+		case 'ping-test-failed':
 			return 'text-red-500';
+
+		default:
+			return 'text-yellow-600';
 		}
 	};
 

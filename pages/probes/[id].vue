@@ -147,7 +147,7 @@
 											<!-- here -->
 											<div
 												v-if="probeDetails"
-												class="absolute bottom-9 left-4 flex h-[38px] w-[86%] overflow-hidden rounded-md border border-[#D1D5DB]"
+												class="absolute bottom-9 left-4 flex h-[38px] w-[86%] max-w-[442px] overflow-hidden rounded-md border border-[#D1D5DB]"
 												@click="!isEditingCity && enableCityEditing()"
 											>
 												<span class="flex w-[38px] shrink-0 items-center justify-center border-r border-r-[#D1D5DB] bg-[#E5E7EB]">

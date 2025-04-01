@@ -97,15 +97,17 @@
 					<CopyButton :content="probeDetails.ip" class="!top-[7px] size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
 				</span>
 
-				<span class="flex h-[38px] w-full items-center whitespace-nowrap sm:w-auto">Alternative IPs:</span>
-				<span
-					v-for="(altIp, index) in limitIpsToShow()"
-					:key="index"
-					class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800"
-				>
-					{{ altIp }}
-					<CopyButton :content="altIp" class="!top-[7px] mb-px size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
-				</span>
+				<template v-if="probeDetails?.altIps.length">
+					<span class="flex h-[38px] w-full items-center whitespace-nowrap sm:w-auto">Alternative IPs:</span>
+					<span
+						v-for="(altIp, index) in limitIpsToShow()"
+						:key="index"
+						class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800"
+					>
+						{{ altIp }}
+						<CopyButton :content="altIp" class="!top-[7px] mb-px size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
+					</span>
+				</template>
 
 				<span
 					v-if="(probeDetails?.altIps?.length || 0) > 1"

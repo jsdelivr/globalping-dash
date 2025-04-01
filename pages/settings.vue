@@ -28,7 +28,7 @@
 						@click="syncFromGithub(1)"
 					/>
 					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
-					<InputText id="username" v-model="user.github_username" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
+					<InputText id="username" v-model="auth.user.github_username" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 
 				<label for="organizations" class="mt-6 flex items-center font-bold">
@@ -37,7 +37,7 @@
 				<div class="relative mt-2">
 					<ReadOnlyAutoComplete
 						id="tags"
-						v-model="user.github_organizations"
+						v-model="auth.user.github_organizations"
 						:pt="{
 							inputMultiple: { class: 'pb-1 pr-48 min-h-10' },
 						}"
@@ -58,18 +58,18 @@
 				<Select
 					id="defaultPrefix"
 					v-model="defaultPrefix"
-					:options="[user.github_username, ...user.github_organizations]"
+					:options="[auth.user.github_username, ...auth.user.github_organizations]"
 					class="mt-2 w-full"
 					:scroll-height="'200px'"
 				/>
-				<Message v-if="publicProbes && defaultPrefix !== user.default_prefix" severity="warn" icon="pi pi-exclamation-triangle" class="mt-2">
-					This will update your probes public tag from <code class="font-bold">u-{{ user.default_prefix }}</code> to <code class="font-bold">u-{{ defaultPrefix }}</code>.
+				<Message v-if="publicProbes && defaultPrefix !== auth.user.default_prefix" severity="warn" icon="pi pi-exclamation-triangle" class="mt-2">
+					This will update your probes public tag from <code class="font-bold">u-{{ auth.user.default_prefix }}</code> to <code class="font-bold">u-{{ defaultPrefix }}</code>.
 				</Message>
 
 				<label for="userType" class="mt-6 block font-bold">User type</label>
 				<div class="relative mt-2">
 					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
-					<InputText id="userType" v-model="user.user_type" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
+					<InputText id="userType" v-model="auth.user.user_type" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 
 				<label for="adoption-token" class="mt-6 flex items-center font-bold">
@@ -111,7 +111,7 @@
 							<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${defaultPrefix}`"/>,
 							allowing you to select them in measurements,
 							and a list of your active probes is also be available at
-							<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${user.github_username}`" target="_blank" rel="noopener">https://globalping.io/users/{{ user.github_username }}</NuxtLink>.</label>
+							<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${auth.user.github_username}`" target="_blank" rel="noopener">https://globalping.io/users/{{ auth.user.github_username }}</NuxtLink>.</label>
 					</div>
 				</div>
 			</div>
@@ -185,15 +185,14 @@
 
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
-	const user = auth.getUser as User;
 
-	const firstName = ref(user.first_name);
-	const lastName = ref(user.last_name);
-	const appearance = ref(user.appearance);
-	const email = ref(user.email);
-	const publicProbes = ref(user.public_probes);
-	const defaultPrefix = ref(user.default_prefix);
-	const adoptionToken = ref(user.adoption_token);
+	const firstName = ref(auth.user.first_name);
+	const lastName = ref(auth.user.last_name);
+	const appearance = ref(auth.user.appearance);
+	const email = ref(auth.user.email);
+	const publicProbes = ref(auth.user.public_probes);
+	const defaultPrefix = ref(auth.user.default_prefix);
+	const adoptionToken = ref(auth.user.adoption_token);
 
 	const themeOptions = [
 		{ name: 'Auto', value: null, icon: 'pi pi-cog' },
@@ -208,9 +207,6 @@
 		saveLoading.value = true;
 
 		try {
-			console.log('user.adoption_token', user.adoption_token);
-			console.log('adoptionToken.value', adoptionToken.value);
-
 			await $directus.request(updateMe({
 				first_name: firstName.value,
 				last_name: lastName.value,
@@ -219,7 +215,7 @@
 				public_probes: publicProbes.value,
 				default_prefix: defaultPrefix.value,
 				// Adoption token values are generated on BE and stored there for a limited time. So we are sending 'adoption_token' only if it is really changed.
-				...user.adoption_token !== adoptionToken.value ? { adoption_token: adoptionToken.value } : {},
+				...auth.user.adoption_token !== adoptionToken.value ? { adoption_token: adoptionToken.value } : {},
 			}));
 
 			lastSavedAppearance = appearance.value;
@@ -236,7 +232,7 @@
 
 	// APPEARANCE
 
-	let lastSavedAppearance = user.appearance;
+	let lastSavedAppearance = auth.user.appearance;
 	onUnmounted(() => auth.setAppearance(lastSavedAppearance));
 
 	// SYNC WITH GITHUB
@@ -257,10 +253,10 @@
 			const response = await $directus.request(customEndpoint<{
 				github_username: string;
 				github_organizations: string[];
-			}>({ method: 'POST', path: '/sync-github-data', body: JSON.stringify({ userId: user.id }) }));
+			}>({ method: 'POST', path: '/sync-github-data', body: JSON.stringify({ userId: auth.user.id }) }));
 
-			user.github_username = response.github_username;
-			user.github_organizations = response.github_organizations;
+			auth.user.github_username = response.github_username;
+			auth.user.github_organizations = response.github_organizations;
 
 			await auth.refresh();
 
@@ -292,7 +288,7 @@
 	const deleteDialog = ref(false);
 	const deleteAccount = async () => {
 		try {
-			await $directus.request(deleteUser(user.id!));
+			await $directus.request(deleteUser(auth.user.id));
 			reloadNuxtApp();
 		} catch (e) {
 			sendErrorToast(e);

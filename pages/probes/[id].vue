@@ -239,7 +239,7 @@
 															<div/>
 														</div>
 
-														<div v-if="tagsToEdit.length" class="mb-5 grid flex-1 grid-cols-[3fr_auto_3fr_1fr] items-center gap-5">
+														<div v-if="tagsToEdit.length" class="mb-5 grid flex-1 grid-cols-[3fr_auto_3fr_1fr] items-center gap-y-5">
 															<template v-for="(tag, index) in tagsToEdit" :key="index">
 																<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
 																<div class="mx-2">{{ probeDetails.tags[0]?.format === 'v1' ? '-' : ':' }}</div>

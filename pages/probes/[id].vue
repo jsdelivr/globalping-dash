@@ -795,7 +795,7 @@
 				aggregate: { sum: 'amount' },
 			}));
 
-			probeCreditsPerMonth.value = creditsResponse[0].sum.amount;
+			probeCreditsPerMonth.value = creditsResponse[0]?.sum?.amount;
 		} catch (e) {
 			sendErrorToast(e);
 		}

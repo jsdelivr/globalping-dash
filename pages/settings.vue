@@ -54,6 +54,18 @@
 					<i class="pi pi-lock absolute right-3 top-3 text-bluegray-500"/>
 				</div>
 
+				<label for="defaultPrefix" class="mt-6 block font-bold">Default prefix</label>
+				<Select
+					id="defaultPrefix"
+					v-model="defaultPrefix"
+					:options="[user.github_username, ...user.github_organizations]"
+					class="mt-2 w-full"
+					:scroll-height="'200px'"
+				/>
+				<Message v-if="publicProbes && defaultPrefix !== user.default_prefix" severity="warn" icon="pi pi-exclamation-triangle" class="mt-2">
+					This will update your probes public tag from <code class="font-bold">u-{{ user.default_prefix }}</code> to <code class="font-bold">u-{{ defaultPrefix }}</code>.
+				</Message>
+
 				<label for="userType" class="mt-6 block font-bold">User type</label>
 				<div class="relative mt-2">
 					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
@@ -96,7 +108,7 @@
 					<div class="flex-1">
 						<label class="cursor-text">
 							When enabled, your probes are automatically tagged by
-							<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.github_username}`"/>,
+							<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${defaultPrefix}`"/>,
 							allowing you to select them in measurements,
 							and a list of your active probes is also be available at
 							<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${user.github_username}`" target="_blank" rel="noopener">https://globalping.io/users/{{ user.github_username }}</NuxtLink>.</label>
@@ -180,6 +192,7 @@
 	const appearance = ref(user.appearance);
 	const email = ref(user.email);
 	const publicProbes = ref(user.public_probes);
+	const defaultPrefix = ref(user.default_prefix);
 	const adoptionToken = ref(user.adoption_token);
 
 	const themeOptions = [
@@ -195,12 +208,16 @@
 		saveLoading.value = true;
 
 		try {
+			console.log('user.adoption_token', user.adoption_token);
+			console.log('adoptionToken.value', adoptionToken.value);
+
 			await $directus.request(updateMe({
 				first_name: firstName.value,
 				last_name: lastName.value,
 				appearance: appearance.value,
 				email: email.value,
 				public_probes: publicProbes.value,
+				default_prefix: defaultPrefix.value,
 				// Adoption token values are generated on BE and stored there for a limited time. So we are sending 'adoption_token' only if it is really changed.
 				...user.adoption_token !== adoptionToken.value ? { adoption_token: adoptionToken.value } : {},
 			}));

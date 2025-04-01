@@ -773,6 +773,9 @@
 		case 'ready':
 			return 'text-green-500';
 
+		case 'offline':
+			return 'text-bluegray-500';
+
 		default:
 			return 'text-red-500';
 		}

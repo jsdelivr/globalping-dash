@@ -208,21 +208,21 @@
 													>
 														{{ `u-${tag.prefix}-${tag.value}` }}
 													</span>
-												</div>
 
-												<Button
-													class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent"
-													@click="openEditTagsPopover($event)"
-												>
-													<i
-														class="pi text-sm text-dark-800"
-														:class="{
-															'pi-pencil': probeDetails?.tags?.length,
-															'pi-plus': !probeDetails?.tags?.length,
-														}"
-													/>
-													<span class="text-xs text-dark-800">{{ probeDetails?.tags?.length ? 'Edit' : 'Add' }}</span>
-												</Button>
+													<Button
+														class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent"
+														@click="openEditTagsPopover($event)"
+													>
+														<i
+															class="pi text-sm text-dark-800"
+															:class="{
+																'pi-pencil': probeDetails?.tags?.length,
+																'pi-plus': !probeDetails?.tags?.length,
+															}"
+														/>
+														<span class="text-xs text-dark-800">{{ probeDetails?.tags?.length ? 'Edit' : 'Add' }}</span>
+													</Button>
+												</div>
 
 												<Popover
 													ref="tagPopoverRef"

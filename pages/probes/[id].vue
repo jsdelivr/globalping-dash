@@ -223,44 +223,48 @@
 													}"
 												>
 													<div v-if="probeDetails" class="grid w-full flex-1 grid-rows-[auto_1fr] p-4">
-														<div class="mb-2 grid grid-cols-[3fr_auto_3fr_1fr] text-xs">
-															<div class="content-center font-bold text-dark-800">Prefix</div>
+														<div v-if="tagsToEdit.length" class="mb-2 grid flex-1 grid-cols-[3fr_auto_3fr_1fr]">
+															<div class="content-center text-xs font-bold text-dark-800">Prefix</div>
 															<div class="mx-3"/>
-															<div class="content-center font-bold text-dark-800">Your tag</div>
+															<div class="content-center text-xs font-bold text-dark-800">Your tag</div>
 															<div/>
 														</div>
 
-														<div v-for="(tag, index) in tagsToEdit" :key="index" class="mb-5 grid flex-1 grid-cols-[3fr_auto_3fr_1fr] items-center">
-															<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
-															<div class="mx-2">{{ probeDetails.tags[0]?.format === 'v1' ? '-' : ':' }}</div>
-															<div class="relative flex-1">
-																<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full" placeholder="my-tag"/>
-																<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
-															</div>
+														<div v-if="tagsToEdit.length" class="mb-5 grid flex-1 grid-cols-[3fr_auto_3fr_1fr] items-center gap-5">
+															<template v-for="(tag, index) in tagsToEdit" :key="index">
+																<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
+																<div class="mx-2">{{ probeDetails.tags[0]?.format === 'v1' ? '-' : ':' }}</div>
+																<div class="relative flex-1">
+																	<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full" placeholder="my-tag"/>
+																	<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
+																</div>
 
-															<div class="ml-2 flex gap-1">
-																<Button
-																	icon="pi pi-trash"
-																	text
-																	aria-label="Remove"
-																	class="text-surface-900 dark:text-surface-0"
-																	@click="removeTag(index)"
-																/>
+																<div class="ml-2 flex gap-1">
+																	<Button
+																		icon="pi pi-trash"
+																		text
+																		aria-label="Remove"
+																		class="text-surface-900 dark:text-surface-0"
+																		@click="removeTag(index)"
+																	/>
 
-																<Button
-																	icon="pi pi-plus"
-																	text
-																	aria-label="Add tag"
-																	class="text-surface-900 dark:text-surface-0"
-																	:class="{
-																		'pointer-events-none opacity-0': index + 1 !== tagsToEdit.length,
-																	}"
-																	@click="addTag()"
-																/>
-															</div>
+																	<Button
+																		icon="pi pi-plus"
+																		text
+																		aria-label="Add tag"
+																		class="text-surface-900 dark:text-surface-0"
+																		:class="{
+																			'pointer-events-none opacity-0': index + 1 !== tagsToEdit.length,
+																		}"
+																		@click="addTag()"
+																	/>
+																</div>
+															</template>
 														</div>
 
-														<div class="mt-4 flex justify-between">
+														<div v-else class="mb-5 h-[61px]">The probe has no user tags</div>
+
+														<div class="flex justify-between">
 															<Button
 																label="Cancel"
 																severity="secondary"
@@ -706,10 +710,10 @@
 	const editTags = () => {
 		isEditingTags.value = true;
 
-		tagsToEdit.value = probeDetails && probeDetails.value ? probeDetails.value.tags.map(({ prefix, value }) => ({
+		tagsToEdit.value = probeDetails.value && probeDetails.value.tags.length ? probeDetails.value.tags.map(({ prefix, value }) => ({
 			uPrefix: `u-${prefix}`,
 			value,
-		})) : [];
+		})) : [{ uPrefix: uPrefixes[0], value: '' }];
 	};
 
 	const addTag = () => {

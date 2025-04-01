@@ -370,7 +370,7 @@
 </template>
 
 <script setup lang="ts">
-	import { readItem, deleteItem, updateItem, aggregate } from '@directus/sdk';
+	import { readItem, updateItem, aggregate } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
 	import isEqual from 'lodash/isEqual';
 	import memoize from 'lodash/memoize';
@@ -436,7 +436,7 @@
 
 		try {
 			if (probeDetails.value) {
-				await $directus.request(deleteItem('gp_probes', probeDetails.value.id));
+				await $directus.request(updateItem('gp_probes', probeDetails.value.id, { userId: null }));
 				sendToast('success', 'Done', 'The probe has been deleted');
 				emit('delete');
 				router.push('/probes');

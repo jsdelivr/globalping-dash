@@ -54,7 +54,9 @@
 					<i class="pi pi-lock absolute right-3 top-3 text-bluegray-500"/>
 				</div>
 
-				<label for="defaultPrefix" class="mt-6 block font-bold">Default prefix</label>
+				<label for="defaultPrefix" class="mt-6 flex items-center font-bold">
+					Default tag prefix <i v-tooltip.top="'Your probe tags will have this prefix by default, but you can adjust it for each tag in the probe settings.'" class="pi pi-info-circle ml-2"/>
+				</label>
 				<Select
 					id="defaultPrefix"
 					v-model="defaultPrefix"
@@ -63,7 +65,11 @@
 					:scroll-height="'200px'"
 				/>
 				<Message v-if="publicProbes && defaultPrefix !== user.default_prefix" severity="warn" icon="pi pi-exclamation-triangle" class="mt-2">
-					This will update your probes public tag from <code class="font-bold">u-{{ user.default_prefix }}</code> to <code class="font-bold">u-{{ defaultPrefix }}</code>.
+					Changing the default prefix will update your user tag from
+					<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.default_prefix}`"/>
+					to
+					<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${defaultPrefix}`"/> on all probes.
+					Other existing tags won't change unless you update them in the probe settings.
 				</Message>
 
 				<label for="userType" class="mt-6 block font-bold">User type</label>

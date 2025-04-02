@@ -1,5 +1,5 @@
 <template>
-	<div class="min-h-full p-6" :class="{'min-w-[640px]': tokens.length}">
+	<div class="min-h-full p-4 sm:p-6" :class="{'min-w-[640px]': tokens.length}">
 		<div data-testid="tokens-table">
 			<div class="mb-4 flex">
 				<h1 class="page-title">Tokens</h1>

@@ -1,9 +1,9 @@
 <template>
-	<div class="min-h-full p-6">
+	<div class="min-h-full p-4 sm:p-6">
 		<div>
 			<h1 class="page-title">Settings</h1>
 		</div>
-		<div class="mt-6 flex rounded-xl border bg-surface-0 p-6 max-sm:flex-col dark:bg-dark-800">
+		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Account details</h5>
 			</div>
@@ -99,7 +99,7 @@
 			</div>
 		</div>
 
-		<div class="mt-6 flex rounded-xl border bg-surface-0 p-6 max-sm:flex-col dark:bg-dark-800">
+		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Privacy</h5>
 			</div>
@@ -123,7 +123,7 @@
 			</div>
 		</div>
 
-		<div class="mt-6 flex rounded-xl border bg-surface-0 p-6 max-sm:flex-col dark:bg-dark-800">
+		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Interface</h5>
 			</div>
@@ -147,7 +147,7 @@
 			</div>
 		</div>
 
-		<div class="mt-6 flex rounded-xl border bg-surface-0 p-6 max-sm:flex-col dark:bg-dark-800">
+		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Data removal</h5>
 			</div>

@@ -2,7 +2,7 @@
 	<section class="grid grid-cols-[256px_auto] grid-rows-[56px_auto] max-lg:grid-cols-1">
 		<Toast class="max-[440px]:left-5 max-[440px]:w-auto"/>
 
-		<header class="col-span-2 flex items-center border-b bg-dark-800 px-6 py-3 text-surface-0 max-lg:px-3">
+		<header class="col-span-2 flex items-center border-b bg-dark-800 px-6 py-3 text-surface-0 max-lg:pr-3 max-sm:pl-4 max-sm:pr-2">
 			<NuxtLink to="/">
 				<img class="h-6" src="~/assets/images/gp-logo-white.svg" alt="Globalping logo">
 			</NuxtLink>
@@ -88,7 +88,7 @@
 				class="absolute !ml-4 !mt-2 !overflow-hidden !rounded-xl bg-[var(--p-surface-0)] dark:bg-[var(--main-bg)]"
 				:pt:content="{ class: 'flex items-center !rounded-xl border dark:border-[var(--table-border)]'}"
 			>
-				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-6 sm:w-[37rem]">
+				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-4 sm:w-[37rem] sm:p-6">
 					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
 						<span

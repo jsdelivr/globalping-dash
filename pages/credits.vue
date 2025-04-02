@@ -1,5 +1,5 @@
 <template>
-	<div class="min-h-full p-6" :class="{'min-w-[640px]': creditsChanges.length}">
+	<div class="min-h-full p-4 sm:p-6" :class="{'min-w-[640px]': creditsChanges.length}">
 		<div class="mb-4 flex">
 			<h1 class="page-title">Credits</h1>
 			<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" class="ml-auto" target="_blank" rel="noopener">

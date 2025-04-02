@@ -1,5 +1,5 @@
 <template>
-	<div class="min-h-full p-6" :class="{'md:min-w-[940px]': probes?.length}">
+	<div class="min-h-full p-4 sm:p-6" :class="{'md:min-w-[940px]': probes?.length}">
 		<div class="mb-4 flex">
 			<h1 class="page-title">Probes</h1>
 			<Button class="ml-auto" @click="adoptProbeDialog = true">
@@ -163,7 +163,7 @@
 		</div>
 		<div v-else class="flex grow flex-col overflow-hidden rounded-xl border bg-surface-0 dark:bg-dark-800">
 			<p class="flex border-b px-6 py-3 font-bold text-bluegray-700 dark:text-dark-0">List of probes</p>
-			<div class="m-6 flex grow flex-col items-center justify-center rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
+			<div class="m-6 flex grow flex-col items-center justify-center rounded-xl bg-surface-50 p-4 text-center sm:p-6 dark:bg-dark-600">
 				<img class="mx-auto w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
 				<p class="mt-6 leading-tight">
 					<b>You don't have any probes yet.</b><br><br>

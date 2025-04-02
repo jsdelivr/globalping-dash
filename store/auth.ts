@@ -1,4 +1,4 @@
-import { readMe, readRolesMe } from '@directus/sdk';
+import { readMe, readRolesMe, deleteUser } from '@directus/sdk';
 import { defineStore } from 'pinia';
 
 interface AuthState {
@@ -81,6 +81,13 @@ export const useAuth = defineStore('auth', {
 		},
 		setAppearance (appearance: AuthState['user']['appearance']) {
 			this.user.appearance = appearance;
+		},
+		async deleteAccount () {
+			const { $directus } = useNuxtApp();
+
+			await $directus.request(deleteUser(this.user.id));
+			this.$reset();
+			navigateTo('/login');
 		},
 	},
 });

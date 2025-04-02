@@ -19,8 +19,8 @@
 				When enabled, your probes are automatically tagged by
 				<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.default_prefix}`"/>,
 				allowing you to select them in measurements,
-				and a list of your active probes is also be available at
-				<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${user.default_prefix}`" target="_blank" rel="noopener">https://globalping.io/users/{{ user.default_prefix }}</NuxtLink>.
+				and a list of your active probes is also available on your
+				<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${user.default_prefix}`" target="_blank" rel="noopener">user page</NuxtLink>.
 			</p>
 		</div>
 

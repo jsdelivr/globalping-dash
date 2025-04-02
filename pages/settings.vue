@@ -175,7 +175,7 @@
 </template>
 
 <script setup lang="ts">
-	import { customEndpoint, deleteUser, updateMe } from '@directus/sdk';
+	import { customEndpoint, updateMe } from '@directus/sdk';
 	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
@@ -288,8 +288,7 @@
 	const deleteDialog = ref(false);
 	const deleteAccount = async () => {
 		try {
-			await $directus.request(deleteUser(auth.user.id));
-			reloadNuxtApp();
+			await auth.deleteAccount();
 		} catch (e) {
 			sendErrorToast(e);
 		}

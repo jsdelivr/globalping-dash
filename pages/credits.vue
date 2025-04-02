@@ -56,7 +56,8 @@
 				:first="first"
 				:rows="itemsPerPage"
 				:total-records="creditsChangesCount"
-				template="PrevPageLink PageLinks NextPageLink"
+				:page-link-size="pageLinkSize"
+				:template="template"
 				@page="page = $event.page"
 			/>
 		</div>
@@ -116,7 +117,7 @@
 	const loading = ref(false);
 	const creditsChangesCount = ref(0);
 	const creditsChanges = ref<CreditsChange[]>([]);
-	const { page, first } = usePagination({ itemsPerPage });
+	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 
 	const { data: credits } = await useLazyAsyncData('credits-stats', async () => {
 		try {

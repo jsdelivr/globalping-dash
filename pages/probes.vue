@@ -157,7 +157,8 @@
 				:first="first"
 				:rows="itemsPerPage"
 				:total-records="probesCount"
-				template="PrevPageLink PageLinks NextPageLink"
+				:page-link-size="pageLinkSize"
+				:template="template"
 				@page="page = $event.page"
 			/>
 		</div>
@@ -224,7 +225,7 @@
 	const probesCount = ref(0);
 	const probes = ref<Probe[]>([]);
 	const credits = ref<Record<string, number>>({});
-	const { page, first } = usePagination({ itemsPerPage, active: () => !route.params.id });
+	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage, active: () => !route.params.id });
 	const totalCredits = ref(0);
 	const gmapsLoaded = ref(false);
 

@@ -77,7 +77,8 @@
 					:first="firstToken"
 					:rows="itemsPerPage"
 					:total-records="tokensCount"
-					template="PrevPageLink PageLinks NextPageLink"
+					:page-link-size="pageLinkSize"
+					:template="template"
 					@page="tokensPage = $event.page"
 				/>
 			</div>
@@ -130,7 +131,8 @@
 					:first="firstApp"
 					:rows="itemsPerPage"
 					:total-records="appsCount"
-					template="PrevPageLink PageLinks NextPageLink"
+					:page-link-size="pageLinkSize"
+					:template="template"
 					@page="appsPage = $event.page"
 				/>
 			</div>
@@ -234,7 +236,7 @@
 	const loadingTokens = ref(false);
 	const tokens = ref<Token[]>([]);
 	const tokensCount = ref(0);
-	const { page: tokensPage, first: firstToken } = usePagination({ itemsPerPage, paramKey: 'tokensPage' });
+	const { page: tokensPage, first: firstToken, pageLinkSize, template } = usePagination({ itemsPerPage, paramKey: 'tokensPage' });
 
 	const loadTokens = async () => {
 		loadingTokens.value = true;

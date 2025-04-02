@@ -63,7 +63,8 @@
 			:first="first"
 			:rows="itemsPerPage"
 			:total-records="notificationsCount"
-			template="PrevPageLink PageLinks NextPageLink"
+			:page-link-size="pageLinkSize"
+			:template="template"
 			@page="page = $event.page"
 		/>
 	</div>
@@ -82,7 +83,7 @@
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 	const itemsPerPage = config.public.itemsPerTablePage;
-	const { page, first } = usePagination({ itemsPerPage });
+	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 	const displayedNotifications = ref<DirectusNotification[]>([]);
 	const notificationsCount = ref<number>(0);
 	const notificationBus = useEventBus<string[]>('notification-updated');

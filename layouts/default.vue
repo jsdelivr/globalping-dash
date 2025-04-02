@@ -17,14 +17,14 @@
 					<i class="pi pi-external-link text-bluegray-300"/>
 					<span class="m-2">Globalping</span>
 				</NuxtLink>
-				<p class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(auth.user.user_type) }}</span></p>
+				<p class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(user.user_type) }}</span></p>
 				<Button class="relative mr-8 text-surface-0 hover:bg-transparent" text rounded aria-label="Notifications" @click="toggleNotifications">
 					<i class="pi pi-bell text-[1.3rem]"/>
 					<i v-if="inboxNotificationIds.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.3rem] text-primary"/>
 				</Button>
 				<Button class="flex items-center !px-2 text-surface-0 hover:bg-transparent" text rounded aria-label="Profile" @click="toggleProfile">
 					<i class="pi pi-user rounded-full border-1.5 border-surface-0 p-2" style="font-size: 1.1rem;"/>
-					<p class="font-semibold">{{ auth.user.github_username || `${auth.user.first_name} ${auth.user.last_name}` }}</p>
+					<p class="font-semibold">{{ user.github_username || `${user.first_name} ${user.last_name}` }}</p>
 					<i class="pi pi-chevron-down" style="font-size: .7rem;"/>
 				</Button>
 				<TieredMenu ref="profilePanel" :model="items" popup>
@@ -54,7 +54,7 @@
 					<template #header>
 						<div class="text-lg font-semibold" data-pc-section="title">
 							<i class="pi pi-user mr-2 rounded-full border-1.5 border-main-900 p-2" style="font-size: 1.1rem;"/>
-							<span class="font-semibold">{{ auth.user.github_username || `${auth.user.first_name} ${auth.user.last_name}` }}</span>
+							<span class="font-semibold">{{ user.github_username || `${user.first_name} ${user.last_name}` }}</span>
 						</div>
 					</template>
 
@@ -196,7 +196,7 @@
 	const { $directus } = useNuxtApp();
 
 	const auth = useAuth();
-
+	const { user } = storeToRefs(auth);
 	// NOTIFICATIONS
 	const notificationBus = useEventBus<string[]>('notification-updated');
 
@@ -246,7 +246,7 @@
 		try {
 			const notifications = await $directus.request<{ id: string }[]>(readNotifications({
 				filter: {
-					recipient: { _eq: auth.user.id },
+					recipient: { _eq: user.value.id },
 					status: { _eq: 'inbox' },
 				},
 				fields: [ 'id' ],
@@ -268,7 +268,7 @@
 			limit: DD_ITEMS_LIMIT,
 			offset: 0,
 			filter: {
-				recipient: { _eq: auth.user.id },
+				recipient: { _eq: user.value.id },
 			},
 			sort: [ '-timestamp' ],
 		}));

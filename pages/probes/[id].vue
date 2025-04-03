@@ -28,7 +28,8 @@
 					class="relative flex w-full cursor-pointer items-center gap-3 sm:w-auto"
 					@click="!isEditingName && enableNameEditing()"
 				>
-					<img class="h-10" src="~/assets/icons/gp-white.svg" alt="Globalping White logo">
+					<img v-if="isDarkMode" class="h-10" src="~/assets/icons/gp-dark.svg" alt="Globalping Dark Logo">
+					<img v-else class="h-10" src="~/assets/icons/gp-white.svg" alt="Globalping White Logo">
 
 					<input
 						v-if="isEditingName"
@@ -838,4 +839,7 @@
 	watch(probeDetails, async () => {
 		loadCreditsData();
 	});
+
+	// HANDLE TOP LOGO IMG SRC
+	const isDarkMode = computed(() => auth.user.appearance === 'dark');
 </script>

@@ -11,12 +11,12 @@
 					<span class="flex items-center gap-2 pl-3">
 						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails.status)"/>
 
-						<span class="font-bold text-bluegray-900">
+						<span class="font-bold text-bluegray-900 dark:text-[var(--bluegray-0)]">
 							{{ capitalize(probeDetails.status) }}
 						</span>
 					</span>
 
-					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900">
+					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900 dark:text-[var(--bluegray-0)]">
 						v{{ probeDetails.version }}
 					</span>
 				</div>
@@ -60,18 +60,18 @@
 					<span class="flex items-center gap-2 pl-3">
 						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails.status)"/>
 
-						<span class="font-bold text-bluegray-900">
+						<span class="font-bold text-bluegray-900 dark:text-[var(--bluegray-0)]">
 							{{ capitalize(probeDetails.status) }}
 						</span>
 					</span>
 
-					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900 dark:bg-dark-600">
+					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900 dark:bg-dark-600 dark:text-[var(--bluegray-0)]">
 						v{{ probeDetails.version }}
 					</span>
 				</div>
 
 				<div v-if="probeCreditsPerMonth" class="ml-auto flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-normal">
-					<span class="whitespace-nowrap text-bluegray-900">
+					<span class="whitespace-nowrap text-bluegray-900 dark:text-[var(--bluegray-0)]">
 						Credits per month
 					</span>
 
@@ -93,7 +93,7 @@
 				}"
 			>
 				<span class="flex h-[38px] w-full items-center whitespace-nowrap sm:w-auto">Primary IP:</span>
-				<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800">
+				<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800 dark:text-[var(--bluegray-0)]">
 					{{ probeDetails.ip }}
 					<CopyButton :content="probeDetails.ip" class="!top-[7px] size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
 				</span>
@@ -103,7 +103,7 @@
 					<span
 						v-for="(altIp, index) in limitIpsToShow()"
 						:key="index"
-						class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800"
+						class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800 dark:text-[var(--bluegray-0)]"
 					>
 						{{ altIp }}
 						<CopyButton :content="altIp" class="!top-[7px] mb-px size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
@@ -112,7 +112,7 @@
 
 				<span
 					v-if="(probeDetails?.altIps?.length || 0) > 1"
-					class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900"
+					class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900 dark:text-[var(--bluegray-0)]"
 					@click="showHideMoreIps"
 				>
 					{{ showMoreIps ? 'Show less' : 'Show more' }}
@@ -130,12 +130,12 @@
 						<div class="flex flex-col gap-6">
 							<div class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-2">
 								<div class="col-span-1 flex flex-col rounded-xl border border-surface-300 bg-white md:col-span-1 lg:col-span-1 dark:border-dark-600 dark:bg-dark-800">
-									<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600">
+									<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600 dark:text-[var(--bluegray-0)]">
 										Location
 									</h3>
 
 									<div class="flex grow flex-col gap-3 p-6">
-										<p class="text-sm leading-[100%] text-bluegray-600">
+										<p class="text-sm leading-[100%] text-bluegray-600 dark:text-[var(--bluegray-0)]">
 											City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
 										</p>
 
@@ -144,7 +144,7 @@
 
 											<span
 												v-if="probeDetails"
-												class="absolute right-4 top-4 rounded-xl border border-surface-300 bg-white px-2 py-1 font-bold leading-none text-dark-800 dark:border-dark-600 dark:bg-dark-800"
+												class="absolute right-4 top-4 rounded-xl border border-surface-300 bg-white px-2 py-1 font-bold leading-none text-dark-800 dark:border-dark-600 dark:bg-dark-800 dark:text-[var(--bluegray-0)]"
 											>
 												{{ probeDetails.network }} {{ probeDetails.asn }}
 											</span>
@@ -162,14 +162,14 @@
 													v-if="isEditingCity"
 													ref="inputCityRef"
 													v-model="editedCity"
-													class="flex w-full border-0 pl-3 pr-16 text-bluegray-900 shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0"
+													class="flex w-full border-0 pl-3 pr-16 text-bluegray-900 shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 dark:text-[var(--bluegray-0)]"
 													@keyup.enter="updateProbeCity"
 													@blur="cancelCityEditing"
 												>
 
 												<span
 													v-else
-													class="flex w-full items-center bg-white px-3 text-bluegray-900 dark:bg-dark-800"
+													class="flex w-full items-center bg-white px-3 text-bluegray-900 dark:bg-dark-800 dark:text-[var(--bluegray-0)]"
 												>
 													{{ city }}
 												</span>
@@ -191,12 +191,12 @@
 
 								<div class="grid grid-cols-1 gap-4 2xl:grid-cols-2">
 									<div class="flex flex-col rounded-xl border border-surface-300 bg-white dark:border-dark-600 dark:bg-dark-800">
-										<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600">
+										<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600 dark:text-[var(--bluegray-0)]">
 											User tags
 										</h3>
 
 										<div class="flex flex-col gap-3 p-6">
-											<p class="text-sm leading-[100%] text-bluegray-600">
+											<p class="text-sm leading-[100%] text-bluegray-600 dark:text-[var(--bluegray-0)]">
 												Public user-defined tags that can be used to target the probe in measurements. Each tag must be prefixed by your GitHub username or organization. E.g., for a user with username jimaek and tag home-1 the final tag would be u-jimaek-home-1.
 											</p>
 
@@ -205,7 +205,7 @@
 													<span
 														v-for="(tag, index) in probeDetails.tags"
 														:key="index"
-														class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600"
+														class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600 dark:text-[var(--bluegray-0)]"
 													>
 														{{ `u-${tag.prefix}-${tag.value}` }}
 													</span>
@@ -215,13 +215,13 @@
 														@click="openEditTagsPopover($event)"
 													>
 														<i
-															class="pi text-sm text-dark-800"
+															class="pi text-sm text-dark-800 dark:text-[var(--bluegray-0)]"
 															:class="{
 																'pi-pencil': probeDetails?.tags?.length,
 																'pi-plus': !probeDetails?.tags?.length,
 															}"
 														/>
-														<span class="text-xs text-dark-800">{{ probeDetails?.tags?.length ? 'Edit' : 'Add' }}</span>
+														<span class="text-xs text-dark-800 dark:text-[var(--bluegray-0)]">{{ probeDetails?.tags?.length ? 'Edit' : 'Add' }}</span>
 													</Button>
 												</div>
 
@@ -234,9 +234,9 @@
 												>
 													<div v-if="probeDetails" class="grid w-full flex-1 grid-rows-[auto_1fr] p-4">
 														<div v-if="tagsToEdit.length" class="mb-2 grid flex-1 grid-cols-[3fr_auto_3fr_1fr]">
-															<div class="content-center text-xs font-bold text-dark-800">Prefix</div>
+															<div class="content-center text-xs font-bold text-dark-800 dark:text-[var(--bluegray-0)]">Prefix</div>
 															<div class="mx-3"/>
-															<div class="content-center text-xs font-bold text-dark-800">Your tag</div>
+															<div class="content-center text-xs font-bold text-dark-800 dark:text-[var(--bluegray-0)]">Your tag</div>
 															<div/>
 														</div>
 
@@ -296,12 +296,12 @@
 									</div>
 
 									<div class="flex flex-col rounded-xl border border-surface-300 bg-white dark:border-dark-600 dark:bg-dark-800">
-										<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600">
+										<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600 dark:text-[var(--bluegray-0)]">
 											System tags
 										</h3>
 
 										<div class="flex flex-col gap-3 p-6">
-											<p class="text-sm leading-[100%] text-bluegray-600">
+											<p class="text-sm leading-[100%] text-bluegray-600 dark:text-[var(--bluegray-0)]">
 												Public tags that can be used to target the probe in measurements.
 											</p>
 
@@ -310,7 +310,7 @@
 													<span
 														v-for="(tag, index) in probeDetails.systemTags"
 														:key="index"
-														class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600"
+														class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600 dark:text-[var(--bluegray-0)]"
 													>
 														{{ tag }}
 													</span>
@@ -322,11 +322,11 @@
 							</div>
 
 							<div class="flex flex-col rounded-xl border border-surface-300 dark:border-dark-600">
-								<h3 class="flex h-10 items-center border-b border-surface-300 pl-6 font-bold text-dark-800 dark:border-dark-600">Tests (last 24h)</h3>
+								<h3 class="flex h-10 items-center border-b border-surface-300 pl-6 font-bold text-dark-800 dark:border-dark-600 dark:text-[var(--bluegray-0)]">Tests (last 24h)</h3>
 								<div class="flex flex-col gap-6 p-6">
 									<div>
-										<span class="text-bluegray-900">Total: </span>
-										<span class="font-bold text-bluegray-900">{{ '347,530' }} tests</span>
+										<span class="text-bluegray-900 dark:text-[var(--bluegray-0)]">Total: </span>
+										<span class="font-bold text-bluegray-900 dark:text-[var(--bluegray-0)]">{{ '347,530' }} tests</span>
 									</div>
 
 									<div class="h-36">
@@ -337,8 +337,8 @@
 
 							<div class="flex flex-col gap-4 rounded-xl bg-surface-100 px-6 py-4 sm:h-[68px] sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-0 dark:bg-dark-600">
 								<span class="flex gap-2">
-									<i class="pi pi-info-circle text-lg text-bluegray-900"/>
-									<span class="text-bluegray-900">Removing the probe will result in data loss.</span>
+									<i class="pi pi-info-circle text-lg text-bluegray-900 dark:text-[var(--bluegray-0)]"/>
+									<span class="text-bluegray-900 dark:text-[var(--bluegray-0)]">Removing the probe will result in data loss.</span>
 								</span>
 
 								<Button

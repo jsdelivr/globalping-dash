@@ -7,7 +7,7 @@
 					<span class="font-bold text-bluegray-500">Back to probes</span>
 				</NuxtLink>
 
-				<div v-if="probeDetails" class="flex h-8 items-center gap-1 rounded-full border border-surface-300 md:hidden">
+				<div v-if="probeDetails" class="flex h-8 items-center gap-1 rounded-full border border-surface-300 md:hidden dark:border-dark-600">
 					<span class="flex items-center gap-2 pl-3">
 						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails.status)"/>
 
@@ -34,7 +34,7 @@
 						v-if="isEditingName"
 						ref="inputNameRef"
 						v-model="editedName"
-						class="flex w-[calc(100%-52px)] rounded-xl border border-gray-300 px-2 py-1 text-xl font-bold focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)]"
+						class="flex w-[calc(100%-52px)] rounded-xl border border-gray-300 px-2 py-1 text-xl font-bold focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)] dark:border-dark-600"
 						:class="{ 'pr-16': isEditingName && editedName !== originalName }"
 						@keyup.enter="updateProbeName"
 						@blur="cancelNameEditing"
@@ -56,7 +56,7 @@
 					<i v-if="!isEditingName" class="pi pi-pencil text-lg"/>
 				</div>
 
-				<div class="hidden h-8 items-center gap-1 rounded-full border border-surface-300 md:flex">
+				<div class="hidden h-8 items-center gap-1 rounded-full border border-surface-300 md:flex dark:border-dark-600">
 					<span class="flex items-center gap-2 pl-3">
 						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails.status)"/>
 
@@ -65,7 +65,7 @@
 						</span>
 					</span>
 
-					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900">
+					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900 dark:bg-dark-600">
 						v{{ probeDetails.version }}
 					</span>
 				</div>
@@ -75,7 +75,7 @@
 						Credits per month
 					</span>
 
-					<span class="flex h-[30px] items-center gap-2 rounded-md border border-surface-300 px-2">
+					<span class="flex h-[30px] items-center gap-2 rounded-md border border-surface-300 px-2 dark:border-dark-600">
 						<nuxt-icon class="text-green-500" name="coin"/>
 						<span class="font-bold text-green-500">+{{ probeCreditsPerMonth }}</span>
 					</span>
@@ -93,7 +93,7 @@
 				}"
 			>
 				<span class="flex h-[38px] w-full items-center whitespace-nowrap sm:w-auto">Primary IP:</span>
-				<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:bg-dark-800">
+				<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800">
 					{{ probeDetails.ip }}
 					<CopyButton :content="probeDetails.ip" class="!top-[7px] size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
 				</span>
@@ -103,7 +103,7 @@
 					<span
 						v-for="(altIp, index) in limitIpsToShow()"
 						:key="index"
-						class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:bg-dark-800"
+						class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800"
 					>
 						{{ altIp }}
 						<CopyButton :content="altIp" class="!top-[7px] mb-px size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
@@ -120,7 +120,7 @@
 			</div>
 
 			<Tabs value="0">
-				<TabList class="!border-b !border-surface-300">
+				<TabList class="!border-b !border-surface-300 dark:border-dark-600">
 					<Tab value="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Details</Tab>
 					<Tab value="1" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Logs</Tab>
 				</TabList>
@@ -129,8 +129,8 @@
 					<TabPanel value="0">
 						<div class="flex flex-col gap-6">
 							<div class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-2">
-								<div class="col-span-1 flex flex-col rounded-xl border border-surface-300 bg-white md:col-span-1 lg:col-span-1 dark:bg-dark-800">
-									<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">
+								<div class="col-span-1 flex flex-col rounded-xl border border-surface-300 bg-white md:col-span-1 lg:col-span-1 dark:border-dark-600 dark:bg-dark-800">
+									<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600">
 										Location
 									</h3>
 
@@ -144,17 +144,17 @@
 
 											<span
 												v-if="probeDetails"
-												class="absolute right-4 top-4 rounded-xl border border-surface-300 bg-white px-2 py-1 font-bold leading-none text-dark-800 dark:bg-dark-800"
+												class="absolute right-4 top-4 rounded-xl border border-surface-300 bg-white px-2 py-1 font-bold leading-none text-dark-800 dark:border-dark-600 dark:bg-dark-800"
 											>
 												{{ probeDetails.network }} {{ probeDetails.asn }}
 											</span>
 
 											<div
 												v-if="probeDetails"
-												class="absolute bottom-9 left-4 flex h-[38px] w-[86%] max-w-[442px] overflow-hidden rounded-md border border-[#D1D5DB]"
+												class="absolute bottom-9 left-4 flex h-[38px] w-[86%] max-w-[442px] overflow-hidden rounded-md border border-[#D1D5DB] dark:border-dark-600"
 												@click="!isEditingCity && enableCityEditing()"
 											>
-												<span class="flex w-[38px] shrink-0 items-center justify-center border-r border-r-[#D1D5DB] bg-[#E5E7EB]">
+												<span class="flex w-[38px] shrink-0 items-center justify-center border-r border-r-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600 dark:bg-dark-600">
 													<CountryFlag :country="probeDetails.country" size="small"/>
 												</span>
 
@@ -190,8 +190,8 @@
 								</div>
 
 								<div class="grid grid-cols-1 gap-4 2xl:grid-cols-2">
-									<div class="flex flex-col rounded-xl border border-surface-300 bg-white dark:bg-dark-800">
-										<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">
+									<div class="flex flex-col rounded-xl border border-surface-300 bg-white dark:border-dark-600 dark:bg-dark-800">
+										<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600">
 											User tags
 										</h3>
 
@@ -205,13 +205,13 @@
 													<span
 														v-for="(tag, index) in probeDetails.tags"
 														:key="index"
-														class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900"
+														class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600"
 													>
 														{{ `u-${tag.prefix}-${tag.value}` }}
 													</span>
 
 													<Button
-														class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent"
+														class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent dark:!border-dark-600 dark:bg-dark-600"
 														@click="openEditTagsPopover($event)"
 													>
 														<i
@@ -295,8 +295,8 @@
 										</div>
 									</div>
 
-									<div class="flex flex-col rounded-xl border border-surface-300 bg-white dark:bg-dark-800">
-										<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">
+									<div class="flex flex-col rounded-xl border border-surface-300 bg-white dark:border-dark-600 dark:bg-dark-800">
+										<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600">
 											System tags
 										</h3>
 
@@ -310,7 +310,7 @@
 													<span
 														v-for="(tag, index) in probeDetails.systemTags"
 														:key="index"
-														class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900"
+														class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600"
 													>
 														{{ tag }}
 													</span>
@@ -321,8 +321,8 @@
 								</div>
 							</div>
 
-							<div class="flex flex-col rounded-xl border border-surface-300">
-								<h3 class="flex h-10 items-center border-b border-surface-300 pl-6 font-bold text-dark-800">Tests (last 24h)</h3>
+							<div class="flex flex-col rounded-xl border border-surface-300 dark:border-dark-600">
+								<h3 class="flex h-10 items-center border-b border-surface-300 pl-6 font-bold text-dark-800 dark:border-dark-600">Tests (last 24h)</h3>
 								<div class="flex flex-col gap-6 p-6">
 									<div>
 										<span class="text-bluegray-900">Total: </span>

@@ -85,7 +85,7 @@
 			<div
 				v-if="probeDetails"
 				ref="ipsContentRef"
-				class="flex flex-wrap content-start gap-2 rounded-xl bg-surface-100 p-4 transition-all ease-in-out"
+				class="flex flex-wrap content-start gap-2 rounded-xl bg-surface-100 p-4 transition-all ease-in-out dark:bg-dark-600"
 				:class="getIpsOpeningClass()"
 				:style="{
 					maxHeight: ipsContentHeight,
@@ -93,7 +93,7 @@
 				}"
 			>
 				<span class="flex h-[38px] w-full items-center whitespace-nowrap sm:w-auto">Primary IP:</span>
-				<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800">
+				<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:bg-dark-800">
 					{{ probeDetails.ip }}
 					<CopyButton :content="probeDetails.ip" class="!top-[7px] size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
 				</span>
@@ -103,7 +103,7 @@
 					<span
 						v-for="(altIp, index) in limitIpsToShow()"
 						:key="index"
-						class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800"
+						class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:bg-dark-800"
 					>
 						{{ altIp }}
 						<CopyButton :content="altIp" class="!top-[7px] mb-px size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
@@ -129,7 +129,7 @@
 					<TabPanel value="0">
 						<div class="flex flex-col gap-6">
 							<div class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-2">
-								<div class="col-span-1 flex flex-col rounded-xl border border-surface-300 bg-white md:col-span-1 lg:col-span-1">
+								<div class="col-span-1 flex flex-col rounded-xl border border-surface-300 bg-white md:col-span-1 lg:col-span-1 dark:bg-dark-800">
 									<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">
 										Location
 									</h3>
@@ -144,7 +144,7 @@
 
 											<span
 												v-if="probeDetails"
-												class="absolute right-4 top-4 rounded-xl border border-surface-300 bg-white px-2 py-1 font-bold leading-none text-dark-800"
+												class="absolute right-4 top-4 rounded-xl border border-surface-300 bg-white px-2 py-1 font-bold leading-none text-dark-800 dark:bg-dark-800"
 											>
 												{{ probeDetails.network }} {{ probeDetails.asn }}
 											</span>
@@ -169,7 +169,7 @@
 
 												<span
 													v-else
-													class="flex w-full items-center bg-white px-3 text-bluegray-900"
+													class="flex w-full items-center bg-white px-3 text-bluegray-900 dark:bg-dark-800"
 												>
 													{{ city }}
 												</span>
@@ -190,7 +190,7 @@
 								</div>
 
 								<div class="grid grid-cols-1 gap-4 2xl:grid-cols-2">
-									<div class="flex flex-col rounded-xl border border-surface-300 bg-white">
+									<div class="flex flex-col rounded-xl border border-surface-300 bg-white dark:bg-dark-800">
 										<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">
 											User tags
 										</h3>
@@ -295,7 +295,7 @@
 										</div>
 									</div>
 
-									<div class="flex flex-col rounded-xl border border-surface-300 bg-white">
+									<div class="flex flex-col rounded-xl border border-surface-300 bg-white dark:bg-dark-800">
 										<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800">
 											System tags
 										</h3>
@@ -335,7 +335,7 @@
 								</div>
 							</div>
 
-							<div class="flex flex-col gap-4 rounded-xl bg-surface-100 px-6 py-4 sm:h-[68px] sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-0">
+							<div class="flex flex-col gap-4 rounded-xl bg-surface-100 px-6 py-4 sm:h-[68px] sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-0 dark:bg-dark-600">
 								<span class="flex gap-2">
 									<i class="pi pi-info-circle text-lg text-bluegray-900"/>
 									<span class="text-bluegray-900">Removing the probe will result in data loss.</span>

@@ -630,7 +630,7 @@
 
 			originalCity.value = editedCity.value;
 			isEditingCity.value = false;
-			probeDetails.value.name = editedCity.value;
+			probeDetails.value.city = editedCity.value;
 		} catch (e) {
 			sendErrorToast(e);
 

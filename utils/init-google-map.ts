@@ -78,6 +78,7 @@ export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, sh
 		mapTypeControl: false,
 		streetViewControl: false,
 		fullscreenControl: false,
+		disableDefaultUI: true,
 		minZoom: MAP_MIN_ZOOM,
 		maxZoom: MAP_MAX_ZOOM,
 		gestureHandling: 'cooperative',

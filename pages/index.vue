@@ -1,12 +1,12 @@
 <template>
-	<div class="grid grid-cols-2 gap-4 p-6">
+	<div class="grid grid-cols-2 gap-4 p-4 sm:p-6">
 		<h1 class="page-title col-span-2 mb-2">Overview</h1>
 
 		<div class="rounded-xl border bg-surface-0 max-[1480px]:col-span-2 dark:bg-dark-800">
-			<p class="flex border-b px-6 py-3 font-bold text-bluegray-700 dark:text-dark-0">Summary</p>
+			<p class="flex border-b px-4 py-3 font-bold text-bluegray-700 sm:px-6 dark:text-dark-0">Summary</p>
 
 			<AsyncBlock :status="statusProbes">
-				<div class="p-6">
+				<div class="p-4 sm:p-6">
 					<div class="flex max-sm:flex-wrap">
 						<div class="flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:bg-surface-50 max-sm:p-4 max-sm:dark:bg-dark-700">
 							<BigIcon name="gp" border/>
@@ -48,7 +48,7 @@
 		</div>
 
 		<div class="rounded-xl border bg-surface-0 max-[1480px]:col-span-2 dark:bg-dark-800">
-			<p class="flex items-center border-b px-6 py-3 font-bold text-bluegray-700 dark:text-dark-0">
+			<p class="flex items-center border-b px-4 py-3 font-bold text-bluegray-700 sm:px-6 dark:text-dark-0">
 				Credits<i
 					v-tooltip.top="'Credits allow you to run measurements above the hourly limits.'"
 					class="pi pi-info-circle ml-2"
@@ -56,7 +56,7 @@
 			</p>
 
 			<AsyncBlock :status="statusCredits">
-				<div class="p-6">
+				<div class="p-4 sm:p-6">
 					<div class="flex gap-x-2 max-sm:flex-wrap">
 						<div class="flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:bg-surface-50 max-sm:p-4 max-sm:dark:bg-dark-700">
 							<BigIcon name="coin" border/>
@@ -94,7 +94,7 @@
 		</div>
 
 		<div class="col-span-2 rounded-xl border bg-surface-0 dark:bg-dark-800">
-			<div class="flex h-10 items-center border-b px-6 font-bold text-bluegray-700 dark:text-dark-0">
+			<div class="flex h-10 items-center border-b px-4 font-bold text-bluegray-700 sm:px-6 dark:text-dark-0">
 				<span>Probes</span>
 				<NuxtLink class="ml-auto" to="/probes" tabindex="-1">
 					<Button link label="See all" icon-pos="right" icon="pi pi-chevron-right"/>
@@ -102,7 +102,7 @@
 			</div>
 
 			<AsyncBlock :status="statusProbes">
-				<div class="p-6">
+				<div class="p-4 sm:p-6">
 					<div v-if="adoptedProbes.length" class="probes-wrapper flex overflow-hidden max-sm:flex-col">
 						<div v-for="probe in adoptedProbes.slice(0, 10)" :key="probe.id" class="probe box-content min-w-60 py-2">
 							<component :is="useWindowSize().width.value > 640 ? 'div' : NuxtLink" :to="`/probes/${probe.id}`" class="block">
@@ -131,7 +131,7 @@
 							</component>
 						</div>
 					</div>
-					<div v-if="!adoptedProbes.length" class="flex rounded-xl bg-surface-50 p-6 max-sm:flex-col max-sm:items-center dark:bg-dark-600">
+					<div v-if="!adoptedProbes.length" class="flex rounded-xl bg-surface-50 p-4 max-sm:flex-col max-sm:items-center sm:p-6 dark:bg-dark-600">
 						<img class="size-24 max-sm:mb-4" src="~/assets/images/hw-probe.png" alt="Hardware probe">
 						<p class="ml-6 leading-tight">
 							<b>You don't have any probes yet.</b><br><br>
@@ -189,13 +189,15 @@
 	const creditsPerAdoptedProbe = useMetadata().creditsPerAdoptedProbe;
 	const route = useRoute();
 	const router = useRouter();
+	const auth = useAuth();
+	const { user } = storeToRefs(auth);
 
 	// SUMMARY
 
 	const { status: statusProbes, data: adoptedProbes } = await useLazyAsyncData('gp_probes', async () => {
 		try {
 			const result = await $directus.request(readItems('gp_probes', {
-				filter: { userId: { _eq: user.id } },
+				filter: { userId: { _eq: user.value.id } },
 				sort: [ 'status', 'name' ],
 			}));
 
@@ -214,21 +216,18 @@
 
 	// CREDITS
 
-	const auth = useAuth();
-	const user = auth.getUser;
-
 	const { status: statusCredits, data: credits } = await useLazyAsyncData('gp_credits', async () => {
 		try {
 			let fromSponsorshipPromise = Promise.resolve(0);
 
 			const totalPromise = $directus.request(readItems('gp_credits', {
-				filter: { user_id: { _eq: user.id } },
+				filter: { user_id: { _eq: user.value.id } },
 			}));
 
-			if (user.user_type !== 'member') {
+			if (user.value.user_type !== 'member') {
 				fromSponsorshipPromise = $directus.request(readItems('gp_credits_additions', {
 					filter: {
-						github_id: { _eq: user.external_identifier || 'admin' },
+						github_id: { _eq: user.value.external_identifier || 'admin' },
 						comment: { _icontains: 'recurring' },
 						date_created: { _gte: '$NOW(-35 day)' },
 					},
@@ -253,7 +252,7 @@
 	}, { default: () => {} });
 
 	const total = computed(() => {
-		const creditsObj = credits.value?.total.find(({ user_id }) => user_id === user.id);
+		const creditsObj = credits.value?.total.find(({ user_id }) => user_id === user.value.id);
 		return creditsObj ? creditsObj.amount : 0;
 	});
 

@@ -1,23 +1,12 @@
-import { readMe, readRolesMe } from '@directus/sdk';
+import { readMe, readRolesMe, deleteUser } from '@directus/sdk';
 import { defineStore } from 'pinia';
 
 interface AuthState {
 	isLoggedIn: boolean,
 	expiresAt: number,
-		isAdmin: boolean,
-		user: {
-		id: string,
-		first_name: string | null,
-		last_name: string | null,
-		github_username: string,
-		github_organizations: string[],
-		email: string | null,
+	isAdmin: boolean,
+	user: User & {
 		last_page: string | null,
-		external_identifier: string | null,
-		appearance: 'light' | 'dark' | null,
-		user_type: 'member' | 'sponsor' | 'special',
-		public_probes: boolean,
-		adoption_token: string,
 	}
 }
 
@@ -30,22 +19,18 @@ export const useAuth = defineStore('auth', {
 			id: '',
 			first_name: '',
 			last_name: '',
+			email: '',
+			external_identifier: '',
 			github_username: '',
 			github_organizations: [],
-			email: '',
-			last_page: '',
-			external_identifier: '',
-			appearance: null,
 			user_type: 'member',
+			appearance: null,
 			public_probes: false,
 			adoption_token: '',
+			default_prefix: '',
+			last_page: '',
 		},
 	}),
-
-	getters: {
-		getUser: state => state.user,
-	},
-
 	actions: {
 		getRedirectUrl () {
 			const url = new URL(location.href);
@@ -96,6 +81,13 @@ export const useAuth = defineStore('auth', {
 		},
 		setAppearance (appearance: AuthState['user']['appearance']) {
 			this.user.appearance = appearance;
+		},
+		async deleteAccount () {
+			const { $directus } = useNuxtApp();
+
+			await $directus.request(deleteUser(this.user.id));
+			this.$reset();
+			navigateTo('/login');
 		},
 	},
 });

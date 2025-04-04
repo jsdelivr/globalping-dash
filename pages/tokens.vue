@@ -1,5 +1,5 @@
 <template>
-	<div class="min-h-full p-6" :class="{'min-w-[640px]': tokens.length}">
+	<div class="min-h-full p-4 sm:p-6" :class="{'min-w-[640px]': tokens.length}">
 		<div data-testid="tokens-table">
 			<div class="mb-4 flex">
 				<h1 class="page-title">Tokens</h1>
@@ -77,7 +77,8 @@
 					:first="firstToken"
 					:rows="itemsPerPage"
 					:total-records="tokensCount"
-					template="PrevPageLink PageLinks NextPageLink"
+					:page-link-size="pageLinkSize"
+					:template="template"
 					@page="tokensPage = $event.page"
 				/>
 			</div>
@@ -130,7 +131,8 @@
 					:first="firstApp"
 					:rows="itemsPerPage"
 					:total-records="appsCount"
-					template="PrevPageLink PageLinks NextPageLink"
+					:page-link-size="pageLinkSize"
+					:template="template"
 					@page="appsPage = $event.page"
 				/>
 			</div>
@@ -225,8 +227,8 @@
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
+	const { user } = storeToRefs(auth);
 
-	const user = auth.getUser as User;
 	const itemsPerPage = config.public.itemsPerTablePage;
 
 	// TOKENS
@@ -234,7 +236,7 @@
 	const loadingTokens = ref(false);
 	const tokens = ref<Token[]>([]);
 	const tokensCount = ref(0);
-	const { page: tokensPage, first: firstToken } = usePagination({ itemsPerPage, paramKey: 'tokensPage' });
+	const { page: tokensPage, first: firstToken, pageLinkSize, template } = usePagination({ itemsPerPage, paramKey: 'tokensPage' });
 
 	const loadTokens = async () => {
 		loadingTokens.value = true;
@@ -242,13 +244,13 @@
 		try {
 			const [ gpTokens, [{ count }] ] = await Promise.all([
 				$directus.request(readItems('gp_tokens', {
-					filter: { user_created: { _eq: user.id }, app_id: { _null: true } },
+					filter: { user_created: { _eq: user.value.id }, app_id: { _null: true } },
 					offset: firstToken.value,
 					limit: itemsPerPage,
 					sort: '-date_created',
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_tokens', {
-					query: { filter: { user_created: { _eq: user.id }, app_id: { _null: true } } },
+					query: { filter: { user_created: { _eq: user.value.id }, app_id: { _null: true } } },
 					aggregate: { count: '*' },
 				})),
 			]);

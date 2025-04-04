@@ -78,7 +78,7 @@
 						<div class="w-14 bg-surface-100 group-hover:bg-[#E5FCF6] dark:bg-dark-600 dark:group-hover:bg-dark-600">
 							<Checkbox class="mt-6" size="large"/>
 						</div>
-						<div class="w-80 p-6 text-left">
+						<div class="w-80 p-4 text-left sm:p-6">
 							<p class="font-bold">Software probe</p>
 							<p class="mt-2">A Docker container that runs on your own hardware.</p>
 							<nuxt-icon class="mt-2 inline-block text-6xl text-[#099CEC]" name="docker"/>
@@ -88,7 +88,7 @@
 						<div class="w-14 bg-surface-100 group-hover:bg-[#E5FCF6] dark:bg-dark-600 dark:group-hover:bg-dark-600">
 							<Checkbox class="mt-6" size="large"/>
 						</div>
-						<div class="w-80 p-6 text-left">
+						<div class="w-80 p-4 text-left sm:p-6">
 							<p class="font-bold">Hardware probe</p>
 							<p class="mt-2">A dedicated device that you received from us or one of our partners.</p>
 							<img class="mt-4 w-14" src="~/assets/images/hw-probe-small.png" alt="Hardware probe">
@@ -232,8 +232,7 @@
 
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
-
-	const user = auth.getUser as User;
+	const { user } = storeToRefs(auth);
 
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 
@@ -275,7 +274,7 @@
 
 	const { data: initialProbes } = await useLazyAsyncData('initial_user_probes', async () => {
 		const result = await $directus.request(readItems('gp_probes', {
-			filter: { userId: { _eq: user.id } },
+			filter: { userId: { _eq: user.value.id } },
 		}));
 
 		return result;
@@ -289,7 +288,7 @@
 			await new Promise<void>((resolve) => {
 				const checkProbes = async () => {
 					const currentProbes = await $directus.request(readItems('gp_probes', {
-						filter: { userId: { _eq: user.id } },
+						filter: { userId: { _eq: user.value.id } },
 					}));
 
 					if (currentProbes.length > initialProbes.value.length) {

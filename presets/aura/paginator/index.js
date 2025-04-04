@@ -26,7 +26,7 @@ export default {
 			'border-0 rounded-full',
 
 			// Size
-			'min-w-10 h-10 m-[0.143rem]',
+			'min-w-10 h-10 m-[1px]',
 			'leading-none',
 
 			// Color
@@ -57,7 +57,7 @@ export default {
 			'border-0 rounded-full',
 
 			// Size
-			'min-w-10 h-10 m-[0.143rem]',
+			'min-w-10 h-10 m-[1px]',
 			'leading-none',
 
 			// Color
@@ -88,7 +88,7 @@ export default {
 			'border-0 rounded-full',
 
 			// Size
-			'min-w-10 h-10 m-[0.143rem]',
+			'min-w-10 h-10 m-[1px]',
 			'leading-none',
 
 			// Color
@@ -119,7 +119,7 @@ export default {
 			'border-0 rounded-full',
 
 			// Size
-			'min-w-10 h-10 m-[0.143rem]',
+			'min-w-10 h-10 m-[1px]',
 			'leading-none',
 
 			// Color
@@ -150,7 +150,7 @@ export default {
 			'border-0 rounded-full',
 
 			// Size
-			'min-w-10 h-10 m-[0.143rem]',
+			'min-w-10 h-10 m-[1px]',
 			'leading-none',
 
 			// Color

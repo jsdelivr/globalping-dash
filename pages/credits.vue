@@ -1,5 +1,5 @@
 <template>
-	<div class="min-h-full p-6" :class="{'min-w-[640px]': creditsChanges.length}">
+	<div class="min-h-full p-4 sm:p-6" :class="{'min-w-[640px]': creditsChanges.length}">
 		<div class="mb-4 flex">
 			<h1 class="page-title">Credits</h1>
 			<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" class="ml-auto" target="_blank" rel="noopener">
@@ -56,7 +56,8 @@
 				:first="first"
 				:rows="itemsPerPage"
 				:total-records="creditsChangesCount"
-				template="PrevPageLink PageLinks NextPageLink"
+				:page-link-size="pageLinkSize"
+				:template="template"
 				@page="page = $event.page"
 			/>
 		</div>
@@ -107,7 +108,7 @@
 
 	const config = useRuntimeConfig();
 	const auth = useAuth();
-	const user = auth.getUser as User;
+	const { user } = storeToRefs(auth);
 	const { $directus } = useNuxtApp();
 	const metadata = useMetadata();
 
@@ -116,16 +117,16 @@
 	const loading = ref(false);
 	const creditsChangesCount = ref(0);
 	const creditsChanges = ref<CreditsChange[]>([]);
-	const { page, first } = usePagination({ itemsPerPage });
+	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 
 	const { data: credits } = await useLazyAsyncData('credits-stats', async () => {
 		try {
 			const [ total, additions, deductions, todayOnlineProbes ] = await Promise.all([
 				$directus.request<{amount: number}[]>(readItems('gp_credits', {
-					filter: { user_id: { _eq: user.id } },
+					filter: { user_id: { _eq: user.value.id } },
 				})),
 				$directus.request<[{sum: { amount: number }, date_created: 'datetime'}]>(aggregate('gp_credits_additions', {
-					query: { filter: { github_id: { _eq: user.external_identifier || 'admin' }, date_created: { _gte: '$NOW(-30 day)' } } },
+					query: { filter: { github_id: { _eq: user.value.external_identifier || 'admin' }, date_created: { _gte: '$NOW(-30 day)' } } },
 					groupBy: [ 'date_created' ],
 					aggregate: { sum: 'amount' },
 				})).then((additions) => {
@@ -135,7 +136,7 @@
 					});
 				}),
 				$directus.request<[{sum: { amount: number }, date: 'datetime'}]>(aggregate('gp_credits_deductions', {
-					query: { filter: { user_id: { _eq: user.id }, date: { _gte: '$NOW(-30 day)' } } },
+					query: { filter: { user_id: { _eq: user.value.id }, date: { _gte: '$NOW(-30 day)' } } },
 					groupBy: [ 'date' ],
 					aggregate: { sum: 'amount' },
 				})).then((deduction) => {
@@ -145,7 +146,7 @@
 					});
 				}),
 				$directus.request<[{count: number}]>(aggregate('gp_probes', {
-					query: { filter: { userId: { _eq: user.id }, onlineTimesToday: { _gt: 0 } } },
+					query: { filter: { userId: { _eq: user.value.id }, onlineTimesToday: { _gt: 0 } } },
 					aggregate: { count: '*' },
 				})),
 			]);
@@ -176,11 +177,11 @@
 				} })),
 				$directus.request<[{count: number}]>(aggregate('gp_credits_additions', {
 					aggregate: { count: '*' },
-					query: { filter: { github_id: { _eq: user.external_identifier || 'admin' } } },
+					query: { filter: { github_id: { _eq: user.value.external_identifier || 'admin' } } },
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_credits_deductions', {
 					aggregate: { count: '*' },
-					query: { filter: { user_id: { _eq: user.id } } },
+					query: { filter: { user_id: { _eq: user.value.id } } },
 				})),
 			]);
 

@@ -8,6 +8,7 @@ export interface PaginationOptions {
 
 export const usePagination = ({ active = () => true, itemsPerPage, paramKey = 'page' }: PaginationOptions) => {
 	const page = ref(0);
+	const windowSize = useWindowSize();
 
 	watch(() => route.query[paramKey], () => {
 		if (active()) {
@@ -31,5 +32,7 @@ export const usePagination = ({ active = () => true, itemsPerPage, paramKey = 'p
 			},
 		}),
 		first: computed(() => page.value * itemsPerPage),
+		pageLinkSize: computed(() => windowSize.width.value <= 640 ? 3 : 5),
+		template: 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink',
 	};
 };

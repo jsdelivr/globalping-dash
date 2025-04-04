@@ -1,5 +1,5 @@
 <template>
-	<div class="dark:var(--main-bg) flex min-h-full flex-col gap-y-6 p-6">
+	<div class="dark:var(--main-bg) flex min-h-full flex-col gap-y-6 p-4 sm:p-6">
 		<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 			<h1 class="text-2xl font-bold leading-8">Your notifications</h1>
 			<span
@@ -49,7 +49,7 @@
 					/>
 				</div>
 
-				<div class="overflow-hidden px-6 pb-6 text-sm font-normal leading-[18px] text-bluegray-900 dark:text-[var(--bluegray-0)]">
+				<div class="overflow-hidden px-4 pb-6 text-sm font-normal leading-[18px] text-bluegray-900 sm:px-6 dark:text-[var(--bluegray-0)]">
 					<!-- eslint-disable-next-line vue/no-v-html -->
 					<span v-if="notification.message" class="[&_a]:font-semibold [&_a]:text-[var(--p-primary-color)] [&_p:last-child]:mb-0 [&_p]:mb-[18px] [&_p_strong]:break-all" v-html="notification.message"/>
 				</div>
@@ -63,7 +63,8 @@
 			:first="first"
 			:rows="itemsPerPage"
 			:total-records="notificationsCount"
-			template="PrevPageLink PageLinks NextPageLink"
+			:page-link-size="pageLinkSize"
+			:template="template"
 			@page="page = $event.page"
 		/>
 	</div>
@@ -80,9 +81,9 @@
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
-	const user = auth.getUser as User;
+	const { user } = storeToRefs(auth);
 	const itemsPerPage = config.public.itemsPerTablePage;
-	const { page, first } = usePagination({ itemsPerPage });
+	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 	const displayedNotifications = ref<DirectusNotification[]>([]);
 	const notificationsCount = ref<number>(0);
 	const notificationBus = useEventBus<string[]>('notification-updated');
@@ -127,7 +128,7 @@
 			limit: itemsPerPage,
 			offset: page.value * itemsPerPage,
 			filter: {
-				recipient: { _eq: user.id },
+				recipient: { _eq: user.value.id },
 			},
 			sort: [ '-timestamp' ],
 		}));
@@ -145,7 +146,7 @@
 	const { data: cntResponse } = await useAsyncData('directus_notifications_cnt', async () => {
 		return $directus.request(readNotifications({
 			filter: {
-				recipient: { _eq: user.id },
+				recipient: { _eq: user.value.id },
 			},
 			aggregate: {
 				count: [ 'id' ],
@@ -163,13 +164,13 @@
 					limit: itemsPerPage,
 					offset: pageNumber * itemsPerPage,
 					filter: {
-						recipient: { _eq: user.id },
+						recipient: { _eq: user.value.id },
 					},
 					sort: [ '-timestamp' ],
 				})),
 				$directus.request<NotificationCntResponse>(readNotifications({
 					filter: {
-						recipient: { _eq: user.id },
+						recipient: { _eq: user.value.id },
 					},
 					aggregate: {
 						count: [ 'id' ],

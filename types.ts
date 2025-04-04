@@ -1,7 +1,3 @@
-import { useAuth } from '~/store/auth';
-
-const auth = useAuth();
-
 declare global {
   interface Window {
     googleMapsLoadCallback: () => void,
@@ -79,16 +75,19 @@ declare global {
     nodeVersion: string;
   };
 
-  type User = typeof auth.getUser & {
+  type User = {
     id: string;
     first_name: string | null;
     last_name: string | null;
     email: string | null;
     external_identifier: string | null; // null for non-gh admin
-    github_organizations: string[];
     github_username: string | null; // null for non-gh admin
+    github_organizations: string[];
     user_type: 'member' | 'special' | 'sponsor';
     appearance: null | 'light' | 'dark';
+    public_probes: boolean;
+    adoption_token: string;
+    default_prefix: string;
   };
 
   type Token = {

@@ -1,5 +1,5 @@
 <template>
-	<div class="min-h-full p-6" :class="{'md:min-w-[940px]': probes?.length}">
+	<div class="min-h-full p-4 sm:p-6" :class="{'md:min-w-[940px]': probes?.length}">
 		<div class="mb-4 flex">
 			<h1 class="page-title">Probes</h1>
 			<Button class="ml-auto" @click="adoptProbeDialog = true">
@@ -157,13 +157,14 @@
 				:first="first"
 				:rows="itemsPerPage"
 				:total-records="probesCount"
-				template="PrevPageLink PageLinks NextPageLink"
+				:page-link-size="pageLinkSize"
+				:template="template"
 				@page="page = $event.page"
 			/>
 		</div>
 		<div v-else class="flex grow flex-col overflow-hidden rounded-xl border bg-surface-0 dark:bg-dark-800">
 			<p class="flex border-b px-6 py-3 font-bold text-bluegray-700 dark:text-dark-0">List of probes</p>
-			<div class="m-6 flex grow flex-col items-center justify-center rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
+			<div class="m-6 flex grow flex-col items-center justify-center rounded-xl bg-surface-50 p-4 text-center sm:p-6 dark:bg-dark-600">
 				<img class="mx-auto w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
 				<p class="mt-6 leading-tight">
 					<b>You don't have any probes yet.</b><br><br>
@@ -211,8 +212,7 @@
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const auth = useAuth();
-	const user = auth.getUser as User;
-
+	const { user } = storeToRefs(auth);
 	const config = useRuntimeConfig();
 
 	const { $directus } = useNuxtApp();
@@ -225,7 +225,7 @@
 	const probesCount = ref(0);
 	const probes = ref<Probe[]>([]);
 	const credits = ref<Record<string, number>>({});
-	const { page, first } = usePagination({ itemsPerPage, active: () => !route.params.id });
+	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage, active: () => !route.params.id });
 	const totalCredits = ref(0);
 	const gmapsLoaded = ref(false);
 
@@ -243,17 +243,17 @@
 		try {
 			const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
 				$directus.request(readItems('gp_probes', {
-					filter: { userId: { _eq: user.id } },
+					filter: { userId: { _eq: user.value.id } },
 					sort: [ 'status', 'name' ],
 					offset: first.value,
 					limit: itemsPerPage,
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_probes', {
-					query: { filter: { userId: { _eq: user.id } } },
+					query: { filter: { userId: { _eq: user.value.id } } },
 					aggregate: { count: '*' },
 				})),
 				$directus.request<[{ sum: { amount: number }, adopted_probe: string}]>(aggregate('gp_credits_additions', {
-					query: { filter: { github_id: { _eq: user.external_identifier || 'admin' }, adopted_probe: { _null: false }, date_created: { _gte: '$NOW(-30 day)' } } },
+					query: { filter: { github_id: { _eq: user.value.external_identifier || 'admin' }, adopted_probe: { _null: false }, date_created: { _gte: '$NOW(-30 day)' } } },
 					groupBy: [ 'adopted_probe' ],
 					aggregate: { sum: 'amount' },
 				})),

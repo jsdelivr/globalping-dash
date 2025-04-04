@@ -1,9 +1,9 @@
 <template>
-	<div class="min-h-full p-6">
+	<div class="min-h-full p-4 sm:p-6">
 		<div>
 			<h1 class="page-title">Settings</h1>
 		</div>
-		<div class="mt-6 flex rounded-xl border bg-surface-0 p-6 max-sm:flex-col dark:bg-dark-800">
+		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Account details</h5>
 			</div>
@@ -54,6 +54,24 @@
 					<i class="pi pi-lock absolute right-3 top-3 text-bluegray-500"/>
 				</div>
 
+				<label for="defaultPrefix" class="mt-6 flex items-center font-bold">
+					Default tag prefix <i v-tooltip.top="'Your probe tags will have this prefix by default, but you can adjust it for each tag in the probe settings.'" class="pi pi-info-circle ml-2"/>
+				</label>
+				<Select
+					id="defaultPrefix"
+					v-model="defaultPrefix"
+					:options="[user.github_username, ...user.github_organizations]"
+					class="mt-2 w-full"
+					:scroll-height="'200px'"
+				/>
+				<Message v-if="publicProbes && defaultPrefix !== user.default_prefix" severity="warn" icon="pi pi-exclamation-triangle" class="mt-2">
+					Changing the default prefix will update your user tag from
+					<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.default_prefix}`"/>
+					to
+					<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${defaultPrefix}`"/> on all probes.
+					Other existing tags won't change unless you update them in the probe settings.
+				</Message>
+
 				<label for="userType" class="mt-6 block font-bold">User type</label>
 				<div class="relative mt-2">
 					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
@@ -81,7 +99,7 @@
 			</div>
 		</div>
 
-		<div class="mt-6 flex rounded-xl border bg-surface-0 p-6 max-sm:flex-col dark:bg-dark-800">
+		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Privacy</h5>
 			</div>
@@ -96,16 +114,16 @@
 					<div class="flex-1">
 						<label class="cursor-text">
 							When enabled, your probes are automatically tagged by
-							<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.github_username}`"/>,
+							<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${defaultPrefix}`"/>,
 							allowing you to select them in measurements,
-							and a list of your active probes is also be available at
-							<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${user.github_username}`" target="_blank" rel="noopener">https://globalping.io/users/{{ user.github_username }}</NuxtLink>.</label>
+							and a list of your active probes is also available on your
+							<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${defaultPrefix}`" target="_blank" rel="noopener">user page</NuxtLink>.</label>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="mt-6 flex rounded-xl border bg-surface-0 p-6 max-sm:flex-col dark:bg-dark-800">
+		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Interface</h5>
 			</div>
@@ -129,7 +147,7 @@
 			</div>
 		</div>
 
-		<div class="mt-6 flex rounded-xl border bg-surface-0 p-6 max-sm:flex-col dark:bg-dark-800">
+		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Data removal</h5>
 			</div>
@@ -163,7 +181,7 @@
 </template>
 
 <script setup lang="ts">
-	import { customEndpoint, deleteUser, updateMe } from '@directus/sdk';
+	import { customEndpoint, updateMe } from '@directus/sdk';
 	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
@@ -173,14 +191,14 @@
 
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
-	const user = auth.getUser as User;
-
-	const firstName = ref(user.first_name);
-	const lastName = ref(user.last_name);
-	const appearance = ref(user.appearance);
-	const email = ref(user.email);
-	const publicProbes = ref(user.public_probes);
-	const adoptionToken = ref(user.adoption_token);
+	const { user } = storeToRefs(auth);
+	const firstName = ref(user.value.first_name);
+	const lastName = ref(user.value.last_name);
+	const appearance = ref(user.value.appearance);
+	const email = ref(user.value.email);
+	const publicProbes = ref(user.value.public_probes);
+	const defaultPrefix = ref(user.value.default_prefix);
+	const adoptionToken = ref(user.value.adoption_token);
 
 	const themeOptions = [
 		{ name: 'Auto', value: null, icon: 'pi pi-cog' },
@@ -201,8 +219,9 @@
 				appearance: appearance.value,
 				email: email.value,
 				public_probes: publicProbes.value,
+				default_prefix: defaultPrefix.value,
 				// Adoption token values are generated on BE and stored there for a limited time. So we are sending 'adoption_token' only if it is really changed.
-				...user.adoption_token !== adoptionToken.value ? { adoption_token: adoptionToken.value } : {},
+				...user.value.adoption_token !== adoptionToken.value ? { adoption_token: adoptionToken.value } : {},
 			}));
 
 			lastSavedAppearance = appearance.value;
@@ -219,7 +238,7 @@
 
 	// APPEARANCE
 
-	let lastSavedAppearance = user.appearance;
+	let lastSavedAppearance = user.value.appearance;
 	onUnmounted(() => auth.setAppearance(lastSavedAppearance));
 
 	// SYNC WITH GITHUB
@@ -240,10 +259,10 @@
 			const response = await $directus.request(customEndpoint<{
 				github_username: string;
 				github_organizations: string[];
-			}>({ method: 'POST', path: '/sync-github-data', body: JSON.stringify({ userId: user.id }) }));
+			}>({ method: 'POST', path: '/sync-github-data', body: JSON.stringify({ userId: user.value.id }) }));
 
-			user.github_username = response.github_username;
-			user.github_organizations = response.github_organizations;
+			user.value.github_username = response.github_username;
+			user.value.github_organizations = response.github_organizations;
 
 			await auth.refresh();
 
@@ -275,8 +294,7 @@
 	const deleteDialog = ref(false);
 	const deleteAccount = async () => {
 		try {
-			await $directus.request(deleteUser(user.id!));
-			reloadNuxtApp();
+			await auth.deleteAccount();
 		} catch (e) {
 			sendErrorToast(e);
 		}

@@ -404,7 +404,7 @@
 	const deleteProbeLoading = ref(false);
 	const emit = defineEmits([ 'save', 'hide', 'delete' ]);
 	const auth = useAuth();
-	const user = auth.getUser as User;
+	const { user } = storeToRefs(auth);
 	const probeDetailsUpdating = ref(false);
 
 	let removeWatcher: (() => void) | undefined;
@@ -712,7 +712,10 @@
 		hide: () => void;
 		visible: boolean;
 	};
-	const uPrefixes = [ user.github_username, ...user.github_organizations ].map(value => `u-${value}`);
+	const uPrefixes = [ user.value.github_username, ...user.value.github_organizations ]
+		// Make default prefix the first option
+		.sort((prefixA, prefixB) => prefixA === user.value.default_prefix ? -1 : prefixB === user.value.default_prefix ? 1 : 0)
+		.map(value => `u-${value}`);
 	const tagPopoverRef = ref<Popover | null>(null);
 	const tagsToEdit = ref<{ uPrefix: string, value: string }[]>([]);
 	const isEditingTags = ref<boolean>(false);
@@ -743,7 +746,7 @@
 
 	const addTag = () => {
 		isEditingTags.value = true;
-		tagsToEdit.value.push({ uPrefix: `u-${user.github_username}`, value: '' });
+		tagsToEdit.value.push({ uPrefix: `u-${user.value.default_prefix}`, value: '' });
 	};
 
 	const removeTag = (index: number) => {
@@ -821,7 +824,7 @@
 			const creditsResponse = await $directus.request<[{ sum: { amount: number }, adopted_probe: string}]>(aggregate('gp_credits_additions', {
 				query: {
 					filter: {
-						github_id: { _eq: user.external_identifier || 'admin' },
+						github_id: { _eq: user.value.external_identifier || 'admin' },
 						adopted_probe: { _eq: probeDetails?.value?.id },
 						date_created: { _gte: '$NOW(-30 day)' },
 					},
@@ -841,5 +844,5 @@
 	});
 
 	// HANDLE TOP LOGO IMG SRC
-	const isDarkMode = computed(() => auth.user.appearance === 'dark');
+	const isDarkMode = computed(() => user.value.appearance === 'dark');
 </script>

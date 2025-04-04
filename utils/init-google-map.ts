@@ -53,7 +53,7 @@ const stylesByTheme = {
 
 let map: google.maps.Map, marker: google.maps.Marker, infoWindow: google.maps.InfoWindow;
 
-export const initGoogleMap = async (probe: Probe) => {
+export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, showIW: boolean = true) => {
 	if (!probe) {
 		return;
 	}
@@ -78,15 +78,19 @@ export const initGoogleMap = async (probe: Probe) => {
 		mapTypeControl: false,
 		streetViewControl: false,
 		fullscreenControl: false,
+		disableDefaultUI: true,
 		minZoom: MAP_MIN_ZOOM,
 		maxZoom: MAP_MAX_ZOOM,
 		gestureHandling: 'cooperative',
 	});
 
-	createMapMarker(probe);
+	createMapMarker(probe, showPulse, showIW);
 
 	map.addListener('zoom_changed', () => {
-		infoWindow && infoWindow.close();
+		if (showIW) {
+			infoWindow?.close();
+		}
+
 		updateStyles(map, appearance.theme);
 	});
 
@@ -109,54 +113,116 @@ const updateStyles = (map: google.maps.Map, theme: 'light' | 'dark') => {
 	}
 };
 
-function createMapMarker (probe: Probe) {
+function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: boolean = true) {
 	// create svg to use as a Marker icon
 	const svgFillColor = DEFAULT_MARKER_COLOR;
-	const svg = window.btoa(`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<g filter="url(#filter0_d_6106_3045)">
-		<circle cx="12" cy="10" r="6" fill="${svgFillColor}"/>
-		<circle cx="12" cy="10" r="7" stroke="white" stroke-width="2"/>
-		</g>
-		<defs>
-		<filter id="filter0_d_6106_3045" x="0" y="0" width="24" height="24" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-		<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-		<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-		<feOffset dy="2"/>
-		<feGaussianBlur stdDeviation="2"/>
-		<feComposite in2="hardAlpha" operator="out"/>
-		<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
-		<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_6106_3045"/>
-		<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_6106_3045" result="shape"/>
-		</filter>
-		</defs>
-		</svg>`);
+	let svg;
+	let markerIconSettings: google.maps.Icon;
 
+	if (showPulse) {
+		const pulseSvg = `
+			<circle cx="66" cy="66" r="12" stroke="#17D4A7" stroke-width="1" fill="none">
+				<animate attributeName="r" values="12;66" keyTimes="0;1" dur="3.9s" begin="1s" repeatCount="indefinite"/>
+				<animate attributeName="opacity" values="1;0.4;0.2;0" keyTimes="0;0.7;0.85;1" dur="3.9s" begin="1s" repeatCount="indefinite"/>
+			</circle>
+			<circle cx="66" cy="66" r="12" stroke="#17D4A7" stroke-width="1" fill="none">
+				<animate attributeName="r" values="12;66" keyTimes="0;1" dur="3.9s" begin="2.2s" repeatCount="indefinite"/>
+				<animate attributeName="opacity" values="1;0.4;0.2;0" keyTimes="0;0.7;0.85;1" dur="3.9s" begin="2.2s" repeatCount="indefinite"/>
+			</circle>
+			<circle cx="66" cy="66" r="12" stroke="#17D4A7" stroke-width="1" fill="none">
+				<animate attributeName="r" values="12;66" keyTimes="0;1" dur="3.9s" begin="3.4s" repeatCount="indefinite"/>
+				<animate attributeName="opacity" values="1;0.4;0.2;0" keyTimes="0;0.7;0.85;1" dur="3.9s" begin="3.4s" repeatCount="indefinite"/>
+			</circle>
+		`;
 
-	// create an Info Window
-	infoWindow = new google.maps.InfoWindow({
-		content: `<div class="mt-3">
-				<div class="font-semibold">${probe.network}</div>
-				<div class="font-semibold">(${probe.city}, ${probe.country})</div>
-			</div>`,
-	});
+		const markerSvg = `
+			<g filter="url(#filter0_d_6106_3045)">
+				<circle cx="66" cy="66" r="6" fill="${svgFillColor}"/>
+				<circle cx="66" cy="66" r="7" stroke="white" stroke-width="2"/>
+			</g>
+		`;
+
+		const defs = `
+			<defs>
+				<filter id="filter0_d_6106_3045" x="0" y="0" width="100" height="100" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+					<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+					<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>
+					<feOffset dy="2"/>
+					<feGaussianBlur stdDeviation="2"/>
+					<feComposite in2="hardAlpha" operator="out"/>
+					<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
+					<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_6106_3045"/>
+					<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_6106_3045" result="shape"/>
+				</filter>
+			</defs>
+		`;
+
+		svg = window.btoa(`<svg width="132" height="132" viewBox="0 0 132 132" fill="none" xmlns="http://www.w3.org/2000/svg">
+			${defs}
+			${pulseSvg}
+			${markerSvg}
+			</svg>`);
+
+		markerIconSettings = {
+			url: `data:image/svg+xml;base64,${svg}`,
+			anchor: new google.maps.Point(50, 50),
+		};
+	} else {
+		svg = window.btoa(`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<g filter="url(#filter0_d_6106_3045)">
+			<circle cx="12" cy="10" r="6" fill="${svgFillColor}"/>
+			<circle cx="12" cy="10" r="7" stroke="white" stroke-width="2"/>
+			</g>
+			<defs>
+			<filter id="filter0_d_6106_3045" x="0" y="0" width="24" height="24" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+			<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+			<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+			<feOffset dy="2"/>
+			<feGaussianBlur stdDeviation="2"/>
+			<feComposite in2="hardAlpha" operator="out"/>
+			<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
+			<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_6106_3045"/>
+			<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_6106_3045" result="shape"/>
+			</filter>
+			</defs>
+			</svg>`);
+
+		markerIconSettings = {
+			url: `data:image/svg+xml;base64,${svg}`,
+		};
+	}
+
+	if (showIW) {
+		// create an Info Window
+		infoWindow = new google.maps.InfoWindow({
+			content: `<div class="mt-3">
+					<div class="font-semibold">${probe.network}</div>
+					<div class="font-semibold">(${probe.city}, ${probe.country})</div>
+				</div>`,
+		});
+	}
 
 	// create the Marker
 	marker = new google.maps.Marker({
 		map,
-		icon: {
-			url: `data:image/svg+xml;base64,${svg}`,
-		},
+		icon: markerIconSettings,
 		position: { lat: probe.latitude, lng: probe.longitude },
 		optimized: false,
 	});
 
-	google.maps.event.addListener(marker, 'click', () => {
-		infoWindow.open(map, marker);
-	});
+	if (showIW === false) {
+		marker.setOptions({ cursor: 'default' });
+	}
 
-	google.maps.event.addListener(map, 'click', () => {
-		infoWindow.close();
-	});
+	if (showIW) {
+		google.maps.event.addListener(marker, 'click', () => {
+			infoWindow.open(map, marker);
+		});
+
+		google.maps.event.addListener(map, 'click', () => {
+			infoWindow.close();
+		});
+	}
 
 	return marker;
 }

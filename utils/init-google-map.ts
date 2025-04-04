@@ -88,7 +88,7 @@ export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, sh
 
 	map.addListener('zoom_changed', () => {
 		if (showIW) {
-			infoWindow && infoWindow.close();
+			infoWindow?.close();
 		}
 
 		updateStyles(map, appearance.theme);

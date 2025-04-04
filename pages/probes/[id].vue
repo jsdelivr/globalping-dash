@@ -35,7 +35,7 @@
 						v-if="isEditingName"
 						ref="inputNameRef"
 						v-model="editedName"
-						class="flex w-[calc(100%-52px)] rounded-xl border border-gray-300 px-2 py-1 text-xl font-bold focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)] dark:border-dark-600"
+						class="flex w-[calc(100%-52px)] rounded-xl border border-gray-300 px-2 py-1 text-xl font-bold focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)] dark:border-dark-600 dark:focus:bg-dark-800"
 						:class="{ 'pr-16': isEditingName && editedName !== originalName }"
 						@keyup.enter="updateProbeName"
 						@blur="cancelNameEditing"
@@ -163,7 +163,7 @@
 													v-if="isEditingCity"
 													ref="inputCityRef"
 													v-model="editedCity"
-													class="flex w-full border-0 pl-3 pr-16 text-bluegray-900 shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 dark:text-[var(--bluegray-0)]"
+													class="flex w-full border-0 pl-3 pr-16 text-bluegray-900 shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 dark:text-[var(--bluegray-0)] dark:focus:bg-dark-800"
 													@keyup.enter="updateProbeCity"
 													@blur="cancelCityEditing"
 												>

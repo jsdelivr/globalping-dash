@@ -179,8 +179,11 @@
 				</NuxtLink>
 			</div>
 		</aside>
+
 		<div class="overflow-auto">
-			<slot/>
+			<div class="mx-auto max-w-[1664px]">
+				<slot/>
+			</div>
 		</div>
 	</section>
 </template>

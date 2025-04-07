@@ -73,7 +73,7 @@
 				</DataTable>
 				<Paginator
 					v-if="tokens.length !== tokensCount"
-					class="mt-9"
+					class="mt-6"
 					:first="firstToken"
 					:rows="itemsPerPage"
 					:total-records="tokensCount"
@@ -127,7 +127,7 @@
 				</DataTable>
 				<Paginator
 					v-if="apps.length !== appsCount"
-					class="mt-9"
+					class="mt-6"
 					:first="firstApp"
 					:rows="itemsPerPage"
 					:total-records="appsCount"
@@ -229,14 +229,14 @@
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 
-	const itemsPerPage = config.public.itemsPerTablePage;
+	const itemsPerPage = ref(Math.round(config.public.itemsPerTablePage / 2));
 
 	// TOKENS
 
 	const loadingTokens = ref(false);
 	const tokens = ref<Token[]>([]);
 	const tokensCount = ref(0);
-	const { page: tokensPage, first: firstToken, pageLinkSize, template } = usePagination({ itemsPerPage, paramKey: 'tokensPage' });
+	const { page: tokensPage, first: firstToken, pageLinkSize, template } = usePagination({ itemsPerPage, pageKey: 'tokensPage' });
 
 	const loadTokens = async () => {
 		loadingTokens.value = true;
@@ -246,7 +246,7 @@
 				$directus.request(readItems('gp_tokens', {
 					filter: { user_created: { _eq: user.value.id }, app_id: { _null: true } },
 					offset: firstToken.value,
-					limit: itemsPerPage,
+					limit: itemsPerPage.value,
 					sort: '-date_created',
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_tokens', {
@@ -390,7 +390,7 @@
 	const loadingApplications = ref(false);
 	const apps = ref<Application[]>([]);
 	const appsCount = ref(0);
-	const { page: appsPage, first: firstApp } = usePagination({ itemsPerPage, paramKey: 'appsPage' });
+	const { page: appsPage, first: firstApp } = usePagination({ itemsPerPage, pageKey: 'appsPage' });
 
 	const loadApplications = async () => {
 		loadingApplications.value = true;
@@ -398,7 +398,7 @@
 		try {
 			const { applications, total } = await $directus.request<{applications: Application[], total: number}>(customEndpoint({ method: 'GET', path: '/applications', params: {
 				offset: firstApp.value,
-				limit: itemsPerPage,
+				limit: itemsPerPage.value,
 			} }));
 
 			apps.value = applications;

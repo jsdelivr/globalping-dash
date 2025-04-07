@@ -2,17 +2,22 @@ const route = useRoute();
 
 export interface PaginationOptions {
 	active?: () => boolean;
-	itemsPerPage: number;
-	paramKey?: string;
+	itemsPerPage: Ref<number>;
+	limitKey?: string;
+	pageKey?: string;
 }
 
-export const usePagination = ({ active = () => true, itemsPerPage, paramKey = 'page' }: PaginationOptions) => {
+export const usePagination = ({ active = () => true, itemsPerPage, limitKey = 'limit', pageKey = 'page' }: PaginationOptions) => {
 	const page = ref(0);
 	const windowSize = useWindowSize();
 
-	watch(() => route.query[paramKey], () => {
+	watch(() => route.query[pageKey], () => {
 		if (active()) {
-			page.value = route.query[paramKey] ? Number(route.query[paramKey]) - 1 : 0;
+			page.value = route.query[pageKey] ? Number(route.query[pageKey]) - 1 : 0;
+
+			if (route.query[limitKey]) {
+				itemsPerPage.value = Number(route.query[limitKey]);
+			}
 		}
 	}, { immediate: true });
 
@@ -26,12 +31,13 @@ export const usePagination = ({ active = () => true, itemsPerPage, paramKey = 'p
 					path: route.path,
 					query: {
 						...route.query,
-						[paramKey]: newPage ? newPage + 1 : undefined,
+						[pageKey]: newPage ? newPage + 1 : undefined,
+						[limitKey]: newPage ? itemsPerPage.value : undefined,
 					},
 				});
 			},
 		}),
-		first: computed(() => page.value * itemsPerPage),
+		first: computed(() => page.value * itemsPerPage.value),
 		pageLinkSize: computed(() => windowSize.width.value <= 640 ? 3 : 5),
 		template: 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink',
 	};

@@ -153,7 +153,7 @@
 			</div>
 			<Paginator
 				v-if="probes.length !== probesCount"
-				class="mt-7"
+				class="mt-6"
 				:first="first"
 				:rows="itemsPerPage"
 				:total-records="probesCount"
@@ -218,7 +218,7 @@
 	const { $directus } = useNuxtApp();
 	const route = useRoute();
 
-	const itemsPerPage = config.public.itemsPerTablePage;
+	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const startProbeDialog = ref(false);
 	const adoptProbeDialog = ref(false);
 	const loading = ref(false);
@@ -246,7 +246,7 @@
 					filter: { userId: { _eq: user.value.id } },
 					sort: [ 'status', 'name' ],
 					offset: first.value,
-					limit: itemsPerPage,
+					limit: itemsPerPage.value,
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_probes', {
 					query: { filter: { userId: { _eq: user.value.id } } },
@@ -283,6 +283,10 @@
 	// PROBES LIST
 
 	onMounted(async () => {
+		if (!route.query.limit) {
+			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 420) / 65), 5), 15);
+		}
+
 		await loadLazyData();
 	});
 

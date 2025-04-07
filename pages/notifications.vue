@@ -1,5 +1,5 @@
 <template>
-	<div class="dark:var(--main-bg) flex min-h-full flex-col gap-y-6 p-4 sm:p-6">
+	<div class="dark:var(--main-bg) flex min-h-full flex-col p-4 sm:p-6">
 		<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 			<h1 class="text-2xl font-bold leading-8">Your notifications</h1>
 			<span
@@ -18,7 +18,7 @@
 			/>
 		</div>
 
-		<div v-if="displayedNotifications.length" class="flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2">
+		<div v-if="displayedNotifications.length" class="mt-6 flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2">
 			<div
 				v-for="notification in displayedNotifications"
 				:key="notification.id"
@@ -59,7 +59,7 @@
 		<p v-else class="p-4 text-lg font-bold leading-5">No notifications at the moment.</p>
 
 		<Paginator
-			class="mt-9"
+			class="mt-6"
 			:first="first"
 			:rows="itemsPerPage"
 			:total-records="notificationsCount"
@@ -78,11 +78,12 @@
 	import { formatDateTime } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
 
+	const route = useRoute();
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
-	const itemsPerPage = config.public.itemsPerTablePage;
+	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 	const displayedNotifications = ref<DirectusNotification[]>([]);
 	const notificationsCount = ref<number>(0);
@@ -121,12 +122,16 @@
 		}
 	};
 
+	if (!route.query.limit) {
+		itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 210) / 140), 5), 15);
+	}
+
 	// get initial notifications
 	const { data: notifications } = await useAsyncData('directus_notifications_page', async () => {
 		return $directus.request<DirectusNotification[]>(readNotifications({
 			format: 'html',
-			limit: itemsPerPage,
-			offset: page.value * itemsPerPage,
+			limit: itemsPerPage.value,
+			offset: page.value * itemsPerPage.value,
 			filter: {
 				recipient: { _eq: user.value.id },
 			},
@@ -161,8 +166,8 @@
 			const [ notificationsResp, notificationsCntResp ] = await Promise.all([
 				$directus.request<DirectusNotification[]>(readNotifications({
 					format: 'html',
-					limit: itemsPerPage,
-					offset: pageNumber * itemsPerPage,
+					limit: itemsPerPage.value,
+					offset: pageNumber * itemsPerPage.value,
 					filter: {
 						recipient: { _eq: user.value.id },
 					},

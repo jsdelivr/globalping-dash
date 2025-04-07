@@ -234,14 +234,12 @@
 													}"
 												>
 													<div v-if="probeDetails" class="grid w-full flex-1 grid-rows-[auto_1fr] p-4">
-														<div v-if="tagsToEdit.length" class="mb-2 grid flex-1 grid-cols-[3fr_auto_3fr_auto]">
-															<div class="content-center text-xs font-bold text-dark-800 dark:text-[var(--bluegray-0)]">Prefix</div>
-															<div class="mx-3"/>
-															<div class="content-center text-xs font-bold text-dark-800 dark:text-[var(--bluegray-0)]">Your tag</div>
-															<div/>
-														</div>
-
 														<div v-if="tagsToEdit.length" class="mb-6 grid flex-1 grid-cols-[3fr_auto_3fr_auto] items-center gap-y-5">
+															<div class="-mb-2 content-center text-xs font-bold text-dark-800 dark:text-[var(--bluegray-0)]">Prefix</div>
+															<div class="mx-3 -mb-2"/>
+															<div class="-mb-2 content-center text-xs font-bold text-dark-800 dark:text-[var(--bluegray-0)]">Your tag</div>
+															<div class="-mb-2 "/>
+
 															<template v-for="(tag, index) in tagsToEdit" :key="index">
 																<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
 																<div class="mx-2">{{ probeDetails.tags[0]?.format === 'v1' ? '-' : ':' }}</div>
@@ -261,7 +259,7 @@
 																</div>
 															</template>
 
-															<div class="-mt-3 w-full">
+															<div class="col-span-4 -mt-3">
 																<Button
 																	icon="pi pi-plus"
 																	text
@@ -273,10 +271,10 @@
 															</div>
 														</div>
 
-														<div v-else class="mb-6 h-[61px]">
-															The probe has no user tags
+														<div v-else class="mb-6 h-[110px]">
+															<div>The probe has no user tags</div>
 
-															<div class="mt-2 w-full">
+															<div class="col-span-4 mt-2">
 																<Button
 																	icon="pi pi-plus"
 																	text

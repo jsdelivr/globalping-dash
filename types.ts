@@ -73,7 +73,7 @@ declare global {
     hardwareDevice: string | null;
     hardwareDeviceFirmware: string | null;
     nodeVersion: string;
-    possibleCountries: string[];
+    allowedCountries: string[];
   };
 
   type User = {

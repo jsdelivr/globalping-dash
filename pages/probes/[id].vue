@@ -67,7 +67,7 @@
 				<Select
 					id="country"
 					v-model="probe.country"
-					:options="probe.possibleCountries"
+					:options="probe.allowedCountries"
 					class="border-r"
 				>
 					<template #value="slotProps">

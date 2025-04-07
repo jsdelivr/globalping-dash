@@ -333,12 +333,12 @@
 								</div>
 							</div>
 
-							<div class="flex flex-col rounded-xl border border-surface-300 dark:border-dark-600">
+							<div v-if="showChart" class="flex flex-col rounded-xl border border-surface-300 dark:border-dark-600">
 								<h3 class="flex h-10 items-center border-b border-surface-300 pl-6 font-bold text-dark-800 dark:border-dark-600 dark:text-[var(--bluegray-0)]">Tests (last 24h)</h3>
 								<div class="flex flex-col gap-6 p-6">
 									<div>
 										<span class="text-bluegray-900 dark:text-[var(--bluegray-0)]">Total: </span>
-										<span class="font-bold text-bluegray-900 dark:text-[var(--bluegray-0)]">{{ '347,530' }} tests</span>
+										<span class="font-bold text-bluegray-900 dark:text-[var(--bluegray-0)]">{{ testsCountDisplayed }} tests</span>
 									</div>
 
 									<div class="h-36">
@@ -856,4 +856,9 @@
 
 	// HANDLE TOP LOGO IMG SRC
 	const isDarkMode = computed(() => user.value.appearance === 'dark');
+
+	// HANDLE CHART
+	const testsCount = ref(347530);
+	const testsCountDisplayed = testsCount.value?.toLocaleString();
+	const showChart = ref(false);
 </script>

@@ -53,7 +53,7 @@ const stylesByTheme = {
 
 let map: google.maps.Map, marker: google.maps.Marker, infoWindow: google.maps.InfoWindow;
 
-export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, showIW: boolean = true) => {
+export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, showIW: boolean = true, verticalOffset: number | null = null) => {
 	if (!probe) {
 		return;
 	}
@@ -84,7 +84,7 @@ export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, sh
 		gestureHandling: 'cooperative',
 	});
 
-	createMapMarker(probe, showPulse, showIW);
+	createMapMarker(probe, showPulse, showIW, verticalOffset);
 
 	map.addListener('zoom_changed', () => {
 		if (showIW) {
@@ -113,7 +113,7 @@ const updateStyles = (map: google.maps.Map, theme: 'light' | 'dark') => {
 	}
 };
 
-function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: boolean = true) {
+function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: boolean = true, verticalOffset: number | null = null) {
 	// create svg to use as a Marker icon
 	const svgFillColor = DEFAULT_MARKER_COLOR;
 	let svg;
@@ -209,6 +209,36 @@ function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: bool
 		position: { lat: probe.latitude, lng: probe.longitude },
 		optimized: false,
 	});
+
+	// adjust the map center to visually shift marker by offset value verically
+	if (verticalOffset) {
+		google.maps.event.addListenerOnce(map, 'idle', () => {
+			const projection = map.getProjection();
+			const zoom = map.getZoom();
+			const markerLatLng = marker.getPosition();
+
+			if (
+				projection
+				&& typeof zoom === 'number'
+				&& markerLatLng instanceof google.maps.LatLng
+			) {
+				const scale = Math.pow(2, zoom);
+				const point = projection.fromLatLngToPoint(markerLatLng);
+
+				if (point) {
+					const shiftedPoint = new google.maps.Point(
+						point.x,
+						point.y + verticalOffset / scale,
+					);
+					const shiftedLatLng = projection.fromPointToLatLng(shiftedPoint);
+
+					if (shiftedLatLng !== null) {
+						map.setCenter(shiftedLatLng);
+					}
+				}
+			}
+		});
+	}
 
 	if (showIW === false) {
 		marker.setOptions({ cursor: 'default' });

@@ -424,7 +424,7 @@
 		useGoogleMaps(() => {
 			const stopWatching = watchEffect(async () => {
 				if (probeDetails.value) {
-					removeWatcher = await initGoogleMap(probeDetails.value, true, false);
+					removeWatcher = await initGoogleMap(probeDetails.value, true, false, 36);
 					stopWatching();
 				}
 			});

@@ -234,14 +234,14 @@
 													}"
 												>
 													<div v-if="probeDetails" class="grid w-full flex-1 grid-rows-[auto_1fr] p-4">
-														<div v-if="tagsToEdit.length" class="mb-2 grid flex-1 grid-cols-[3fr_auto_3fr_1fr]">
+														<div v-if="tagsToEdit.length" class="mb-2 grid flex-1 grid-cols-[3fr_auto_3fr_auto]">
 															<div class="content-center text-xs font-bold text-dark-800 dark:text-[var(--bluegray-0)]">Prefix</div>
 															<div class="mx-3"/>
 															<div class="content-center text-xs font-bold text-dark-800 dark:text-[var(--bluegray-0)]">Your tag</div>
 															<div/>
 														</div>
 
-														<div v-if="tagsToEdit.length" class="mb-5 grid flex-1 grid-cols-[3fr_auto_3fr_1fr] items-center gap-y-5">
+														<div v-if="tagsToEdit.length" class="mb-6 grid flex-1 grid-cols-[3fr_auto_3fr_auto] items-center gap-y-5">
 															<template v-for="(tag, index) in tagsToEdit" :key="index">
 																<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
 																<div class="mx-2">{{ probeDetails.tags[0]?.format === 'v1' ? '-' : ':' }}</div>
@@ -258,22 +258,35 @@
 																		class="text-surface-900 dark:text-surface-0"
 																		@click="removeTag(index)"
 																	/>
-
-																	<Button
-																		icon="pi pi-plus"
-																		text
-																		aria-label="Add tag"
-																		class="text-surface-900 dark:text-surface-0"
-																		:class="{
-																			'pointer-events-none opacity-0': index + 1 !== tagsToEdit.length,
-																		}"
-																		@click="addTag()"
-																	/>
 																</div>
 															</template>
+
+															<div class="-mt-3 w-full">
+																<Button
+																	icon="pi pi-plus"
+																	text
+																	label="Add"
+																	aria-label="Add tag"
+																	class="text-surface-900 dark:text-surface-0"
+																	@click="addTag()"
+																/>
+															</div>
 														</div>
 
-														<div v-else class="mb-5 h-[61px]">The probe has no user tags</div>
+														<div v-else class="mb-6 h-[61px]">
+															The probe has no user tags
+
+															<div class="mt-2 w-full">
+																<Button
+																	icon="pi pi-plus"
+																	text
+																	label="Add"
+																	aria-label="Add tag"
+																	class="text-surface-900 dark:text-surface-0"
+																	@click="addTag()"
+																/>
+															</div>
+														</div>
 
 														<div class="flex justify-between">
 															<Button

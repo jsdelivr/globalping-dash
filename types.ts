@@ -47,12 +47,10 @@ declare global {
     asn: number;
     city: string;
     country: string;
-    countryOfCustomCity: string | null;
     date_created: string;
     date_updated: string;
     ip: string;
     altIps: string[];
-    isCustomCity: boolean;
     lastSyncDate: string;
     latitude: number;
     longitude: number;

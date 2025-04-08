@@ -242,7 +242,7 @@
 
 															<template v-for="(tag, index) in tagsToEdit" :key="index">
 																<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
-																<div class="mx-2">{{ probeDetails.tags[0]?.format === 'v1' ? '-' : ':' }}</div>
+																<div class="inline-flex w-6 justify-center">{{ probeDetails.tags[0]?.format === 'v1' ? '-' : ':' }}</div>
 																<div class="relative flex-1">
 																	<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full" placeholder="my-tag"/>
 																	<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>

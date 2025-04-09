@@ -2,7 +2,7 @@
 	<div class="min-h-full p-6">
 		<div class="flex flex-col gap-4">
 			<div class="flex gap-2">
-				<NuxtLink to="/probes" class="mr-auto flex items-center gap-2">
+				<NuxtLink class="mr-auto flex cursor-pointer items-center gap-2" @click="goBackToProbes">
 					<i class="pi pi-arrow-left text-bluegray-500"/>
 					<span class="font-bold text-bluegray-500">Back to probes</span>
 				</NuxtLink>
@@ -861,4 +861,16 @@
 	const testsCount = ref(347530);
 	const testsCountDisplayed = testsCount.value?.toLocaleString();
 	const showChart = ref(false);
+
+	// HANDLE GO BACK TO PROBES
+	definePageMeta({
+		middleware: [ 'track-from' ],
+	});
+
+	const goBackToProbes = () => {
+		const defaultPathBackTo = '/probes';
+		const fromPath = useState<string | null>('fromPath');
+
+		navigateTo(fromPath.value && fromPath.value.includes(defaultPathBackTo) ? fromPath.value : defaultPathBackTo);
+	};
 </script>

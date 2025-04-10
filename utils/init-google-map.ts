@@ -120,25 +120,27 @@ function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: bool
 	let markerIconSettings: google.maps.Icon;
 
 	if (showPulse) {
+		const svgWidth = 132;
+		const svgHeight = 132;
 		const pulseSvg = `
-			<circle cx="66" cy="66" r="12" stroke="#17D4A7" stroke-width="1" fill="none">
-				<animate attributeName="r" values="12;66" keyTimes="0;1" dur="3.9s" begin="1s" repeatCount="indefinite"/>
+			<circle cx="${svgWidth / 2}" cy="${svgHeight / 2}" r="12" stroke="#17D4A7" stroke-width="1" fill="none">
+				<animate attributeName="r" values="12;${svgWidth / 2}" keyTimes="0;1" dur="3.9s" begin="1s" repeatCount="indefinite"/>
 				<animate attributeName="opacity" values="1;0.4;0.2;0" keyTimes="0;0.7;0.85;1" dur="3.9s" begin="1s" repeatCount="indefinite"/>
 			</circle>
-			<circle cx="66" cy="66" r="12" stroke="#17D4A7" stroke-width="1" fill="none">
-				<animate attributeName="r" values="12;66" keyTimes="0;1" dur="3.9s" begin="2.2s" repeatCount="indefinite"/>
+			<circle cx="${svgWidth / 2}" cy="${svgHeight / 2}" r="12" stroke="#17D4A7" stroke-width="1" fill="none">
+				<animate attributeName="r" values="12;${svgWidth / 2}" keyTimes="0;1" dur="3.9s" begin="2.2s" repeatCount="indefinite"/>
 				<animate attributeName="opacity" values="1;0.4;0.2;0" keyTimes="0;0.7;0.85;1" dur="3.9s" begin="2.2s" repeatCount="indefinite"/>
 			</circle>
-			<circle cx="66" cy="66" r="12" stroke="#17D4A7" stroke-width="1" fill="none">
-				<animate attributeName="r" values="12;66" keyTimes="0;1" dur="3.9s" begin="3.4s" repeatCount="indefinite"/>
+			<circle cx="${svgWidth / 2}" cy="${svgHeight / 2}" r="12" stroke="#17D4A7" stroke-width="1" fill="none">
+				<animate attributeName="r" values="12;${svgWidth / 2}" keyTimes="0;1" dur="3.9s" begin="3.4s" repeatCount="indefinite"/>
 				<animate attributeName="opacity" values="1;0.4;0.2;0" keyTimes="0;0.7;0.85;1" dur="3.9s" begin="3.4s" repeatCount="indefinite"/>
 			</circle>
 		`;
 
 		const markerSvg = `
 			<g filter="url(#filter0_d_6106_3045)">
-				<circle cx="66" cy="66" r="6" fill="${svgFillColor}"/>
-				<circle cx="66" cy="66" r="7" stroke="white" stroke-width="2"/>
+				<circle cx="${svgWidth / 2}" cy="${svgHeight / 2}" r="6" fill="${svgFillColor}"/>
+				<circle cx="${svgWidth / 2}" cy="${svgHeight / 2}" r="7" stroke="white" stroke-width="2"/>
 			</g>
 		`;
 
@@ -157,7 +159,7 @@ function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: bool
 			</defs>
 		`;
 
-		svg = window.btoa(`<svg width="132" height="132" viewBox="0 0 132 132" fill="none" xmlns="http://www.w3.org/2000/svg">
+		svg = window.btoa(`<svg width="${svgWidth}" height="${svgHeight}" viewBox="0 0 132 132" fill="none" xmlns="http://www.w3.org/2000/svg">
 			${defs}
 			${pulseSvg}
 			${markerSvg}
@@ -165,7 +167,7 @@ function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: bool
 
 		markerIconSettings = {
 			url: `data:image/svg+xml;base64,${svg}`,
-			anchor: new google.maps.Point(50, 50),
+			anchor: new google.maps.Point(svgWidth / 2, svgHeight / 2),
 		};
 	} else {
 		svg = window.btoa(`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

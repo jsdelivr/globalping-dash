@@ -97,6 +97,7 @@
 			</InputGroup>
 			<p class="mt-2 text-xs text-bluegray-400">
 				Location of the probe. If the auto-detected value is wrong, you can adjust it here.
+				<span v-if="probe.allowedCountries.length > 1">The country can only be changed to one of the values reported by our GeoIP providers.</span>
 			</p>
 
 			<label for="systemTags" class="mt-4 inline-block text-xs">System tags</label>

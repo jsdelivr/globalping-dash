@@ -73,6 +73,8 @@
 					v-model="probe.country"
 					:options="probe.allowedCountries"
 					class="border-r"
+					:pt="{ dropdown: 'w-8' }"
+					:pt-options="{ mergeProps: true }"
 				>
 					<template #value="slotProps">
 						<div class="flex items-center">

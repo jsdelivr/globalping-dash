@@ -64,7 +64,11 @@
 
 			<label for="city" class="mt-4 inline-block text-xs">Location</label>
 			<InputGroup class="mt-1">
+				<InputGroupAddon v-if="probe.allowedCountries.length <= 1" class="!bg-transparent">
+					<CountryFlag :country="probe.country" size="small"/>
+				</InputGroupAddon>
 				<Select
+					v-if="probe.allowedCountries.length > 1"
 					id="country"
 					v-model="probe.country"
 					:options="probe.allowedCountries"

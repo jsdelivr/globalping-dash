@@ -108,11 +108,11 @@
 					</div>
 
 					<Accordion
-						v-if="displayedNotifications.length"
+						v-if="headerNotifications.length"
 						class="box-border flex w-full flex-col gap-y-2"
 					>
 						<AccordionPanel
-							v-for="notification in displayedNotifications"
+							v-for="notification in headerNotifications"
 							:key="notification.id"
 							:value="notification.id"
 							class="!rounded-xl border-none bg-[var(--p-surface-50)] !p-0 !pb-4 dark:!border dark:!border-solid dark:!border-[var(--table-border)] dark:bg-dark-800"
@@ -197,7 +197,7 @@
 
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
-	const { inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead, fetchNotifications } = useNotifications();
+	const { headerNotifications, inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead, updateHeaderNotifications } = useNotifications();
 
 	// NOTIFICATIONS
 	const notificationsPanel = ref();
@@ -205,21 +205,7 @@
 		notificationsPanel.value.toggle(event);
 	};
 
-	const DD_ITEMS_LIMIT = 5;
-	const { data: notifications } = await useAsyncData('directus_notifications', () => {
-		return fetchNotifications(DD_ITEMS_LIMIT);
-	}, { default: () => [] });
-
-	const displayedNotifications = computed(() => [ ...notifications.value ].slice(0, DD_ITEMS_LIMIT));
-
-	const notificationBus = useEventBus<string[]>('notification-updated');
-	notificationBus.on((idsToArchive) => {
-		displayedNotifications.value.forEach((notification) => {
-			if (idsToArchive.includes(notification.id)) {
-				notification.status = 'archived';
-			}
-		});
-	});
+	updateHeaderNotifications();
 
 	// NOTIFICATIONS END
 

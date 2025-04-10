@@ -3,6 +3,17 @@ import { useAuth } from '~/store/auth';
 
 const inboxNotificationIds = useState<string[]>('inboxNotifIds', () => []);
 
+const headerNotifications = useState<DirectusNotification[]>('notifications', () => []);
+
+const notificationBus = useEventBus<string[]>('notification-updated');
+notificationBus.on((idsToArchive) => {
+	headerNotifications.value.forEach((notification) => {
+		if (idsToArchive.includes(notification.id)) {
+			notification.status = 'archived';
+		}
+	});
+});
+
 export const useNotifications = () => {
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
@@ -26,22 +37,19 @@ export const useNotifications = () => {
 		}
 	};
 
-	const fetchNotifications = async (limit: number) => {
+	const updateHeaderNotifications = async () => {
 		try {
-			const notifications = await $directus.request(readNotifications({
+			headerNotifications.value = await $directus.request(readNotifications({
 				format: 'html',
-				limit,
+				limit: 5,
 				offset: 0,
 				filter: {
 					recipient: { _eq: user.value.id },
 				},
 				sort: [ '-timestamp' ],
-			}));
-
-			return notifications;
+			})) as DirectusNotification[];
 		} catch (error) {
 			console.error('Error fetching notifications:', error);
-			return [];
 		}
 	};
 
@@ -75,8 +83,9 @@ export const useNotifications = () => {
 
 	return {
 		inboxNotificationIds,
+		headerNotifications,
 		fetchInboxNotificationIds,
-		fetchNotifications,
+		updateHeaderNotifications,
 		markNotificationsAsRead,
 		markAllNotificationsAsRead,
 	};

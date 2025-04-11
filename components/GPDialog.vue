@@ -26,14 +26,14 @@
 	});
 
 	const props = defineProps({
-		name: {
+		viewName: {
 			type: String as PropType<string | undefined>,
 			default: undefined,
 		},
 	});
 
 	const afterHide = () => {
-		if (props.name && route.query.view === props.name) {
+		if (props.viewName && route.query.view === props.viewName) {
 			const { view, ...newQuery } = route.query;
 
 			router.push({
@@ -46,9 +46,9 @@
 	};
 
 	onMounted(() => {
-		if (props.name) {
+		if (props.viewName) {
 			watch(() => route.query.view, async () => {
-				visible.value = route.query.view === props.name;
+				visible.value = route.query.view === props.viewName;
 			}, { immediate: true });
 		}
 	});

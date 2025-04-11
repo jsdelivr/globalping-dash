@@ -153,7 +153,7 @@
 
 		<GPDialog
 			v-model:visible="creditsDialog"
-			name="add-credits"
+			view-name="add-credits"
 			header="Add credits"
 			content-class="!p-0"
 			class="w-[700px]"

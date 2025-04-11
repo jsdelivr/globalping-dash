@@ -46,12 +46,10 @@
 		emit('after-hide');
 	};
 
-	onMounted(() => {
-		if (props.viewName) {
-			watch(() => route.query.view, async () => {
-				visible.value = route.query.view === props.viewName;
-			}, { immediate: true });
-		}
-	});
+	if (props.viewName) {
+		watch(() => route.query.view, async () => {
+			visible.value = route.query.view === props.viewName;
+		}, { immediate: true });
+	}
 
 </script>

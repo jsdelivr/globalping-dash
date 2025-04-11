@@ -188,6 +188,7 @@
 		</div>
 		<GPDialog
 			v-model:visible="startProbeDialog"
+			view-name="start-a-probe"
 			header="Start a probe"
 		>
 			<StartProbe/>

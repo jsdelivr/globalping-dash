@@ -153,10 +153,10 @@
 
 		<GPDialog
 			v-model:visible="creditsDialog"
+			view-name="add-credits"
 			header="Add credits"
 			content-class="!p-0"
 			class="w-[700px]"
-			@after-hide="afterCreditsHide"
 		>
 			<AddCredits
 				@cancel="creditsDialog = false"
@@ -187,8 +187,6 @@
 
 	const { $directus } = useNuxtApp();
 	const creditsPerAdoptedProbe = useMetadata().creditsPerAdoptedProbe;
-	const route = useRoute();
-	const router = useRouter();
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 
@@ -264,24 +262,7 @@
 
 	// CREDITS DIALOG
 
-	const creditsDialog = ref(route.query.view === 'add-credits');
-
-	const afterCreditsHide = () => {
-		if (route.query.view === 'add-credits') {
-			const newQuery = { ...route.query };
-			delete newQuery.view;
-
-			router.push({
-				path: route.path,
-				query: newQuery,
-			});
-		}
-	};
-
-	watch(() => route.query.view, async () => {
-		creditsDialog.value = route.query.view === 'add-credits';
-	});
-
+	const creditsDialog = ref(false);
 </script>
 
 <style scoped>

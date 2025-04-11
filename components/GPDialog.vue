@@ -26,6 +26,7 @@
 	});
 
 	const props = defineProps({
+		/** If set, automatically show the dialog when the URL contains ?view=${viewName} parameter */
 		viewName: {
 			type: String as PropType<string | undefined>,
 			default: undefined,

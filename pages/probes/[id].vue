@@ -64,9 +64,31 @@
 
 			<label for="city" class="mt-4 inline-block text-xs">Location</label>
 			<InputGroup class="mt-1">
-				<InputGroupAddon class="!bg-transparent">
+				<InputGroupAddon v-if="probe.allowedCountries.length <= 1" class="!bg-transparent">
 					<CountryFlag :country="probe.country" size="small"/>
 				</InputGroupAddon>
+				<Select
+					v-if="probe.allowedCountries.length > 1"
+					id="country"
+					v-model="probe.country"
+					:options="probe.allowedCountries"
+					class="border-r"
+					:pt="{ dropdown: 'w-8' }"
+					:pt-options="{ mergeProps: true }"
+				>
+					<template #value="slotProps">
+						<div class="flex items-center">
+							<CountryFlag :country="slotProps.value" size="small"/>
+							<div class="ml-2">{{ slotProps.value }}</div>
+						</div>
+					</template>
+					<template #option="slotProps">
+						<div class="flex items-center">
+							<CountryFlag :country="slotProps.option" size="small"/>
+							<div class="ml-2">{{ slotProps.option }}</div>
+						</div>
+					</template>
+				</Select>
 				<InputText
 					id="city"
 					v-model="probe.city"
@@ -74,7 +96,8 @@
 				/>
 			</InputGroup>
 			<p class="mt-2 text-xs text-bluegray-400">
-				City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
+				Location of the probe. If the auto-detected value is wrong, you can adjust it here.
+				<span v-if="probe.allowedCountries.length > 1">The country can only be changed to one of the values reported by our GeoIP providers.</span>
 			</p>
 
 			<label for="systemTags" class="mt-4 inline-block text-xs">System tags</label>
@@ -321,6 +344,7 @@
 
 	const isSaveEnabled = computed(() => (
 		probe.value.name !== props.probe.name
+		|| probe.value.country !== props.probe.country
 		|| probe.value.city !== props.probe.city
 		|| !isEqual(probe.value.tags, props.probe.tags)
 		|| isEditingTags.value
@@ -341,6 +365,7 @@
 		try {
 			await $directus.request(updateItem('gp_probes', probe.value.id, {
 				...(probe.value.name !== props.probe.name && { name: probe.value.name }),
+				...(probe.value.country !== props.probe.country && { country: probe.value.country }),
 				...(probe.value.city !== props.probe.city && { city: probe.value.city }),
 				...(!isEqual(tags, props.probe.tags) && { tags }),
 			}));

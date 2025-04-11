@@ -3,13 +3,13 @@
 		<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 			<h1 class="text-2xl font-bold leading-8">Your notifications</h1>
 			<span
-				v-if="inboxNotifIds.length"
+				v-if="inboxNotificationIds.length"
 				class="rounded-full bg-[var(--p-primary-color)] px-2 py-1 text-sm font-bold leading-[17px] text-[var(--bluegray-0)] sm:ml-auto sm:mr-4"
 			>
-				{{ inboxNotifIds.length }} unread
+				{{ inboxNotificationIds.length }} unread
 			</span>
 			<Button
-				v-if="inboxNotifIds.length"
+				v-if="inboxNotificationIds.length"
 				severity="secondary"
 				outlined
 				label="Mark all as read"
@@ -25,7 +25,7 @@
 				:value="notification.id"
 				class="group rounded-xl border border-surface-300 bg-white p-0 dark:border-[var(--table-border)] dark:bg-dark-800"
 				:class="{ 'cursor-pointer bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:bg-[var(--dark-700)] dark:bg-none': notification.status === 'inbox' }"
-				@click="markNotificationAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
+				@click="markNotificationsAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 			>
 				<div class="relative p-6 pb-4">
 					<div class="relative flex flex-col items-start gap-y-1 pr-10">
@@ -71,9 +71,9 @@
 </template>
 
 <script setup lang="ts">
-	import { readNotifications, updateNotifications } from '@directus/sdk';
+	import { readNotifications } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
-	import { useInboxNotificationIds } from '~/composables/useInboxNotificationIds';
+	import { useNotifications } from '~/composables/useNotifications';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
@@ -87,8 +87,8 @@
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 	const displayedNotifications = ref<DirectusNotification[]>([]);
 	const notificationsCount = ref<number>(0);
+	const { inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead } = useNotifications();
 	const notificationBus = useEventBus<string[]>('notification-updated');
-	const inboxNotifIds = useInboxNotificationIds();
 
 	notificationBus.on((idsToArchive) => {
 		displayedNotifications.value.forEach((notification) => {
@@ -97,30 +97,6 @@
 			}
 		});
 	});
-
-	const markNotificationAsRead = async (notificationIds: string[]) => {
-		if (notificationIds.length === 0) {
-			return;
-		}
-
-		try {
-			const updateData = { status: 'archived' };
-
-			await $directus.request(updateNotifications(notificationIds, updateData));
-
-			notificationBus.emit(notificationIds);
-		} catch (error) {
-			console.error('Error updating notifications:', error);
-		}
-	};
-
-	const markAllNotificationsAsRead = async () => {
-		try {
-			await markNotificationAsRead(inboxNotifIds.value);
-		} catch (error) {
-			console.error('Error updating all notifications:', error);
-		}
-	};
 
 	if (!route.query.limit) {
 		itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 210) / 140), 5), 15);

@@ -108,16 +108,16 @@
 					</div>
 
 					<Accordion
-						v-if="displayedNotifications.length"
+						v-if="headerNotifications.length"
 						class="box-border flex w-full flex-col gap-y-2"
 					>
 						<AccordionPanel
-							v-for="notification in displayedNotifications"
+							v-for="notification in headerNotifications"
 							:key="notification.id"
 							:value="notification.id"
 							class="!rounded-xl border-none bg-[var(--p-surface-50)] !p-0 !pb-4 dark:!border dark:!border-solid dark:!border-[var(--table-border)] dark:bg-dark-800"
 							:class="{ 'bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:!bg-[var(--dark-700)] dark:bg-none': notification.status === 'inbox' }"
-							@click="markNotificationAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
+							@click="markNotificationsAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 						>
 							<AccordionHeader
 								class="relative -mb-4 !p-4 !pr-8 text-left [&[aria-expanded='true']>i]:rotate-90"
@@ -189,95 +189,23 @@
 </template>
 
 <script lang="ts" setup>
-	import { readNotifications, updateNotifications } from '@directus/sdk';
 	import { defaults } from 'chart.js';
 	import capitalize from 'lodash/capitalize';
-	import { useInboxNotificationIds } from '~/composables/useInboxNotificationIds';
+	import { useNotifications } from '~/composables/useNotifications';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
 
-	const { $directus } = useNuxtApp();
-
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
+	const { headerNotifications, inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead, updateHeaderNotifications } = useNotifications();
+
 	// NOTIFICATIONS
-	const notificationBus = useEventBus<string[]>('notification-updated');
-
-	notificationBus.on((idsToArchive) => {
-		displayedNotifications.value.forEach((notification) => {
-			if (idsToArchive.includes(notification.id)) {
-				notification.status = 'archived';
-			}
-		});
-
-		// update inbox notifications IDs for a counter, mark-all-as-read btn
-		inboxNotificationIds.value = inboxNotificationIds.value.filter(id => !idsToArchive.includes(id));
-	});
-
 	const notificationsPanel = ref();
 	const toggleNotifications = async (event: Event) => {
 		notificationsPanel.value.toggle(event);
 	};
-	const markNotificationAsRead = async (notificationIds: string[]) => {
-		if (notificationIds.length === 0) {
-			return;
-		}
 
-		try {
-			const updateData = { status: 'archived' };
-
-			await $directus.request(updateNotifications(notificationIds, updateData));
-
-			notificationBus.emit(notificationIds);
-		} catch (error) {
-			console.error('Error updating notifications:', error);
-		}
-	};
-	const markAllNotificationsAsRead = async () => {
-		try {
-			await markNotificationAsRead(inboxNotificationIds.value);
-		} catch (error) {
-			console.error('Error updating all notifications:', error);
-		}
-	};
-
-	// fetch at the start all inbox notifications
-	// to use these IDs for the mark-all-as-read btn
-	// also for the unread notifications counter
-	const inboxNotificationIds = useInboxNotificationIds();
-	const fetchInboxNotificationIds = async () => {
-		try {
-			const notifications = await $directus.request<{ id: string }[]>(readNotifications({
-				filter: {
-					recipient: { _eq: user.value.id },
-					status: { _eq: 'inbox' },
-				},
-				fields: [ 'id' ],
-				limit: -1,
-			}));
-
-			inboxNotificationIds.value = notifications.map(n => n.id);
-		} catch (error) {
-			console.error('Error fetching notification IDs:', error);
-		}
-	};
-
-	fetchInboxNotificationIds();
-
-	const DD_ITEMS_LIMIT = 5;
-	const { data: notifications } = await useAsyncData('directus_notifications', async () => {
-		return $directus.request(readNotifications({
-			format: 'html',
-			limit: DD_ITEMS_LIMIT,
-			offset: 0,
-			filter: {
-				recipient: { _eq: user.value.id },
-			},
-			sort: [ '-timestamp' ],
-		}));
-	}, { default: () => [] });
-
-	const displayedNotifications = computed(() => [ ...notifications.value ].slice(0, DD_ITEMS_LIMIT));
+	updateHeaderNotifications();
 
 	// NOTIFICATIONS END
 

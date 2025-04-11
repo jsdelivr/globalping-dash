@@ -36,12 +36,14 @@
 <script setup lang="ts">
 	import { updateMe } from '@directus/sdk';
 	import CountryFlag from 'vue-country-flag-next';
+	import { useNotifications } from '~/composables/useNotifications';
 	import { useAuth } from '~/store/auth';
 	import { pluralize } from '~/utils/pluralize';
 
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
+	const { updateHeaderNotifications } = useNotifications();
 
 	defineProps({
 		probes: {
@@ -60,4 +62,8 @@
 
 		await auth.refresh();
 	};
+
+	onMounted(async () => {
+		await updateHeaderNotifications();
+	});
 </script>

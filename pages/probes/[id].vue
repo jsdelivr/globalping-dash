@@ -91,8 +91,10 @@
 				</Select>
 				<InputText
 					id="city"
+					ref="cityInputRef"
 					v-model="probe.city"
 					class="w-full"
+					placeholder="City"
 				/>
 			</InputGroup>
 			<p class="mt-2 text-xs text-bluegray-400">
@@ -270,10 +272,20 @@
 	// ROOT
 
 	const probeDetailsDialog = ref(true);
+	const cityInputRef = ref();
 
 	const probe = ref({ ...props.probe });
 	watch(() => props.probe, () => {
 		probe.value = { ...props.probe };
+	});
+
+	// Reset the city on country change.
+	watch(() => probe.value.country, () => {
+		probe.value.city = '';
+
+		setTimeout(() => {
+			cityInputRef.value?.rootEl.focus();
+		});
 	});
 
 	useHead(() => {

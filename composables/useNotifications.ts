@@ -20,7 +20,7 @@ export const useNotifications = () => {
 	const { user } = storeToRefs(auth);
 	const notificationBus = useEventBus<string[]>('notification-updated');
 
-	const fetchInboxNotificationIds = async () => {
+	const updateInboxNotificationIds = async () => {
 		try {
 			const notifications = await $directus.request<{ id: string }[]>(readNotifications({
 				filter: {
@@ -42,7 +42,6 @@ export const useNotifications = () => {
 			headerNotifications.value = await $directus.request(readNotifications({
 				format: 'html',
 				limit: 5,
-				offset: 0,
 				filter: {
 					recipient: { _eq: user.value.id },
 				},
@@ -79,12 +78,12 @@ export const useNotifications = () => {
 	};
 
 	// Fetch inbox notification IDs immediately for the counter and mark-all-as-read button.
-	fetchInboxNotificationIds();
+	updateInboxNotificationIds();
 
 	return {
 		inboxNotificationIds,
 		headerNotifications,
-		fetchInboxNotificationIds,
+		updateInboxNotificationIds,
 		updateHeaderNotifications,
 		markNotificationsAsRead,
 		markAllNotificationsAsRead,

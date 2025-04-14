@@ -403,7 +403,7 @@
 	import CountryFlag from 'vue-country-flag-next';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { useAuth } from '~/store/auth';
-	import { initGoogleMap } from '~/utils/init-google-map';
+	import { initGoogleMap, updateMapMarker } from '~/utils/init-google-map';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();
@@ -636,15 +636,17 @@
 		try {
 			await $directus.request(updateItem('gp_probes', probeDetails.value.id, { city: editedCity.value }));
 
-			// TODO: on succesful update fetch updated probe's data and then update map marker
+			// on succesful update fetch updated probe's data and then update map marker, city etc.
 			const updProbeDetails = await $directus.request(readItem('gp_probes', probeDetails.value.id));
 
 			sendToast('success', 'Done', 'The probe has been successfully updated');
 			emit('save');
 
-			originalCity.value = editedCity.value;
+			originalCity.value = updProbeDetails.city;
 			isEditingCity.value = false;
-			probeDetails.value.city = editedCity.value;
+			probeDetails.value.city = updProbeDetails.city;
+
+			updateMapMarker(updProbeDetails.latitude, updProbeDetails.longitude);
 		} catch (e) {
 			sendErrorToast(e);
 

@@ -873,7 +873,8 @@
 	const getBackToProbesHref = () => {
 		const defaultPathBackTo = '/probes';
 		const fromPath = useState<string | null>('fromPath');
+		const regex = /^\/probes\?page=\d+$/;
 
-		return fromPath.value && fromPath.value.includes(defaultPathBackTo) ? fromPath.value : defaultPathBackTo;
+		return fromPath.value && regex.test(fromPath.value) ? fromPath.value : defaultPathBackTo;
 	};
 </script>

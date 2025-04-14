@@ -636,6 +636,9 @@
 		try {
 			await $directus.request(updateItem('gp_probes', probeDetails.value.id, { city: editedCity.value }));
 
+			// TODO: on succesful update fetch updated probe's data and then update map marker
+			const updProbeDetails = await $directus.request(readItem('gp_probes', probeDetails.value.id));
+
 			sendToast('success', 'Done', 'The probe has been successfully updated');
 			emit('save');
 

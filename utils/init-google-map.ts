@@ -258,3 +258,11 @@ function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: bool
 
 	return marker;
 }
+
+export const updateMapMarker = (latitude: number, longitude: number) => {
+	if (marker) {
+		marker.setPosition(new google.maps.LatLng(latitude, longitude));
+		map.setCenter({ lat: latitude, lng: longitude });
+		map.setZoom(MAP_ZOOM_REG);
+	}
+};

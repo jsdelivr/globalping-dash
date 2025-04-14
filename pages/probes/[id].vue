@@ -2,7 +2,7 @@
 	<div class="min-h-full p-6">
 		<div class="flex flex-col gap-4">
 			<div class="flex gap-2">
-				<NuxtLink class="mr-auto flex cursor-pointer items-center gap-2" @click="goBackToProbes">
+				<NuxtLink :href="getBackToProbesHref()" class="mr-auto flex cursor-pointer items-center gap-2">
 					<i class="pi pi-arrow-left text-bluegray-500"/>
 					<span class="font-bold text-bluegray-500">Back to probes</span>
 				</NuxtLink>
@@ -870,10 +870,10 @@
 		middleware: [ 'track-from' ],
 	});
 
-	const goBackToProbes = () => {
+	const getBackToProbesHref = () => {
 		const defaultPathBackTo = '/probes';
 		const fromPath = useState<string | null>('fromPath');
 
-		navigateTo(fromPath.value && fromPath.value.includes(defaultPathBackTo) ? fromPath.value : defaultPathBackTo);
+		return fromPath.value && fromPath.value.includes(defaultPathBackTo) ? fromPath.value : defaultPathBackTo;
 	};
 </script>

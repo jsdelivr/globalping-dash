@@ -417,6 +417,7 @@
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 	const probeDetailsUpdating = ref(false);
+	const VERTICAL_OFFSET = 36;
 
 	let removeWatcher: (() => void) | undefined;
 
@@ -424,7 +425,7 @@
 		useGoogleMaps(() => {
 			const stopWatching = watchEffect(async () => {
 				if (probeDetails.value) {
-					removeWatcher = await initGoogleMap(probeDetails.value, true, false, 36);
+					removeWatcher = await initGoogleMap(probeDetails.value, true, false, VERTICAL_OFFSET);
 					stopWatching();
 				}
 			});
@@ -646,7 +647,7 @@
 			isEditingCity.value = false;
 			probeDetails.value.city = updProbeDetails.city;
 
-			updateMapMarker(updProbeDetails.latitude, updProbeDetails.longitude);
+			updateMapMarker(updProbeDetails.latitude, updProbeDetails.longitude, VERTICAL_OFFSET);
 		} catch (e) {
 			sendErrorToast(e);
 

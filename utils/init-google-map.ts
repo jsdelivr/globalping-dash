@@ -67,12 +67,15 @@ export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, sh
 
 	const appearance = useAppearance();
 	const style = stylesByTheme[appearance.theme];
+	// adjust the map center to visually shift marker verically by offset value
+	const mapCenterLat = verticalOffset ? probe.latitude - verticalOffset / Math.pow(2, MAP_ZOOM_REG) : probe.latitude;
+	const mapCenterLng = probe.longitude;
 
 	map = new Map(element, {
 		backgroundColor: style.background,
 		styles: style.initial,
 		zoom: MAP_ZOOM_REG,
-		center: { lat: probe.latitude, lng: probe.longitude },
+		center: { lat: mapCenterLat, lng: mapCenterLng },
 		mapTypeId: 'roadmap',
 		draggableCursor: 'default',
 		mapTypeControl: false,
@@ -84,7 +87,7 @@ export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, sh
 		gestureHandling: 'cooperative',
 	});
 
-	createMapMarker(probe, showPulse, showIW, verticalOffset);
+	createMapMarker(probe, showPulse, showIW);
 
 	map.addListener('zoom_changed', () => {
 		if (showIW) {
@@ -113,7 +116,7 @@ const updateStyles = (map: google.maps.Map, theme: 'light' | 'dark') => {
 	}
 };
 
-function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: boolean = true, verticalOffset: number | null = null) {
+function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: boolean = true) {
 	// create svg to use as a Marker icon
 	const svgFillColor = DEFAULT_MARKER_COLOR;
 	let svg;
@@ -212,36 +215,6 @@ function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: bool
 		optimized: false,
 	});
 
-	// adjust the map center to visually shift marker by offset value verically
-	if (verticalOffset) {
-		google.maps.event.addListenerOnce(map, 'idle', () => {
-			const projection = map.getProjection();
-			const zoom = map.getZoom();
-			const markerLatLng = marker.getPosition();
-
-			if (
-				projection
-				&& typeof zoom === 'number'
-				&& markerLatLng instanceof google.maps.LatLng
-			) {
-				const scale = Math.pow(2, zoom);
-				const point = projection.fromLatLngToPoint(markerLatLng);
-
-				if (point) {
-					const shiftedPoint = new google.maps.Point(
-						point.x,
-						point.y + verticalOffset / scale,
-					);
-					const shiftedLatLng = projection.fromPointToLatLng(shiftedPoint);
-
-					if (shiftedLatLng !== null) {
-						map.setCenter(shiftedLatLng);
-					}
-				}
-			}
-		});
-	}
-
 	if (showIW === false) {
 		marker.setOptions({ cursor: 'default' });
 	}
@@ -259,10 +232,12 @@ function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: bool
 	return marker;
 }
 
-export const updateMapMarker = (latitude: number, longitude: number) => {
+export const updateMapMarker = (latitude: number, longitude: number, verticalOffset: number) => {
 	if (marker) {
+		const mapCenterLat = verticalOffset ? latitude - verticalOffset / Math.pow(2, MAP_ZOOM_REG) : latitude;
+
 		marker.setPosition(new google.maps.LatLng(latitude, longitude));
-		map.setCenter({ lat: latitude, lng: longitude });
+		map.setCenter({ lat: mapCenterLat, lng: longitude });
 		map.setZoom(MAP_ZOOM_REG);
 	}
 };

@@ -22,11 +22,9 @@ declare global {
 
   type CreditsAddition = {
     amount: number;
-    comment: string;
     date_created: 'datetime';
-    adopted_probe: string | null;
     github_id: string;
-  };
+  } & CreditsAdditionMeta;
 
   type CreditsDeduction = {
     amount: number;
@@ -37,9 +35,34 @@ declare global {
   type CreditsChange = {
     type: 'addition' | 'deduction';
     date_created: string;
-    comment?: string;
     amount: number;
-    adopted_probe?: string | null;
+  } & (CreditsAdditionMeta | {
+    reason: null;
+    meta: null;
+  });
+
+  type CreditsAdditionMeta = {
+    reason: 'one_time_sponsorship',
+    meta: {
+      amountInDollars: number;
+    }
+  } | {
+    reason: 'recurring_sponsorship',
+    meta: {
+      amountInDollars: number;
+    }
+  } | {
+    reason: 'adopted_probe',
+    meta: {
+      id: string;
+      name: string;
+      ip: string;
+    }
+  } | {
+    reason: 'other',
+    meta: {
+      comment: string;
+    }
   };
 
   type Probe = {

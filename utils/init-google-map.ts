@@ -126,7 +126,7 @@ function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: bool
 		const svgWidth = 132;
 		const svgHeight = 132;
 		const pulseSvg = `
-			<circle cx="${svgWidth / 2}" cy="${svgHeight / 2}" r="0" stroke="#17D4A7" stroke-width="1" fill="none">
+		<circle cx="${svgWidth / 2}" cy="${svgHeight / 2}" r="0" stroke="#17D4A7" stroke-width="1" fill="none">
 				<animate attributeName="r" values="12;${svgWidth / 2}" keyTimes="0;1" dur="3.9s" begin="1s" repeatCount="indefinite"/>
 				<animate attributeName="opacity" values="1;0.4;0.2;0" keyTimes="0;0.7;0.85;1" dur="3.9s" begin="1s" repeatCount="indefinite"/>
 			</circle>

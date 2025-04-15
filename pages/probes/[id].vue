@@ -530,7 +530,6 @@
 
 		if (inputNameRef.value) {
 			inputNameRef.value.focus();
-			inputNameRef.value.select();
 		}
 	};
 
@@ -603,7 +602,6 @@
 
 		if (inputCityRef.value) {
 			inputCityRef.value.focus();
-			inputCityRef.value.select();
 		}
 	};
 

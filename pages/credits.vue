@@ -52,7 +52,7 @@
 			</DataTable>
 			<Paginator
 				v-if="creditsChanges.length !== creditsChangesCount"
-				class="mt-9"
+				class="mt-6"
 				:first="first"
 				:rows="itemsPerPage"
 				:total-records="creditsChangesCount"
@@ -111,9 +111,10 @@
 	const { user } = storeToRefs(auth);
 	const { $directus } = useNuxtApp();
 	const metadata = useMetadata();
+	const route = useRoute();
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
-	const itemsPerPage = config.public.itemsPerTablePage;
+	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const loading = ref(false);
 	const creditsChangesCount = ref(0);
 	const creditsChanges = ref<CreditsChange[]>([]);
@@ -173,7 +174,7 @@
 			] = await Promise.all([
 				$directus.request<{changes: CreditsChange[]}>(customEndpoint({ method: 'GET', path: '/credits-timeline', params: {
 					offset: first.value,
-					limit: itemsPerPage,
+					limit: itemsPerPage.value,
 				} })),
 				$directus.request<[{count: number}]>(aggregate('gp_credits_additions', {
 					aggregate: { count: '*' },
@@ -202,6 +203,10 @@
 	};
 
 	onMounted(async () => {
+		if (!route.query.limit) {
+			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 540) / 54), 5), 15);
+		}
+
 		await loadLazyData();
 	});
 

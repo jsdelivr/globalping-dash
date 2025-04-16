@@ -1,15 +1,15 @@
 <template>
-	<div class="dark:var(--main-bg) flex min-h-full flex-col gap-y-6 p-4 sm:p-6">
+	<div class="dark:var(--main-bg) flex min-h-full flex-col p-4 sm:p-6">
 		<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 			<h1 class="text-2xl font-bold leading-8">Your notifications</h1>
 			<span
-				v-if="inboxNotifIds.length"
+				v-if="inboxNotificationIds.length"
 				class="rounded-full bg-[var(--p-primary-color)] px-2 py-1 text-sm font-bold leading-[17px] text-[var(--bluegray-0)] sm:ml-auto sm:mr-4"
 			>
-				{{ inboxNotifIds.length }} unread
+				{{ inboxNotificationIds.length }} unread
 			</span>
 			<Button
-				v-if="inboxNotifIds.length"
+				v-if="inboxNotificationIds.length"
 				severity="secondary"
 				outlined
 				label="Mark all as read"
@@ -18,14 +18,14 @@
 			/>
 		</div>
 
-		<div v-if="displayedNotifications.length" class="flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2">
+		<div v-if="displayedNotifications.length" class="mt-6 flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2">
 			<div
 				v-for="notification in displayedNotifications"
 				:key="notification.id"
 				:value="notification.id"
 				class="group rounded-xl border border-surface-300 bg-white p-0 dark:border-[var(--table-border)] dark:bg-dark-800"
 				:class="{ 'cursor-pointer bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:bg-[var(--dark-700)] dark:bg-none': notification.status === 'inbox' }"
-				@click="markNotificationAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
+				@click="markNotificationsAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 			>
 				<div class="relative p-6 pb-4">
 					<div class="relative flex flex-col items-start gap-y-1 pr-10">
@@ -59,7 +59,7 @@
 		<p v-else class="p-4 text-lg font-bold leading-5">No notifications at the moment.</p>
 
 		<Paginator
-			class="mt-9"
+			class="mt-6"
 			:first="first"
 			:rows="itemsPerPage"
 			:total-records="notificationsCount"
@@ -71,23 +71,24 @@
 </template>
 
 <script setup lang="ts">
-	import { readNotifications, updateNotifications } from '@directus/sdk';
+	import { readNotifications } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
-	import { useInboxNotificationIds } from '~/composables/useInboxNotificationIds';
+	import { useNotifications } from '~/composables/useNotifications';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
 
+	const route = useRoute();
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
-	const itemsPerPage = config.public.itemsPerTablePage;
+	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 	const displayedNotifications = ref<DirectusNotification[]>([]);
 	const notificationsCount = ref<number>(0);
+	const { inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead } = useNotifications();
 	const notificationBus = useEventBus<string[]>('notification-updated');
-	const inboxNotifIds = useInboxNotificationIds();
 
 	notificationBus.on((idsToArchive) => {
 		displayedNotifications.value.forEach((notification) => {
@@ -97,36 +98,16 @@
 		});
 	});
 
-	const markNotificationAsRead = async (notificationIds: string[]) => {
-		if (notificationIds.length === 0) {
-			return;
-		}
-
-		try {
-			const updateData = { status: 'archived' };
-
-			await $directus.request(updateNotifications(notificationIds, updateData));
-
-			notificationBus.emit(notificationIds);
-		} catch (error) {
-			console.error('Error updating notifications:', error);
-		}
-	};
-
-	const markAllNotificationsAsRead = async () => {
-		try {
-			await markNotificationAsRead(inboxNotifIds.value);
-		} catch (error) {
-			console.error('Error updating all notifications:', error);
-		}
-	};
+	if (!route.query.limit) {
+		itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 210) / 140), 5), 15);
+	}
 
 	// get initial notifications
 	const { data: notifications } = await useAsyncData('directus_notifications_page', async () => {
 		return $directus.request<DirectusNotification[]>(readNotifications({
 			format: 'html',
-			limit: itemsPerPage,
-			offset: page.value * itemsPerPage,
+			limit: itemsPerPage.value,
+			offset: page.value * itemsPerPage.value,
 			filter: {
 				recipient: { _eq: user.value.id },
 			},
@@ -161,8 +142,8 @@
 			const [ notificationsResp, notificationsCntResp ] = await Promise.all([
 				$directus.request<DirectusNotification[]>(readNotifications({
 					format: 'html',
-					limit: itemsPerPage,
-					offset: pageNumber * itemsPerPage,
+					limit: itemsPerPage.value,
+					offset: pageNumber * itemsPerPage.value,
 					filter: {
 						recipient: { _eq: user.value.id },
 					},

@@ -233,7 +233,12 @@
 														'!left-1/2 !-translate-x-1/2 !transform': screenWidth < 768
 													}"
 												>
-													<div v-if="probeDetails" class="grid w-full flex-1 grid-rows-[auto_1fr] p-4">
+													<div
+														v-if="probeDetails"
+														ref="popoverContentRef"
+														tabindex="0"
+														class="grid w-full flex-1 grid-rows-[auto_1fr] p-4 focus-visible:outline-none focus-visible:ring-0"
+													>
 														<div v-if="tagsToEdit.length" class="mb-6 grid flex-1 grid-cols-[3fr_auto_3fr_auto] items-center gap-y-5">
 															<div class="-mb-2 content-center text-xs font-bold text-dark-800 dark:text-[var(--bluegray-0)]">Prefix</div>
 															<div class="mx-3 -mb-2"/>
@@ -724,23 +729,23 @@
 	};
 
 	// HANDLE TAGS EDITING
-	type Popover = {
-		toggle: (event: Event) => void;
-		hide: () => void;
-		visible: boolean;
-	};
 	const uPrefixes = [ user.value.github_username, ...user.value.github_organizations ]
 		// Make default prefix the first option
 		.sort((prefixA, prefixB) => prefixA === user.value.default_prefix ? -1 : prefixB === user.value.default_prefix ? 1 : 0)
 		.map(value => `u-${value}`);
-	const tagPopoverRef = ref<Popover | null>(null);
+	const tagPopoverRef = ref();
 	const tagsToEdit = ref<{ uPrefix: string, value: string }[]>([]);
 	const isEditingTags = ref<boolean>(false);
+	const popoverContentRef = ref<HTMLElement>();
 
 	const openEditTagsPopover = (event: Event) => {
 		editTags();
 
 		tagPopoverRef.value?.toggle(event);
+
+		nextTick(() => {
+			popoverContentRef.value?.focus();
+		});
 	};
 
 	const closeEditTagsPopover = () => {

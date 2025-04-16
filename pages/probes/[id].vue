@@ -176,8 +176,17 @@
 												</span>
 
 												<Button
+													v-if="isEditingCity && editedCity !== originalCity && !probeDetailsUpdating"
+													severity="danger"
+													icon="pi pi-times"
+													class="!absolute !right-2 !top-1/2 mr-11 !h-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold text-white"
+													:disabled="probeDetailsUpdating"
+													@click.stop="cancelCityEditing"
+												/>
+
+												<Button
 													v-if="isEditingCity && editedCity !== originalCity"
-													label="Save"
+													icon="pi pi-check"
 													class="!absolute !right-2 !top-1/2 !h-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold text-white"
 													:loading="probeDetailsUpdating"
 													:disabled="probeDetailsUpdating"

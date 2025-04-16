@@ -170,7 +170,7 @@
 
 												<span
 													v-else
-													class="flex w-full items-center bg-white px-3 text-bluegray-900 dark:bg-dark-800 dark:text-[var(--bluegray-0)]"
+													class="flex w-full cursor-pointer items-center bg-white px-3 text-bluegray-900 dark:bg-dark-800 dark:text-[var(--bluegray-0)]"
 												>
 													{{ city }}
 												</span>

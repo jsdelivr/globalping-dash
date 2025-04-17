@@ -185,6 +185,7 @@
 				<slot/>
 			</div>
 		</div>
+		<NavigationGuard/>
 	</section>
 </template>
 

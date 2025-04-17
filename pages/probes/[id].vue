@@ -25,7 +25,7 @@
 			<div v-if="probeDetails" class="flex w-full flex-col items-center gap-4 sm:flex-row sm:flex-wrap">
 				<div
 					v-if="probeDetails"
-					class="relative flex w-full cursor-pointer items-center gap-3 sm:w-auto"
+					class="relative flex h-[42px] w-full cursor-pointer items-center gap-1 sm:w-auto"
 					@click="!isEditingName && enableNameEditing()"
 				>
 					<img v-if="isDarkMode" class="h-10" src="~/assets/icons/gp-dark.svg" alt="Globalping Dark Logo">
@@ -35,15 +35,14 @@
 						v-if="isEditingName"
 						ref="inputNameRef"
 						v-model="editedName"
-						class="flex w-[calc(100%-52px)] rounded-xl border border-gray-300 px-2 py-1 text-xl font-bold focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)] dark:border-dark-600 dark:focus:bg-dark-800"
-						:class="{ 'pr-16': isEditingName && editedName !== originalName }"
+						class="flex w-[calc(100%-52px)] rounded-xl border border-gray-300 py-1 pl-2 pr-16 text-2xl font-bold focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)] dark:border-dark-600 dark:focus:bg-dark-800"
 						@keyup.enter="updateProbeName"
 						@blur="cancelNameEditing"
 					>
 
-					<span v-else class="truncate text-2xl font-bold">
+					<div v-else class="flex w-[calc(100%-52px)] truncate px-[9px] py-[5px] text-2xl font-bold">
 						{{ name }}
-					</span>
+					</div>
 
 					<Button
 						v-if="isEditingName && editedName !== originalName"

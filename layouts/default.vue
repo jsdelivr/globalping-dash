@@ -192,6 +192,7 @@
 <script lang="ts" setup>
 	import { defaults } from 'chart.js';
 	import capitalize from 'lodash/capitalize';
+	import { ref, provide } from 'vue';
 	import { useNotifications } from '~/composables/useNotifications';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
@@ -199,6 +200,9 @@
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 	const { headerNotifications, inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead, updateHeaderNotifications } = useNotifications();
+
+	const isFormDirty = ref(false);
+	provide('form-dirty', isFormDirty);
 
 	// NOTIFICATIONS
 	const notificationsPanel = ref();

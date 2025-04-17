@@ -19,28 +19,22 @@
 </template>
 
 <script setup lang="ts">
-	import { onMounted, onUnmounted, ref } from 'vue';
 	import { useRouter, type RouteLocationNormalized, type NavigationGuardNext } from 'vue-router';
-
-	declare global {
-		interface Window {
-			hasDirtyForm?: boolean;
-		}
-	}
 
 	const router = useRouter();
 	const showNavigationConfirm = ref(false);
 	const pendingNavigation = ref<NavigationGuardNext | null>(null);
+	const isFormDirty = inject<Ref<boolean>>('form-dirty');
 
 	const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-		if (window.hasDirtyForm) {
+		if (isFormDirty?.value) {
 			e.preventDefault();
 			e.returnValue = '';
 		}
 	};
 
 	const handleNavigation = (_to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {
-		if (window.hasDirtyForm) {
+		if (isFormDirty?.value) {
 			pendingNavigation.value = next;
 			showNavigationConfirm.value = true;
 		} else {
@@ -52,7 +46,10 @@
 		pendingNavigation.value?.();
 		pendingNavigation.value = null;
 		showNavigationConfirm.value = false;
-		window.hasDirtyForm = false;
+
+		if (isFormDirty) {
+			isFormDirty.value = false;
+		}
 	};
 
 	const handleNavigationReject = () => {

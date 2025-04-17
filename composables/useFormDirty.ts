@@ -1,3 +1,5 @@
+import { inject, onMounted, watch, type Ref } from 'vue';
+
 export function useFormDirty<T> (initialValue: T, isDirty: (current: T) => boolean) {
 	const isFormDirty = inject<Ref<boolean>>('form-dirty');
 
@@ -12,6 +14,12 @@ export function useFormDirty<T> (initialValue: T, isDirty: (current: T) => boole
 
 		checkFormDirty();
 
-		watch(() => isDirty(initialValue), checkFormDirty);
+		watch(() => isDirty(initialValue), () => {
+			checkFormDirty();
+		}, { deep: true });
 	});
+
+	return () => {
+		isFormDirty.value = false;
+	};
 }

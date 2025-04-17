@@ -201,7 +201,7 @@
 	const defaultPrefix = ref(user.value.default_prefix);
 	const adoptionToken = ref(user.value.adoption_token);
 
-	useFormDirty({
+	const resetFormDirty = useFormDirty({
 		firstName: user.value.first_name,
 		lastName: user.value.last_name,
 		appearance: user.value.appearance,
@@ -248,6 +248,7 @@
 			await auth.refresh();
 
 			sendToast('success', 'Saved', 'All settings saved');
+			resetFormDirty();
 		} catch (e) {
 			sendErrorToast(e);
 		}

@@ -1,9 +1,13 @@
-import { onMounted, watch } from 'vue';
-
 export function useFormDirty<T> (initialValue: T, isDirty: (current: T) => boolean) {
+	const isFormDirty = inject<Ref<boolean>>('form-dirty');
+
+	if (!isFormDirty) {
+		throw new Error('useFormDirty must be used within a component that provides form-dirty state');
+	}
+
 	onMounted(() => {
 		const checkFormDirty = () => {
-			Object.assign(window, { hasDirtyForm: isDirty(initialValue) });
+			isFormDirty.value = isDirty(initialValue);
 		};
 
 		checkFormDirty();

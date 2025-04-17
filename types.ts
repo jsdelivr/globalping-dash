@@ -37,29 +37,32 @@ declare global {
     date_created: string;
     amount: number;
   } & (CreditsAdditionMeta | {
+    reason: 'adopted_probe';
+    meta: null;
+  } | {
     reason: null;
     meta: null;
   });
 
   type CreditsAdditionMeta = {
-    reason: 'one_time_sponsorship',
+    reason: 'one_time_sponsorship';
     meta: {
       amountInDollars: number;
     }
   } | {
-    reason: 'recurring_sponsorship',
+    reason: 'recurring_sponsorship';
     meta: {
       amountInDollars: number;
     }
   } | {
-    reason: 'adopted_probe',
+    reason: 'adopted_probe';
     meta: {
       id: string;
       name: string;
       ip: string;
     }
   } | {
-    reason: 'other',
+    reason: 'other';
     meta: {
       comment: string;
     }
@@ -79,15 +82,15 @@ declare global {
     longitude: number;
     name: string | null;
     network: string;
-    onlineTimesToday: number,
-    state: string | null,
+    onlineTimesToday: number;
+    state: string | null;
     status: 'initializing' | 'ready' | 'unbuffer-missing' | 'ping-test-failed' | 'sigterm';
     tags: {
         value: string;
         prefix: string;
         format?: string;
-      }[],
-    systemTags: string[],
+      }[];
+    systemTags: string[];
     userId: string;
     uuid: string;
     version: string;
@@ -179,9 +182,9 @@ declare global {
   };
 
   type Metadata = {
-    targetNodeVersion: string,
-    targetHardwareDeviceFirmware: string,
-    creditsPerDollar: number,
-    creditsPerAdoptedProbe: number,
+    targetNodeVersion: string;
+    targetHardwareDeviceFirmware: string;
+    creditsPerDollar: number;
+    creditsPerAdoptedProbe: number;
   }
 }

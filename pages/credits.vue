@@ -235,7 +235,7 @@
 		case 'recurring_sponsorship':
 			return `Recurring $${change.meta.amountInDollars} sponsorship.`;
 		case 'adopted_probe':
-			return `Adopted probe ${change.meta.name ? `"${change.meta.name}" ` : ''}(${change.meta.ip}).`;
+			return `Adopted probes.`;
 		default:
 			return change.meta?.comment || 'Other';
 		}

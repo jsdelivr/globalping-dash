@@ -127,7 +127,7 @@
 				</TabList>
 
 				<TabPanels class="mt-6 !bg-transparent !p-0">
-					<TabPanel value="0">
+					<TabPanel value="0" tabindex="-1">
 						<div class="flex flex-col gap-6">
 							<div class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-2">
 								<div class="col-span-1 flex flex-col rounded-xl border border-surface-300 bg-white md:col-span-1 lg:col-span-1 dark:border-dark-600 dark:bg-dark-800">
@@ -385,7 +385,7 @@
 						</div>
 					</TabPanel>
 
-					<TabPanel value="1">
+					<TabPanel value="1" tabindex="-1">
 						NO LOGS FOR NOW
 					</TabPanel>
 				</TabPanels>

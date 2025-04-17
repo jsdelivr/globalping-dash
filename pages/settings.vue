@@ -182,6 +182,7 @@
 
 <script setup lang="ts">
 	import { customEndpoint, updateMe } from '@directus/sdk';
+	import { useFormDirty } from '~/composables/useFormDirty';
 	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
@@ -199,6 +200,24 @@
 	const publicProbes = ref(user.value.public_probes);
 	const defaultPrefix = ref(user.value.default_prefix);
 	const adoptionToken = ref(user.value.adoption_token);
+
+	useFormDirty({
+		firstName: user.value.first_name,
+		lastName: user.value.last_name,
+		appearance: user.value.appearance,
+		email: user.value.email,
+		publicProbes: user.value.public_probes,
+		defaultPrefix: user.value.default_prefix,
+		adoptionToken: user.value.adoption_token,
+	}, (current) => {
+		return firstName.value !== current.firstName
+			|| lastName.value !== current.lastName
+			|| appearance.value !== current.appearance
+			|| email.value !== current.email
+			|| publicProbes.value !== current.publicProbes
+			|| defaultPrefix.value !== current.defaultPrefix
+			|| adoptionToken.value !== current.adoptionToken;
+	});
 
 	const themeOptions = [
 		{ name: 'Auto', value: null, icon: 'pi pi-cog' },

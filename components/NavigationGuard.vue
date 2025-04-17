@@ -65,6 +65,5 @@
 
 	onUnmounted(() => {
 		window.removeEventListener('beforeunload', handleBeforeUnload);
-		router.beforeEach(handleNavigation);
 	});
 </script>

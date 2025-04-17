@@ -163,7 +163,7 @@
 													v-if="isEditingCity"
 													ref="inputCityRef"
 													v-model="editedCity"
-													class="flex w-full border-0 pl-3 pr-16 text-bluegray-900 shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 dark:bg-dark-800 dark:text-[var(--bluegray-0)] dark:focus:bg-dark-800"
+													class="flex w-full border-0 pl-3 pr-[72px] text-bluegray-900 shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 dark:bg-dark-800 dark:text-[var(--bluegray-0)] dark:focus:bg-dark-800"
 													@keyup.enter="updateProbeCity"
 													@blur="cancelCityEditing"
 												>
@@ -176,21 +176,22 @@
 												</span>
 
 												<Button
-													v-if="isEditingCity && editedCity !== originalCity && !probeDetailsUpdating"
-													severity="danger"
-													icon="pi pi-times"
-													class="!absolute !right-2 !top-1/2 mr-11 !h-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold text-white"
-													:disabled="probeDetailsUpdating"
-													@click.stop="cancelCityEditing"
-												/>
-
-												<Button
 													v-if="isEditingCity && editedCity !== originalCity"
+													severity="undefined"
 													icon="pi pi-check"
-													class="!absolute !right-2 !top-1/2 !h-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold text-white"
+													class="!absolute !right-2 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[var(--p-primary-color)] focus:ring-[var(--p-primary-color)]"
 													:loading="probeDetailsUpdating"
 													:disabled="probeDetailsUpdating"
 													@click.stop="updateProbeCity"
+												/>
+
+												<Button
+													v-if="isEditingCity && editedCity !== originalCity && !probeDetailsUpdating"
+													severity="undefined"
+													icon="pi pi-times"
+													class="!absolute !right-2 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:ring-[#ef4444]"
+													:disabled="probeDetailsUpdating"
+													@click.stop="cancelCityEditing"
 												/>
 
 												<i v-if="!isEditingCity" class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2"/>

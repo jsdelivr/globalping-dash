@@ -19,6 +19,7 @@
 </template>
 
 <script setup lang="ts">
+	import { ref, inject, onMounted, onUnmounted, type Ref } from 'vue';
 	import { useRouter, type RouteLocationNormalized, type NavigationGuardNext } from 'vue-router';
 
 	const router = useRouter();
@@ -61,9 +62,13 @@
 	onMounted(() => {
 		window.addEventListener('beforeunload', handleBeforeUnload);
 		router.beforeEach(handleNavigation);
-	});
 
-	onUnmounted(() => {
-		window.removeEventListener('beforeunload', handleBeforeUnload);
+		const removeGuard = router.beforeEach(handleNavigation);
+		const guardRemover = ref(removeGuard);
+
+		onUnmounted(() => {
+			window.removeEventListener('beforeunload', handleBeforeUnload);
+			guardRemover.value();
+		});
 	});
 </script>

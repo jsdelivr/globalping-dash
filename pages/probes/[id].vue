@@ -575,7 +575,7 @@
 		const parentEl = document.getElementById('probeNameInput');
 
 		// do not blur name Input block if it comes from its children
-		if (parentEl && target instanceof Node && parentEl.contains(target)) {
+		if (probeDetailsUpdating.value || (parentEl && target instanceof Node && parentEl.contains(target))) {
 			return;
 		}
 
@@ -656,7 +656,7 @@
 		const parentEl = document.getElementById('probeCityInput');
 
 		// do not blur city Input block if it comes from its children
-		if (parentEl && target instanceof Node && parentEl.contains(target)) {
+		if (probeDetailsUpdating.value || (parentEl && target instanceof Node && parentEl.contains(target))) {
 			return;
 		}
 

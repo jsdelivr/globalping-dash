@@ -24,7 +24,14 @@ declare global {
     amount: number;
     date_created: 'datetime';
     github_id: string;
-  } & CreditsAdditionMeta;
+  } & (CreditsAdditionMeta | {
+    reason: 'adopted_probe';
+    meta: {
+      id: string;
+      name: string;
+      ip: string;
+    }
+  });
 
   type CreditsDeduction = {
     amount: number;
@@ -33,33 +40,24 @@ declare global {
   };
 
   type CreditsChange = {
-    type: 'addition' | 'deduction';
+    type: 'addition';
     date_created: string;
     amount: number;
   } & (CreditsAdditionMeta | {
     reason: 'adopted_probe';
     meta: null;
-  } | {
+  }) | {
+    type: 'deduction';
+    date_created: string;
+    amount: number;
     reason: null;
     meta: null;
-  });
+  };
 
   type CreditsAdditionMeta = {
-    reason: 'one_time_sponsorship';
+    reason: 'one_time_sponsorship' | 'recurring_sponsorship' | 'tier_changed';
     meta: {
       amountInDollars: number;
-    }
-  } | {
-    reason: 'recurring_sponsorship';
-    meta: {
-      amountInDollars: number;
-    }
-  } | {
-    reason: 'adopted_probe';
-    meta: {
-      id: string;
-      name: string;
-      ip: string;
     }
   } | {
     reason: 'other';

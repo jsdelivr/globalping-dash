@@ -38,7 +38,11 @@
 				:loading="loading"
 			>
 				<Column header="Date" field="date_created"/>
-				<Column header="Comment" field="comment"/>
+				<Column header="Comment" field="comment">
+					<template #body="slotProps">
+						{{ formatComment(slotProps.data) }}
+					</template>
+				</Column>
 				<Column header="Amount" field="amount">
 					<template #body="slotProps">
 						<Tag v-if="slotProps.data.type === 'addition'" class="flex items-center !text-sm" severity="success">
@@ -189,7 +193,6 @@
 			creditsChanges.value = [
 				...changes.map(change => ({
 					...change,
-					comment: !change.comment && change.type === 'deduction' ? 'Measurements ran on this day.' : change.comment,
 					date_created: formatDateForTable(change.date_created),
 				})),
 			];
@@ -218,4 +221,25 @@
 
 	const creditsDialog = ref(false);
 	const adoptProbeDialog = ref(false);
+
+	const formatComment = (change: CreditsChange) => {
+		console.log(change);
+
+		if (change.type === 'deduction') {
+			return 'Measurements ran on this day.';
+		}
+
+		switch (change.reason) {
+		case 'one_time_sponsorship':
+			return `One-time $${change.meta?.amountInDollars} sponsorship.`;
+		case 'recurring_sponsorship':
+			return `Recurring $${change.meta?.amountInDollars} sponsorship.`;
+		case 'tier_changed':
+			return `Sponsorship tier changed. Adding a diff of $${change.meta?.amountInDollars}.`;
+		case 'adopted_probe':
+			return `Adopted probes.`;
+		default:
+			return change.meta?.comment || 'Other';
+		}
+	};
 </script>

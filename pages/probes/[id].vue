@@ -25,6 +25,7 @@
 			<div v-if="probeDetails" class="flex w-full flex-col items-center gap-4 sm:flex-row sm:flex-wrap">
 				<div
 					v-if="probeDetails"
+					id="probeNameInput"
 					class="relative flex h-[42px] w-full cursor-pointer items-center gap-1 sm:w-auto"
 					@click="!isEditingName && enableNameEditing()"
 				>
@@ -35,9 +36,9 @@
 						v-if="isEditingName"
 						ref="inputNameRef"
 						v-model="editedName"
-						class="flex w-[calc(100%-52px)] rounded-xl border border-gray-300 py-1 pl-2 pr-16 text-2xl font-bold focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)] dark:border-dark-600 dark:focus:bg-dark-800"
+						class="flex w-[calc(100%-52px)] rounded-xl border border-gray-300 py-1 pl-2 pr-[72px] text-2xl font-bold focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)] dark:border-dark-600 dark:focus:bg-dark-800"
 						@keyup.enter="updateProbeName"
-						@blur="cancelNameEditing"
+						@blur="cancelNameEditingOnBlur"
 					>
 
 					<div v-else class="flex w-[calc(100%-52px)] truncate px-[9px] py-[5px] text-2xl font-bold">
@@ -46,11 +47,24 @@
 
 					<Button
 						v-if="isEditingName && editedName !== originalName"
-						label="Save"
-						class="!absolute !right-2 !top-1/2 !h-7 !-translate-y-1/2 !rounded-lg !px-2 !py-1 !text-sm !font-bold text-white"
+						severity="undefined"
+						icon="pi pi-check"
+						class="!absolute !right-2 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[var(--p-primary-color)] focus:ring-[var(--p-primary-color)]"
 						:loading="probeDetailsUpdating"
 						:disabled="probeDetailsUpdating"
-						@click="updateProbeName"
+						@click.stop="updateProbeName"
+						@blur="cancelNameEditingOnBlur"
+					/>
+
+					<Button
+						v-if="isEditingName && editedName !== originalName && !probeDetailsUpdating"
+						severity="undefined"
+						icon="pi pi-times"
+						class="!absolute !right-2 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:ring-[#ef4444]"
+						:disabled="probeDetailsUpdating"
+						@keyup.enter="cancelNameEditing"
+						@click.stop="cancelNameEditing"
+						@blur="cancelNameEditingOnBlur"
 					/>
 
 					<i v-if="!isEditingName" class="pi pi-pencil text-lg"/>
@@ -551,10 +565,19 @@
 		}
 	};
 
-	const cancelNameEditing = (event: FocusEvent) => {
-		const target = event.relatedTarget as HTMLElement | null;
+	const cancelNameEditing = () => {
+		editedName.value = originalName.value;
+		isEditingName.value = false;
+	};
 
-		if (target?.tagName === 'BUTTON') { return; }
+	const cancelNameEditingOnBlur = (event: FocusEvent) => {
+		const target = event.relatedTarget as HTMLElement | null;
+		const parentEl = document.getElementById('probeNameInput');
+
+		// do not blur name Input block if it comes from its children
+		if (parentEl && target instanceof Node && parentEl.contains(target)) {
+			return;
+		}
 
 		editedName.value = originalName.value;
 		isEditingName.value = false;
@@ -633,7 +656,7 @@
 		const parentEl = document.getElementById('probeCityInput');
 
 		// do not blur city Input block if it comes from its children
-		if ((target === null) || (parentEl && target instanceof Node && parentEl.contains(target))) {
+		if (parentEl && target instanceof Node && parentEl.contains(target)) {
 			return;
 		}
 

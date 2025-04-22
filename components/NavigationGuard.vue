@@ -19,8 +19,7 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, inject, onMounted, onUnmounted, type Ref } from 'vue';
-	import { useRouter, type RouteLocationNormalized, type NavigationGuardNext } from 'vue-router';
+	import { type RouteLocationNormalized, type NavigationGuardNext } from 'vue-router';
 
 	const router = useRouter();
 	const showNavigationConfirm = ref(false);

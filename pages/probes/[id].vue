@@ -433,6 +433,9 @@
 									label="Remove probe"
 									icon="pi pi-trash"
 									:loading="deleteProbeLoading"
+									aria-label="Remove probe"
+									:aria-disabled="deleteProbeLoading"
+									aria-haspopup="dialog"
 									@click="deleteDialog = true"
 								/>
 							</div>

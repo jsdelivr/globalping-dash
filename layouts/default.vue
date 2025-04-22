@@ -192,8 +192,6 @@
 <script lang="ts" setup>
 	import { defaults } from 'chart.js';
 	import capitalize from 'lodash/capitalize';
-	import { ref, provide } from 'vue';
-	import NavigationGuard from '~/components/NavigationGuard.vue';
 	import { useNotifications } from '~/composables/useNotifications';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';

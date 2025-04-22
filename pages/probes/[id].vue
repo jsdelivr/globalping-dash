@@ -31,6 +31,9 @@
 						'[&>input]:outline-none [&>input]:ring-1 [&>input]:ring-[var(--p-primary-color)]': isEditingName,
 						'[&>input]:dark:border-dark-600 [&>input]:dark:bg-dark-800': isEditingName,
 					}"
+					role="button"
+					aria-label="Edit probe name"
+					aria-pressed="false"
 					@click="!isEditingName && enableNameEditing()"
 				>
 					<img v-if="isDarkMode" class="h-10" src="~/assets/icons/gp-dark.svg" alt="Globalping Dark Logo">
@@ -41,6 +44,7 @@
 						ref="inputNameRef"
 						v-model="editedName"
 						class="flex w-[calc(100%-52px)] rounded-xl border border-gray-300 py-1 pl-2 pr-[72px] text-2xl font-bold"
+						aria-label="Probe name input"
 						@keyup.enter="updateProbeName"
 						@blur="cancelNameEditingOnBlur"
 					>
@@ -56,6 +60,7 @@
 						class="!absolute !right-4 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[var(--p-primary-color)] focus:ring-[var(--p-primary-color)]"
 						:loading="probeDetailsUpdating"
 						:disabled="probeDetailsUpdating"
+						aria-label="Save probe name"
 						@click.stop="updateProbeName"
 						@blur="cancelNameEditingOnBlur"
 					/>
@@ -66,12 +71,13 @@
 						icon="pi pi-times"
 						class="!absolute !right-4 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:ring-[#ef4444]"
 						:disabled="probeDetailsUpdating"
+						aria-label="Cancel editing probe name"
 						@keyup.enter="cancelNameEditing"
 						@click.stop="cancelNameEditing"
 						@blur="cancelNameEditingOnBlur"
 					/>
 
-					<i v-if="!isEditingName" class="pi pi-pencil text-lg"/>
+					<i v-if="!isEditingName" class="pi pi-pencil text-lg" aria-hidden="true"/>
 				</div>
 
 				<div class="hidden h-8 items-center gap-1 rounded-full border border-surface-300 md:flex dark:border-dark-600">

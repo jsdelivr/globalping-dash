@@ -27,6 +27,10 @@
 					v-if="probeDetails"
 					id="probeNameInput"
 					class="relative flex h-[42px] w-full cursor-pointer items-center gap-1 sm:w-auto"
+					:class="{
+						'[&>input]:outline-none [&>input]:ring-1 [&>input]:ring-[var(--p-primary-color)]': isEditingName,
+						'[&>input]:dark:border-dark-600 [&>input]:dark:bg-dark-800': isEditingName,
+					}"
 					@click="!isEditingName && enableNameEditing()"
 				>
 					<img v-if="isDarkMode" class="h-10" src="~/assets/icons/gp-dark.svg" alt="Globalping Dark Logo">
@@ -36,7 +40,7 @@
 						v-if="isEditingName"
 						ref="inputNameRef"
 						v-model="editedName"
-						class="flex w-[calc(100%-52px)] rounded-xl border border-gray-300 py-1 pl-2 pr-[72px] text-2xl font-bold focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)] dark:border-dark-600 dark:focus:bg-dark-800"
+						class="flex w-[calc(100%-52px)] rounded-xl border border-gray-300 py-1 pl-2 pr-[72px] text-2xl font-bold"
 						@keyup.enter="updateProbeName"
 						@blur="cancelNameEditingOnBlur"
 					>

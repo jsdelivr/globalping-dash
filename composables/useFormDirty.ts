@@ -10,11 +10,9 @@ export function useFormDirty<T> (initialValue: T, isDirty: (current: T) => boole
 			isFormDirty.value = isDirty(initialValue);
 		};
 
-		checkFormDirty();
-
 		watch(() => isDirty(initialValue), () => {
 			checkFormDirty();
-		}, { deep: true });
+		}, { deep: true, immediate: true });
 	});
 
 	return () => {

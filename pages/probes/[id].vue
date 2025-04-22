@@ -34,6 +34,7 @@
 					role="button"
 					aria-label="Edit probe name"
 					aria-pressed="false"
+					:tabindex="isEditingName ? -1 : 0"
 					@click="!isEditingName && enableNameEditing()"
 				>
 					<img v-if="isDarkMode" class="h-10" src="~/assets/icons/gp-dark.svg" alt="Globalping Dark Logo">
@@ -180,6 +181,7 @@
 												role="button"
 												aria-label="Edit probe city"
 												aria-pressed="false"
+												:tabindex="isEditingCity ? -1 : 0"
 												@click="!isEditingCity && enableCityEditing()"
 											>
 												<span

@@ -177,9 +177,15 @@
 												v-if="probeDetails"
 												id="probeCityInput"
 												class="absolute inset-x-4 bottom-9 flex h-[38px] overflow-hidden rounded-md border border-[#D1D5DB] dark:border-dark-600"
+												role="button"
+												aria-label="Edit probe city"
+												aria-pressed="false"
 												@click="!isEditingCity && enableCityEditing()"
 											>
-												<span class="flex w-[38px] shrink-0 items-center justify-center border-r border-r-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600 dark:bg-dark-700">
+												<span
+													class="flex w-[38px] shrink-0 items-center justify-center border-r border-r-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600 dark:bg-dark-700"
+													aria-hidden="true"
+												>
 													<CountryFlag :country="probeDetails.country" size="small"/>
 												</span>
 
@@ -188,6 +194,7 @@
 													ref="inputCityRef"
 													v-model="editedCity"
 													class="flex w-full border-0 pl-3 pr-[72px] text-bluegray-900 shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 dark:bg-dark-800 dark:text-[var(--bluegray-0)] dark:focus:bg-dark-800"
+													aria-label="City name input"
 													@keyup.enter="updateProbeCity"
 													@blur="cancelCityEditingOnBlur"
 												>
@@ -206,6 +213,7 @@
 													class="!absolute !right-2 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[var(--p-primary-color)] focus:ring-[var(--p-primary-color)]"
 													:loading="probeDetailsUpdating"
 													:disabled="probeDetailsUpdating"
+													aria-label="Save city name"
 													@click.stop="updateProbeCity"
 													@blur="cancelCityEditingOnBlur"
 												/>
@@ -216,12 +224,13 @@
 													icon="pi pi-times"
 													class="!absolute !right-2 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:ring-[#ef4444]"
 													:disabled="probeDetailsUpdating"
+													aria-label="Cancel editing city"
 													@keyup.enter="cancelCityEditing"
 													@click.stop="cancelCityEditing"
 													@blur="cancelCityEditingOnBlur"
 												/>
 
-												<i v-if="!isEditingCity" class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2"/>
+												<i v-if="!isEditingCity" class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2" aria-hidden="true"/>
 											</div>
 										</div>
 									</div>

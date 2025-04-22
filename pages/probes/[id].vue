@@ -261,6 +261,9 @@
 
 													<Button
 														class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent dark:!border-dark-600 dark:bg-dark-600"
+														:aria-label="probeDetails?.tags?.length ? 'Edit tags' : 'Add tags'"
+														aria-haspopup="dialog"
+														aria-expanded="false"
 														@click="openEditTagsPopover($event)"
 													>
 														<i
@@ -280,6 +283,8 @@
 													:class="{
 														'!left-1/2 !-translate-x-1/2 !transform': screenWidth < 768
 													}"
+													role="dialog"
+													:aria-label="probeDetails?.tags?.length ? 'Edit tags' : 'Add tags'"
 												>
 													<div
 														v-if="probeDetails"
@@ -294,10 +299,23 @@
 															<div class="-mb-2 "/>
 
 															<template v-for="(tag, index) in tagsToEdit" :key="index">
-																<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
+																<Select
+																	v-model="tag.uPrefix"
+																	class="flex-1"
+																	:options="uPrefixes"
+																	:scroll-height="'200px'"
+																	aria-label="Tag prefix"
+																	aria-required="true"
+																/>
 																<div class="inline-flex w-6 justify-center">:</div>
 																<div class="relative flex-1">
-																	<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full" placeholder="my-tag"/>
+																	<InputText
+																		v-model="tag.value"
+																		:invalid="!isTagValid(tag.value)"
+																		class="w-full"
+																		placeholder="my-tag"
+																		aria-label="Your tag"
+																	/>
 																	<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
 																</div>
 
@@ -305,7 +323,7 @@
 																	<Button
 																		icon="pi pi-trash"
 																		text
-																		aria-label="Remove"
+																		aria-label="Remove tag"
 																		class="text-surface-900 dark:text-surface-0"
 																		@click="removeTag(index)"
 																	/>
@@ -345,12 +363,14 @@
 																severity="secondary"
 																class="dark:!bg-dark-800"
 																outlined
+																aria-label="Cancel tag editing"
 																@click="closeEditTagsPopover"
 															/>
 															<Button
 																label="Save"
 																:loading="probeDetailsUpdating"
 																:disabled="probeDetailsUpdating"
+																aria-label="Save edited tags"
 																@click="updateProbeTags"
 															/>
 														</div>

@@ -189,6 +189,8 @@
 												aria-pressed="false"
 												:tabindex="isEditingCity ? -1 : 0"
 												@click="!isEditingCity && enableCityEditing()"
+												@keyup.enter="!isEditingCity && enableCityEditing()"
+												@keyup.space="!isEditingCity && enableCityEditing()"
 											>
 												<span
 													class="flex w-[38px] shrink-0 items-center justify-center border-r border-r-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600 dark:bg-dark-700"

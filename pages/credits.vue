@@ -223,8 +223,6 @@
 	const adoptProbeDialog = ref(false);
 
 	const formatComment = (change: CreditsChange) => {
-		console.log(change);
-
 		if (change.type === 'deduction') {
 			return 'Measurements ran on this day.';
 		}

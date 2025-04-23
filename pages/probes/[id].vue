@@ -442,6 +442,8 @@
 									aria-label="Remove probe"
 									:aria-disabled="deleteProbeLoading"
 									aria-haspopup="dialog"
+									:aria-expanded="deleteDialog"
+									aria-controls="removeProbeDialog"
 									@click="deleteDialog = true"
 								/>
 							</div>
@@ -457,8 +459,10 @@
 
 		<GPDialog
 			v-if="probeDetails"
+			id="removeProbeDialog"
 			v-model:visible="deleteDialog"
 			header="Delete probe"
+			aria-label="Remove a probe dialog"
 		>
 			<div class="flex items-center">
 				<div>

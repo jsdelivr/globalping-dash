@@ -42,6 +42,7 @@
 					@click="!isEditingName && enableNameEditing()"
 					@keyup.enter="!isEditingName && enableNameEditing()"
 					@keyup.space="!isEditingName && enableNameEditing()"
+					@keyup.esc="isEditingName && cancelNameEditing()"
 				>
 					<img v-if="isDarkMode" class="h-10" src="~/assets/icons/gp-dark.svg" alt="Globalping Dark Logo">
 					<img v-else class="h-10" src="~/assets/icons/gp-white.svg" alt="Globalping White Logo">
@@ -191,6 +192,7 @@
 												@click="!isEditingCity && enableCityEditing()"
 												@keyup.enter="!isEditingCity && enableCityEditing()"
 												@keyup.space="!isEditingCity && enableCityEditing()"
+												@keyup.esc="isEditingCity && cancelCityEditing()"
 											>
 												<span
 													class="flex w-[38px] shrink-0 items-center justify-center border-r border-r-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600 dark:bg-dark-700"

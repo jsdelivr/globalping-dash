@@ -265,9 +265,10 @@
 
 													<Button
 														class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent dark:!border-dark-600 dark:bg-dark-600"
-														:aria-label="probeDetails?.tags?.length ? 'Edit tags' : 'Add tags'"
+														:aria-label="probeDetails?.tags?.length ? 'Open edit tags dialog' : 'Open add tags dialog'"
 														aria-haspopup="dialog"
 														aria-expanded="false"
+														aria-controls="editTagsPopover"
 														@click="openEditTagsPopover($event)"
 													>
 														<i
@@ -282,13 +283,14 @@
 												</div>
 
 												<Popover
+													id="editTagsPopover"
 													ref="tagPopoverRef"
 													class="w-[95%] sm:w-[500px]"
 													:class="{
 														'!left-1/2 !-translate-x-1/2 !transform': screenWidth < 768
 													}"
 													role="dialog"
-													:aria-label="probeDetails?.tags?.length ? 'Edit tags' : 'Add tags'"
+													:aria-label="probeDetails?.tags?.length ? 'Edit tags dialog' : 'Add tags dialog'"
 												>
 													<div
 														v-if="probeDetails"

@@ -267,7 +267,7 @@
 														class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent dark:!border-dark-600 dark:bg-dark-600"
 														:aria-label="probeDetails?.tags?.length ? 'Open edit tags dialog' : 'Open add tags dialog'"
 														aria-haspopup="dialog"
-														aria-expanded="false"
+														:aria-expanded="tagPopoverRef.value?.visible"
 														aria-controls="editTagsPopover"
 														@click="openEditTagsPopover($event)"
 													>
@@ -834,7 +834,12 @@
 	const openEditTagsPopover = (event: Event) => {
 		editTags();
 
+		console.log('++++++ BEFORE visible', tagPopoverRef.value?.visible);
+		console.log('________________________');
 		tagPopoverRef.value?.toggle(event);
+
+		console.log('++++++ AFTER visible', tagPopoverRef.value?.visible);
+		console.log('________________________');
 
 		nextTick(() => {
 			popoverContentRef.value?.focus();

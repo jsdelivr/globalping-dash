@@ -40,6 +40,8 @@
 					aria-pressed="false"
 					:tabindex="isEditingName ? -1 : 0"
 					@click="!isEditingName && enableNameEditing()"
+					@keyup.enter="!isEditingName && enableNameEditing()"
+					@keyup.space="!isEditingName && enableNameEditing()"
 				>
 					<img v-if="isDarkMode" class="h-10" src="~/assets/icons/gp-dark.svg" alt="Globalping Dark Logo">
 					<img v-else class="h-10" src="~/assets/icons/gp-white.svg" alt="Globalping White Logo">

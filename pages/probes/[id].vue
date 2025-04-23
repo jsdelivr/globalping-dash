@@ -2,7 +2,11 @@
 	<div class="min-h-full p-6">
 		<div class="flex flex-col gap-4">
 			<div class="flex gap-2">
-				<NuxtLink :href="getBackToProbesHref()" class="mr-auto flex cursor-pointer items-center gap-2">
+				<NuxtLink
+					:href="getBackToProbesHref()"
+					class="mr-auto flex cursor-pointer items-center gap-2"
+					aria-label="Go back to the list of probes"
+				>
 					<i class="pi pi-arrow-left text-bluegray-500"/>
 					<span class="font-bold text-bluegray-500">Back to probes</span>
 				</NuxtLink>

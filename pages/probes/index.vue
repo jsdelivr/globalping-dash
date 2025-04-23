@@ -176,16 +176,7 @@
 				<Button class="mt-6" label="Start a probe" @click="startProbeDialog = true"/>
 			</div>
 		</div>
-		<!-- <div v-if="probeDetails">
-			<NuxtPage
-				:credits="credits[probeDetails!.id] || 0"
-				:probe="probeDetails"
-				:gmaps-loaded="gmapsLoaded"
-				@save="loadLazyData"
-				@hide="onHide"
-				@delete="onDelete"
-			/>
-		</div> -->
+
 		<GPDialog
 			v-model:visible="startProbeDialog"
 			view-name="start-a-probe"

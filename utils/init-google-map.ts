@@ -51,9 +51,9 @@ const stylesByTheme = {
 	},
 };
 
-let map: google.maps.Map, marker: google.maps.Marker, infoWindow: google.maps.InfoWindow;
+let map: google.maps.Map, marker: google.maps.Marker;
 
-export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, showIW: boolean = true, verticalOffset: number | null = null) => {
+export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, markerHasIW: boolean = true, verticalOffset: number | null = null) => {
 	if (!probe) {
 		return;
 	}
@@ -87,11 +87,11 @@ export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, sh
 		gestureHandling: 'cooperative',
 	});
 
-	createMapMarker(probe, showPulse, showIW);
+	const { infoWindow } = createMapMarkerWithIW(probe, showPulse, markerHasIW);
 
 	map.addListener('zoom_changed', () => {
-		if (showIW) {
-			infoWindow?.close();
+		if (markerHasIW && infoWindow) {
+			infoWindow.close();
 		}
 
 		updateStyles(map, appearance.theme);
@@ -116,9 +116,10 @@ const updateStyles = (map: google.maps.Map, theme: 'light' | 'dark') => {
 	}
 };
 
-function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: boolean = true) {
+function createMapMarkerWithIW (probe: Probe, showPulse: boolean = false, markerHasIW: boolean = true) {
 	const svgFillColor = DEFAULT_MARKER_COLOR;
 	let markerIconSettings: google.maps.Icon;
+	let infoWindow: google.maps.InfoWindow | null = null;
 
 	if (showPulse) {
 		const svgWidth = 132;
@@ -195,8 +196,7 @@ function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: bool
 		};
 	}
 
-	if (showIW) {
-		// create an Info Window
+	if (markerHasIW) {
 		infoWindow = new google.maps.InfoWindow({
 			content: `<div class="mt-3">
 					<div class="font-semibold">${probe.network}</div>
@@ -213,11 +213,11 @@ function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: bool
 		optimized: false,
 	});
 
-	if (showIW === false) {
+	if (markerHasIW === false) {
 		marker.setOptions({ cursor: 'default' });
 	}
 
-	if (showIW) {
+	if (markerHasIW && infoWindow) {
 		google.maps.event.addListener(marker, 'click', () => {
 			infoWindow.open(map, marker);
 		});
@@ -227,7 +227,7 @@ function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: bool
 		});
 	}
 
-	return marker;
+	return { marker, infoWindow };
 }
 
 export const updateMapMarker = (latitude: number, longitude: number, verticalOffset: number) => {

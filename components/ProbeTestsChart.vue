@@ -33,7 +33,7 @@
 				callbacks: {
 					title: () => null,
 					label: () => null,
-					afterBody: () => 'TODO: AFTER BODY CHART OPTIONS',
+					afterBody: () => null,
 				},
 				bodyFont: {
 					weight: 400,

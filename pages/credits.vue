@@ -173,7 +173,8 @@
 		try {
 			const [
 				{ changes },
-				[{ count: additionsCount }],
+				[{ count: sponsorAdditionsCount }],
+				probeAdditionsCount,
 				[{ count: deductionsCount }],
 			] = await Promise.all([
 				$directus.request<{changes: CreditsChange[]}>(customEndpoint({ method: 'GET', path: '/credits-timeline', params: {
@@ -182,8 +183,13 @@
 				} })),
 				$directus.request<[{count: number}]>(aggregate('gp_credits_additions', {
 					aggregate: { count: '*' },
-					query: { filter: { github_id: { _eq: user.value.external_identifier || 'admin' } } },
+					query: { filter: { github_id: { _eq: user.value.external_identifier || 'admin' }, reason: { _neq: 'adopted_probe' } } },
 				})),
+				$directus.request<[{count: number}]>(aggregate('gp_credits_additions', {
+					aggregate: { count: '*' },
+					groupBy: [ 'date_created' ],
+					query: { filter: { github_id: { _eq: user.value.external_identifier || 'admin' }, reason: { _eq: 'adopted_probe' } } },
+				})).then(additions => additions.length),
 				$directus.request<[{count: number}]>(aggregate('gp_credits_deductions', {
 					aggregate: { count: '*' },
 					query: { filter: { user_id: { _eq: user.value.id } } },
@@ -197,7 +203,7 @@
 				})),
 			];
 
-			creditsChangesCount.value = additionsCount + deductionsCount;
+			creditsChangesCount.value = sponsorAdditionsCount + probeAdditionsCount + deductionsCount;
 		} catch (e) {
 			sendErrorToast(e);
 		}

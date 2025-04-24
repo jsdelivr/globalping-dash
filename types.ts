@@ -22,11 +22,16 @@ declare global {
 
   type CreditsAddition = {
     amount: number;
-    comment: string;
     date_created: 'datetime';
-    adopted_probe: string | null;
     github_id: string;
-  };
+  } & (CreditsAdditionMeta | {
+    reason: 'adopted_probe';
+    meta: {
+      id: string;
+      name: string;
+      ip: string;
+    }
+  });
 
   type CreditsDeduction = {
     amount: number;
@@ -35,11 +40,30 @@ declare global {
   };
 
   type CreditsChange = {
-    type: 'addition' | 'deduction';
+    type: 'addition';
     date_created: string;
-    comment?: string;
     amount: number;
-    adopted_probe?: string | null;
+  } & (CreditsAdditionMeta | {
+    reason: 'adopted_probe';
+    meta: null;
+  }) | {
+    type: 'deduction';
+    date_created: string;
+    amount: number;
+    reason: null;
+    meta: null;
+  };
+
+  type CreditsAdditionMeta = {
+    reason: 'one_time_sponsorship' | 'recurring_sponsorship' | 'tier_changed';
+    meta: {
+      amountInDollars: number;
+    }
+  } | {
+    reason: 'other';
+    meta: {
+      comment: string;
+    }
   };
 
   type Probe = {
@@ -56,15 +80,15 @@ declare global {
     longitude: number;
     name: string | null;
     network: string;
-    onlineTimesToday: number,
-    state: string | null,
+    onlineTimesToday: number;
+    state: string | null;
     status: 'initializing' | 'ready' | 'unbuffer-missing' | 'ping-test-failed' | 'sigterm';
     tags: {
         value: string;
         prefix: string;
         format?: string;
-      }[],
-    systemTags: string[],
+      }[];
+    systemTags: string[];
     userId: string;
     uuid: string;
     version: string;
@@ -156,9 +180,9 @@ declare global {
   };
 
   type Metadata = {
-    targetNodeVersion: string,
-    targetHardwareDeviceFirmware: string,
-    creditsPerDollar: number,
-    creditsPerAdoptedProbe: number,
+    targetNodeVersion: string;
+    targetHardwareDeviceFirmware: string;
+    creditsPerDollar: number;
+    creditsPerAdoptedProbe: number;
   }
 }

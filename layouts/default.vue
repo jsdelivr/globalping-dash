@@ -185,6 +185,7 @@
 				<slot/>
 			</div>
 		</div>
+		<NavigationGuard/>
 	</section>
 </template>
 
@@ -198,6 +199,9 @@
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 	const { headerNotifications, inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead, updateHeaderNotifications } = useNotifications();
+
+	const isFormDirty = ref(false);
+	provide('form-dirty', isFormDirty);
 
 	// NOTIFICATIONS
 	const notificationsPanel = ref();

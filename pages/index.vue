@@ -226,7 +226,7 @@
 				fromSponsorshipPromise = $directus.request(readItems('gp_credits_additions', {
 					filter: {
 						github_id: { _eq: user.value.external_identifier || 'admin' },
-						comment: { _icontains: 'recurring' },
+						reason: { _eq: 'recurring_sponsorship' },
 						date_created: { _gte: '$NOW(-35 day)' },
 					},
 					sort: '-date_created',

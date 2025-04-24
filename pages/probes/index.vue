@@ -244,9 +244,9 @@
 					query: { filter: { userId: { _eq: user.value.id } } },
 					aggregate: { count: '*' },
 				})),
-				$directus.request<[{ sum: { amount: number }, adopted_probe: string}]>(aggregate('gp_credits_additions', {
-					query: { filter: { github_id: { _eq: user.value.external_identifier || 'admin' }, adopted_probe: { _null: false }, date_created: { _gte: '$NOW(-30 day)' } } },
-					groupBy: [ 'adopted_probe' ],
+				$directus.request<[{ sum: { amount: number }, meta: { id: string, name: string | null, ip: string} }]>(aggregate('gp_credits_additions', {
+					query: { filter: { github_id: { _eq: user.value.external_identifier || 'admin' }, reason: { _eq: 'adopted_probe' }, date_created: { _gte: '$NOW(-30 day)' } } },
+					groupBy: [ 'meta' ],
 					aggregate: { sum: 'amount' },
 				})),
 			]);
@@ -256,10 +256,10 @@
 			totalCredits.value = 0;
 
 			for (const addition of creditsAdditions) {
-				const { adopted_probe: adoptedProbe, sum: { amount } } = addition;
+				const { meta, sum: { amount } } = addition;
 
 				totalCredits.value += amount;
-				creditsByProbeId[adoptedProbe] = creditsByProbeId[adoptedProbe] ? creditsByProbeId[adoptedProbe] + amount : amount;
+				creditsByProbeId[meta.id] = creditsByProbeId[meta.id] ? creditsByProbeId[meta.id] + amount : amount;
 			}
 
 			credits.value = creditsByProbeId;

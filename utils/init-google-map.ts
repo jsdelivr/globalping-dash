@@ -117,9 +117,7 @@ const updateStyles = (map: google.maps.Map, theme: 'light' | 'dark') => {
 };
 
 function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: boolean = true) {
-	// create svg to use as a Marker icon
 	const svgFillColor = DEFAULT_MARKER_COLOR;
-	let svg;
 	let markerIconSettings: google.maps.Icon;
 
 	if (showPulse) {
@@ -162,18 +160,18 @@ function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: bool
 			</defs>
 		`;
 
-		svg = window.btoa(`<svg width="${svgWidth}" height="${svgHeight}" viewBox="0 0 132 132" fill="none" xmlns="http://www.w3.org/2000/svg">
+		const finalSvg = window.btoa(`<svg width="${svgWidth}" height="${svgHeight}" viewBox="0 0 132 132" fill="none" xmlns="http://www.w3.org/2000/svg">
 			${defs}
 			${pulseSvg}
 			${markerSvg}
 			</svg>`);
 
 		markerIconSettings = {
-			url: `data:image/svg+xml;base64,${svg}`,
+			url: `data:image/svg+xml;base64,${finalSvg}`,
 			anchor: new google.maps.Point(svgWidth / 2, svgHeight / 2),
 		};
 	} else {
-		svg = window.btoa(`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		const finalSvg = window.btoa(`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<g filter="url(#filter0_d_6106_3045)">
 			<circle cx="12" cy="10" r="6" fill="${svgFillColor}"/>
 			<circle cx="12" cy="10" r="7" stroke="white" stroke-width="2"/>
@@ -193,7 +191,7 @@ function createMapMarker (probe: Probe, showPulse: boolean = false, showIW: bool
 			</svg>`);
 
 		markerIconSettings = {
-			url: `data:image/svg+xml;base64,${svg}`,
+			url: `data:image/svg+xml;base64,${finalSvg}`,
 		};
 	}
 

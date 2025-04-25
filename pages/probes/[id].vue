@@ -256,7 +256,7 @@
 
 										<div class="flex flex-col gap-3 p-6">
 											<p class="text-sm leading-[100%] text-bluegray-600 dark:text-[var(--bluegray-0)]">
-												Public user-defined tags that can be used to target the probe in measurements. Each tag must be prefixed by your GitHub username or organization. E.g., for a user with username jimaek and tag home-1 the final tag would be u-jimaek-home-1.
+												Public user-defined tags that can be used to target the probe in measurements. Each tag must be prefixed by your GitHub username or organization. E.g., for a user with username jimaek and tag home-1 the final tag would be u-jimaek:home-1.
 											</p>
 
 											<div class="flex gap-1">
@@ -266,7 +266,7 @@
 														:key="index"
 														class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600 dark:text-[var(--bluegray-0)]"
 													>
-														{{ `u-${tag.prefix}-${tag.value}` }}
+														{{ `u-${tag.prefix}:${tag.value}` }}
 													</span>
 
 													<Button

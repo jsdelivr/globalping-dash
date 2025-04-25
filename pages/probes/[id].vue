@@ -965,7 +965,8 @@
 	};
 
 	watch(probeDetails, async () => {
-		loadCreditsData();
+		// TODO: update loadCreditsData once BE is ready
+		// loadCreditsData();
 	});
 
 	// HANDLE TOP LOGO IMG SRC

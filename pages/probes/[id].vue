@@ -130,7 +130,7 @@
 					<CopyButton :content="probeDetails.ip" class="!top-[7px] size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
 				</span>
 
-				<template v-if="probeDetails?.altIps.length">
+				<template v-if="probeDetails?.altIps?.length">
 					<span class="flex h-[38px] w-full items-center whitespace-nowrap sm:w-auto">Alternative IPs:</span>
 					<span
 						v-for="(altIp, index) in limitIpsToShow()"
@@ -786,7 +786,7 @@
 			return probeDetails?.value?.altIps;
 		}
 
-		return probeDetails?.value?.altIps.slice(0, 1);
+		return probeDetails?.value?.altIps?.slice(0, 1) ?? [];
 	};
 
 	const updateIpsContentHeight = async (onResize: boolean = false) => {

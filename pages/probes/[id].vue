@@ -950,11 +950,11 @@
 				query: {
 					filter: {
 						github_id: { _eq: user.value.external_identifier || 'admin' },
-						adopted_probe: { _eq: probeDetails?.value?.id },
+						// adopted_probe: { _eq: probeDetails?.value?.id },
 						date_created: { _gte: '$NOW(-30 day)' },
 					},
 				},
-				groupBy: [ 'adopted_probe' ],
+				// groupBy: [ 'adopted_probe' ],
 				aggregate: { sum: 'amount' },
 			}));
 

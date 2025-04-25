@@ -488,7 +488,9 @@
 </template>
 
 <script setup lang="ts">
-	import { readItem, updateItem, aggregate } from '@directus/sdk';
+	// TODO: uncomment this line and remove the line below once loadCreditsData is updated
+	// import { readItem, updateItem, aggregate } from '@directus/sdk';
+	import { readItem, updateItem } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
 	import isEqual from 'lodash/isEqual';
 	import memoize from 'lodash/memoize';
@@ -966,8 +968,7 @@
 	// };
 
 	// watch(probeDetails, async () => {
-		// TODO: update loadCreditsData once BE is ready
-		// loadCreditsData();
+	// 	loadCreditsData();
 	// });
 
 	// HANDLE TOP LOGO IMG SRC

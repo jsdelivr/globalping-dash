@@ -944,30 +944,31 @@
 	// HANDLE CREDITS
 	const probeCreditsPerMonth = ref<number | null>(null);
 
-	const loadCreditsData = async () => {
-		try {
-			const creditsResponse = await $directus.request<[{ sum: { amount: number }, adopted_probe: string}]>(aggregate('gp_credits_additions', {
-				query: {
-					filter: {
-						github_id: { _eq: user.value.external_identifier || 'admin' },
-						// adopted_probe: { _eq: probeDetails?.value?.id },
-						date_created: { _gte: '$NOW(-30 day)' },
-					},
-				},
-				// groupBy: [ 'adopted_probe' ],
-				aggregate: { sum: 'amount' },
-			}));
+	// TODO: update loadCreditsData once BE is ready
+	// const loadCreditsData = async () => {
+	// 	try {
+	// 		const creditsResponse = await $directus.request<[{ sum: { amount: number }, adopted_probe: string}]>(aggregate('gp_credits_additions', {
+	// 			query: {
+	// 				filter: {
+	// 					github_id: { _eq: user.value.external_identifier || 'admin' },
+	// 					// adopted_probe: { _eq: probeDetails?.value?.id },
+	// 					date_created: { _gte: '$NOW(-30 day)' },
+	// 				},
+	// 			},
+	// 			// groupBy: [ 'adopted_probe' ],
+	// 			aggregate: { sum: 'amount' },
+	// 		}));
 
-			probeCreditsPerMonth.value = creditsResponse[0]?.sum?.amount;
-		} catch (e) {
-			sendErrorToast(e);
-		}
-	};
+	// 		probeCreditsPerMonth.value = creditsResponse[0]?.sum?.amount;
+	// 	} catch (e) {
+	// 		sendErrorToast(e);
+	// 	}
+	// };
 
-	watch(probeDetails, async () => {
+	// watch(probeDetails, async () => {
 		// TODO: update loadCreditsData once BE is ready
 		// loadCreditsData();
-	});
+	// });
 
 	// HANDLE TOP LOGO IMG SRC
 	const isDarkMode = computed(() => user.value.appearance === 'dark');

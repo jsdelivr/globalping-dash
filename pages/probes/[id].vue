@@ -572,13 +572,14 @@
 	loadProbeData(probeId);
 
 	// HANDLE SCREEN SIZE
-	const screenWidth = ref(window.innerWidth);
-
+	const screenWidth = ref(0);
 	const updateScreenWidth = () => {
 		screenWidth.value = window.innerWidth;
 	};
 
 	onMounted(() => {
+		screenWidth.value = window.innerWidth;
+
 		window.addEventListener('resize', updateScreenWidth);
 	});
 

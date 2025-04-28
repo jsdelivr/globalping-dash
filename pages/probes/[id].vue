@@ -589,7 +589,7 @@
 		window.removeEventListener('resize', updateScreenWidth);
 	});
 
-	watch(screenWidth, (newWidth) => {
+	watch(screenWidth, () => {
 		nextTick(() => {
 			updateIpsContentHeight(true);
 		});

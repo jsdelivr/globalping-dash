@@ -142,13 +142,15 @@
 					</span>
 				</template>
 
-				<span
+				<Button
 					v-if="(probeDetails?.altIps?.length || 0) > 1"
-					class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900 dark:text-[var(--bluegray-0)]"
+					severity="undefined"
+					:aria-label="showMoreIps ? 'Show less IPs' : 'Show more IPs'"
+					class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900 focus:!border-[var(--p-primary-color)] focus:!ring-[var(--p-primary-color)] dark:text-[var(--bluegray-0)]"
 					@click="showHideMoreIps"
 				>
 					{{ showMoreIps ? 'Show less' : 'Show more' }}
-				</span>
+				</Button>
 			</div>
 
 			<Tabs value="0">

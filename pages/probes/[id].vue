@@ -590,8 +590,6 @@
 	});
 
 	watch(screenWidth, (newWidth) => {
-		screenWidth.value = newWidth;
-
 		nextTick(() => {
 			updateIpsContentHeight(true);
 		});

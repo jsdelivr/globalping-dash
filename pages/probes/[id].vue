@@ -905,6 +905,14 @@
 			return;
 		}
 
+		// check if the tags have proper format
+		if (!updTags || updTags.some(({ value }) => !isTagValid(value))) {
+			sendToast('error', 'Tags are invalid', 'Some tag values have an invalid format');
+			probeDetailsUpdating.value = false;
+
+			return;
+		}
+
 		// close the Popover if tags are left the same
 		if (isEqual(updTags, probeDetails.value.tags)) {
 			probeDetailsUpdating.value = false;

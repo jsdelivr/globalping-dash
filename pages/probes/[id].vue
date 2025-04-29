@@ -35,7 +35,6 @@
 						'[&>input]:outline-none [&>input]:ring-1 [&>input]:ring-[var(--p-primary-color)]': isEditingName,
 						'[&>input]:dark:border-dark-600 [&>input]:dark:bg-dark-800': isEditingName,
 					}"
-					role="button"
 					aria-label="Edit probe name"
 					aria-haspopup="true"
 					:aria-expanded="isEditingName"
@@ -189,7 +188,6 @@
 												v-if="probeDetails"
 												id="probeCityInput"
 												class="absolute inset-x-4 bottom-9 flex h-[38px] overflow-hidden rounded-md border border-[#D1D5DB] dark:border-dark-600"
-												role="button"
 												aria-label="Edit probe city"
 												aria-haspopup="true"
 												:aria-expanded="isEditingCity"

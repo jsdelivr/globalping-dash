@@ -145,15 +145,14 @@
 					</span>
 				</template>
 
-				<Button
+				<button
 					v-if="(probeDetails?.altIps?.length || 0) > 1"
-					severity="undefined"
 					:aria-label="showMoreIps ? 'Show less IPs' : 'Show more IPs'"
 					class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900 focus:!border-[var(--p-primary-color)] focus:!ring-[var(--p-primary-color)] dark:text-[var(--bluegray-0)]"
 					@click="showHideMoreIps"
 				>
 					{{ showMoreIps ? 'Show less' : 'Show more' }}
-				</Button>
+				</button>
 			</div>
 
 			<Tabs value="0">
@@ -226,9 +225,10 @@
 
 												<Button
 													v-if="isEditingCity && editedCity !== originalCity"
-													severity="undefined"
+													variant="text"
+													severity="secondary"
 													icon="pi pi-check"
-													class="!absolute !right-2 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[var(--p-primary-color)] focus:ring-[var(--p-primary-color)]"
+													class="!absolute !right-2 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[var(--p-primary-color)] focus:!ring-[var(--p-primary-color)]"
 													:loading="probeDetailsUpdating"
 													:disabled="probeDetailsUpdating"
 													aria-label="Save city name"
@@ -238,9 +238,10 @@
 
 												<Button
 													v-if="isEditingCity && editedCity !== originalCity && !probeDetailsUpdating"
-													severity="undefined"
+													variant="text"
+													severity="secondary"
 													icon="pi pi-times"
-													class="!absolute !right-2 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:ring-[#ef4444]"
+													class="!absolute !right-2 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:!ring-[#ef4444]"
 													:disabled="probeDetailsUpdating"
 													aria-label="Cancel editing city"
 													@keyup.enter="cancelCityEditing"

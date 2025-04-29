@@ -266,7 +266,7 @@
 													<span
 														v-for="(tag, index) in probeDetails.tags"
 														:key="index"
-														class="h-6 max-w-full items-center overflow-hidden truncate rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600 dark:text-[var(--bluegray-0)]"
+														class="inline-flex h-6 max-w-full items-center overflow-hidden truncate rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600 dark:text-[var(--bluegray-0)]"
 													>
 														<span class="block truncate">
 															{{ `u-${tag.prefix}:${tag.value}` }}

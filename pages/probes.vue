@@ -208,6 +208,7 @@
 	import CountryFlag from 'vue-country-flag-next';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
+	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { getProbeStatus } from '~/utils/probe-status';
 	import { sendErrorToast } from '~/utils/send-toast';
@@ -230,6 +231,8 @@
 	const totalCredits = ref(0);
 	const gmapsLoaded = ref(false);
 
+	const { getUserFilter, adminMode, debouncedImpersonatedUser } = useUserFilter();
+
 	useHead(() => {
 		return {
 			title: 'Probes -',
@@ -244,13 +247,13 @@
 		try {
 			const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
 				$directus.request(readItems('gp_probes', {
-					filter: { userId: { _eq: user.value.id } },
+					filter: getUserFilter(),
 					sort: [ 'status', 'name' ],
 					offset: first.value,
 					limit: itemsPerPage.value,
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_probes', {
-					query: { filter: { userId: { _eq: user.value.id } } },
+					query: { filter: getUserFilter() },
 					aggregate: { count: '*' },
 				})),
 				$directus.request<[{ sum: { amount: number }, meta: { id: string, name: string | null, ip: string} }]>(aggregate('gp_credits_additions', {
@@ -292,7 +295,7 @@
 	});
 
 	// Update list data only when navigating list to list (e.g. page 1 to page 2), not list to details or details to list.
-	watch([ () => page.value, () => route.params.id ], async ([ newPage, newId ], [ oldPage, oldId ]) => {
+	watch([ () => page.value, () => route.params.id, () => adminMode.value, () => debouncedImpersonatedUser.value ], async ([ newPage, newId ], [ oldPage, oldId ]) => {
 		if (newPage !== oldPage && !oldId && !newId) {
 			await loadLazyData();
 		}

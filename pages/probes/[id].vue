@@ -760,9 +760,8 @@
 			sendToast('success', 'Done', 'The probe has been successfully updated');
 			emit('save');
 
-			originalCity.value = updProbeDetails.city;
 			isEditingCity.value = false;
-			probeDetails.value.city = updProbeDetails.city;
+			probeDetails.value = updProbeDetails;
 
 			updateMapMarker(updProbeDetails.latitude, updProbeDetails.longitude, VERTICAL_OFFSET);
 		} catch (e) {

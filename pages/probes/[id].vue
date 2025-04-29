@@ -63,9 +63,10 @@
 
 					<Button
 						v-if="isEditingName && editedName !== originalName"
-						severity="undefined"
+						variant="text"
+						severity="secondary"
 						icon="pi pi-check"
-						class="!absolute !right-4 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[var(--p-primary-color)] focus:ring-[var(--p-primary-color)]"
+						class="!absolute !right-4 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[var(--p-primary-color)] focus:!ring-[var(--p-primary-color)]"
 						:loading="probeDetailsUpdating"
 						:disabled="probeDetailsUpdating"
 						aria-label="Save probe name"
@@ -75,9 +76,10 @@
 
 					<Button
 						v-if="isEditingName && editedName !== originalName && !probeDetailsUpdating"
-						severity="undefined"
+						variant="text"
+						severity="secondary"
 						icon="pi pi-times"
-						class="!absolute !right-4 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:ring-[#ef4444]"
+						class="!absolute !right-4 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:!ring-[#ef4444]"
 						:disabled="probeDetailsUpdating"
 						aria-label="Cancel editing probe name"
 						@keyup.enter="cancelNameEditing"

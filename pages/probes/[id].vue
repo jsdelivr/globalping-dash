@@ -306,7 +306,7 @@
 														tabindex="0"
 														class="grid w-full flex-1 grid-rows-[auto_1fr] p-4 focus-visible:outline-none focus-visible:ring-0"
 													>
-														<div v-if="tagsToEdit.length" class="mb-6 grid flex-1 grid-cols-[3fr_auto_3fr_auto] items-center gap-y-5">
+														<div v-if="tagsToEdit.length" class="mb-6 grid flex-1 grid-cols-[minmax(6rem,1fr)_auto_minmax(6rem,1fr)_auto] items-center gap-y-5">
 															<div class="-mb-2 content-center text-xs font-bold text-dark-800 dark:text-[var(--bluegray-0)]">Prefix</div>
 															<div class="mx-3 -mb-2"/>
 															<div class="-mb-2 content-center text-xs font-bold text-dark-800 dark:text-[var(--bluegray-0)]">Your tag</div>
@@ -315,14 +315,13 @@
 															<template v-for="(tag, index) in tagsToEdit" :key="index">
 																<Select
 																	v-model="tag.uPrefix"
-																	class="flex-1"
 																	:options="uPrefixes"
 																	:scroll-height="'200px'"
 																	aria-label="Tag prefix"
 																	aria-required="true"
 																/>
 																<div class="inline-flex w-6 justify-center">:</div>
-																<div class="relative flex-1">
+																<div class="relative">
 																	<InputText
 																		v-model="tag.value"
 																		:invalid="!isTagValid(tag.value)"

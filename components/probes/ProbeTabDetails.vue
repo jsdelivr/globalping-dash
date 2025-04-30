@@ -138,7 +138,7 @@
 								ref="tagPopoverRef"
 								class="w-[95%] sm:w-[500px]"
 								:class="{
-									'!left-1/2 !-translate-x-1/2 !transform': screenWidth < 768
+									'!left-1/2 !-translate-x-1/2 !transform': windowSize.width.value < 768
 								}"
 								role="dialog"
 								:aria-label="probe?.tags?.length ? 'Edit tags dialog' : 'Add tags dialog'"
@@ -352,6 +352,7 @@
 
 	const emit = defineEmits([ 'save', 'hide', 'delete' ]);
 	const router = useRouter();
+	const windowSize = useWindowSize();
 
 	const deleteProbe = async () => {
 		deleteProbeLoading.value = true;

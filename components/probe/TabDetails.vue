@@ -119,7 +119,7 @@
 
 								<Button
 									class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent dark:!border-dark-600 dark:bg-dark-600"
-									:aria-label="probe?.tags?.length ? 'Open edit tags dialog' : 'Open add tags dialog'"
+									:aria-label="probe.tags.length ? 'Open edit tags dialog' : 'Open add tags dialog'"
 									aria-haspopup="dialog"
 									:aria-expanded="tagPopoverRef?.value?.visible || false"
 									aria-controls="editTagsPopover"
@@ -128,11 +128,11 @@
 									<i
 										class="pi text-sm text-dark-800 dark:text-bluegray-0"
 										:class="{
-											'pi-pencil': probe?.tags?.length,
-											'pi-plus': !probe?.tags?.length,
+											'pi-pencil': probe.tags.length,
+											'pi-plus': !probe.tags.length,
 										}"
 									/>
-									<span class="text-xs text-dark-800 dark:text-bluegray-0">{{ probe?.tags?.length ? 'Edit' : 'Add' }}</span>
+									<span class="text-xs text-dark-800 dark:text-bluegray-0">{{ probe.tags.length ? 'Edit' : 'Add' }}</span>
 								</Button>
 							</div>
 
@@ -145,7 +145,7 @@
 									'!left-1/2 !-translate-x-1/2 !transform': windowSize.width.value < 768
 								}"
 								role="dialog"
-								:aria-label="probe?.tags?.length ? 'Edit tags dialog' : 'Add tags dialog'"
+								:aria-label="probe.tags.length ? 'Edit tags dialog' : 'Add tags dialog'"
 							>
 								<div
 									v-if="probe"

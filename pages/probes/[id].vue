@@ -3,7 +3,7 @@
 		<div class="flex flex-col gap-4">
 			<div class="flex gap-2">
 				<NuxtLink
-					:href="getBackToProbesHref()"
+					:to="getBackToProbesHref()"
 					class="mr-auto flex cursor-pointer items-center gap-2"
 					aria-label="Go back to the list of probes"
 				>
@@ -204,7 +204,7 @@
 		}
 	};
 
-	loadProbeData(probeId);
+	await loadProbeData(probeId);
 
 	// HANDLE PROBE NAME
 	const isEditingName = ref(false);

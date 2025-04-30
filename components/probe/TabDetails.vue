@@ -7,7 +7,7 @@
 				</h3>
 
 				<div class="flex grow flex-col gap-3 p-6">
-					<p class="text-sm leading-[100%] text-bluegray-600 dark:text-bluegray-0">
+					<p class="text-sm leading-[125%] text-bluegray-600 dark:text-bluegray-0">
 						City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
 					</p>
 
@@ -90,15 +90,18 @@
 				</div>
 			</div>
 
-			<div class="grid auto-rows-max grid-cols-1 gap-4 2xl:grid-cols-2">
+			<div class="grid auto-rows-max grid-cols-1 gap-4">
 				<div class="flex flex-col rounded-xl border border-surface-300 bg-white dark:border-dark-600 dark:bg-dark-800">
 					<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600 dark:text-bluegray-0">
 						User tags
 					</h3>
 
 					<div class="flex flex-col gap-3 p-6">
-						<p class="text-sm leading-[100%] text-bluegray-600 dark:text-bluegray-0">
-							Public user-defined tags that can be used to target the probe in measurements. Each tag must be prefixed by your GitHub username or organization. E.g., for a user with username jimaek and tag home-1 the final tag would be u-jimaek:home-1.
+						<p class="text-sm leading-[125%] text-bluegray-600 dark:text-bluegray-0">
+							Public user-defined tags that can be used to target the probe in measurements.
+							Each tag must be prefixed by your GitHub username or organization.
+							E.g., for a user with username <code class="font-bold">jimaek</code> and tag <code class="font-bold">home-1</code>
+							the final tag would be <code class="font-bold">u-jimaek:home-1</code>.
 						</p>
 
 						<div class="flex w-full gap-1">
@@ -133,6 +136,7 @@
 								</Button>
 							</div>
 
+							<!-- TODO: all tag handling needs to include the format === 'v1' check and the related logic and warning on editing (see current probe modal) -->
 							<Popover
 								id="editTagsPopover"
 								ref="tagPopoverRef"
@@ -242,7 +246,7 @@
 					</h3>
 
 					<div class="flex flex-col gap-3 p-6">
-						<p class="text-sm leading-[100%] text-bluegray-600 dark:text-bluegray-0">
+						<p class="text-sm leading-[125%] text-bluegray-600 dark:text-bluegray-0">
 							Public tags that can be used to target the probe in measurements.
 						</p>
 
@@ -372,6 +376,7 @@
 	};
 
 	// HANDLE PROBE CITY
+	// TODO: the new country editing is missing; bring it back from the modal (test with one of the probes that has multiple `allowedCountries`)
 	const isEditingCity = ref(false);
 	const editedCity = ref('');
 	const originalCity = ref('');

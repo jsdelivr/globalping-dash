@@ -174,7 +174,6 @@
 	// import { readItem, updateItem, aggregate } from '@directus/sdk';
 	import { readItem, updateItem } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
-	import ProbeTabDetails from '~/components/probes/ProbeTabDetails.vue';
 	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 

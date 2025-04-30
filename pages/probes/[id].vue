@@ -15,12 +15,12 @@
 					<span class="flex items-center gap-2 pl-3">
 						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails.status)"/>
 
-						<span class="font-bold text-bluegray-900 dark:text-[var(--bluegray-0)]">
+						<span class="font-bold text-bluegray-900 dark:text-bluegray-0">
 							{{ capitalize(probeDetails.status) }}
 						</span>
 					</span>
 
-					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900 dark:text-[var(--bluegray-0)]">
+					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900 dark:text-bluegray-0">
 						v{{ probeDetails.version }}
 					</span>
 				</div>
@@ -94,18 +94,18 @@
 					<span class="flex items-center gap-2 pl-3">
 						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails.status)"/>
 
-						<span class="font-bold text-bluegray-900 dark:text-[var(--bluegray-0)]">
+						<span class="font-bold text-bluegray-900 dark:text-bluegray-0">
 							{{ capitalize(probeDetails.status) }}
 						</span>
 					</span>
 
-					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900 dark:bg-dark-600 dark:text-[var(--bluegray-0)]">
+					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900 dark:bg-dark-600 dark:text-bluegray-0">
 						v{{ probeDetails.version }}
 					</span>
 				</div>
 
 				<div v-if="probeCreditsPerMonth" class="ml-auto flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-normal">
-					<span class="whitespace-nowrap text-bluegray-900 dark:text-[var(--bluegray-0)]">
+					<span class="whitespace-nowrap text-bluegray-900 dark:text-bluegray-0">
 						Credits per month
 					</span>
 
@@ -121,7 +121,7 @@
 					class="flex flex-wrap content-start gap-2 rounded-xl bg-surface-100 p-4 dark:bg-dark-600"
 				>
 					<span class="flex h-[38px] w-full items-center whitespace-nowrap sm:w-auto">Primary IP:</span>
-					<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800 dark:text-[var(--bluegray-0)]">
+					<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800 dark:text-bluegray-0">
 						{{ probeDetails.ip }}
 						<CopyButton :content="probeDetails.ip" class="!top-[7px] size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
 					</span>
@@ -131,7 +131,7 @@
 						<span
 							v-for="(altIp, index) in limitIpsToShow()"
 							:key="index"
-							class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800 dark:text-[var(--bluegray-0)]"
+							class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800 dark:text-bluegray-0"
 						>
 							{{ altIp }}
 							<CopyButton :content="altIp" class="!top-[7px] mb-px size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
@@ -141,7 +141,7 @@
 					<button
 						v-if="probeDetails.altIps.length > 1"
 						:aria-label="showMoreIps ? 'Show fewer IPs' : 'Show more IPs'"
-						class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900 focus:!border-[var(--p-primary-color)] focus:!ring-[var(--p-primary-color)] dark:text-[var(--bluegray-0)]"
+						class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900 focus:!border-[var(--p-primary-color)] focus:!ring-[var(--p-primary-color)] dark:text-bluegray-0"
 						@click="showMoreIps = !showMoreIps"
 					>
 						{{ showMoreIps ? 'Show less' : 'Show more' }}

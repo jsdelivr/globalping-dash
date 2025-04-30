@@ -2,12 +2,12 @@
 	<div class="flex flex-col gap-6">
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-2">
 			<div class="col-span-1 flex flex-col rounded-xl border border-surface-300 bg-white md:col-span-1 lg:col-span-1 dark:border-dark-600 dark:bg-dark-800">
-				<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600 dark:text-[var(--bluegray-0)]">
+				<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600 dark:text-bluegray-0">
 					Location
 				</h3>
 
 				<div class="flex grow flex-col gap-3 p-6">
-					<p class="text-sm leading-[100%] text-bluegray-600 dark:text-[var(--bluegray-0)]">
+					<p class="text-sm leading-[100%] text-bluegray-600 dark:text-bluegray-0">
 						City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
 					</p>
 
@@ -16,7 +16,7 @@
 
 						<span
 							v-if="probe"
-							class="absolute right-4 top-4 rounded-xl border border-surface-300 bg-white px-2 py-1 font-bold leading-none text-dark-800 dark:border-dark-600 dark:bg-dark-800 dark:text-[var(--bluegray-0)]"
+							class="absolute right-4 top-4 rounded-xl border border-surface-300 bg-white px-2 py-1 font-bold leading-none text-dark-800 dark:border-dark-600 dark:bg-dark-800 dark:text-bluegray-0"
 						>
 							{{ probe.network }} {{ probe.asn }}
 						</span>
@@ -45,7 +45,7 @@
 								v-if="isEditingCity"
 								ref="inputCityRef"
 								v-model="editedCity"
-								class="flex w-full border-0 pl-3 pr-[72px] text-bluegray-900 shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 dark:bg-dark-800 dark:text-[var(--bluegray-0)] dark:focus:bg-dark-800"
+								class="flex w-full border-0 pl-3 pr-[72px] text-bluegray-900 shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 dark:bg-dark-800 dark:text-bluegray-0 dark:focus:bg-dark-800"
 								aria-label="City name input"
 								@keyup.enter="updateProbeCity"
 								@blur="cancelCityEditingOnBlur"
@@ -53,7 +53,7 @@
 
 							<span
 								v-else
-								class="flex w-full cursor-pointer items-center bg-white px-3 text-bluegray-900 dark:bg-dark-800 dark:text-[var(--bluegray-0)]"
+								class="flex w-full cursor-pointer items-center bg-white px-3 text-bluegray-900 dark:bg-dark-800 dark:text-bluegray-0"
 							>
 								{{ city }}
 							</span>
@@ -92,12 +92,12 @@
 
 			<div class="grid auto-rows-max grid-cols-1 gap-4 2xl:grid-cols-2">
 				<div class="flex flex-col rounded-xl border border-surface-300 bg-white dark:border-dark-600 dark:bg-dark-800">
-					<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600 dark:text-[var(--bluegray-0)]">
+					<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600 dark:text-bluegray-0">
 						User tags
 					</h3>
 
 					<div class="flex flex-col gap-3 p-6">
-						<p class="text-sm leading-[100%] text-bluegray-600 dark:text-[var(--bluegray-0)]">
+						<p class="text-sm leading-[100%] text-bluegray-600 dark:text-bluegray-0">
 							Public user-defined tags that can be used to target the probe in measurements. Each tag must be prefixed by your GitHub username or organization. E.g., for a user with username jimaek and tag home-1 the final tag would be u-jimaek:home-1.
 						</p>
 
@@ -106,7 +106,7 @@
 								<span
 									v-for="(tag, index) in probe.tags"
 									:key="index"
-									class="inline-flex h-6 max-w-full items-center overflow-hidden truncate rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600 dark:text-[var(--bluegray-0)]"
+									class="inline-flex h-6 max-w-full items-center overflow-hidden truncate rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600 dark:text-bluegray-0"
 									:title="`u-${tag.prefix}:${tag.value}`"
 								>
 									<span class="block truncate">
@@ -123,13 +123,13 @@
 									@click="openEditTagsPopover($event)"
 								>
 									<i
-										class="pi text-sm text-dark-800 dark:text-[var(--bluegray-0)]"
+										class="pi text-sm text-dark-800 dark:text-bluegray-0"
 										:class="{
 											'pi-pencil': probe?.tags?.length,
 											'pi-plus': !probe?.tags?.length,
 										}"
 									/>
-									<span class="text-xs text-dark-800 dark:text-[var(--bluegray-0)]">{{ probe?.tags?.length ? 'Edit' : 'Add' }}</span>
+									<span class="text-xs text-dark-800 dark:text-bluegray-0">{{ probe?.tags?.length ? 'Edit' : 'Add' }}</span>
 								</Button>
 							</div>
 
@@ -150,9 +150,9 @@
 									class="grid w-full flex-1 grid-rows-[auto_1fr] p-4 focus-visible:outline-none focus-visible:ring-0"
 								>
 									<div v-if="tagsToEdit.length" class="mb-6 grid flex-1 grid-cols-[minmax(6rem,1fr)_auto_minmax(6rem,1fr)_auto] items-center gap-y-5">
-										<div class="-mb-2 content-center text-xs font-bold text-dark-800 dark:text-[var(--bluegray-0)]">Prefix</div>
+										<div class="-mb-2 content-center text-xs font-bold text-dark-800 dark:text-bluegray-0">Prefix</div>
 										<div class="mx-3 -mb-2"/>
-										<div class="-mb-2 content-center text-xs font-bold text-dark-800 dark:text-[var(--bluegray-0)]">Your tag</div>
+										<div class="-mb-2 content-center text-xs font-bold text-dark-800 dark:text-bluegray-0">Your tag</div>
 										<div class="-mb-2 "/>
 
 										<template v-for="(tag, index) in tagsToEdit" :key="index">
@@ -237,12 +237,12 @@
 				</div>
 
 				<div class="flex flex-col self-start rounded-xl border border-surface-300 bg-white dark:border-dark-600 dark:bg-dark-800">
-					<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600 dark:text-[var(--bluegray-0)]">
+					<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600 dark:text-bluegray-0">
 						System tags
 					</h3>
 
 					<div class="flex flex-col gap-3 p-6">
-						<p class="text-sm leading-[100%] text-bluegray-600 dark:text-[var(--bluegray-0)]">
+						<p class="text-sm leading-[100%] text-bluegray-600 dark:text-bluegray-0">
 							Public tags that can be used to target the probe in measurements.
 						</p>
 
@@ -251,7 +251,7 @@
 								<span
 									v-for="(tag, index) in probe.systemTags"
 									:key="index"
-									class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600 dark:text-[var(--bluegray-0)]"
+									class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600 dark:text-bluegray-0"
 								>
 									{{ tag }}
 								</span>
@@ -263,11 +263,11 @@
 		</div>
 
 		<div v-if="showChart" class="flex flex-col rounded-xl border border-surface-300 dark:border-dark-600">
-			<h3 class="flex h-10 items-center border-b border-surface-300 pl-6 font-bold text-dark-800 dark:border-dark-600 dark:text-[var(--bluegray-0)]">Tests (last 24h)</h3>
+			<h3 class="flex h-10 items-center border-b border-surface-300 pl-6 font-bold text-dark-800 dark:border-dark-600 dark:text-bluegray-0">Tests (last 24h)</h3>
 			<div class="flex flex-col gap-6 p-6">
 				<div>
-					<span class="text-bluegray-900 dark:text-[var(--bluegray-0)]">Total: </span>
-					<span class="font-bold text-bluegray-900 dark:text-[var(--bluegray-0)]">{{ testsCountDisplayed }} tests</span>
+					<span class="text-bluegray-900 dark:text-bluegray-0">Total: </span>
+					<span class="font-bold text-bluegray-900 dark:text-bluegray-0">{{ testsCountDisplayed }} tests</span>
 				</div>
 
 				<div class="h-36">
@@ -278,8 +278,8 @@
 
 		<div class="flex flex-col gap-4 rounded-xl bg-surface-100 px-6 py-4 sm:h-[68px] sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-0 dark:bg-dark-600">
 			<span class="flex gap-2">
-				<i class="pi pi-info-circle text-lg text-bluegray-900 dark:text-[var(--bluegray-0)]"/>
-				<span class="text-bluegray-900 dark:text-[var(--bluegray-0)]">Removing the probe will result in data loss.</span>
+				<i class="pi pi-info-circle text-lg text-bluegray-900 dark:text-bluegray-0"/>
+				<span class="text-bluegray-900 dark:text-bluegray-0">Removing the probe will result in data loss.</span>
 			</span>
 
 			<Button

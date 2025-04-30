@@ -216,22 +216,9 @@
 	loadProbeData(probeId);
 
 	// HANDLE SCREEN SIZE
-	const screenWidth = ref(0);
-	const updateScreenWidth = () => {
-		screenWidth.value = window.innerWidth;
-	};
+	const windowSize = useWindowSize();
 
-	onMounted(() => {
-		screenWidth.value = window.innerWidth;
-
-		window.addEventListener('resize', updateScreenWidth);
-	});
-
-	onBeforeUnmount(() => {
-		window.removeEventListener('resize', updateScreenWidth);
-	});
-
-	watch(screenWidth, () => {
+	watch(windowSize.width, () => {
 		nextTick(() => {
 			updateIpsContentHeight(true);
 		});
@@ -369,14 +356,12 @@
 	};
 
 	watch(probeDetails, async () => {
-		await nextTick();
-
 		if (ipsContentRef.value) {
 			const initialHeight = `${ipsContentRef.value.scrollHeight}px`;
 			initialIpsContentHeight.value = initialHeight;
 			ipsContentHeight.value = initialHeight;
 		}
-	});
+	}, { flush: 'post' });
 
 	watch(showMoreIps, () => {
 		ipsOpening.value = true;

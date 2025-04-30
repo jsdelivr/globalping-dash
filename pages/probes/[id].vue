@@ -993,15 +993,11 @@
 	const showChart = ref(false);
 
 	// HANDLE GO BACK TO PROBES
-	definePageMeta({
-		middleware: [ 'track-from' ],
-	});
-
 	const getBackToProbesHref = () => {
-		const defaultPathBackTo = '/probes';
-		const fromPath = useState<string | null>('fromPath');
-		const regex = /^\/probes(\?.*?[&]?page=\d+.*)?$/;
+		const defaultPath = '/probes';
+		const prevPath = typeof router.options.history.state.back === 'string' ? router.options.history.state.back : defaultPath;
+		const isPrevPathValid = prevPath.startsWith(defaultPath);
 
-		return fromPath.value && regex.test(fromPath.value) ? fromPath.value : defaultPathBackTo;
+		return isPrevPathValid ? prevPath : defaultPath;
 	};
 </script>

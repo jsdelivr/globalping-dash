@@ -44,8 +44,7 @@
 					@keyup.space="!isEditingName && enableNameEditing()"
 					@keyup.esc="isEditingName && cancelNameEditing()"
 				>
-					<img v-if="isDarkMode" class="h-10" src="~/assets/icons/gp-dark.svg" alt="Globalping Dark Logo">
-					<img v-else class="h-10" src="~/assets/icons/gp-white.svg" alt="Globalping White Logo">
+					<BigIcon :name="probeDetails.hardwareDevice ? 'probe' : 'docker'" border/>
 
 					<input
 						v-if="isEditingName"
@@ -174,7 +173,6 @@
 	// import { readItem, updateItem, aggregate } from '@directus/sdk';
 	import { readItem, updateItem } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
-	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();
@@ -183,8 +181,6 @@
 	const probeId = route.params.id as string;
 	const probeDetails = ref<Probe | null>(null);
 	const emit = defineEmits([ 'save', 'hide', 'delete' ]);
-	const auth = useAuth();
-	const { user } = storeToRefs(auth);
 	const probeDetailsUpdating = ref(false);
 	const showMoreIps = ref(false);
 
@@ -353,10 +349,6 @@
 	// watch(probeDetails, async () => {
 	// 	loadCreditsData();
 	// });
-
-	// HANDLE TOP LOGO IMG SRC
-	const isDarkMode = computed(() => user.value.appearance === 'dark');
-
 
 	// HANDLE GO BACK TO PROBES
 	const getBackToProbesHref = () => {

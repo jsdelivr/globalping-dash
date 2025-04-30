@@ -116,43 +116,38 @@
 				</div>
 			</div>
 
-			<div
-				v-if="probeDetails"
-				ref="ipsContentRef"
-				class="flex flex-wrap content-start gap-2 rounded-xl bg-surface-100 p-4 transition-all ease-in-out dark:bg-dark-600"
-				:class="getIpsOpeningClass()"
-				:style="{
-					maxHeight: ipsContentHeight,
-					height: ipsContentHeight,
-				}"
-			>
-				<span class="flex h-[38px] w-full items-center whitespace-nowrap sm:w-auto">Primary IP:</span>
-				<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800 dark:text-[var(--bluegray-0)]">
-					{{ probeDetails.ip }}
-					<CopyButton :content="probeDetails.ip" class="!top-[7px] size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
-				</span>
-
-				<template v-if="probeDetails?.altIps?.length">
-					<span class="flex h-[38px] w-full items-center whitespace-nowrap sm:w-auto">Alternative IPs:</span>
-					<span
-						v-for="(altIp, index) in limitIpsToShow()"
-						:key="index"
-						class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800 dark:text-[var(--bluegray-0)]"
-					>
-						{{ altIp }}
-						<CopyButton :content="altIp" class="!top-[7px] mb-px size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
-					</span>
-				</template>
-
-				<button
-					v-if="(probeDetails?.altIps?.length || 0) > 1"
-					:aria-label="showMoreIps ? 'Show less IPs' : 'Show more IPs'"
-					class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900 focus:!border-[var(--p-primary-color)] focus:!ring-[var(--p-primary-color)] dark:text-[var(--bluegray-0)]"
-					@click="showHideMoreIps"
+			<show-more v-if="probeDetails" v-model:expanded="showMoreIps">
+				<div
+					class="flex flex-wrap content-start gap-2 rounded-xl bg-surface-100 p-4 dark:bg-dark-600"
 				>
-					{{ showMoreIps ? 'Show less' : 'Show more' }}
-				</button>
-			</div>
+					<span class="flex h-[38px] w-full items-center whitespace-nowrap sm:w-auto">Primary IP:</span>
+					<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800 dark:text-[var(--bluegray-0)]">
+						{{ probeDetails.ip }}
+						<CopyButton :content="probeDetails.ip" class="!top-[7px] size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
+					</span>
+
+					<template v-if="probeDetails?.altIps?.length">
+						<span class="flex h-[38px] w-full items-center whitespace-nowrap sm:w-auto">Alternative IPs:</span>
+						<span
+							v-for="(altIp, index) in limitIpsToShow()"
+							:key="index"
+							class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800 dark:text-[var(--bluegray-0)]"
+						>
+							{{ altIp }}
+							<CopyButton :content="altIp" class="!top-[7px] mb-px size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
+						</span>
+					</template>
+
+					<button
+						v-if="probeDetails.altIps.length > 1"
+						:aria-label="showMoreIps ? 'Show fewer IPs' : 'Show more IPs'"
+						class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900 focus:!border-[var(--p-primary-color)] focus:!ring-[var(--p-primary-color)] dark:text-[var(--bluegray-0)]"
+						@click="showMoreIps = !showMoreIps"
+					>
+						{{ showMoreIps ? 'Show less' : 'Show more' }}
+					</button>
+				</div>
+			</show-more>
 
 			<Tabs value="0">
 				<TabList class="!border-b !border-surface-300 dark:!border-dark-600">
@@ -192,6 +187,7 @@
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 	const probeDetailsUpdating = ref(false);
+	const showMoreIps = ref(false);
 
 	useHead(() => {
 		return {
@@ -214,15 +210,6 @@
 	};
 
 	loadProbeData(probeId);
-
-	// HANDLE SCREEN SIZE
-	const windowSize = useWindowSize();
-
-	watch(windowSize.width, () => {
-		nextTick(() => {
-			updateIpsContentHeight(true);
-		});
-	});
 
 	// HANDLE PROBE NAME
 	const isEditingName = ref(false);
@@ -314,65 +301,12 @@
 	};
 
 	// HANDLE PRIMARY, ALT IPS
-	const showMoreIps = ref(false);
-	const ipsContentRef = ref<HTMLDivElement | null>(null);
-	const ipsContentHeight = ref('auto');
-	const initialIpsContentHeight = ref('auto');
-	const ipsOpening = ref(false);
-	const ipsOpeningDuration = ref(500);
-
-	const showHideMoreIps = () => {
-		showMoreIps.value = !showMoreIps.value;
-
-		nextTick(updateIpsContentHeight);
-	};
-
 	const limitIpsToShow = () => {
 		if (showMoreIps.value) {
 			return probeDetails?.value?.altIps;
 		}
 
 		return probeDetails?.value?.altIps?.slice(0, 1) ?? [];
-	};
-
-	const updateIpsContentHeight = async (onResize: boolean = false) => {
-		if (!ipsContentRef.value) { return; }
-
-		if (onResize) {
-			showMoreIps.value = false;
-			initialIpsContentHeight.value = 'auto';
-			ipsContentHeight.value = 'auto';
-
-			await nextTick();
-
-			initialIpsContentHeight.value = `${ipsContentRef.value.scrollHeight}px`;
-		}
-
-		if (showMoreIps.value) {
-			ipsContentHeight.value = `${ipsContentRef.value.scrollHeight}px`;
-		} else {
-			ipsContentHeight.value = initialIpsContentHeight.value;
-		}
-	};
-
-	watch(probeDetails, async () => {
-		if (ipsContentRef.value) {
-			const initialHeight = `${ipsContentRef.value.scrollHeight}px`;
-			initialIpsContentHeight.value = initialHeight;
-			ipsContentHeight.value = initialHeight;
-		}
-	}, { flush: 'post' });
-
-	watch(showMoreIps, () => {
-		ipsOpening.value = true;
-
-		setTimeout(() => {
-			ipsOpening.value = false;
-		}, ipsOpeningDuration.value);
-	});
-
-	const getIpsOpeningClass = () => {
-		return `duration-${ipsOpeningDuration.value} ${ipsOpening.value ? 'overflow-hidden' : ''}`;
 	};
 
 

@@ -335,7 +335,7 @@
 	import { useAuth } from '~/store/auth';
 	import { initGoogleMap, updateMapMarker } from '~/utils/init-google-map';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
-	const VERTICAL_OFFSET = 36;
+	const MAP_CENTER_Y_OFFSET_PX = 36;
 
 	const deleteDialog = ref(false);
 	const deleteProbeLoading = ref(false);
@@ -413,7 +413,7 @@
 		useGoogleMaps(() => {
 			const stopWatching = watchEffect(async () => {
 				if (probe.value) {
-					removeWatcher = await initGoogleMap(probe.value, true, false, VERTICAL_OFFSET);
+					removeWatcher = await initGoogleMap(probe.value, true, false, MAP_CENTER_Y_OFFSET_PX);
 					stopWatching();
 				}
 			});
@@ -469,7 +469,7 @@
 			isEditingCity.value = false;
 			probe.value = updProbeDetails;
 
-			updateMapMarker(updProbeDetails.latitude, updProbeDetails.longitude, VERTICAL_OFFSET);
+			updateMapMarker(updProbeDetails.latitude, updProbeDetails.longitude, MAP_CENTER_Y_OFFSET_PX);
 		} catch (e) {
 			sendErrorToast(e);
 

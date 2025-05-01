@@ -35,10 +35,36 @@
 							@keyup.esc="isEditingCity && cancelCityEditing()"
 						>
 							<span
-								class="flex w-[38px] shrink-0 items-center justify-center border-r border-r-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600 dark:bg-dark-700"
+								class="flex m-w-[38px] shrink-0 items-center justify-center border-r border-r-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600 dark:bg-dark-700"
 								aria-hidden="true"
 							>
-								<CountryFlag :country="probe.country" size="small"/>
+								<InputGroupAddon v-if="probe.allowedCountries.length <= 1" class="!bg-transparent">
+									<CountryFlag :country="probe.country" size="small"/>
+								</InputGroupAddon>
+
+								<Select
+									v-if="probe.allowedCountries.length > 1"
+									id="country"
+									v-model="probe.country"
+									:options="probe.allowedCountries"
+									class="border-r"
+									:pt="{ dropdown: 'w-8' }"
+									:pt-options="{ mergeProps: true }"
+								>
+									<template #value="slotProps">
+										<div class="flex items-center">
+											<CountryFlag :country="slotProps.value" size="small"/>
+											<div class="ml-2">{{ slotProps.value }}</div>
+										</div>
+									</template>
+
+									<template #option="slotProps">
+										<div class="flex items-center">
+											<CountryFlag :country="slotProps.option" size="small"/>
+											<div class="ml-2">{{ slotProps.option }}</div>
+										</div>
+									</template>
+								</Select>
 							</span>
 
 							<input

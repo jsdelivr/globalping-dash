@@ -4,7 +4,7 @@
 			<h1 class="text-2xl font-bold leading-8">Your notifications</h1>
 			<span
 				v-if="inboxNotificationIds.length"
-				class="rounded-full bg-[var(--p-primary-color)] px-2 py-1 text-sm font-bold leading-[17px] text-[var(--bluegray-0)] sm:ml-auto sm:mr-4"
+				class="rounded-full bg-primary px-2 py-1 text-sm font-bold leading-[17px] text-bluegray-0 sm:ml-auto sm:mr-4"
 			>
 				{{ inboxNotificationIds.length }} unread
 			</span>
@@ -23,15 +23,15 @@
 				v-for="notification in displayedNotifications"
 				:key="notification.id"
 				:value="notification.id"
-				class="group rounded-xl border border-surface-300 bg-white p-0 dark:border-[var(--table-border)] dark:bg-dark-800"
-				:class="{ 'cursor-pointer bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:bg-[var(--dark-700)] dark:bg-none': notification.status === 'inbox' }"
+				class="group rounded-xl border border-surface-300 bg-white p-0 dark:border-table-border dark:bg-dark-800"
+				:class="{ 'cursor-pointer bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:bg-dark-700 dark:bg-none': notification.status === 'inbox' }"
 				@click="markNotificationsAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 			>
 				<div class="relative p-6 pb-4">
 					<div class="relative flex flex-col items-start gap-y-1 pr-10">
 						<span
 							class="text-left text-lg font-bold leading-5 text-[#4b5563] dark:text-dark-0"
-							:class="{ 'text-[var(--bluegray-900)] dark:text-[var(--bluegray-0)]': notification.status === 'inbox' }"
+							:class="{ 'text-bluegray-900 dark:text-bluegray-0': notification.status === 'inbox' }"
 						>
 							{{ notification.subject }}
 						</span>
@@ -49,9 +49,9 @@
 					/>
 				</div>
 
-				<div class="overflow-hidden px-4 pb-6 text-sm font-normal leading-[18px] text-bluegray-900 sm:px-6 dark:text-[var(--bluegray-0)]">
+				<div class="overflow-hidden px-4 pb-6 text-sm font-normal leading-[18px] text-bluegray-900 sm:px-6 dark:text-bluegray-0">
 					<!-- eslint-disable-next-line vue/no-v-html -->
-					<span v-if="notification.message" class="[&_a]:font-semibold [&_a]:text-[var(--p-primary-color)] [&_p:last-child]:mb-0 [&_p]:mb-[18px] [&_p_strong]:break-all" v-html="notification.message"/>
+					<span v-if="notification.message" class="[&_a]:font-semibold [&_a]:text-primary [&_p:last-child]:mb-0 [&_p]:mb-[18px] [&_p_strong]:break-all" v-html="notification.message"/>
 				</div>
 			</div>
 		</div>

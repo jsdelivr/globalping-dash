@@ -85,15 +85,15 @@
 			</div>
 			<Popover
 				ref="notificationsPanel"
-				class="absolute !ml-4 !mt-2 !overflow-hidden !rounded-xl bg-[var(--p-surface-0)] dark:bg-[var(--main-bg)]"
-				:pt:content="{ class: 'flex items-center !rounded-xl border dark:border-[var(--table-border)]'}"
+				class="absolute !ml-4 !mt-2 !overflow-hidden !rounded-xl bg-surface-0 dark:bg-main-bg"
+				:pt:content="{ class: 'flex items-center !rounded-xl border dark:border-table-border'}"
 			>
 				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-4 sm:w-[37rem] sm:p-6">
 					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
 						<span
 							v-if="inboxNotificationIds.length"
-							class="rounded-full bg-[var(--p-primary-color)] px-2 py-1 text-sm font-bold leading-[17px] text-[var(--bluegray-0)] sm:ml-2 sm:mr-auto"
+							class="rounded-full bg-primary px-2 py-1 text-sm font-bold leading-[17px] text-bluegray-0 sm:ml-2 sm:mr-auto"
 						>
 							{{ inboxNotificationIds.length }} unread
 						</span>
@@ -115,8 +115,8 @@
 							v-for="notification in headerNotifications"
 							:key="notification.id"
 							:value="notification.id"
-							class="!rounded-xl border-none bg-[var(--p-surface-50)] !p-0 !pb-4 dark:!border dark:!border-solid dark:!border-[var(--table-border)] dark:bg-dark-800"
-							:class="{ 'bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:!bg-[var(--dark-700)] dark:bg-none': notification.status === 'inbox' }"
+							class="!rounded-xl border-none bg-surface-50 !p-0 !pb-4 dark:!border dark:!border-solid dark:!border-table-border dark:bg-dark-800"
+							:class="{ 'bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:!bg-dark-700 dark:bg-none': notification.status === 'inbox' }"
 							@click="markNotificationsAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 						>
 							<AccordionHeader
@@ -126,12 +126,12 @@
 								<div class="flex flex-col !items-start gap-y-1">
 									<span
 										class="text-sm font-semibold leading-5 text-[#4b5563] dark:!text-dark-0"
-										:class="{ '!text-[var(--bluegray-900)] dark:!text-[var(--bluegray-0)]': notification.status === 'inbox' }"
+										:class="{ '!text-bluegray-900 dark:!text-bluegray-0': notification.status === 'inbox' }"
 									>
 										<span>{{ notification.subject }}</span>
 										<span
 											v-if="notification.status === 'inbox'"
-											class="mb-px ml-2 inline-block size-2 rounded-full bg-[var(--p-primary-500)]"
+											class="mb-px ml-2 inline-block size-2 rounded-full bg-primary-500"
 										/>
 									</span>
 
@@ -140,15 +140,15 @@
 									</span>
 								</div>
 
-								<i class="pi pi-chevron-right absolute right-4 top-4 text-[var(--bluegray-900)] transition-all duration-[400] ease-in-out dark:!text-dark-0"/>
+								<i class="pi pi-chevron-right duration-400 absolute right-4 top-4 text-bluegray-900 transition-all ease-in-out dark:!text-dark-0"/>
 							</AccordionHeader>
 
 							<AccordionContent
-								class="z-0 overflow-hidden px-4 py-0 font-normal leading-[18px] text-[var(--bluegray-900)]"
-								:pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden dark:text-[var(--bluegray-0)]'}"
+								class="z-0 overflow-hidden px-4 py-0 font-normal leading-[18px] text-bluegray-900"
+								:pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden dark:text-bluegray-0'}"
 							>
 								<!-- eslint-disable-next-line vue/no-v-html -->
-								<span v-if="notification.message" class="[&_a]:font-semibold [&_a]:text-[var(--p-primary-color)] [&_p:last-child]:mb-0 [&_p]:mb-[18px] [&_p_strong]:break-all" v-html="notification.message"/>
+								<span v-if="notification.message" class="[&_a]:text-primary-color [&_a]:font-semibold [&_p:last-child]:mb-0 [&_p]:mb-[18px] [&_p_strong]:break-all" v-html="notification.message"/>
 							</AccordionContent>
 						</AccordionPanel>
 					</Accordion>
@@ -157,7 +157,7 @@
 
 					<NuxtLink
 						to="/notifications"
-						class="ps-4 font-bold leading-4 text-[var(--p-primary-color)]"
+						class="ps-4 font-bold leading-4 text-primary"
 						@click="toggleNotifications"
 					>
 						Go to Notifications page

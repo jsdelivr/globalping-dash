@@ -29,7 +29,7 @@
 			<div v-if="probeDetails" class="flex w-full flex-col items-center gap-4 sm:flex-row sm:flex-wrap">
 				<div
 					v-if="probeDetails"
-					id="probeNameInput"
+					ref="probeNameInput"
 					class="relative flex h-[42px] w-full cursor-pointer items-center gap-1 sm:w-auto"
 					:class="{
 						'[&>input]:outline-none [&>input]:ring-1 [&>input]:ring-[var(--p-primary-color)]': isEditingName,
@@ -183,6 +183,7 @@
 	const emit = defineEmits([ 'save', 'hide', 'delete' ]);
 	const probeDetailsUpdating = ref(false);
 	const showMoreIps = ref(false);
+	const probeNameInput = ref<HTMLElement | null>(null);
 
 	useHead(() => {
 		return {
@@ -246,7 +247,7 @@
 
 	const cancelNameEditingOnBlur = (event: FocusEvent) => {
 		const target = event.relatedTarget as HTMLElement | null;
-		const parentEl = document.getElementById('probeNameInput');
+		const parentEl = probeNameInput.value;
 
 		// do not blur name Input block if it comes from its children
 		if (probeDetailsUpdating.value || (parentEl && target instanceof Node && parentEl.contains(target))) {

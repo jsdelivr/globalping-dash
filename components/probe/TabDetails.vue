@@ -23,7 +23,7 @@
 
 						<div
 							v-if="probe"
-							id="probeCityInput"
+							ref="probeCityInput"
 							class="absolute inset-x-4 bottom-9 flex h-[38px] overflow-hidden rounded-md border border-[#D1D5DB] dark:border-dark-600"
 							aria-label="Edit probe city"
 							aria-haspopup="true"
@@ -339,6 +339,7 @@
 
 	const deleteDialog = ref(false);
 	const deleteProbeLoading = ref(false);
+	const probeCityInput = ref<HTMLElement | null>(null);
 	const { $directus } = useNuxtApp();
 
 	const auth = useAuth();
@@ -427,7 +428,7 @@
 
 	const cancelCityEditingOnBlur = (event: FocusEvent) => {
 		const target = event.relatedTarget as HTMLElement | null;
-		const parentEl = document.getElementById('probeCityInput');
+		const parentEl = probeCityInput.value;
 
 		// do not blur city Input block if it comes from its children
 		if (probeDetailsUpdating.value || (parentEl && target instanceof Node && parentEl.contains(target))) {

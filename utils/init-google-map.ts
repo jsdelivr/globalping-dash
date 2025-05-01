@@ -53,7 +53,7 @@ const stylesByTheme = {
 
 let map: google.maps.Map, marker: google.maps.Marker;
 
-export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, markerHasIW: boolean = true, verticalOffset: number | null = null) => {
+export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, markerHasIW: boolean = true, mapCenterYOffsetPx: number | null = null) => {
 	if (!probe) {
 		return;
 	}
@@ -68,7 +68,7 @@ export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, ma
 	const appearance = useAppearance();
 	const style = stylesByTheme[appearance.theme];
 	// adjust the map center to visually shift marker verically by offset value
-	const mapCenterLat = verticalOffset ? probe.latitude - verticalOffset / Math.pow(2, MAP_ZOOM_REG) : probe.latitude;
+	const mapCenterLat = mapCenterYOffsetPx ? probe.latitude - mapCenterYOffsetPx / Math.pow(2, MAP_ZOOM_REG) : probe.latitude;
 	const mapCenterLng = probe.longitude;
 
 	map = new Map(element, {
@@ -230,9 +230,9 @@ function createMapMarkerWithIW (probe: Probe, showPulse: boolean = false, marker
 	return { marker, infoWindow };
 }
 
-export const updateMapMarker = (latitude: number, longitude: number, verticalOffset: number) => {
+export const updateMapMarker = (latitude: number, longitude: number, mapCenterYOffsetPx: number) => {
 	if (marker) {
-		const mapCenterLat = verticalOffset ? latitude - verticalOffset / Math.pow(2, MAP_ZOOM_REG) : latitude;
+		const mapCenterLat = mapCenterYOffsetPx ? latitude - mapCenterYOffsetPx / Math.pow(2, MAP_ZOOM_REG) : latitude;
 
 		marker.setPosition(new google.maps.LatLng(latitude, longitude));
 		map.setCenter({ lat: mapCenterLat, lng: longitude });

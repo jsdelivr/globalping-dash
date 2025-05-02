@@ -23,19 +23,10 @@
 
 						<div
 							v-if="probe"
-							ref="probeCityInput"
-							class="absolute inset-x-4 bottom-9 flex h-[38px] overflow-hidden rounded-md border border-[#D1D5DB] dark:border-dark-600"
-							aria-label="Edit probe city"
-							aria-haspopup="true"
-							:aria-expanded="isEditingCity"
-							:tabindex="isEditingCity ? -1 : 0"
-							@click="!isEditingCity && enableCityEditing()"
-							@keyup.enter="!isEditingCity && enableCityEditing()"
-							@keyup.space="!isEditingCity && enableCityEditing()"
-							@keyup.esc="isEditingCity && cancelCityEditing()"
+							class="absolute inset-x-4 bottom-9 flex h-[38px]"
 						>
 							<span
-								class="flex m-w-[38px] shrink-0 items-center justify-center border-r border-r-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600 dark:bg-dark-700"
+								class="m-w-[38px] flex h-full shrink-0 items-center justify-center !rounded-r-none rounded-l-md border border-r-0 border-[#D1D5DB] bg-[#E5E7EB]"
 								aria-hidden="true"
 							>
 								<InputGroupAddon v-if="probe.allowedCountries.length <= 1" class="!bg-transparent">
@@ -45,9 +36,9 @@
 								<Select
 									v-if="probe.allowedCountries.length > 1"
 									id="country"
-									v-model="probe.country"
+									v-model="editedCountry"
 									:options="probe.allowedCountries"
-									class="border-r"
+									class="h-full !rounded-r-none rounded-l-md border-0 !border-r border-[#D1D5DB]"
 									:pt="{ dropdown: 'w-8' }"
 									:pt-options="{ mergeProps: true }"
 								>
@@ -67,50 +58,63 @@
 								</Select>
 							</span>
 
-							<input
-								v-if="isEditingCity"
-								ref="inputCityRef"
-								v-model="editedCity"
-								class="flex w-full border-0 pl-3 pr-[72px] text-bluegray-900 shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 dark:bg-dark-800 dark:text-bluegray-0 dark:focus:bg-dark-800"
-								aria-label="City name input"
-								@keyup.enter="updateProbeCity"
-								@blur="cancelCityEditingOnBlur"
+							<div
+								ref="probeCityInput"
+								class="flex h-full grow overflow-hidden rounded-r-md border border-l-0 border-[#D1D5DB] dark:border-dark-600"
+								aria-label="Edit probe city"
+								aria-haspopup="true"
+								:aria-expanded="isEditingCity"
+								:tabindex="isEditingCity ? -1 : 0"
+								@click="!isEditingCity && enableCityEditing()"
+								@keyup.enter="!isEditingCity && enableCityEditing()"
+								@keyup.space="!isEditingCity && enableCityEditing()"
+								@keyup.esc="isEditingCity && cancelCityEditing()"
 							>
+								<input
+									v-if="isEditingCity"
+									ref="inputCityRef"
+									v-model="editedCity"
+									class="flex w-full border-0 pl-3 pr-[72px] text-bluegray-900 shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 dark:bg-dark-800 dark:text-bluegray-0 dark:focus:bg-dark-800"
+									aria-label="City name input"
+									@keyup.enter="updateProbeCity"
+									@blur="cancelCityEditingOnBlur"
+								>
 
-							<span
-								v-else
-								class="flex w-full cursor-pointer items-center bg-white px-3 text-bluegray-900 dark:bg-dark-800 dark:text-bluegray-0"
-							>
-								{{ city }}
-							</span>
+								<span
+									v-else
+									class="flex w-full cursor-pointer items-center bg-white px-3 text-bluegray-900 dark:bg-dark-800 dark:text-bluegray-0"
+								>
+									{{ city }}
+								</span>
 
-							<Button
-								v-if="isEditingCity && editedCity !== originalCity"
-								variant="text"
-								severity="secondary"
-								icon="pi pi-check"
-								class="!absolute !right-2 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[var(--p-primary-color)] focus:!ring-[var(--p-primary-color)]"
-								:loading="probeDetailsUpdating"
-								:disabled="probeDetailsUpdating"
-								aria-label="Save city name"
-								@click.stop="updateProbeCity"
-								@blur="cancelCityEditingOnBlur"
-							/>
+								<Button
+									v-if="isEditingCity && editedCity !== originalCity"
+									variant="text"
+									severity="secondary"
+									icon="pi pi-check"
+									class="!absolute !right-2 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[var(--p-primary-color)] focus:!ring-[var(--p-primary-color)]"
+									:loading="probeDetailsUpdating"
+									:disabled="probeDetailsUpdating"
+									aria-label="Save city name"
+									@click.stop="updateProbeCity"
+									@blur="cancelCityEditingOnBlur"
+								/>
 
-							<Button
-								v-if="isEditingCity && editedCity !== originalCity && !probeDetailsUpdating"
-								variant="text"
-								severity="secondary"
-								icon="pi pi-times"
-								class="!absolute !right-2 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:!ring-[#ef4444]"
-								:disabled="probeDetailsUpdating"
-								aria-label="Cancel editing city"
-								@keyup.enter="cancelCityEditing"
-								@click.stop="cancelCityEditing"
-								@blur="cancelCityEditingOnBlur"
-							/>
+								<Button
+									v-if="isEditingCity && editedCity !== originalCity && !probeDetailsUpdating"
+									variant="text"
+									severity="secondary"
+									icon="pi pi-times"
+									class="!absolute !right-2 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:!ring-[#ef4444]"
+									:disabled="probeDetailsUpdating"
+									aria-label="Cancel editing city"
+									@keyup.enter="cancelCityEditing"
+									@click.stop="cancelCityEditing"
+									@blur="cancelCityEditingOnBlur"
+								/>
 
-							<i v-if="!isEditingCity" class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2" aria-hidden="true"/>
+								<i v-if="!isEditingCity" class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2" aria-hidden="true"/>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -407,16 +411,35 @@
 	const isEditingCity = ref(false);
 	const editedCity = ref('');
 	const originalCity = ref('');
+	const editedCountry = ref('');
+	const originalCountry = ref('');
 	const inputCityRef = ref<HTMLInputElement | null>(null);
-
 	const city = computed(() => {
 		return probe.value ? probe.value.city : '';
+	});
+	const country = computed(() => {
+		return probe.value ? probe.value.country : '';
 	});
 
 	watch(city, (newCity) => {
 		originalCity.value = newCity;
 		editedCity.value = newCity;
 	}, { immediate: true });
+
+	watch(country, (newCountry) => {
+		originalCountry.value = newCountry;
+		editedCountry.value = newCountry;
+	}, { immediate: true });
+
+	watch(editedCountry, (newEditedCountry) => {
+		if (newEditedCountry === originalCountry.value) { return; }
+
+		if (inputCityRef.value) {
+			inputCityRef.value.focus();
+		}
+
+		editedCity.value = '';
+	});
 
 	const enableCityEditing = async () => {
 		isEditingCity.value = true;
@@ -506,7 +529,6 @@
 			probeDetailsUpdating.value = false;
 		}
 	};
-
 
 	// HANDLE TAGS EDITING
 	const uPrefixes = [ user.value.github_username, ...user.value.github_organizations ]

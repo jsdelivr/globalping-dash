@@ -436,9 +436,7 @@
 	}, { immediate: true });
 
 	// once country is changed - enable city editing and focus the input
-	watch(editedCountry, (newEditedCountry) => {
-		if (newEditedCountry === originalCountry.value) { return; }
-
+	watch(editedCountry, () => {
 		// delay focus to next event loop tick to avoid PrimeVue's Select stealing it back after change
 		setTimeout(() => {
 			enableCityEditing();

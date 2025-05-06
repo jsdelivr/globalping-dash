@@ -29,7 +29,8 @@
 								class="m-w-[38px] flex h-full shrink-0 items-center justify-center !rounded-r-none rounded-l-md border border-r-0 border-[#D1D5DB] bg-[#E5E7EB]"
 								aria-hidden="true"
 							>
-								<InputGroupAddon v-if="probe.allowedCountries.length <= 1" class="!bg-transparent">
+								<InputGroupAddon v-if="probe.allowedCountries.length <= 1" class="!bg-transparent"
+								ref="countrySelectRef">
 									<CountryFlag :country="probe.country" size="small"/>
 								</InputGroupAddon>
 
@@ -407,13 +408,13 @@
 	};
 
 	// HANDLE PROBE CITY
-	// TODO: the new country editing is missing; bring it back from the modal (test with one of the probes that has multiple `allowedCountries`)
 	const isEditingCity = ref(false);
 	const editedCity = ref('');
 	const originalCity = ref('');
 	const editedCountry = ref('');
 	const originalCountry = ref('');
 	const inputCityRef = ref<HTMLInputElement | null>(null);
+	const countrySelectRef = ref();
 	const city = computed(() => {
 		return probe.value ? probe.value.city : '';
 	});
@@ -431,14 +432,14 @@
 		editedCountry.value = newCountry;
 	}, { immediate: true });
 
+	// once country is changed - enable city editing and focus the input
 	watch(editedCountry, (newEditedCountry) => {
 		if (newEditedCountry === originalCountry.value) { return; }
 
-		if (inputCityRef.value) {
-			inputCityRef.value.focus();
-		}
-
-		editedCity.value = '';
+		// delay focus to next event loop tick to avoid PrimeVue's Select stealing it back after change
+		setTimeout(() => {
+			enableCityEditing();
+		}, 0);
 	});
 
 	const enableCityEditing = async () => {

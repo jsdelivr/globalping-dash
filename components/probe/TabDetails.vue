@@ -29,8 +29,11 @@
 								class="m-w-[38px] flex h-full shrink-0 items-center justify-center !rounded-r-none rounded-l-md border border-r-0 border-[#D1D5DB] bg-[#E5E7EB]"
 								aria-hidden="true"
 							>
-								<InputGroupAddon v-if="probe.allowedCountries.length <= 1" class="!bg-transparent"
-								ref="countrySelectRef">
+								<InputGroupAddon
+									v-if="probe.allowedCountries.length <= 1"
+									ref="countrySelectRef"
+									class="!bg-transparent"
+								>
 									<CountryFlag :country="probe.country" size="small"/>
 								</InputGroupAddon>
 
@@ -77,7 +80,7 @@
 									v-model="editedCity"
 									class="flex w-full border-0 pl-3 pr-[72px] text-bluegray-900 shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 dark:bg-dark-800 dark:text-bluegray-0 dark:focus:bg-dark-800"
 									aria-label="City name input"
-									@keyup.enter="updateProbeCity"
+									@keyup.enter="updateProbeLocation"
 									@blur="cancelCityEditingOnBlur"
 								>
 
@@ -97,7 +100,7 @@
 									:loading="probeDetailsUpdating"
 									:disabled="probeDetailsUpdating"
 									aria-label="Save city name"
-									@click.stop="updateProbeCity"
+									@click.stop="updateProbeLocation"
 									@blur="cancelCityEditingOnBlur"
 								/>
 
@@ -489,7 +492,7 @@
 		isEditingCity.value = false;
 	};
 
-	const updateProbeCity = async (event: Event) => {
+	const updateProbeLocation = async (event: Event) => {
 		event.stopPropagation();
 
 		probeDetailsUpdating.value = true;
@@ -500,15 +503,26 @@
 			return;
 		}
 
-		if (editedCity.value === originalCity.value) {
+		if (editedCity.value === originalCity.value && editedCountry === originalCountry) {
 			isEditingCity.value = false;
 			probeDetailsUpdating.value = false;
 
 			return;
 		}
 
+		// create an object to store the probe's properties that need to be updated if they have changed
+		const updProbePart: { city?: string; country?: string } = {};
+
+		if (editedCountry !== originalCountry) {
+			updProbePart.country = editedCountry.value;
+		}
+
+		if (editedCity.value !== originalCity.value) {
+			updProbePart.city = editedCity.value;
+		}
+
 		try {
-			await $directus.request(updateItem('gp_probes', probe.value.id, { city: editedCity.value }));
+			await $directus.request(updateItem('gp_probes', probe.value.id, updProbePart));
 
 			// on succesful update fetch updated probe's data and then update map marker, city etc.
 			const updProbeDetails = await $directus.request(readItem('gp_probes', probe.value.id));

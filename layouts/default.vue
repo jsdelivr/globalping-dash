@@ -17,7 +17,23 @@
 					<i class="pi pi-external-link text-bluegray-300"/>
 					<span class="m-2">Globalping</span>
 				</NuxtLink>
-				<p class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(user.user_type) }}</span></p>
+				<div class="mx-12 flex items-center gap-4">
+					<p>Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(user.user_type) }}</span></p>
+					<div v-if="auth.isAdmin" class="flex items-center gap-2">
+						<span class="text-sm">Admin Mode:</span>
+						<ToggleSwitch v-model="adminMode"/>
+						<Button
+							class="relative mr-8 text-surface-0 hover:bg-transparent"
+							text
+							rounded
+							aria-label="Impersonate"
+							@click="toggleImpersonation"
+						>
+							<i class="pi pi-user-edit text-[1.3rem]"/>
+							<i v-if="debouncedImpersonatedUser" class="pi pi-circle-fill absolute right-3 top-1 text-[0.3rem] text-primary"/>
+						</Button>
+					</div>
+				</div>
 				<Button class="relative mr-8 text-surface-0 hover:bg-transparent" text rounded aria-label="Notifications" @click="toggleNotifications">
 					<i class="pi pi-bell text-[1.3rem]"/>
 					<i v-if="inboxNotificationIds.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.3rem] text-primary"/>
@@ -57,6 +73,32 @@
 							<span class="font-semibold">{{ user.github_username || `${user.first_name} ${user.last_name}` }}</span>
 						</div>
 					</template>
+
+					<div class="px-4 py-2">
+						<p>Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(user.user_type) }}</span></p>
+						<div v-if="auth.isAdmin" class="mt-4 flex flex-col gap-2">
+							<div class="flex items-center gap-2">
+								<span class="text-sm">Admin Mode:</span>
+								<div class="w-12">
+									<ToggleSwitch v-model="adminMode"/>
+								</div>
+							</div>
+							<div class="flex items-center gap-2">
+								<span class="text-sm">Impersonate:</span>
+								<InputText v-model="impersonatedUser" placeholder="Enter username" class="w-full"/>
+								<Button
+									v-if="impersonatedUser"
+									class="!p-2"
+									text
+									rounded
+									aria-label="Clear"
+									@click="setImpersonatedUser('')"
+								>
+									<i class="pi pi-times text-[1.1rem]"/>
+								</Button>
+							</div>
+						</div>
+					</div>
 
 					<NuxtLink active-class="active" class="sidebar-link" to="/" @click="mobileSidebar = false"><i class="pi pi-home sidebar-link-icon"/>Overview</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/probes" @click="mobileSidebar = false"><nuxt-icon class="pi sidebar-link-icon" name="probe"/>Probes</NuxtLink>
@@ -186,12 +228,40 @@
 			</div>
 		</div>
 		<NavigationGuard/>
+		<Popover
+			ref="impersonationPanel"
+			class="absolute !ml-4 !mt-2 !overflow-hidden !rounded-xl bg-[var(--p-surface-0)] dark:bg-[var(--main-bg)]"
+			:pt:content="{ class: 'flex items-center !rounded-xl border dark:border-[var(--table-border)]'}"
+		>
+			<div class="flex w-[calc(100vw-32px)] flex-col gap-4 rounded-xl p-4 sm:w-[37rem] sm:p-6">
+				<h1 class="text-lg font-bold leading-6">Impersonate User</h1>
+				<div class="flex items-center gap-2">
+					<InputText v-model="impersonatedUser" placeholder="Enter username" class="w-full"/>
+					<Button
+						v-if="impersonatedUser"
+						text
+						rounded
+						@click="setImpersonatedUser('')"
+					>
+						Clear
+					</Button>
+					<Button
+						text
+						rounded
+						@click="toggleImpersonation"
+					>
+						Close
+					</Button>
+				</div>
+			</div>
+		</Popover>
 	</section>
 </template>
 
 <script lang="ts" setup>
 	import { defaults } from 'chart.js';
 	import capitalize from 'lodash/capitalize';
+	import { provideAdminFunctionality } from '~/composables/useAdminFunctionality';
 	import { useNotifications } from '~/composables/useNotifications';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
@@ -199,6 +269,7 @@
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 	const { headerNotifications, inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead, updateHeaderNotifications } = useNotifications();
+	const { adminMode, impersonatedUser, debouncedImpersonatedUser, setImpersonatedUser } = provideAdminFunctionality();
 
 	const isFormDirty = ref(false);
 	provide('form-dirty', isFormDirty);
@@ -207,6 +278,12 @@
 	const notificationsPanel = ref();
 	const toggleNotifications = async (event: Event) => {
 		notificationsPanel.value.toggle(event);
+	};
+
+	// IMPERSONATION
+	const impersonationPanel = ref();
+	const toggleImpersonation = async (event: Event) => {
+		impersonationPanel.value.toggle(event);
 	};
 
 	updateHeaderNotifications();

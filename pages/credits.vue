@@ -101,6 +101,7 @@
 <script setup lang="ts">
 	import { aggregate, customEndpoint, readItems } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
+	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
 	import { formatDateForTable } from '~/utils/date-formatters';
@@ -116,6 +117,7 @@
 	const { $directus } = useNuxtApp();
 	const metadata = useMetadata();
 	const route = useRoute();
+	const { getUserFilter, adminMode, debouncedImpersonatedUser } = useUserFilter();
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
@@ -151,7 +153,7 @@
 					});
 				}),
 				$directus.request<[{count: number}]>(aggregate('gp_probes', {
-					query: { filter: { userId: { _eq: user.value.id }, onlineTimesToday: { _gt: 0 } } },
+					query: { filter: { ...getUserFilter(), onlineTimesToday: { _gt: 0 } } },
 					aggregate: { count: '*' },
 				})),
 			]);
@@ -161,7 +163,10 @@
 			sendErrorToast(e);
 			throw e;
 		}
-	}, { default: () => ({ total: 0, additions: [], deductions: [], todayOnlineProbes: 0 }) });
+	}, {
+		default: () => ({ total: 0, additions: [], deductions: [], todayOnlineProbes: 0 }),
+		watch: [ () => adminMode.value, () => debouncedImpersonatedUser.value ],
+	});
 
 	const totalAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + addition.amount, 0));
 	const totalDeductions = computed(() => credits.value.deductions.reduce((sum, deduction) => sum + deduction.amount, 0));

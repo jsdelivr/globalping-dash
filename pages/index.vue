@@ -175,6 +175,7 @@
 	import countBy from 'lodash/countBy';
 	import isEmpty from 'lodash/isEmpty';
 	import CountryFlag from 'vue-country-flag-next';
+	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
 	import { pluralize } from '~/utils/pluralize';
@@ -189,13 +190,14 @@
 	const creditsPerAdoptedProbe = useMetadata().creditsPerAdoptedProbe;
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
+	const { getUserFilter, adminMode, debouncedImpersonatedUser } = useUserFilter();
 
 	// SUMMARY
 
 	const { status: statusProbes, data: adoptedProbes } = await useLazyAsyncData('gp_probes', async () => {
 		try {
 			const result = await $directus.request(readItems('gp_probes', {
-				filter: { userId: { _eq: user.value.id } },
+				filter: getUserFilter(),
 				sort: [ 'status', 'name' ],
 			}));
 
@@ -204,7 +206,10 @@
 			sendErrorToast(e);
 			throw e;
 		}
-	}, { default: () => [] });
+	}, {
+		default: () => [],
+		watch: [ () => adminMode.value, () => debouncedImpersonatedUser.value ],
+	});
 
 	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status === 'ready'));
 	const offlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status !== 'ready'));

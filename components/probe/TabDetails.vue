@@ -44,6 +44,7 @@
 									class="h-full !rounded-r-none rounded-l-md border-0 !border-r border-[#D1D5DB]"
 									:pt="{ dropdown: 'w-8' }"
 									:pt-options="{ mergeProps: true }"
+									@change="onCountryChanged"
 								>
 									<template #value="slotProps">
 										<div class="flex items-center">
@@ -433,13 +434,15 @@
 		editedCountry.value = newCountry;
 	}, { immediate: true });
 
-	// once country is changed - enable city editing and focus the input
-	watch(editedCountry, () => {
-		// delay focus to next event loop tick to avoid PrimeVue's Select stealing it back after change
+	const onCountryChanged = async () => {
+		// wait for Vue to update
+		await nextTick();
+
+		// then delay again to let Select finish its focus handling
 		setTimeout(() => {
 			enableCityEditing();
 		}, 0);
-	});
+	};
 
 	const enableCityEditing = async () => {
 		if (isEditingCity.value === true) { return; }

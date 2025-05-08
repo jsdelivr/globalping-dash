@@ -26,8 +26,12 @@
 							class="absolute inset-x-4 bottom-9 flex h-[38px]"
 						>
 							<span
-								class="m-w-[38px] flex h-full shrink-0 items-center justify-center !rounded-r-none rounded-l-md border border-r-0 border-[#D1D5DB] bg-[#E5E7EB]"
+								class="flex h-full shrink-0 items-center justify-center !rounded-r-none rounded-l-md border border-r-0 border-[#D1D5DB] bg-[#E5E7EB]"
 								aria-hidden="true"
+								:class="{
+									'w-[38px]': probe.allowedCountries.length <= 1,
+									'w-24': probe.allowedCountries.length > 1
+								}"
 							>
 								<InputGroupAddon
 									v-if="probe.allowedCountries.length <= 1"

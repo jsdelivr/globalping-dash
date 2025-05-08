@@ -31,7 +31,6 @@
 							>
 								<InputGroupAddon
 									v-if="probe.allowedCountries.length <= 1"
-									ref="countrySelectRef"
 									class="!bg-transparent"
 								>
 									<CountryFlag :country="probe.country" size="small"/>
@@ -72,7 +71,7 @@
 								@click="enableCityEditing"
 								@keyup.enter="enableCityEditing"
 								@keyup.space="enableCityEditing"
-								@keyup.esc="isEditingCity && cancelCityEditing"
+								@keyup.esc="cancelCityEditing"
 							>
 								<input
 									v-if="isEditingCity"
@@ -417,7 +416,6 @@
 	const editedCountry = ref('');
 	const originalCountry = ref('');
 	const inputCityRef = ref<HTMLInputElement | null>(null);
-	const countrySelectRef = ref();
 	const city = computed(() => {
 		return probe.value ? probe.value.city : '';
 	});
@@ -456,6 +454,8 @@
 	};
 
 	const cancelCityEditing = () => {
+		if (isEditingCity.value === false) { return; }
+
 		restoreOriginalLocation();
 		isEditingCity.value = false;
 		inputCityRef.value?.blur();

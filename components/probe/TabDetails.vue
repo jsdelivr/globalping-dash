@@ -45,7 +45,7 @@
 									id="country"
 									v-model="editedCountry"
 									:options="probe.allowedCountries"
-									class="h-full !rounded-r-none rounded-l-md border-0 !border-r border-[#D1D5DB]"
+									class="size-full !rounded-r-none rounded-l-md border-0 !border-r border-[#D1D5DB]"
 									:pt="{ dropdown: 'w-8' }"
 									:pt-options="{ mergeProps: true }"
 									@change="onCountryChanged"

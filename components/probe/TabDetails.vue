@@ -91,7 +91,7 @@
 								</span>
 
 								<Button
-									v-if="isEditingCity && editedCity !== originalCity"
+									v-if="isEditingCity && ((editedCity !== originalCity) || (originalCountry !== editedCountry))"
 									variant="text"
 									severity="secondary"
 									icon="pi pi-check"
@@ -104,7 +104,7 @@
 								/>
 
 								<Button
-									v-if="isEditingCity && editedCity !== originalCity && !probeDetailsUpdating"
+									v-if="isEditingCity && (((editedCity !== originalCity) || (originalCountry !== editedCountry)) && !probeDetailsUpdating)"
 									variant="text"
 									severity="secondary"
 									icon="pi pi-times"

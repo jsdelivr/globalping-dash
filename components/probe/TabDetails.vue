@@ -69,10 +69,10 @@
 								aria-haspopup="true"
 								:aria-expanded="isEditingCity"
 								:tabindex="isEditingCity ? -1 : 0"
-								@click="!isEditingCity && enableCityEditing()"
-								@keyup.enter="!isEditingCity && enableCityEditing()"
-								@keyup.space="!isEditingCity && enableCityEditing()"
-								@keyup.esc="isEditingCity && cancelCityEditing()"
+								@click="enableCityEditing"
+								@keyup.enter="enableCityEditing"
+								@keyup.space="enableCityEditing"
+								@keyup.esc="isEditingCity && cancelCityEditing"
 							>
 								<input
 									v-if="isEditingCity"
@@ -444,6 +444,8 @@
 	});
 
 	const enableCityEditing = async () => {
+		if (isEditingCity.value === true) { return; }
+
 		isEditingCity.value = true;
 
 		await nextTick();
@@ -454,8 +456,31 @@
 	};
 
 	const cancelCityEditing = () => {
-		editedCity.value = originalCity.value;
+		restoreOriginalLocation();
 		isEditingCity.value = false;
+		inputCityRef.value?.blur();
+	};
+
+	const cancelCityEditingOnBlur = (event: FocusEvent) => {
+		const target = event.relatedTarget as HTMLElement | null;
+		const parentEl = probeCityInput.value;
+
+		// do not blur city Input block if it comes from its children
+		if (probeDetailsUpdating.value || (parentEl && target instanceof Node && parentEl.contains(target))) {
+			return;
+		}
+
+		cancelCityEditing();
+	};
+
+	const restoreOriginalLocation = () => {
+		if (editedCity.value !== originalCity.value) {
+			editedCity.value = originalCity.value;
+		}
+
+		if (originalCountry.value !== editedCountry.value) {
+			editedCountry.value = originalCountry.value;
+		}
 	};
 
 	let removeWatcher: (() => void) | undefined;
@@ -476,19 +501,6 @@
 			removeWatcher();
 		}
 	});
-
-	const cancelCityEditingOnBlur = (event: FocusEvent) => {
-		const target = event.relatedTarget as HTMLElement | null;
-		const parentEl = probeCityInput.value;
-
-		// do not blur city Input block if it comes from its children
-		if (probeDetailsUpdating.value || (parentEl && target instanceof Node && parentEl.contains(target))) {
-			return;
-		}
-
-		editedCity.value = originalCity.value;
-		isEditingCity.value = false;
-	};
 
 	const updateProbeLocation = async (event: Event) => {
 		event.stopPropagation();

@@ -68,7 +68,7 @@
 
 							<div
 								ref="probeCityInput"
-								class="flex h-full grow overflow-hidden rounded-r-md border border-l-0 border-[#D1D5DB] dark:border-dark-600"
+								class="relative flex h-full grow overflow-hidden rounded-r-md border border-l-0 border-[#D1D5DB] focus:z-10 focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)] dark:border-dark-600"
 								aria-label="Edit probe city"
 								aria-haspopup="true"
 								:aria-expanded="isEditingCity"

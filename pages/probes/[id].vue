@@ -169,15 +169,16 @@
 </template>
 
 <script setup lang="ts">
-	// TODO: uncomment this line and remove the line below once loadCreditsData is updated
-	// import { readItem, updateItem, aggregate } from '@directus/sdk';
-	import { readItem, updateItem } from '@directus/sdk';
+	import { readItem, updateItem, aggregate } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
+	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();
 	const route = useRoute();
 	const router = useRouter();
+	const auth = useAuth();
+	const { user } = storeToRefs(auth);
 	const probeId = route.params.id as string;
 	const probeDetails = ref<Probe | null>(null);
 	const emit = defineEmits([ 'save', 'hide', 'delete' ]);
@@ -327,29 +328,29 @@
 	const probeCreditsPerMonth = ref<number | null>(null);
 
 	// TODO: update loadCreditsData once BE is ready
-	// const loadCreditsData = async () => {
-	// 	try {
-	// 		const creditsResponse = await $directus.request<[{ sum: { amount: number }, adopted_probe: string}]>(aggregate('gp_credits_additions', {
-	// 			query: {
-	// 				filter: {
-	// 					github_id: { _eq: user.value.external_identifier || 'admin' },
-	// 					// adopted_probe: { _eq: probeDetails?.value?.id },
-	// 					date_created: { _gte: '$NOW(-30 day)' },
-	// 				},
-	// 			},
-	// 			// groupBy: [ 'adopted_probe' ],
-	// 			aggregate: { sum: 'amount' },
-	// 		}));
+	const loadCreditsData = async () => {
+		try {
+			const creditsResponse = await $directus.request<[{ sum: { amount: number }, adopted_probe: string}]>(aggregate('gp_credits_additions', {
+				query: {
+					filter: {
+						github_id: { _eq: user.value.external_identifier || 'admin' },
+						adopted_probe: { _eq: probeDetails?.value?.id },
+						date_created: { _gte: '$NOW(-30 day)' },
+					},
+				},
+				groupBy: [ 'adopted_probe' ],
+				aggregate: { sum: 'amount' },
+			}));
 
-	// 		probeCreditsPerMonth.value = creditsResponse[0]?.sum?.amount;
-	// 	} catch (e) {
-	// 		sendErrorToast(e);
-	// 	}
-	// };
+			probeCreditsPerMonth.value = creditsResponse[0]?.sum?.amount;
+		} catch (e) {
+			sendErrorToast(e);
+		}
+	};
 
-	// watch(probeDetails, async () => {
-	// 	loadCreditsData();
-	// });
+	watch(probeDetails, async () => {
+		loadCreditsData();
+	}, { immediate: true });
 
 	// HANDLE GO BACK TO PROBES
 	const getBackToProbesHref = () => {

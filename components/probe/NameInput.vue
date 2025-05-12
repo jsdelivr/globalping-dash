@@ -78,7 +78,7 @@
 		required: true,
 	});
 
-	const emit = defineEmits([ 'save', 'hide', 'delete' ]);
+	const emit = defineEmits([ 'save' ]);
 	const probeNameInput = ref<HTMLElement | null>(null);
 	const isEditingName = ref(false);
 	const editedName = ref('');

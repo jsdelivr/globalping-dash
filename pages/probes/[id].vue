@@ -4,7 +4,7 @@
 			<div class="flex gap-2">
 				<NuxtLink
 					:to="getBackToProbesHref()"
-					class="mr-auto flex cursor-pointer items-center gap-2"
+					class="mr-auto flex cursor-pointer items-center gap-2 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--p-primary-color)] focus-visible:ring-offset-2"
 					aria-label="Go back to the list of probes"
 				>
 					<i class="pi pi-arrow-left text-bluegray-500"/>

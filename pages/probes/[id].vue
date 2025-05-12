@@ -4,7 +4,7 @@
 			<div class="flex gap-2">
 				<NuxtLink
 					:to="getBackToProbesHref()"
-					class="mr-auto flex cursor-pointer items-center gap-2 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--p-primary-color)] focus-visible:ring-offset-2"
+					class="mr-auto flex cursor-pointer items-center gap-2 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--p-primary-color)] focus-visible:ring-offset-2"
 					aria-label="Go back to the list of probes"
 				>
 					<i class="pi pi-arrow-left text-bluegray-500"/>
@@ -30,7 +30,7 @@
 				<div
 					v-if="probeDetails"
 					ref="probeNameInput"
-					class="relative flex h-[42px] w-full cursor-pointer items-center gap-1 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--p-primary-color)] focus-visible:ring-offset-2 sm:w-auto"
+					class="relative flex h-[42px] w-full cursor-pointer items-center gap-1 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--p-primary-color)] focus-visible:ring-offset-2 sm:w-auto"
 					:class="{
 						'[&>input]:outline-none [&>input]:ring-1 [&>input]:ring-[var(--p-primary-color)]': isEditingName,
 						'[&>input]:dark:border-dark-600 [&>input]:dark:bg-dark-800': isEditingName,
@@ -140,7 +140,7 @@
 					<button
 						v-if="probeDetails.altIps.length > 1"
 						:aria-label="showMoreIps ? 'Show fewer IPs' : 'Show more IPs'"
-						class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--p-primary-color)] dark:text-bluegray-0"
+						class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--p-primary-color)] dark:text-bluegray-0"
 						@click="showMoreIps = !showMoreIps"
 					>
 						{{ showMoreIps ? 'Show less' : 'Show more' }}

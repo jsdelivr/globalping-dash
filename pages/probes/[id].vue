@@ -27,67 +27,7 @@
 			</div>
 
 			<div v-if="probeDetails" class="flex w-full flex-col items-center gap-4 sm:flex-row sm:flex-wrap">
-				<div
-					v-if="probeDetails"
-					ref="probeNameInput"
-					class="relative flex h-[42px] w-full cursor-pointer items-center gap-1 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--p-primary-color)] focus-visible:ring-offset-2 sm:w-auto"
-					:class="{
-						'[&>input]:outline-none [&>input]:ring-1 [&>input]:ring-[var(--p-primary-color)]': isEditingName,
-						'[&>input]:dark:border-dark-600 [&>input]:dark:bg-dark-800': isEditingName,
-					}"
-					aria-label="Edit probe name"
-					aria-haspopup="true"
-					:aria-expanded="isEditingName"
-					:tabindex="isEditingName ? -1 : 0"
-					@click="!isEditingName && enableNameEditing()"
-					@keyup.enter="!isEditingName && enableNameEditing()"
-					@keyup.space="!isEditingName && enableNameEditing()"
-					@keyup.esc="isEditingName && cancelNameEditing()"
-				>
-					<BigIcon :name="probeDetails.hardwareDevice ? 'probe' : 'docker'" border/>
-
-					<input
-						v-if="isEditingName"
-						ref="inputNameRef"
-						v-model="editedName"
-						class="flex w-[calc(100%-52px)] rounded-xl border border-gray-300 py-1 pl-2 pr-[72px] text-2xl font-bold"
-						aria-label="Probe name input"
-						@keyup.enter="updateProbeName"
-						@blur="cancelNameEditingOnBlur"
-					>
-
-					<div v-else class="flex w-[calc(100%-52px)] truncate px-[9px] py-[5px] text-2xl font-bold">
-						{{ name }}
-					</div>
-
-					<Button
-						v-if="isEditingName && editedName !== originalName"
-						variant="text"
-						severity="secondary"
-						icon="pi pi-check"
-						class="!absolute !right-4 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[var(--p-primary-color)] focus:!ring-[var(--p-primary-color)]"
-						:loading="probeDetailsUpdating"
-						:disabled="probeDetailsUpdating"
-						aria-label="Save probe name"
-						@click.stop="updateProbeName"
-						@blur="cancelNameEditingOnBlur"
-					/>
-
-					<Button
-						v-if="isEditingName && editedName !== originalName && !probeDetailsUpdating"
-						variant="text"
-						severity="secondary"
-						icon="pi pi-times"
-						class="!absolute !right-4 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:!ring-[#ef4444]"
-						:disabled="probeDetailsUpdating"
-						aria-label="Cancel editing probe name"
-						@keyup.enter="cancelNameEditing"
-						@click.stop="cancelNameEditing"
-						@blur="cancelNameEditingOnBlur"
-					/>
-
-					<i v-if="!isEditingName" class="pi pi-pencil text-lg" aria-hidden="true"/>
-				</div>
+				<ProbeNameInput v-model:probe-details-updating="probeDetailsUpdating" v-model:probe="probeDetails"/>
 
 				<div class="hidden h-8 items-center gap-1 rounded-full border border-surface-300 md:flex dark:border-dark-600">
 					<span class="flex items-center gap-2 pl-3">
@@ -169,10 +109,10 @@
 </template>
 
 <script setup lang="ts">
-	import { readItem, updateItem, aggregate } from '@directus/sdk';
+	import { readItem, aggregate } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
 	import { useAuth } from '~/store/auth';
-	import { sendErrorToast, sendToast } from '~/utils/send-toast';
+	import { sendErrorToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();
 	const route = useRoute();
@@ -181,10 +121,8 @@
 	const { user } = storeToRefs(auth);
 	const probeId = route.params.id as string;
 	const probeDetails = ref<Probe | null>(null);
-	const emit = defineEmits([ 'save', 'hide', 'delete' ]);
 	const probeDetailsUpdating = ref(false);
 	const showMoreIps = ref(false);
-	const probeNameInput = ref<HTMLElement | null>(null);
 
 	useHead(() => {
 		return {
@@ -207,95 +145,6 @@
 	};
 
 	await loadProbeData(probeId);
-
-	// HANDLE PROBE NAME
-	const isEditingName = ref(false);
-	const editedName = ref('');
-	const originalName = ref('');
-	const inputNameRef = ref<HTMLInputElement | null>(null);
-
-	const name = computed(() => {
-		if (probeDetails.value) {
-			if (probeDetails.value.name) {
-				return probeDetails.value.name;
-			}
-
-			return `${probeDetails.value.city} ${probeDetails.value.country} ${probeDetails.value.asn}`;
-		}
-
-		return '';
-	});
-
-	watch(name, (newName) => {
-		originalName.value = newName;
-		editedName.value = newName;
-	}, { immediate: true });
-
-	const enableNameEditing = async () => {
-		isEditingName.value = true;
-
-		await nextTick();
-
-		if (inputNameRef.value) {
-			inputNameRef.value.focus();
-		}
-	};
-
-	const cancelNameEditing = () => {
-		editedName.value = originalName.value;
-		isEditingName.value = false;
-	};
-
-	const cancelNameEditingOnBlur = (event: FocusEvent) => {
-		const target = event.relatedTarget as HTMLElement | null;
-		const parentEl = probeNameInput.value;
-
-		// do not blur name Input block if it comes from its children
-		if (probeDetailsUpdating.value || (parentEl && target instanceof Node && parentEl.contains(target))) {
-			return;
-		}
-
-		editedName.value = originalName.value;
-		isEditingName.value = false;
-	};
-
-	const updateProbeName = async (event: Event) => {
-		event.stopPropagation();
-
-		probeDetailsUpdating.value = true;
-
-		if (!probeDetails.value) {
-			probeDetailsUpdating.value = false;
-
-			return;
-		}
-
-		if (editedName.value === originalName.value) {
-			isEditingName.value = false;
-			probeDetailsUpdating.value = false;
-
-			return;
-		}
-
-		try {
-			await $directus.request(updateItem('gp_probes', probeDetails.value.id, { name: editedName.value }));
-
-			sendToast('success', 'Done', 'The probe has been successfully updated');
-			emit('save');
-
-			originalName.value = editedName.value;
-			isEditingName.value = false;
-			probeDetails.value.name = editedName.value;
-		} catch (e) {
-			sendErrorToast(e);
-
-			if (inputNameRef.value) {
-				inputNameRef.value.focus();
-			}
-		} finally {
-			probeDetailsUpdating.value = false;
-		}
-	};
 
 	// HANDLE PRIMARY, ALT IPS
 	const limitIpsToShow = () => {

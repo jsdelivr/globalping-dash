@@ -24,6 +24,7 @@ declare global {
     amount: number;
     date_created: 'datetime';
     github_id: string;
+    adopted_probe: string | null;
   } & (CreditsAdditionMeta | {
     reason: 'adopted_probe';
     meta: {

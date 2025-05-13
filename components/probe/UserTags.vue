@@ -18,10 +18,10 @@
 						v-for="(tag, index) in probe.tags"
 						:key="index"
 						class="inline-flex h-6 max-w-full items-center overflow-hidden truncate rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600 dark:text-bluegray-0"
-						:title="`u-${tag.prefix}:${tag.value}`"
+						:title="`u-${tag.prefix}${probe.tags[0].format === 'v1' ? '-' : ':'}${tag.value}`"
 					>
 						<span class="block truncate">
-							{{ `u-${tag.prefix}:${tag.value}` }}
+							{{ `u-${tag.prefix}${probe.tags[0].format === 'v1' ? '-' : ':'}${tag.value}` }}
 						</span>
 					</span>
 
@@ -44,7 +44,6 @@
 					</Button>
 				</div>
 
-				<!-- TODO: all tag handling needs to include the format === 'v1' check and the related logic and warning on editing (see current probe modal) -->
 				<Popover
 					id="editTagsPopover"
 					ref="tagPopoverRef"
@@ -55,92 +54,117 @@
 					role="dialog"
 					:aria-label="probe.tags.length ? 'Edit tags dialog' : 'Add tags dialog'"
 				>
-					<div
-						v-if="probe"
-						ref="popoverContentRef"
-						tabindex="0"
-						class="grid w-full flex-1 grid-rows-[auto_1fr] p-4 focus-visible:outline-none focus-visible:ring-0"
-					>
-						<div v-if="tagsToEdit.length" class="mb-6 grid flex-1 grid-cols-[minmax(6rem,1fr)_auto_minmax(6rem,1fr)_auto] items-center gap-y-5">
-							<div class="-mb-2 content-center text-xs font-bold text-dark-800 dark:text-bluegray-0">Prefix</div>
-							<div class="mx-3 -mb-2"/>
-							<div class="-mb-2 content-center text-xs font-bold text-dark-800 dark:text-bluegray-0">Your tag</div>
-							<div class="-mb-2 "/>
+					<div class="flex flex-col">
+						<Message v-if="probe.tags[0]?.format === 'v1'" severity="warn" class="mb-1">
+							<p class="font-bold">The tags format has changed</p>
 
-							<template v-for="(tag, index) in tagsToEdit" :key="index">
-								<Select
-									v-model="tag.uPrefix"
-									:options="uPrefixes"
-									:scroll-height="'200px'"
-									aria-label="Tag prefix"
-									aria-required="true"
-								/>
-								<div class="inline-flex w-6 justify-center">:</div>
-								<div class="relative">
-									<InputText
-										v-model="tag.value"
-										:invalid="!isTagValid(tag.value)"
-										class="w-full"
-										placeholder="my-tag"
-										aria-label="Your tag"
+							<div class="mt-1">
+								Your tags use an outdated format and will be converted to the new format after saving.
+								Please be sure to use the updated tags in all future requests.
+								<br>
+								<br>
+
+								Outdated format:<br>
+								<span v-for="(tag, index) in probe.tags" :key="index">
+									<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${tag.prefix}-${tag.value}`"/>
+								</span>
+								<br>
+								<br>
+
+								New format:<br>
+								<span v-for="(tag, index) in probe.tags" :key="index">
+									<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${tag.prefix}:${tag.value}`"/>
+								</span>
+							</div>
+						</Message>
+
+						<div
+							v-if="probe"
+							ref="popoverContentRef"
+							tabindex="0"
+							class="grid w-full flex-1 grid-rows-[auto_1fr] p-4 focus-visible:outline-none focus-visible:ring-0"
+						>
+							<div v-if="tagsToEdit.length" class="mb-6 grid flex-1 grid-cols-[minmax(6rem,1fr)_auto_minmax(6rem,1fr)_auto] items-center gap-y-5">
+								<div class="-mb-2 content-center text-xs font-bold text-dark-800 dark:text-bluegray-0">Prefix</div>
+								<div class="mx-3 -mb-2"/>
+								<div class="-mb-2 content-center text-xs font-bold text-dark-800 dark:text-bluegray-0">Your tag</div>
+								<div class="-mb-2 "/>
+
+								<template v-for="(tag, index) in tagsToEdit" :key="index">
+									<Select
+										v-model="tag.uPrefix"
+										:options="uPrefixes"
+										:scroll-height="'200px'"
+										aria-label="Tag prefix"
+										aria-required="true"
 									/>
-									<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
-								</div>
+									<div class="inline-flex w-6 justify-center">{{ probe.tags[0].format === 'v1' ? '-' : ':' }}</div>
+									<div class="relative">
+										<InputText
+											v-model="tag.value"
+											:invalid="!isTagValid(tag.value)"
+											class="w-full"
+											placeholder="my-tag"
+											aria-label="Your tag"
+										/>
+										<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
+									</div>
 
-								<div class="ml-2 flex gap-1">
+									<div class="ml-2 flex gap-1">
+										<Button
+											icon="pi pi-trash"
+											text
+											aria-label="Remove tag"
+											class="text-surface-900 dark:text-surface-0"
+											@click="removeTag(index)"
+										/>
+									</div>
+								</template>
+
+								<div class="col-span-4 -mt-3">
 									<Button
-										icon="pi pi-trash"
+										icon="pi pi-plus"
 										text
-										aria-label="Remove tag"
+										label="Add"
+										aria-label="Add tag"
 										class="text-surface-900 dark:text-surface-0"
-										@click="removeTag(index)"
+										@click="addTag()"
 									/>
 								</div>
-							</template>
+							</div>
 
-							<div class="col-span-4 -mt-3">
+							<div v-else class="mb-6 h-[110px]">
+								<div>The probe has no user tags</div>
+
+								<div class="col-span-4 mt-2">
+									<Button
+										icon="pi pi-plus"
+										text
+										label="Add"
+										aria-label="Add tag"
+										class="text-surface-900 dark:text-surface-0"
+										@click="addTag()"
+									/>
+								</div>
+							</div>
+
+							<div class="flex justify-between">
 								<Button
-									icon="pi pi-plus"
-									text
-									label="Add"
-									aria-label="Add tag"
-									class="text-surface-900 dark:text-surface-0"
-									@click="addTag()"
+									label="Cancel"
+									severity="secondary"
+									class="dark:!bg-dark-800"
+									outlined
+									aria-label="Cancel tag editing"
+									@click="closeEditTagsPopover"
+								/>
+								<Button
+									label="Save"
+									:loading="probeDetailsUpdating"
+									:disabled="probeDetailsUpdating"
+									aria-label="Save edited tags"
+									@click="updateProbeTags"
 								/>
 							</div>
-						</div>
-
-						<div v-else class="mb-6 h-[110px]">
-							<div>The probe has no user tags</div>
-
-							<div class="col-span-4 mt-2">
-								<Button
-									icon="pi pi-plus"
-									text
-									label="Add"
-									aria-label="Add tag"
-									class="text-surface-900 dark:text-surface-0"
-									@click="addTag()"
-								/>
-							</div>
-						</div>
-
-						<div class="flex justify-between">
-							<Button
-								label="Cancel"
-								severity="secondary"
-								class="dark:!bg-dark-800"
-								outlined
-								aria-label="Cancel tag editing"
-								@click="closeEditTagsPopover"
-							/>
-							<Button
-								label="Save"
-								:loading="probeDetailsUpdating"
-								:disabled="probeDetailsUpdating"
-								aria-label="Save edited tags"
-								@click="updateProbeTags"
-							/>
 						</div>
 					</div>
 				</Popover>
@@ -177,7 +201,7 @@
 		.sort((prefixA, prefixB) => prefixA === user.value.default_prefix ? -1 : prefixB === user.value.default_prefix ? 1 : 0)
 		.map(value => `u-${value}`);
 	const tagPopoverRef = ref();
-	const tagsToEdit = ref<{ uPrefix: string, value: string }[]>([]);
+	const tagsToEdit = ref<{ uPrefix: string, value: string, format?: string }[]>([]);
 	const isEditingTags = ref<boolean>(false);
 	const popoverContentRef = ref<HTMLElement>();
 
@@ -203,9 +227,10 @@
 	const editTags = () => {
 		isEditingTags.value = true;
 
-		tagsToEdit.value = probe.value && probe.value.tags.length ? probe.value.tags.map(({ prefix, value }) => ({
+		tagsToEdit.value = probe.value && probe.value.tags.length ? probe.value.tags.map(({ prefix, value, format }) => ({
 			uPrefix: `u-${prefix}`,
 			value,
+			format,
 		})) : [{ uPrefix: uPrefixes[0], value: '' }];
 	};
 
@@ -218,9 +243,10 @@
 		tagsToEdit.value?.splice(index, 1);
 	};
 
-	const convertTags = (tagsToEdit: { uPrefix: string, value: string }[]) => tagsToEdit.map(({ uPrefix, value }) => ({
+	const convertTags = (tagsToEdit: { uPrefix: string, value: string, format?: string }[]) => tagsToEdit.map(({ uPrefix, value, format }) => ({
 		prefix: uPrefix.replace('u-', ''),
 		value,
+		format,
 	}));
 
 	const updateProbeTags = async () => {

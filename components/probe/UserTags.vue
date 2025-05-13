@@ -243,10 +243,9 @@
 		tagsToEdit.value?.splice(index, 1);
 	};
 
-	const convertTags = (tagsToEdit: { uPrefix: string, value: string, format?: string }[]) => tagsToEdit.map(({ uPrefix, value, format }) => ({
+	const convertTags = (tagsToEdit: { uPrefix: string, value: string }[]) => tagsToEdit.map(({ uPrefix, value }) => ({
 		prefix: uPrefix.replace('u-', ''),
 		value,
-		format,
 	}));
 
 	const updateProbeTags = async () => {

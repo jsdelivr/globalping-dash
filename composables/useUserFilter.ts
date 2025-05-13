@@ -10,6 +10,10 @@ export function useUserFilter () {
 			return {};
 		}
 
+		if (!user?.value) {
+			throw new Error('User not found');
+		}
+
 		return {
 			[filterField]: { _eq: filterField === 'github_id' ? user.value.external_identifier : user.value.id },
 		};

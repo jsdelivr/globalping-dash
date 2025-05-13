@@ -1,31 +1,21 @@
 import { storeToRefs } from 'pinia';
-import { injectAdminFunctionality } from './useAdminFunctionality';
 import { useAuth } from '~/store/auth';
 
 export function useUserFilter () {
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
-	const { adminMode, debouncedImpersonatedUser } = injectAdminFunctionality();
 
-	const getUserFilter = () => {
-		if (adminMode.value) {
+	const getUserFilter = (filterField: string) => {
+		if (auth.isAdmin && auth.adminMode) {
 			return {};
 		}
 
-		if (debouncedImpersonatedUser.value) {
-			return {
-				userId: { _eq: debouncedImpersonatedUser.value },
-			};
-		}
-
 		return {
-			userId: { _eq: user.value.id },
+			[filterField]: { _eq: filterField === 'github_id' ? user.value.external_identifier : user.value.id },
 		};
 	};
 
 	return {
 		getUserFilter,
-		adminMode,
-		debouncedImpersonatedUser,
 	};
 }

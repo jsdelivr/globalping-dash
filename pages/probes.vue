@@ -214,7 +214,7 @@
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const auth = useAuth();
-	const { user } = storeToRefs(auth);
+	const { adminMode, impersonation } = storeToRefs(auth);
 	const config = useRuntimeConfig();
 
 	const { $directus } = useNuxtApp();
@@ -231,7 +231,7 @@
 	const totalCredits = ref(0);
 	const gmapsLoaded = ref(false);
 
-	const { getUserFilter, adminMode, debouncedImpersonatedUser } = useUserFilter();
+	const { getUserFilter } = useUserFilter();
 
 	useHead(() => {
 		return {
@@ -247,17 +247,25 @@
 		try {
 			const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
 				$directus.request(readItems('gp_probes', {
-					filter: getUserFilter(),
+					filter: getUserFilter('userId'),
 					sort: [ 'status', 'name' ],
 					offset: first.value,
 					limit: itemsPerPage.value,
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_probes', {
-					query: { filter: getUserFilter() },
+					query: {
+						filter: getUserFilter('userId'),
+					},
 					aggregate: { count: '*' },
 				})),
 				$directus.request<[{ sum: { amount: number }, meta: { id: string, name: string | null, ip: string} }]>(aggregate('gp_credits_additions', {
-					query: { filter: { github_id: { _eq: user.value.external_identifier || 'admin' }, reason: { _eq: 'adopted_probe' }, date_created: { _gte: '$NOW(-30 day)' } } },
+					query: {
+						filter: {
+							github_id: { _eq: getUserFilter('github_id')?.github_id?._eq || 'admin' },
+							reason: { _eq: 'adopted_probe' },
+							date_created: { _gte: '$NOW(-30 day)' },
+						},
+					},
 					groupBy: [ 'meta' ],
 					aggregate: { sum: 'amount' },
 				})),
@@ -295,7 +303,12 @@
 	});
 
 	// Update list data only when navigating list to list (e.g. page 1 to page 2), not list to details or details to list.
-	watch([ () => page.value, () => route.params.id, () => adminMode.value, () => debouncedImpersonatedUser.value ], async ([ newPage, newId ], [ oldPage, oldId ]) => {
+	watch([
+		() => page.value,
+		() => route.params.id,
+		adminMode,
+		impersonation,
+	], async ([ newPage, newId ], [ oldPage, oldId ]) => {
 		if (newPage !== oldPage && !oldId && !newId) {
 			await loadLazyData();
 		}

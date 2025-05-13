@@ -1,5 +1,5 @@
 import { readNotifications, updateNotifications } from '@directus/sdk';
-import { useAuth } from '~/store/auth';
+import { useUserFilter } from './useUserFilter';
 
 const inboxNotificationIds = useState<string[]>('inboxNotifIds', () => []);
 
@@ -16,15 +16,14 @@ notificationBus.on((idsToArchive) => {
 
 export const useNotifications = () => {
 	const { $directus } = useNuxtApp();
-	const auth = useAuth();
-	const { user } = storeToRefs(auth);
+	const { getUserFilter } = useUserFilter();
 	const notificationBus = useEventBus<string[]>('notification-updated');
 
 	const updateInboxNotificationIds = async () => {
 		try {
 			const notifications = await $directus.request<{ id: string }[]>(readNotifications({
 				filter: {
-					recipient: { _eq: user.value.id },
+					...getUserFilter('recipient'),
 					status: { _eq: 'inbox' },
 				},
 				fields: [ 'id' ],
@@ -43,7 +42,7 @@ export const useNotifications = () => {
 				format: 'html',
 				limit: 5,
 				filter: {
-					recipient: { _eq: user.value.id },
+					...getUserFilter('recipient'),
 				},
 				sort: [ '-timestamp' ],
 			})) as DirectusNotification[];

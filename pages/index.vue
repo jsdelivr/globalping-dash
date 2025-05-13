@@ -189,15 +189,15 @@
 	const { $directus } = useNuxtApp();
 	const creditsPerAdoptedProbe = useMetadata().creditsPerAdoptedProbe;
 	const auth = useAuth();
-	const { user } = storeToRefs(auth);
-	const { getUserFilter, adminMode, debouncedImpersonatedUser } = useUserFilter();
+	const { user, adminMode, impersonation } = storeToRefs(auth);
+	const { getUserFilter } = useUserFilter();
 
 	// SUMMARY
 
 	const { status: statusProbes, data: adoptedProbes } = await useLazyAsyncData('gp_probes', async () => {
 		try {
 			const result = await $directus.request(readItems('gp_probes', {
-				filter: getUserFilter(),
+				filter: getUserFilter('userId'),
 				sort: [ 'status', 'name' ],
 			}));
 
@@ -208,7 +208,7 @@
 		}
 	}, {
 		default: () => [],
-		watch: [ () => adminMode.value, () => debouncedImpersonatedUser.value ],
+		watch: [ adminMode, impersonation ],
 	});
 
 	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status === 'ready'));
@@ -224,13 +224,13 @@
 			let fromSponsorshipPromise = Promise.resolve(0);
 
 			const totalPromise = $directus.request(readItems('gp_credits', {
-				filter: { user_id: { _eq: user.value.id } },
+				filter: getUserFilter('user_id'),
 			}));
 
 			if (user.value.user_type !== 'member') {
 				fromSponsorshipPromise = $directus.request(readItems('gp_credits_additions', {
 					filter: {
-						github_id: { _eq: user.value.external_identifier || 'admin' },
+						github_id: { _eq: getUserFilter('github_id')?.github_id?._eq || 'admin' },
 						reason: { _eq: 'recurring_sponsorship' },
 						date_created: { _gte: '$NOW(-35 day)' },
 					},
@@ -252,7 +252,7 @@
 			sendErrorToast(e);
 			throw e;
 		}
-	}, { default: () => {} });
+	}, { default: () => {}, watch: [ adminMode, impersonation ] });
 
 	const total = computed(() => {
 		const creditsObj = credits.value?.total.find(({ user_id }) => user_id === user.value.id);

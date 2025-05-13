@@ -161,21 +161,21 @@
 	const { $directus } = useNuxtApp();
 
 	const auth = useAuth();
-	const { user } = storeToRefs(auth);
+	const { user, adminMode, impersonation } = storeToRefs(auth);
 	const metadata = useMetadata();
-	const { getUserFilter, adminMode, debouncedImpersonatedUser } = useUserFilter();
+	const { getUserFilter } = useUserFilter();
 
 	defineEmits([ 'cancel', 'adopt-a-probe' ]);
 
 	const { data: adoptionsExists } = await useLazyAsyncData('gp_adopted_probes_exist', async () => {
 		const adoptions = await $directus.request(readItems('gp_probes', {
-			filter: getUserFilter(),
+			filter: getUserFilter('userId'),
 			limit: 1,
 		}));
 		return !!adoptions.length;
 	}, {
 		default: () => false,
-		watch: [ () => adminMode.value, () => debouncedImpersonatedUser.value ],
+		watch: [ adminMode, impersonation ],
 	});
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;

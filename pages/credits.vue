@@ -113,11 +113,11 @@
 
 	const config = useRuntimeConfig();
 	const auth = useAuth();
-	const { user } = storeToRefs(auth);
+	const { adminMode, impersonation } = storeToRefs(auth);
 	const { $directus } = useNuxtApp();
 	const metadata = useMetadata();
 	const route = useRoute();
-	const { getUserFilter, adminMode, debouncedImpersonatedUser } = useUserFilter();
+	const { getUserFilter } = useUserFilter();
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
@@ -130,10 +130,15 @@
 		try {
 			const [ total, additions, deductions, todayOnlineProbes ] = await Promise.all([
 				$directus.request<{amount: number}[]>(readItems('gp_credits', {
-					filter: { user_id: { _eq: user.value.id } },
+					filter: getUserFilter('userId'),
 				})),
 				$directus.request<[{sum: { amount: number }, date_created: 'datetime'}]>(aggregate('gp_credits_additions', {
-					query: { filter: { github_id: { _eq: user.value.external_identifier || 'admin' }, date_created: { _gte: '$NOW(-30 day)' } } },
+					query: {
+						filter: {
+							github_id: { _eq: getUserFilter('github_id')?.github_id?._eq || 'admin' },
+							date_created: { _gte: '$NOW(-30 day)' },
+						},
+					},
 					groupBy: [ 'date_created' ],
 					aggregate: { sum: 'amount' },
 				})).then((additions) => {
@@ -143,7 +148,12 @@
 					});
 				}),
 				$directus.request<[{sum: { amount: number }, date: 'datetime'}]>(aggregate('gp_credits_deductions', {
-					query: { filter: { user_id: { _eq: user.value.id }, date: { _gte: '$NOW(-30 day)' } } },
+					query: {
+						filter: {
+							...getUserFilter('user_id'),
+							date: { _gte: '$NOW(-30 day)' },
+						},
+					},
 					groupBy: [ 'date' ],
 					aggregate: { sum: 'amount' },
 				})).then((deduction) => {
@@ -153,7 +163,12 @@
 					});
 				}),
 				$directus.request<[{count: number}]>(aggregate('gp_probes', {
-					query: { filter: { ...getUserFilter(), onlineTimesToday: { _gt: 0 } } },
+					query: {
+						filter: {
+							...getUserFilter('userId'),
+							onlineTimesToday: { _gt: 0 },
+						},
+					},
 					aggregate: { count: '*' },
 				})),
 			]);
@@ -165,7 +180,7 @@
 		}
 	}, {
 		default: () => ({ total: 0, additions: [], deductions: [], todayOnlineProbes: 0 }),
-		watch: [ () => adminMode.value, () => debouncedImpersonatedUser.value ],
+		watch: [ adminMode, impersonation ],
 	});
 
 	const totalAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + addition.amount, 0));
@@ -188,16 +203,30 @@
 				} })),
 				$directus.request<[{count: number}]>(aggregate('gp_credits_additions', {
 					aggregate: { count: '*' },
-					query: { filter: { github_id: { _eq: user.value.external_identifier || 'admin' }, reason: { _neq: 'adopted_probe' } } },
+					query: {
+						filter: {
+							github_id: { _eq: getUserFilter('github_id')?.github_id?._eq || 'admin' },
+							reason: { _neq: 'adopted_probe' },
+						},
+					},
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_credits_additions', {
 					aggregate: { count: '*' },
 					groupBy: [ 'date_created' ],
-					query: { filter: { github_id: { _eq: user.value.external_identifier || 'admin' }, reason: { _eq: 'adopted_probe' } } },
+					query: {
+						filter: {
+							github_id: { _eq: getUserFilter('github_id')?.github_id?._eq || 'admin' },
+							reason: { _eq: 'adopted_probe' },
+						},
+					},
 				})).then(additions => additions.length),
 				$directus.request<[{count: number}]>(aggregate('gp_credits_deductions', {
 					aggregate: { count: '*' },
-					query: { filter: { user_id: { _eq: user.value.id } } },
+					query: {
+						filter: {
+							...getUserFilter('user_id'),
+						},
+					},
 				})),
 			]);
 
@@ -224,7 +253,7 @@
 		await loadLazyData();
 	});
 
-	watch(page, async () => {
+	watch([ page, adminMode, impersonation ], async () => {
 		await loadLazyData();
 	});
 

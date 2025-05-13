@@ -5,6 +5,13 @@ interface AuthState {
 	isLoggedIn: boolean,
 	expiresAt: number,
 	isAdmin: boolean,
+	impersonation: {
+		originalUser: User & {
+			last_page: string | null,
+		},
+		github_username: string,
+	} | null,
+	adminMode: boolean,
 	user: User & {
 		last_page: string | null,
 	}
@@ -15,6 +22,8 @@ export const useAuth = defineStore('auth', {
 		isLoggedIn: false,
 		expiresAt: 0,
 		isAdmin: false,
+		impersonation: null,
+		adminMode: false,
 		user: {
 			id: '',
 			first_name: '',
@@ -49,6 +58,51 @@ export const useAuth = defineStore('auth', {
 
 			return redirectUrl.toString();
 		},
+		impersonate (user: User & { github_username: string }) {
+			this.adminMode = false;
+
+			this.impersonation = {
+				originalUser: this.user,
+				github_username: user.github_username,
+			};
+
+			this.user = {
+				...user,
+				last_page: this.user.last_page,
+			};
+
+			this.storeAdminConfig();
+		},
+		clearImpersonation () {
+			this.user = this.impersonation?.originalUser || this.user;
+			this.impersonation = null;
+			this.storeAdminConfig();
+		},
+		storeAdminConfig () {
+			localStorage.setItem('adminConfig', JSON.stringify({
+				adminMode: this.adminMode,
+				impersonation: {
+					...this.impersonation,
+					user: this.impersonation ? this.user : null,
+				},
+			}));
+		},
+		applyAdminConfig () {
+			try {
+				const adminConfig = JSON.parse(localStorage.getItem('adminConfig') || '');
+				this.adminMode = adminConfig?.adminMode || false;
+				this.impersonation = adminConfig?.impersonation || null;
+
+				if (this.impersonation) {
+					this.user = adminConfig.impersonation.user;
+				}
+			} catch {
+				localStorage.setItem('adminConfig', JSON.stringify({ adminMode: false, impersonation: null }));
+			}
+		},
+		clearAdminConfig () {
+			localStorage.removeItem('adminConfig');
+		},
 		async login () {
 			const config = useRuntimeConfig();
 			const redirect = this.getRedirectUrl();
@@ -75,6 +129,10 @@ export const useAuth = defineStore('auth', {
 				this.expiresAt = Number(expires_at);
 				this.user = user as AuthState['user'];
 				this.isAdmin = !!roles.some(role => role.name === 'Administrator');
+
+				if (this.isAdmin) {
+					this.applyAdminConfig();
+				}
 			} catch (error) {
 				console.error(error);
 			}

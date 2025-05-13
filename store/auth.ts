@@ -10,6 +10,9 @@ interface AuthState {
 			last_page: string | null,
 		},
 		github_username: string,
+		impersonatedUser: User & {
+			last_page: string | null,
+		} | null,
 	} | null,
 	adminMode: boolean,
 	user: User & {
@@ -64,6 +67,10 @@ export const useAuth = defineStore('auth', {
 			this.impersonation = {
 				originalUser: this.user,
 				github_username: user.github_username,
+				impersonatedUser: {
+					...user,
+					last_page: this.user.last_page,
+				},
 			};
 
 			this.user = {
@@ -81,20 +88,17 @@ export const useAuth = defineStore('auth', {
 		storeAdminConfig () {
 			localStorage.setItem('adminConfig', JSON.stringify({
 				adminMode: this.adminMode,
-				impersonation: {
-					...this.impersonation,
-					user: this.impersonation ? this.user : null,
-				},
+				impersonation: this.impersonation,
 			}));
 		},
 		applyAdminConfig () {
 			try {
-				const adminConfig = JSON.parse(localStorage.getItem('adminConfig') || '');
+				const adminConfig: Pick<AuthState, 'adminMode' | 'impersonation'> = JSON.parse(localStorage.getItem('adminConfig') || '');
 				this.adminMode = adminConfig?.adminMode || false;
 				this.impersonation = adminConfig?.impersonation || null;
 
 				if (this.impersonation) {
-					this.user = adminConfig.impersonation.user;
+					this.user = this.impersonation.impersonatedUser || this.user;
 				}
 			} catch {
 				localStorage.setItem('adminConfig', JSON.stringify({ adminMode: false, impersonation: null }));

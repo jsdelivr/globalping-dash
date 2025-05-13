@@ -42,7 +42,7 @@
 
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
-	const { user } = storeToRefs(auth);
+	const { user, adminMode, impersonation } = storeToRefs(auth);
 	const { updateHeaderNotifications } = useNotifications();
 
 	defineProps({
@@ -64,6 +64,10 @@
 	};
 
 	onMounted(async () => {
+		await updateHeaderNotifications();
+	});
+
+	watch([ adminMode, impersonation ], async () => {
 		await updateHeaderNotifications();
 	});
 </script>

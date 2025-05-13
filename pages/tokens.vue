@@ -278,7 +278,11 @@
 		await loadTokens();
 	});
 
-	watch([ tokensPage, adminMode, impersonation ], async () => {
+	watch([ adminMode, impersonation, tokensPage ], async ([ adminMode, impersonation ], [ oldAdminMode, oldImpersonation ]) => {
+		if (adminMode !== oldAdminMode || impersonation !== oldImpersonation) {
+			tokensPage.value = 0;
+		}
+
 		resetState();
 		await loadTokens();
 	});

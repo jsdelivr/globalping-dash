@@ -239,7 +239,7 @@
 				<div class="flex items-center justify-between gap-2">
 					<span class="shrink-0 text-sm">Impersonate User:</span>
 					<div class="flex items-center gap-2">
-						<InputText v-model="impersonateUsername" placeholder="Enter username" class="w-full"/>
+						<InputText v-model="impersonateUsername" placeholder="Enter username" class="w-full" @keydown.enter="applyImpersonation"/>
 						<Button
 							v-if="impersonateUsername"
 							text
@@ -251,9 +251,12 @@
 						<Button
 							text
 							rounded
+							:disabled="impersonationLoading"
+							:loading="impersonationLoading"
 							@click="applyImpersonation"
 						>
-							Apply
+							<i v-if="impersonationLoading" class="pi pi-spin pi-spinner"/>
+							<span v-else>Apply</span>
 						</Button>
 					</div>
 				</div>
@@ -281,11 +284,12 @@
 
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
-	const { user, adminMode } = storeToRefs(auth);
+	const { user, adminMode, impersonation } = storeToRefs(auth);
 	const { headerNotifications, inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead, updateHeaderNotifications } = useNotifications();
 
 	const impersonateUsername = ref(auth.impersonation?.github_username || '');
 	const impersonationError = ref('');
+	const impersonationLoading = ref(false);
 	const isFormDirty = ref(false);
 	provide('form-dirty', isFormDirty);
 
@@ -317,6 +321,7 @@
 				throw new Error('Please enter a username to impersonate');
 			}
 
+			impersonationLoading.value = true;
 			const users = await $directus.request<User[]>(customEndpoint({
 				method: 'GET',
 				path: '/users',
@@ -336,6 +341,8 @@
 		} catch (error) {
 			console.error(error);
 			impersonationError.value = error instanceof Error ? error.message : 'An unknown error occurred';
+		} finally {
+			impersonationLoading.value = false;
 		}
 	};
 
@@ -345,6 +352,10 @@
 	};
 
 	updateHeaderNotifications();
+
+	watch([ adminMode, impersonation ], async () => {
+		await updateHeaderNotifications();
+	});
 
 	// NOTIFICATIONS END
 

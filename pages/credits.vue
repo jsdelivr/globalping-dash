@@ -130,7 +130,7 @@
 		try {
 			const [ total, additions, deductions, todayOnlineProbes ] = await Promise.all([
 				$directus.request<{amount: number}[]>(readItems('gp_credits', {
-					filter: getUserFilter('userId'),
+					filter: getUserFilter('user_id'),
 				})),
 				$directus.request<[{sum: { amount: number }, date_created: 'datetime'}]>(aggregate('gp_credits_additions', {
 					query: {

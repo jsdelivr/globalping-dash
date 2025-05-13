@@ -61,11 +61,15 @@ export const useAuth = defineStore('auth', {
 
 			return redirectUrl.toString();
 		},
-		impersonate (user: User & { github_username: string }) {
+		impersonate (user: User) {
+			if (!user.github_username || !this.isAdmin) {
+				return;
+			}
+
 			this.adminMode = false;
 
 			this.impersonation = {
-				originalUser: this.user,
+				originalUser: this.impersonation?.originalUser || this.user,
 				github_username: user.github_username,
 				impersonatedUser: {
 					...user,
@@ -94,6 +98,17 @@ export const useAuth = defineStore('auth', {
 		applyAdminConfig () {
 			try {
 				const adminConfig: Pick<AuthState, 'adminMode' | 'impersonation'> = JSON.parse(localStorage.getItem('adminConfig') || '');
+
+				if (
+					typeof adminConfig?.adminMode !== 'boolean'
+					|| typeof adminConfig?.impersonation !== 'object'
+					|| typeof adminConfig?.impersonation?.github_username !== 'string'
+					|| typeof adminConfig?.impersonation?.originalUser?.id !== 'string'
+				) {
+					this.clearAdminConfig();
+					return;
+				}
+
 				this.adminMode = adminConfig?.adminMode || false;
 				this.impersonation = adminConfig?.impersonation || null;
 

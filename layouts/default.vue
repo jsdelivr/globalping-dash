@@ -232,6 +232,7 @@
 			:pt:content="{ class: 'flex items-center !rounded-xl border dark:border-[var(--table-border)]'}"
 		>
 			<div class="flex w-[calc(100vw-32px)] flex-col gap-4 rounded-xl p-4 sm:w-[37rem] sm:p-6">
+				<p class="text-sm font-semibold">Admin Panel</p>
 				<div class="flex items-center justify-between gap-2">
 					<span class="text-sm">Admin Mode:</span>
 					<ToggleSwitch v-model="auth.adminMode"/>
@@ -239,7 +240,7 @@
 				<div class="flex items-center justify-between gap-2">
 					<span class="shrink-0 text-sm">Impersonate User:</span>
 					<div class="flex items-center gap-2">
-						<InputText v-model="impersonateUsername" placeholder="Enter username" class="w-full" @keydown.enter="applyImpersonation"/>
+						<InputText v-model="impersonateUsername" placeholder="Enter username" class="w-full" @keydown.enter="checkImpersonation"/>
 						<Button
 							v-if="impersonateUsername"
 							text
@@ -253,14 +254,23 @@
 							rounded
 							:disabled="impersonationLoading"
 							:loading="impersonationLoading"
-							@click="applyImpersonation"
+							@click="checkImpersonation"
 						>
 							<i v-if="impersonationLoading" class="pi pi-spin pi-spinner"/>
-							<span v-else>Apply</span>
+							<span v-else>Search</span>
 						</Button>
 					</div>
 				</div>
 				<div v-if="impersonationError" class="text-red-500">{{ impersonationError }}</div>
+				<div v-if="impersonationList.length" class="flex flex-col gap-2">
+					<p class="text-sm font-semibold">Select a user to impersonate:</p>
+					<div v-for="item in impersonationList" :key="item.id" class="flex items-center gap-2">
+						<p>{{ item.first_name }} {{ item.last_name }}</p>
+						<Button text rounded @click="applyImpersonation(item)">
+							Apply
+						</Button>
+					</div>
+				</div>
 				<div class="flex items-center justify-end gap-2">
 					<Button v-if="auth.impersonation" @click="clearImpersonation">
 						Stop Impersonation
@@ -290,6 +300,7 @@
 	const impersonateUsername = ref(auth.impersonation?.github_username || '');
 	const impersonationError = ref('');
 	const impersonationLoading = ref(false);
+	const impersonationList = ref<User[]>([]);
 	const isFormDirty = ref(false);
 	provide('form-dirty', isFormDirty);
 
@@ -309,8 +320,9 @@
 		adminPanel.value.toggle(event);
 	};
 
-	const applyImpersonation = async (event: Event) => {
+	const checkImpersonation = async () => {
 		impersonationError.value = '';
+		impersonationList.value = [];
 
 		try {
 			if (!auth.isAdmin) {
@@ -336,18 +348,23 @@
 				throw new Error('User not found');
 			}
 
-			auth.impersonate(users[0] as User & { github_username: string });
-			adminPanel.value.toggle(event);
+			impersonationList.value = users as (User & { github_username: string })[];
 		} catch (error) {
-			console.error(error);
+			console.error('Error during impersonation:', error instanceof Error ? error.message : 'Unknown error');
 			impersonationError.value = error instanceof Error ? error.message : 'An unknown error occurred';
 		} finally {
 			impersonationLoading.value = false;
 		}
 	};
 
+	const applyImpersonation = (user: User) => {
+		auth.impersonate(user);
+		adminPanel.value.toggle();
+	};
+
 	const clearImpersonation = () => {
 		auth.clearImpersonation();
+		impersonationList.value = [];
 		impersonateUsername.value = '';
 	};
 

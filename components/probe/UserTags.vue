@@ -65,16 +65,35 @@
 								<br>
 
 								Outdated format:<br>
-								<span v-for="(tag, index) in probe.tags" :key="index">
-									<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${tag.prefix}-${tag.value}`"/>
-								</span>
+
+								<div v-if="probe" class="flex w-full flex-wrap gap-1">
+									<span
+										v-for="(tag, index) in probe.tags"
+										:key="index"
+										class="inline-flex h-6 max-w-full items-center overflow-hidden truncate rounded-md border border-surface-300 bg-white px-2 text-xs text-[#a16207] dark:border-dark-600 dark:bg-[#17233a] dark:text-[#fde047]"
+										:title="`u-${tag.prefix}-${tag.value}`"
+									>
+										<span class="block truncate">
+											{{ `u-${tag.prefix}-${tag.value}` }}
+										</span>
+									</span>
+								</div>
 								<br>
 								<br>
 
 								New format:<br>
-								<span v-for="(tag, index) in probe.tags" :key="index">
-									<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${tag.prefix}:${tag.value}`"/>
-								</span>
+								<div v-if="probe" class="flex w-full flex-wrap gap-1">
+									<span
+										v-for="(tag, index) in probe.tags"
+										:key="index"
+										class="inline-flex h-6 max-w-full items-center overflow-hidden truncate rounded-md border border-surface-300 bg-white px-2 text-xs text-[#a16207] dark:border-dark-600 dark:bg-[#17233a] dark:text-[#fde047]"
+										:title="`u-${tag.prefix}:${tag.value}`"
+									>
+										<span class="block truncate">
+											{{ `u-${tag.prefix}:${tag.value}` }}
+										</span>
+									</span>
+								</div>
 							</div>
 						</Message>
 

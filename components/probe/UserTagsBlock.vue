@@ -13,33 +13,31 @@
 			</p>
 
 			<div class="flex w-full gap-1">
-				<div v-if="probe" class="flex w-full flex-wrap gap-1">
-					<ProbeUserTagsList
-						:tags="probe.tags"
-						:tag-format="probe.tags[0].format"
-						custom-class="text-bluegray-900 dark:border-dark-600 dark:text-bluegray-0"
-					>
-						<template #edit-button>
-							<Button
-								class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent dark:!border-dark-600 dark:bg-dark-600"
-								:aria-label="probe.tags.length ? 'Open edit tags dialog' : 'Open add tags dialog'"
-								aria-haspopup="dialog"
-								:aria-expanded="tagPopoverRef?.value?.visible || false"
-								aria-controls="editTagsPopover"
-								@click="openEditTagsPopover($event)"
-							>
-								<i
-									class="pi text-sm text-dark-800 dark:text-bluegray-0"
-									:class="{
-										'pi-pencil': probe.tags.length,
-										'pi-plus': !probe.tags.length,
-									}"
-								/>
-								<span class="text-xs text-dark-800 dark:text-bluegray-0">{{ probe.tags.length ? 'Edit' : 'Add' }}</span>
-							</Button>
-						</template>
-					</ProbeUserTagsList>
-				</div>
+				<ProbeUserTagsList
+					:tags="probe.tags"
+					:tag-format="probe.tags[0].format"
+					custom-class="text-bluegray-900 dark:border-dark-600 dark:text-bluegray-0"
+				>
+					<template #edit-button>
+						<Button
+							class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent dark:!border-dark-600 dark:bg-dark-600"
+							:aria-label="probe.tags.length ? 'Open edit tags dialog' : 'Open add tags dialog'"
+							aria-haspopup="dialog"
+							:aria-expanded="tagPopoverRef?.value?.visible || false"
+							aria-controls="editTagsPopover"
+							@click="openEditTagsPopover($event)"
+						>
+							<i
+								class="pi text-sm text-dark-800 dark:text-bluegray-0"
+								:class="{
+									'pi-pencil': probe.tags.length,
+									'pi-plus': !probe.tags.length,
+								}"
+							/>
+							<span class="text-xs text-dark-800 dark:text-bluegray-0">{{ probe.tags.length ? 'Edit' : 'Add' }}</span>
+						</Button>
+					</template>
+				</ProbeUserTagsList>
 
 				<Popover
 					id="editTagsPopover"
@@ -56,21 +54,19 @@
 							<p class="font-bold">The tags format has changed</p>
 
 							<div class="mt-1">
-								Your tags use an outdated format and will be converted to the new format after saving.
-								Please be sure to use the updated tags in all future requests.
-								<br>
-								<br>
+								<p>
+									Your tags use an outdated format and will be converted to the new format after saving.
+									Please be sure to use the updated tags in all future requests.
+								</p>
 
-								Outdated format:<br>
+								<p class="mb-1 mt-5">Outdated format:</p>
 								<ProbeUserTagsList
 									:tags="probe.tags"
 									tag-format="v1"
 									custom-class="bg-white text-[#a16207] dark:border-dark-600 dark:bg-[#17233a] dark:text-[#fde047]"
 								/>
-								<br>
-								<br>
 
-								New format:<br>
+								<p class="mb-1 mt-4">New format:</p>
 								<ProbeUserTagsList
 									:tags="probe.tags"
 									custom-class="bg-white text-[#a16207] dark:border-dark-600 dark:bg-[#17233a] dark:text-[#fde047]"

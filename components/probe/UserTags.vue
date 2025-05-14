@@ -14,34 +14,31 @@
 
 			<div class="flex w-full gap-1">
 				<div v-if="probe" class="flex w-full flex-wrap gap-1">
-					<span
-						v-for="(tag, index) in probe.tags"
-						:key="index"
-						class="inline-flex h-6 max-w-full items-center overflow-hidden truncate rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600 dark:text-bluegray-0"
-						:title="`u-${tag.prefix}${probe.tags[0].format === 'v1' ? '-' : ':'}${tag.value}`"
+					<ProbeUserTagsList
+						:tags="probe.tags"
+						:tag-format="probe.tags[0].format"
+						custom-class="text-bluegray-900 dark:border-dark-600 dark:text-bluegray-0"
 					>
-						<span class="block truncate">
-							{{ `u-${tag.prefix}${probe.tags[0].format === 'v1' ? '-' : ':'}${tag.value}` }}
-						</span>
-					</span>
-
-					<Button
-						class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent dark:!border-dark-600 dark:bg-dark-600"
-						:aria-label="probe.tags.length ? 'Open edit tags dialog' : 'Open add tags dialog'"
-						aria-haspopup="dialog"
-						:aria-expanded="tagPopoverRef?.value?.visible || false"
-						aria-controls="editTagsPopover"
-						@click="openEditTagsPopover($event)"
-					>
-						<i
-							class="pi text-sm text-dark-800 dark:text-bluegray-0"
-							:class="{
-								'pi-pencil': probe.tags.length,
-								'pi-plus': !probe.tags.length,
-							}"
-						/>
-						<span class="text-xs text-dark-800 dark:text-bluegray-0">{{ probe.tags.length ? 'Edit' : 'Add' }}</span>
-					</Button>
+						<template #edit-button>
+							<Button
+								class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent dark:!border-dark-600 dark:bg-dark-600"
+								:aria-label="probe.tags.length ? 'Open edit tags dialog' : 'Open add tags dialog'"
+								aria-haspopup="dialog"
+								:aria-expanded="tagPopoverRef?.value?.visible || false"
+								aria-controls="editTagsPopover"
+								@click="openEditTagsPopover($event)"
+							>
+								<i
+									class="pi text-sm text-dark-800 dark:text-bluegray-0"
+									:class="{
+										'pi-pencil': probe.tags.length,
+										'pi-plus': !probe.tags.length,
+									}"
+								/>
+								<span class="text-xs text-dark-800 dark:text-bluegray-0">{{ probe.tags.length ? 'Edit' : 'Add' }}</span>
+							</Button>
+						</template>
+					</ProbeUserTagsList>
 				</div>
 
 				<Popover
@@ -65,35 +62,19 @@
 								<br>
 
 								Outdated format:<br>
-
-								<div v-if="probe" class="flex w-full flex-wrap gap-1">
-									<span
-										v-for="(tag, index) in probe.tags"
-										:key="index"
-										class="inline-flex h-6 max-w-full items-center overflow-hidden truncate rounded-md border border-surface-300 bg-white px-2 text-xs text-[#a16207] dark:border-dark-600 dark:bg-[#17233a] dark:text-[#fde047]"
-										:title="`u-${tag.prefix}-${tag.value}`"
-									>
-										<span class="block truncate">
-											{{ `u-${tag.prefix}-${tag.value}` }}
-										</span>
-									</span>
-								</div>
+								<ProbeUserTagsList
+									:tags="probe.tags"
+									tag-format="v1"
+									custom-class="bg-white text-[#a16207] dark:border-dark-600 dark:bg-[#17233a] dark:text-[#fde047]"
+								/>
 								<br>
 								<br>
 
 								New format:<br>
-								<div v-if="probe" class="flex w-full flex-wrap gap-1">
-									<span
-										v-for="(tag, index) in probe.tags"
-										:key="index"
-										class="inline-flex h-6 max-w-full items-center overflow-hidden truncate rounded-md border border-surface-300 bg-white px-2 text-xs text-[#a16207] dark:border-dark-600 dark:bg-[#17233a] dark:text-[#fde047]"
-										:title="`u-${tag.prefix}:${tag.value}`"
-									>
-										<span class="block truncate">
-											{{ `u-${tag.prefix}:${tag.value}` }}
-										</span>
-									</span>
-								</div>
+								<ProbeUserTagsList
+									:tags="probe.tags"
+									custom-class="bg-white text-[#a16207] dark:border-dark-600 dark:bg-[#17233a] dark:text-[#fde047]"
+								/>
 							</div>
 						</Message>
 

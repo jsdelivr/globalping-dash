@@ -27,7 +27,7 @@
 			</div>
 
 			<div class="grid auto-rows-max grid-cols-1 gap-4">
-				<ProbeUserTags v-model:probe="probe" v-model:probe-details-updating="probeDetailsUpdating"/>
+				<ProbeUserTagsBlock v-model:probe="probe" v-model:probe-details-updating="probeDetailsUpdating"/>
 
 				<div class="flex flex-col self-start rounded-xl border border-surface-300 bg-white dark:border-dark-600 dark:bg-dark-800">
 					<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600 dark:text-bluegray-0">

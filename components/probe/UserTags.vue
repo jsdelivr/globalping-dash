@@ -195,7 +195,6 @@
 	const { $directus } = useNuxtApp();
 	const emit = defineEmits([ 'save' ]);
 
-	// HANDLE TAGS EDITING
 	const uPrefixes = [ user.value.github_username, ...user.value.github_organizations ]
 		// Make default prefix the first option
 		.sort((prefixA, prefixB) => prefixA === user.value.default_prefix ? -1 : prefixB === user.value.default_prefix ? 1 : 0)

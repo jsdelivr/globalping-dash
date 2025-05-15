@@ -376,11 +376,6 @@
 
 	updateHeaderNotifications();
 
-	watch([ adminMode ], async () => {
-		auth.storeAdminConfig();
-		window.location.reload();
-	});
-
 	// NOTIFICATIONS END
 
 	// PROFILE

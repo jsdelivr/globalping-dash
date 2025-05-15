@@ -4,7 +4,7 @@
 		class="absolute inset-x-4 bottom-9 flex h-[38px]"
 	>
 		<span
-			class="flex h-full shrink-0 items-center justify-center !rounded-r-none rounded-l-md border border-r-0 border-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600"
+			class="flex h-full shrink-0 items-center justify-center !rounded-r-none rounded-l-md border border-r-0 border-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600 dark:bg-dark-800"
 			aria-hidden="true"
 			:class="{
 				'w-[38px]': probe.allowedCountries.length <= 1,

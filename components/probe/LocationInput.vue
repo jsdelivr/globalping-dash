@@ -136,6 +136,7 @@
 	const editedCountry = ref('');
 	const originalCountry = ref('');
 	const inputCityRef = ref<HTMLInputElement | null>(null);
+	const ignoreSelectEnter = ref(false);
 	const city = computed(() => {
 		return probe.value ? probe.value.city : '';
 	});
@@ -160,6 +161,8 @@
 		// then delay again to let Select finish its focus handling
 		setTimeout(() => {
 			enableCityEditing();
+			// flag to suppress unintended Enter on sibling input after keyboard selection in PrimeVue Select
+			ignoreSelectEnter.value = true;
 		}, 0);
 	};
 
@@ -205,7 +208,16 @@
 		}
 	};
 
-	const updateProbeLocation = async (event: Event) => {
+	const updateProbeLocation = async (event: MouseEvent | KeyboardEvent) => {
+		// prevent Enter key from triggering input's handler right after Select change via keyboard
+		// required because PrimeVue Select doesn't fully isolate Enter behavior
+		if (ignoreSelectEnter.value && 'key' in event && event.key === 'Enter') {
+			ignoreSelectEnter.value = false;
+			event.preventDefault();
+			event.stopPropagation();
+			return;
+		}
+
 		event.stopPropagation();
 
 		probeDetailsUpdating.value = true;

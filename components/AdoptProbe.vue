@@ -226,15 +226,12 @@
 <script setup lang="ts">
 	import { customEndpoint, readItems } from '@directus/sdk';
 	import { useUserFilter } from '~/composables/useUserFilter';
-	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 	import { smoothResize } from '~/utils/smooth-resize';
 	import { validateIp } from '~/utils/validate-ip';
 
 	const { $directus } = useNuxtApp();
 	const { getUserFilter } = useUserFilter();
-	const auth = useAuth();
-	const { adminMode, impersonation } = storeToRefs(auth);
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 
 	const activeStep = ref('0');
@@ -279,10 +276,7 @@
 		}));
 
 		return result;
-	}, {
-		default: () => [],
-		watch: [ adminMode, impersonation ],
-	});
+	}, { default: () => [] });
 
 	const searchNewProbes = async (activateCallback: Function) => {
 		activateCallback('2');

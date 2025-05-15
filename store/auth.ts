@@ -83,27 +83,31 @@ export const useAuth = defineStore('auth', {
 			};
 
 			this.storeAdminConfig();
+			window.location.reload();
 		},
 		clearImpersonation () {
 			this.user = this.impersonation?.originalUser || this.user;
 			this.impersonation = null;
 			this.storeAdminConfig();
+			window.location.reload();
 		},
 		storeAdminConfig () {
-			localStorage.setItem('adminConfig', JSON.stringify({
+			sessionStorage.setItem('adminConfig', JSON.stringify({
 				adminMode: this.adminMode,
 				impersonation: this.impersonation,
 			}));
 		},
 		applyAdminConfig () {
 			try {
-				const adminConfig: Pick<AuthState, 'adminMode' | 'impersonation'> = JSON.parse(localStorage.getItem('adminConfig') || '');
+				const adminConfig: Pick<AuthState, 'adminMode' | 'impersonation'> = JSON.parse(sessionStorage.getItem('adminConfig') || '');
 
 				if (
 					typeof adminConfig?.adminMode !== 'boolean'
-					|| typeof adminConfig?.impersonation !== 'object'
-					|| typeof adminConfig?.impersonation?.github_username !== 'string'
-					|| typeof adminConfig?.impersonation?.originalUser?.id !== 'string'
+					|| (adminConfig?.impersonation !== null && (
+						typeof adminConfig?.impersonation !== 'object'
+						|| typeof adminConfig?.impersonation?.github_username !== 'string'
+						|| typeof adminConfig?.impersonation?.originalUser?.id !== 'string'
+					))
 				) {
 					this.clearAdminConfig();
 					return;
@@ -116,11 +120,11 @@ export const useAuth = defineStore('auth', {
 					this.user = this.impersonation.impersonatedUser || this.user;
 				}
 			} catch {
-				localStorage.setItem('adminConfig', JSON.stringify({ adminMode: false, impersonation: null }));
+				sessionStorage.setItem('adminConfig', JSON.stringify({ adminMode: false, impersonation: null }));
 			}
 		},
 		clearAdminConfig () {
-			localStorage.removeItem('adminConfig');
+			sessionStorage.removeItem('adminConfig');
 		},
 		async login () {
 			const config = useRuntimeConfig();

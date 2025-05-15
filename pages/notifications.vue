@@ -75,15 +75,12 @@
 	import { usePagination } from '~/composables/pagination';
 	import { useNotifications } from '~/composables/useNotifications';
 	import { useUserFilter } from '~/composables/useUserFilter';
-	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const route = useRoute();
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
-	const auth = useAuth();
-	const { adminMode, impersonation } = storeToRefs(auth);
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 	const displayedNotifications = ref<DirectusNotification[]>([]);
@@ -113,7 +110,7 @@
 			filter: getUserFilter('recipient'),
 			sort: [ '-timestamp' ],
 		}));
-	}, { default: () => [], watch: [ adminMode, impersonation ] });
+	}, { default: () => [] });
 
 	displayedNotifications.value = notifications.value;
 
@@ -131,7 +128,7 @@
 				count: [ 'id' ],
 			},
 		}));
-	}, { default: () => [], watch: [ adminMode, impersonation ] });
+	}, { default: () => [] });
 
 	notificationsCount.value = (cntResponse.value as NotificationCntResponse)?.[0]?.count?.id ?? 0;
 
@@ -161,7 +158,7 @@
 	};
 
 	// get notifications depending on the selected page in Paginator
-	watch([ page, adminMode, impersonation ], async () => {
+	watch([ page ], async () => {
 		await loadNotifications(page.value);
 	});
 </script>

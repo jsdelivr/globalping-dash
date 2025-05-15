@@ -257,7 +257,7 @@
 							@click="checkImpersonation"
 						>
 							<i v-if="impersonationLoading" class="pi pi-spin pi-spinner"/>
-							<span v-else>Search</span>
+							<span v-else>Apply</span>
 						</Button>
 					</div>
 				</div>
@@ -312,7 +312,9 @@
 
 	// ADMIN
 	watch([ adminMode ], () => {
+		impersonation.value = null;
 		auth.storeAdminConfig();
+		window.location.reload();
 	});
 
 	const adminPanel = ref();
@@ -349,6 +351,10 @@
 			}
 
 			impersonationList.value = users as (User & { github_username: string })[];
+
+			if (impersonationList.value.length === 1) {
+				applyImpersonation(impersonationList.value[0]);
+			}
 		} catch (error) {
 			console.error('Error during impersonation:', error instanceof Error ? error.message : 'Unknown error');
 			impersonationError.value = error instanceof Error ? error.message : 'An unknown error occurred';
@@ -370,8 +376,9 @@
 
 	updateHeaderNotifications();
 
-	watch([ adminMode, impersonation ], async () => {
-		await updateHeaderNotifications();
+	watch([ adminMode ], async () => {
+		auth.storeAdminConfig();
+		window.location.reload();
 	});
 
 	// NOTIFICATIONS END

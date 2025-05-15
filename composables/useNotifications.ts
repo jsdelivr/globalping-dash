@@ -1,6 +1,5 @@
 import { readNotifications, updateNotifications } from '@directus/sdk';
 import { useUserFilter } from './useUserFilter';
-import { useAuth } from '~/store/auth';
 
 const inboxNotificationIds = useState<string[]>('inboxNotifIds', () => []);
 
@@ -18,8 +17,6 @@ notificationBus.on((idsToArchive) => {
 export const useNotifications = () => {
 	const { $directus } = useNuxtApp();
 	const { getUserFilter } = useUserFilter();
-	const auth = useAuth();
-	const { adminMode, impersonation } = storeToRefs(auth);
 	const notificationBus = useEventBus<string[]>('notification-updated');
 
 	const updateInboxNotificationIds = async () => {
@@ -81,10 +78,6 @@ export const useNotifications = () => {
 
 	// Fetch inbox notification IDs immediately for the counter and mark-all-as-read button.
 	updateInboxNotificationIds();
-
-	watch([ adminMode, impersonation ], async () => {
-		await updateInboxNotificationIds();
-	});
 
 	return {
 		inboxNotificationIds,

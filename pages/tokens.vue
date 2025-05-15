@@ -217,7 +217,6 @@
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
 	import { useUserFilter } from '~/composables/useUserFilter';
-	import { useAuth } from '~/store/auth';
 	import { formatDate, getRelativeTimeString } from '~/utils/date-formatters';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
@@ -227,8 +226,6 @@
 
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
-	const auth = useAuth();
-	const { adminMode, impersonation } = storeToRefs(auth);
 	const { getUserFilter } = useUserFilter();
 
 	const itemsPerPage = ref(Math.round(config.public.itemsPerTablePage / 2));
@@ -278,11 +275,7 @@
 		await loadTokens();
 	});
 
-	watch([ adminMode, impersonation, tokensPage ], async ([ adminMode, impersonation ], [ oldAdminMode, oldImpersonation ]) => {
-		if (adminMode !== oldAdminMode || impersonation !== oldImpersonation) {
-			tokensPage.value = 0;
-		}
-
+	watch([ tokensPage ], async () => {
 		resetState();
 		await loadTokens();
 	});

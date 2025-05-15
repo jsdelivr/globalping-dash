@@ -161,7 +161,7 @@
 	const { $directus } = useNuxtApp();
 
 	const auth = useAuth();
-	const { user, adminMode, impersonation } = storeToRefs(auth);
+	const { user } = storeToRefs(auth);
 	const metadata = useMetadata();
 	const { getUserFilter } = useUserFilter();
 
@@ -173,10 +173,7 @@
 			limit: 1,
 		}));
 		return !!adoptions.length;
-	}, {
-		default: () => false,
-		watch: [ adminMode, impersonation ],
-	});
+	}, { default: () => false });
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 	const creditsPerDollar = metadata.creditsPerDollar;

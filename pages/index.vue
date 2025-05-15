@@ -189,7 +189,7 @@
 	const { $directus } = useNuxtApp();
 	const creditsPerAdoptedProbe = useMetadata().creditsPerAdoptedProbe;
 	const auth = useAuth();
-	const { user, adminMode, impersonation } = storeToRefs(auth);
+	const { user } = storeToRefs(auth);
 	const { getUserFilter } = useUserFilter();
 
 	// SUMMARY
@@ -206,10 +206,7 @@
 			sendErrorToast(e);
 			throw e;
 		}
-	}, {
-		default: () => [],
-		watch: [ adminMode, impersonation ],
-	});
+	}, { default: () => [] });
 
 	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status === 'ready'));
 	const offlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status !== 'ready'));
@@ -252,7 +249,7 @@
 			sendErrorToast(e);
 			throw e;
 		}
-	}, { default: () => {}, watch: [ adminMode, impersonation ] });
+	}, { default: () => {} });
 
 	const total = computed(() => {
 		const creditsObj = credits.value?.total.find(({ user_id }) => user_id === user.value.id);

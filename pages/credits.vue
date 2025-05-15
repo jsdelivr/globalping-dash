@@ -102,7 +102,6 @@
 	import { aggregate, customEndpoint, readItems } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
 	import { useUserFilter } from '~/composables/useUserFilter';
-	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
 	import { formatDateForTable } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
@@ -112,8 +111,6 @@
 	});
 
 	const config = useRuntimeConfig();
-	const auth = useAuth();
-	const { adminMode, impersonation } = storeToRefs(auth);
 	const { $directus } = useNuxtApp();
 	const metadata = useMetadata();
 	const route = useRoute();
@@ -180,7 +177,6 @@
 		}
 	}, {
 		default: () => ({ total: 0, additions: [], deductions: [], todayOnlineProbes: 0 }),
-		watch: [ adminMode, impersonation ],
 	});
 
 	const totalAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + addition.amount, 0));
@@ -253,7 +249,7 @@
 		await loadLazyData();
 	});
 
-	watch([ page, adminMode, impersonation ], async () => {
+	watch([ page ], async () => {
 		await loadLazyData();
 	});
 

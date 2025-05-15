@@ -209,12 +209,9 @@
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
 	import { useUserFilter } from '~/composables/useUserFilter';
-	import { useAuth } from '~/store/auth';
 	import { getProbeStatus } from '~/utils/probe-status';
 	import { sendErrorToast } from '~/utils/send-toast';
 
-	const auth = useAuth();
-	const { adminMode, impersonation } = storeToRefs(auth);
 	const config = useRuntimeConfig();
 
 	const { $directus } = useNuxtApp();
@@ -306,8 +303,6 @@
 	watch([
 		() => page.value,
 		() => route.params.id,
-		adminMode,
-		impersonation,
 	], async ([ newPage, newId ], [ oldPage, oldId ]) => {
 		if (newPage !== oldPage && !oldId && !newId) {
 			await loadLazyData();

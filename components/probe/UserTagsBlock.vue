@@ -49,30 +49,32 @@
 					role="dialog"
 					:aria-label="probe.tags.length ? 'Edit tags dialog' : 'Add tags dialog'"
 				>
-					<div class="flex flex-col">
-						<Message v-if="probe.tags[0]?.format === 'v1'" severity="warn" class="mb-1">
+					<div class="flex max-w-full flex-col">
+						<div
+							v-if="probe.tags[0]?.format === 'v1'"
+							role="alert"
+							class="mb-1 w-full rounded-t-lg border-b border-surface-200 bg-[#fefbd5] px-3 py-2 text-[#a16207] dark:border-dark-400 dark:bg-[#413e2b] dark:text-[#fde047]"
+						>
 							<p class="font-bold">The tags format has changed</p>
 
-							<div class="mt-1">
-								<p>
-									Your tags use an outdated format and will be converted to the new format after saving.
-									Please be sure to use the updated tags in all future requests.
-								</p>
+							<p class="mt-1">
+								Your tags use an outdated format and will be converted to the new format after saving.
+								Please be sure to use the updated tags in all future requests.
+							</p>
 
-								<p class="mb-1 mt-5">Outdated format:</p>
-								<ProbeUserTagsList
-									:tags="probe.tags"
-									tag-format="v1"
-									custom-class="bg-white text-[#a16207] dark:border-dark-600 dark:bg-[#17233a] dark:text-[#fde047]"
-								/>
+							<p class="mb-1 mt-5">Outdated format:</p>
+							<ProbeUserTagsList
+								:tags="probe.tags"
+								tag-format="v1"
+								custom-class="bg-white text-[#a16207] dark:border-dark-600 dark:bg-[#17233a] dark:text-[#fde047]"
+							/>
 
-								<p class="mb-1 mt-4">New format:</p>
-								<ProbeUserTagsList
-									:tags="probe.tags"
-									custom-class="bg-white text-[#a16207] dark:border-dark-600 dark:bg-[#17233a] dark:text-[#fde047]"
-								/>
-							</div>
-						</Message>
+							<p class="mb-1 mt-4">New format:</p>
+							<ProbeUserTagsList
+								:tags="probe.tags"
+								custom-class="bg-white text-[#a16207] dark:border-dark-600 dark:bg-[#17233a] dark:text-[#fde047]"
+							/>
+						</div>
 
 						<div
 							v-if="probe"

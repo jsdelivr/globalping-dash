@@ -4,7 +4,7 @@
 		class="absolute inset-x-4 bottom-9 flex h-[38px]"
 	>
 		<span
-			class="flex h-full shrink-0 items-center justify-center !rounded-r-none rounded-l-md border border-r-0 border-[#D1D5DB] bg-[#E5E7EB]"
+			class="flex h-full shrink-0 items-center justify-center !rounded-r-none rounded-l-md border border-r-0 border-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600"
 			aria-hidden="true"
 			:class="{
 				'w-[38px]': probe.allowedCountries.length <= 1,
@@ -23,7 +23,7 @@
 				id="country"
 				v-model="editedCountry"
 				:options="probe.allowedCountries"
-				class="size-full !rounded-r-none rounded-l-md border-0 !border-r border-[#D1D5DB]"
+				class="size-full !rounded-r-none rounded-l-md border-0 !border-r border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-[var(--p-primary-color)] dark:border-dark-600 dark:!bg-dark-800"
 				:pt="{ dropdown: 'w-8' }"
 				:pt-options="{ mergeProps: true }"
 				@change="onCountryChanged"

@@ -27,6 +27,7 @@
 				:pt="{ dropdown: 'w-8' }"
 				:pt-options="{ mergeProps: true }"
 				@change="onCountryChanged"
+				@keydown="handleSelectEnterKey"
 			>
 				<template #value="slotProps">
 					<div class="flex items-center">
@@ -137,6 +138,7 @@
 	const originalCountry = ref('');
 	const inputCityRef = ref<HTMLInputElement | null>(null);
 	const ignoreSelectEnter = ref(false);
+	const selectEnterPressed = ref(false);
 	const city = computed(() => {
 		return probe.value ? probe.value.city : '';
 	});
@@ -161,9 +163,19 @@
 		// then delay again to let Select finish its focus handling
 		setTimeout(() => {
 			enableCityEditing();
-			// flag to suppress unintended Enter on sibling input after keyboard selection in PrimeVue Select
-			ignoreSelectEnter.value = true;
+
+			if (selectEnterPressed.value) {
+				// flag to suppress unintended Enter on sibling input after keyboard selection in PrimeVue Select
+				ignoreSelectEnter.value = true;
+				selectEnterPressed.value = false;
+			}
 		}, 0);
+	};
+
+	const handleSelectEnterKey = (event: KeyboardEvent) => {
+		if (event.key === 'Enter') {
+			selectEnterPressed.value = true;
+		}
 	};
 
 	const enableCityEditing = async () => {

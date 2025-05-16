@@ -75,7 +75,7 @@
 			</span>
 
 			<Button
-				v-if="isEditingCity && ((editedCity !== originalCity) || (originalCountry !== editedCountry))"
+				v-if="isEditingCity && ((editedCity !== initialCity) || (originalCountry !== editedCountry))"
 				variant="text"
 				severity="secondary"
 				icon="pi pi-check"
@@ -88,7 +88,7 @@
 			/>
 
 			<Button
-				v-if="isEditingCity && (((editedCity !== originalCity) || (originalCountry !== editedCountry)) && !probeDetailsUpdating)"
+				v-if="isEditingCity && (((editedCity !== initialCity) || (originalCountry !== editedCountry)) && !probeDetailsUpdating)"
 				variant="text"
 				severity="secondary"
 				icon="pi pi-times"
@@ -133,7 +133,7 @@
 	const probeCityInput = ref<HTMLElement | null>(null);
 	const isEditingCity = ref(false);
 	const editedCity = ref('');
-	const originalCity = ref('');
+	const initialCity = ref('');
 	const editedCountry = ref('');
 	const originalCountry = ref('');
 	const inputCityRef = ref<HTMLInputElement | null>(null);
@@ -147,7 +147,7 @@
 	});
 
 	watch(city, (newCity) => {
-		originalCity.value = newCity;
+		initialCity.value = newCity;
 		editedCity.value = newCity;
 	}, { immediate: true });
 
@@ -211,8 +211,8 @@
 	};
 
 	const restoreOriginalLocation = () => {
-		if (editedCity.value !== originalCity.value) {
-			editedCity.value = originalCity.value;
+		if (editedCity.value !== initialCity.value) {
+			editedCity.value = initialCity.value;
 		}
 
 		if (originalCountry.value !== editedCountry.value) {
@@ -234,12 +234,30 @@
 
 		if (!probe.value) { return; }
 
-		if (editedCity.value === originalCity.value && editedCountry.value === originalCountry.value) {
-			isEditingCity.value = false;
+		const prepEditedCity = editedCity.value.trim();
+		const prepInitialCity = initialCity.value.trim();
+
+		// check if city is empty
+		if (prepEditedCity === '') {
+			sendToast('warn', 'Invalid input', 'City name cannot be empty');
 
 			return;
 		}
 
+		// check if trimmed values are the same, stop editing-updating, restore to initial city's value
+		if (prepEditedCity === prepInitialCity && editedCity.value !== initialCity.value) {
+			isEditingCity.value = false;
+			editedCity.value = initialCity.value;
+
+			return;
+		}
+
+		// check if nothing were changed
+		if (prepEditedCity === prepInitialCity && editedCountry.value === originalCountry.value) {
+			isEditingCity.value = false;
+
+			return;
+		}
 
 		probeDetailsUpdating.value = true;
 		// create an object to store the probe's properties that need to be updated if they have changed
@@ -249,8 +267,8 @@
 			updProbePart.country = editedCountry.value;
 		}
 
-		if (editedCity.value !== originalCity.value) {
-			updProbePart.city = editedCity.value;
+		if (prepEditedCity !== prepInitialCity) {
+			updProbePart.city = prepEditedCity;
 		}
 
 		try {

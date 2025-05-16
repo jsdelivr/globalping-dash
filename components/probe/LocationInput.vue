@@ -228,7 +228,7 @@
 			return;
 		}
 
-		if (editedCity.value === originalCity.value && editedCountry === originalCountry) {
+		if (editedCity.value === originalCity.value && editedCountry.value === originalCountry.value) {
 			isEditingCity.value = false;
 			probeDetailsUpdating.value = false;
 
@@ -238,7 +238,7 @@
 		// create an object to store the probe's properties that need to be updated if they have changed
 		const updProbePart: { city?: string; country?: string } = {};
 
-		if (editedCountry !== originalCountry) {
+		if (editedCountry.value !== originalCountry.value) {
 			updProbePart.country = editedCountry.value;
 		}
 

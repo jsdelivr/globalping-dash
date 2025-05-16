@@ -220,21 +220,16 @@
 
 		event.stopPropagation();
 
-		probeDetailsUpdating.value = true;
-
-		if (!probe.value) {
-			probeDetailsUpdating.value = false;
-
-			return;
-		}
+		if (!probe.value) { return; }
 
 		if (editedCity.value === originalCity.value && editedCountry.value === originalCountry.value) {
 			isEditingCity.value = false;
-			probeDetailsUpdating.value = false;
 
 			return;
 		}
 
+
+		probeDetailsUpdating.value = true;
 		// create an object to store the probe's properties that need to be updated if they have changed
 		const updProbePart: { city?: string; country?: string } = {};
 

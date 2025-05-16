@@ -72,18 +72,18 @@
 						</div>
 					</template>
 
-					<div class="px-4 py-2">
-						<p>Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(user.user_type) }}</span></p>
-						<div v-if="auth.isAdmin" class="mt-4 flex flex-col gap-2">
-							<div class="flex items-center gap-2">
-								<span class="text-sm">Admin Mode:</span>
-								<div class="w-12">
-									<ToggleSwitch v-model="auth.adminMode"/>
-								</div>
+					<div v-if="auth.isAdmin" class="mb-2 mt-4 flex flex-col gap-4 border-b pb-4">
+						<h2 class="text-lg font-semibold">Admin Panel</h2>
+						<div class="flex items-center justify-between gap-2">
+							<span class="text-sm">Admin Mode:</span>
+							<div class="w-12">
+								<ToggleSwitch v-model="auth.adminMode"/>
 							</div>
+						</div>
+						<div class="flex flex-col gap-2">
+							<span class="text-sm">Impersonate User:</span>
 							<div class="flex items-center gap-2">
-								<span class="text-sm">Impersonate:</span>
-								<InputText v-model="impersonateUsername" placeholder="Enter username" class="w-full"/>
+								<InputText v-model="impersonateUsername" placeholder="Enter username" class="w-full" @keydown.enter="checkImpersonation"/>
 								<Button
 									v-if="impersonateUsername"
 									class="!p-2"
@@ -94,8 +94,36 @@
 								>
 									<i class="pi pi-times text-[1.1rem]"/>
 								</Button>
+								<Button
+									class="!p-2"
+									text
+									rounded
+									:disabled="impersonationLoading"
+									:loading="impersonationLoading"
+									@click="checkImpersonation"
+								>
+									<i v-if="impersonationLoading" class="pi pi-spin pi-spinner"/>
+									<span v-else>Apply</span>
+								</Button>
 							</div>
+							<div v-if="impersonationError" class="text-sm text-red-500">{{ impersonationError }}</div>
+							<div v-if="impersonationList.length" class="flex flex-col gap-2">
+								<p class="text-sm font-semibold">Select a user to impersonate:</p>
+								<div v-for="item in impersonationList" :key="item.id" class="flex items-center justify-between gap-2 rounded-lg border p-2">
+									<p class="text-sm">{{ item.first_name }} {{ item.last_name }}</p>
+									<Button text rounded @click="applyImpersonation(item)">
+										Apply
+									</Button>
+								</div>
+							</div>
+							<Button v-if="auth.impersonation" class="w-full" @click="clearImpersonation">
+								Stop Impersonation
+							</Button>
 						</div>
+					</div>
+
+					<div class="mb-2 px-4 py-2">
+						<p>Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(user.user_type) }}</span></p>
 					</div>
 
 					<NuxtLink active-class="active" class="sidebar-link" to="/" @click="mobileSidebar = false"><i class="pi pi-home sidebar-link-icon"/>Overview</NuxtLink>
@@ -365,7 +393,7 @@
 
 	const applyImpersonation = (user: User) => {
 		auth.impersonate(user);
-		adminPanel.value.toggle();
+		adminPanel.value.close();
 	};
 
 	const clearImpersonation = () => {

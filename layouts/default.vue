@@ -229,6 +229,12 @@
 	const isFormDirty = ref(false);
 	provide('form-dirty', isFormDirty);
 
+	useHead({
+		meta: [
+			{ name: 'theme-color', content: 'orange' },
+		],
+	});
+
 	// ADMIN
 	const adminPanel = ref();
 	const toggleAdminPanel = async (event: Event) => {

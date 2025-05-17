@@ -70,7 +70,7 @@
 	import { useAuth } from '~/store/auth';
 
 	definePageMeta({
-		layout: false,
+		layout: 'custom',
 	});
 
 	const auth = useAuth();

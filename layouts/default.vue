@@ -72,10 +72,6 @@
 						</div>
 					</template>
 
-					<div v-if="auth.isAdmin" class="mb-2 mt-4 flex flex-col gap-4 border-b pb-4">
-						<AdminPanel/>
-					</div>
-
 					<NuxtLink active-class="active" class="sidebar-link" to="/" @click="mobileSidebar = false"><i class="pi pi-home sidebar-link-icon"/>Overview</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/probes" @click="mobileSidebar = false"><nuxt-icon class="pi sidebar-link-icon" name="probe"/>Probes</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/credits" @click="mobileSidebar = false"><nuxt-icon class="pi sidebar-link-icon" name="coin"/>Credits</NuxtLink>
@@ -92,6 +88,11 @@
 							<span class="m-2">Globalping</span>
 						</NuxtLink>
 					</div>
+
+					<div v-if="auth.isAdmin" class="mb-2 mt-4 flex flex-col gap-4 border-b pb-4">
+						<AdminPanel/>
+					</div>
+
 					<div class="mt-8 rounded-xl border bg-surface-0 p-6 dark:border-dark-400 dark:bg-dark-500">
 						<p class="mb-2 font-bold">Sponsorship</p>
 						<p class="mb-6">Support the development of our products by becoming a sponsor.</p>

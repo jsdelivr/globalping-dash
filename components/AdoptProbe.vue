@@ -225,15 +225,13 @@
 
 <script setup lang="ts">
 	import { customEndpoint, readItems } from '@directus/sdk';
-	import { useAuth } from '~/store/auth';
+	import { useUserFilter } from '~/composables/useUserFilter';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 	import { smoothResize } from '~/utils/smooth-resize';
 	import { validateIp } from '~/utils/validate-ip';
 
 	const { $directus } = useNuxtApp();
-	const auth = useAuth();
-	const { user } = storeToRefs(auth);
-
+	const { getUserFilter } = useUserFilter();
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 
 	const activeStep = ref('0');
@@ -274,7 +272,7 @@
 
 	const { data: initialProbes } = await useLazyAsyncData('initial_user_probes', async () => {
 		const result = await $directus.request(readItems('gp_probes', {
-			filter: { userId: { _eq: user.value.id } },
+			filter: getUserFilter('userId'),
 		}));
 
 		return result;
@@ -288,7 +286,7 @@
 			await new Promise<void>((resolve) => {
 				const checkProbes = async () => {
 					const currentProbes = await $directus.request(readItems('gp_probes', {
-						filter: { userId: { _eq: user.value.id } },
+						filter: getUserFilter('userId'),
 					}));
 
 					if (currentProbes.length > initialProbes.value.length) {

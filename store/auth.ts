@@ -5,6 +5,16 @@ interface AuthState {
 	isLoggedIn: boolean,
 	expiresAt: number,
 	isAdmin: boolean,
+	impersonation: {
+		originalUser: User & {
+			last_page: string | null,
+		},
+		github_username: string,
+		impersonatedUser: User & {
+			last_page: string | null,
+		} | null,
+	} | null,
+	adminMode: boolean,
 	user: User & {
 		last_page: string | null,
 	}
@@ -15,6 +25,8 @@ export const useAuth = defineStore('auth', {
 		isLoggedIn: false,
 		expiresAt: 0,
 		isAdmin: false,
+		impersonation: null,
+		adminMode: false,
 		user: {
 			id: '',
 			first_name: '',
@@ -49,6 +61,71 @@ export const useAuth = defineStore('auth', {
 
 			return redirectUrl.toString();
 		},
+		impersonate (user: User) {
+			if (!user.github_username || !this.isAdmin) {
+				return;
+			}
+
+			this.adminMode = false;
+
+			this.impersonation = {
+				originalUser: this.impersonation?.originalUser || this.user,
+				github_username: user.github_username,
+				impersonatedUser: {
+					...user,
+					last_page: this.user.last_page,
+				},
+			};
+
+			this.user = {
+				...user,
+				last_page: this.user.last_page,
+			};
+
+			this.storeAdminConfig();
+			window.location.reload();
+		},
+		clearImpersonation () {
+			this.user = this.impersonation?.originalUser || this.user;
+			this.impersonation = null;
+			this.storeAdminConfig();
+			window.location.reload();
+		},
+		storeAdminConfig () {
+			sessionStorage.setItem('adminConfig', JSON.stringify({
+				adminMode: this.adminMode,
+				impersonation: this.impersonation,
+			}));
+		},
+		applyAdminConfig () {
+			try {
+				const adminConfig: Pick<AuthState, 'adminMode' | 'impersonation'> = JSON.parse(sessionStorage.getItem('adminConfig') || '');
+
+				if (
+					typeof adminConfig?.adminMode !== 'boolean'
+					|| (adminConfig?.impersonation !== null && (
+						typeof adminConfig?.impersonation !== 'object'
+						|| typeof adminConfig?.impersonation?.github_username !== 'string'
+						|| typeof adminConfig?.impersonation?.originalUser?.id !== 'string'
+					))
+				) {
+					this.clearAdminConfig();
+					return;
+				}
+
+				this.adminMode = adminConfig?.adminMode || false;
+				this.impersonation = adminConfig?.impersonation || null;
+
+				if (this.impersonation) {
+					this.user = this.impersonation.impersonatedUser || this.user;
+				}
+			} catch {
+				sessionStorage.setItem('adminConfig', JSON.stringify({ adminMode: false, impersonation: null }));
+			}
+		},
+		clearAdminConfig () {
+			sessionStorage.removeItem('adminConfig');
+		},
 		async login () {
 			const config = useRuntimeConfig();
 			const redirect = this.getRedirectUrl();
@@ -75,6 +152,10 @@ export const useAuth = defineStore('auth', {
 				this.expiresAt = Number(expires_at);
 				this.user = user as AuthState['user'];
 				this.isAdmin = !!roles.some(role => role.name === 'Administrator');
+
+				if (this.isAdmin) {
+					this.applyAdminConfig();
+				}
 			} catch (error) {
 				console.error(error);
 			}

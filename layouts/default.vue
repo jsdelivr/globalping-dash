@@ -18,6 +18,20 @@
 					<span class="m-2">Globalping</span>
 				</NuxtLink>
 				<p class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(user.user_type) }}</span></p>
+				<div v-if="auth.isAdmin" class="mr-2 flex items-center gap-2">
+					<Button
+						class="relative text-surface-0 hover:bg-transparent"
+						:class="{ '!bg-[#35425A]': auth.adminMode || auth.impersonation }"
+						text
+						rounded
+						aria-label="Admin Panel"
+						@click="toggleAdminPanel"
+					>
+						<i class="pi pi-user-edit text-[1.3rem]"/>
+						<span v-if="auth.adminMode" class="text-sm font-bold">Admin Mode</span>
+						<span v-if="auth.impersonation" class="text-sm font-bold">Impersonating {{ auth.impersonation.github_username }}</span>
+					</Button>
+				</div>
 				<Button class="relative mr-8 text-surface-0 hover:bg-transparent" text rounded aria-label="Notifications" @click="toggleNotifications">
 					<i class="pi pi-bell text-[1.3rem]"/>
 					<i v-if="inboxNotificationIds.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.3rem] text-primary"/>
@@ -74,6 +88,11 @@
 							<span class="m-2">Globalping</span>
 						</NuxtLink>
 					</div>
+
+					<div v-if="auth.isAdmin" class="mb-2 mt-4 flex flex-col gap-4 border-b pb-4">
+						<AdminPanel/>
+					</div>
+
 					<div class="mt-8 rounded-xl border bg-surface-0 p-6 dark:border-dark-400 dark:bg-dark-500">
 						<p class="mb-2 font-bold">Sponsorship</p>
 						<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
@@ -186,6 +205,13 @@
 			</div>
 		</div>
 		<NavigationGuard/>
+		<Popover
+			ref="adminPanel"
+			class="absolute !ml-4 !mt-2 !overflow-hidden !rounded-xl bg-[var(--p-surface-0)] dark:bg-[var(--main-bg)]"
+			:pt:content="{ class: 'flex items-center !rounded-xl border dark:border-[var(--table-border)]'}"
+		>
+			<AdminPanel/>
+		</Popover>
 	</section>
 </template>
 
@@ -202,6 +228,12 @@
 
 	const isFormDirty = ref(false);
 	provide('form-dirty', isFormDirty);
+
+	// ADMIN
+	const adminPanel = ref();
+	const toggleAdminPanel = async (event: Event) => {
+		adminPanel.value.toggle(event);
+	};
 
 	// NOTIFICATIONS
 	const notificationsPanel = ref();

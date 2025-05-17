@@ -175,6 +175,7 @@
 	import countBy from 'lodash/countBy';
 	import isEmpty from 'lodash/isEmpty';
 	import CountryFlag from 'vue-country-flag-next';
+	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
 	import { pluralize } from '~/utils/pluralize';
@@ -189,13 +190,14 @@
 	const creditsPerAdoptedProbe = useMetadata().creditsPerAdoptedProbe;
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
+	const { getUserFilter } = useUserFilter();
 
 	// SUMMARY
 
 	const { status: statusProbes, data: adoptedProbes } = await useLazyAsyncData('gp_probes', async () => {
 		try {
 			const result = await $directus.request(readItems('gp_probes', {
-				filter: { userId: { _eq: user.value.id } },
+				filter: getUserFilter('userId'),
 				sort: [ 'status', 'name' ],
 			}));
 
@@ -219,13 +221,13 @@
 			let fromSponsorshipPromise = Promise.resolve(0);
 
 			const totalPromise = $directus.request(readItems('gp_credits', {
-				filter: { user_id: { _eq: user.value.id } },
+				filter: getUserFilter('user_id'),
 			}));
 
 			if (user.value.user_type !== 'member') {
 				fromSponsorshipPromise = $directus.request(readItems('gp_credits_additions', {
 					filter: {
-						github_id: { _eq: user.value.external_identifier || 'admin' },
+						github_id: { _eq: getUserFilter('github_id')?.github_id?._eq || 'admin' },
 						reason: { _eq: 'recurring_sponsorship' },
 						date_created: { _gte: '$NOW(-35 day)' },
 					},

@@ -216,7 +216,7 @@
 <script setup lang="ts">
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
-	import { useAuth } from '~/store/auth';
+	import { useUserFilter } from '~/composables/useUserFilter';
 	import { formatDate, getRelativeTimeString } from '~/utils/date-formatters';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
@@ -226,8 +226,7 @@
 
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
-	const auth = useAuth();
-	const { user } = storeToRefs(auth);
+	const { getUserFilter } = useUserFilter();
 
 	const itemsPerPage = ref(Math.round(config.public.itemsPerTablePage / 2));
 
@@ -244,13 +243,21 @@
 		try {
 			const [ gpTokens, [{ count }] ] = await Promise.all([
 				$directus.request(readItems('gp_tokens', {
-					filter: { user_created: { _eq: user.value.id }, app_id: { _null: true } },
+					filter: {
+						...getUserFilter('user_created'),
+						app_id: { _null: true },
+					},
 					offset: firstToken.value,
 					limit: itemsPerPage.value,
 					sort: '-date_created',
 				})),
 				$directus.request<[{count: number}]>(aggregate('gp_tokens', {
-					query: { filter: { user_created: { _eq: user.value.id }, app_id: { _null: true } } },
+					query: {
+						filter: {
+							...getUserFilter('user_created'),
+							app_id: { _null: true },
+						},
+					},
 					aggregate: { count: '*' },
 				})),
 			]);
@@ -268,7 +275,7 @@
 		await loadTokens();
 	});
 
-	watch(tokensPage, async () => {
+	watch([ tokensPage ], async () => {
 		resetState();
 		await loadTokens();
 	});

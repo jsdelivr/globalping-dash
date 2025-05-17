@@ -30,7 +30,7 @@
 			</div>
 		</div>
 
-		<Button v-if="auth.impersonation" @click="clearImpersonation">
+		<Button v-if="auth.impersonation" severity="danger" @click="clearImpersonation">
 			Stop impersonation
 		</Button>
 	</div>

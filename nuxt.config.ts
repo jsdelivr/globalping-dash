@@ -25,6 +25,11 @@ export default defineNuxtConfig({
 			htmlAttrs: {
 				lang: 'en-us',
 			},
+			meta: [
+				{ charset: 'utf-8' },
+				{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
+				{ name: 'description', content: 'Manage your Globalping probes, credits, and access tokens' },
+			],
 		},
 	},
 	imports: {

@@ -18,7 +18,7 @@
 					<span class="m-2">Globalping</span>
 				</NuxtLink>
 				<p class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(user.user_type) }}</span></p>
-				<div v-if="auth.isAdmin" class="flex items-center gap-2">
+				<div v-if="auth.isAdmin" class="mr-2 flex items-center gap-2">
 					<Button
 						class="relative text-surface-0 hover:bg-transparent"
 						:class="{ '!bg-[#35425A]': auth.adminMode || auth.impersonation }"
@@ -73,57 +73,7 @@
 					</template>
 
 					<div v-if="auth.isAdmin" class="mb-2 mt-4 flex flex-col gap-4 border-b pb-4">
-						<h2 class="text-lg font-semibold">Admin Panel</h2>
-						<div class="flex items-center justify-between gap-2">
-							<span class="text-sm">Admin Mode:</span>
-							<div class="w-12">
-								<ToggleSwitch v-model="auth.adminMode"/>
-							</div>
-						</div>
-						<div class="flex flex-col gap-2">
-							<span class="text-sm">Impersonate User:</span>
-							<div class="flex items-center gap-2">
-								<InputText v-model="impersonateUsername" placeholder="Enter username" class="w-full" @keydown.enter="checkImpersonation"/>
-								<Button
-									v-if="impersonateUsername"
-									class="!p-2"
-									text
-									rounded
-									aria-label="Clear"
-									@click="impersonateUsername = ''"
-								>
-									<i class="pi pi-times text-[1.1rem]"/>
-								</Button>
-								<Button
-									class="!p-2"
-									text
-									rounded
-									:disabled="impersonationLoading"
-									:loading="impersonationLoading"
-									@click="checkImpersonation"
-								>
-									<i v-if="impersonationLoading" class="pi pi-spin pi-spinner"/>
-									<span v-else>Apply</span>
-								</Button>
-							</div>
-							<div v-if="impersonationError" class="text-sm text-red-500">{{ impersonationError }}</div>
-							<div v-if="impersonationList.length" class="flex flex-col gap-2">
-								<p class="text-sm font-semibold">Select a user to impersonate:</p>
-								<div v-for="item in impersonationList" :key="item.id" class="flex items-center justify-between gap-2 rounded-lg border p-2">
-									<p class="text-sm">{{ item.first_name }} {{ item.last_name }}</p>
-									<Button text rounded @click="applyImpersonation(item)">
-										Apply
-									</Button>
-								</div>
-							</div>
-							<Button v-if="auth.impersonation" class="w-full" @click="clearImpersonation">
-								Stop Impersonation
-							</Button>
-						</div>
-					</div>
-
-					<div class="mb-2 px-4 py-2">
-						<p>Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(user.user_type) }}</span></p>
+						<AdminPanel/>
 					</div>
 
 					<NuxtLink active-class="active" class="sidebar-link" to="/" @click="mobileSidebar = false"><i class="pi pi-home sidebar-link-icon"/>Overview</NuxtLink>
@@ -259,147 +209,35 @@
 			class="absolute !ml-4 !mt-2 !overflow-hidden !rounded-xl bg-[var(--p-surface-0)] dark:bg-[var(--main-bg)]"
 			:pt:content="{ class: 'flex items-center !rounded-xl border dark:border-[var(--table-border)]'}"
 		>
-			<div class="flex w-[calc(100vw-32px)] flex-col gap-4 rounded-xl p-4 sm:w-[37rem] sm:p-6">
-				<p class="text-sm font-semibold">Admin Panel</p>
-				<div class="flex items-center justify-between gap-2">
-					<span class="text-sm">Admin Mode:</span>
-					<ToggleSwitch v-model="auth.adminMode"/>
-				</div>
-				<div class="flex items-center justify-between gap-2">
-					<span class="shrink-0 text-sm">Impersonate User:</span>
-					<div class="flex items-center gap-2">
-						<InputText v-model="impersonateUsername" placeholder="Enter username" class="w-full" @keydown.enter="checkImpersonation"/>
-						<Button
-							v-if="impersonateUsername"
-							text
-							rounded
-							@click="impersonateUsername = ''"
-						>
-							Clear
-						</Button>
-						<Button
-							text
-							rounded
-							:disabled="impersonationLoading"
-							:loading="impersonationLoading"
-							@click="checkImpersonation"
-						>
-							<i v-if="impersonationLoading" class="pi pi-spin pi-spinner"/>
-							<span v-else>Apply</span>
-						</Button>
-					</div>
-				</div>
-				<div v-if="impersonationError" class="text-red-500">{{ impersonationError }}</div>
-				<div v-if="impersonationList.length" class="flex flex-col gap-2">
-					<p class="text-sm font-semibold">Select a user to impersonate:</p>
-					<div v-for="item in impersonationList" :key="item.id" class="flex items-center gap-2">
-						<p>{{ item.first_name }} {{ item.last_name }}</p>
-						<Button text rounded @click="applyImpersonation(item)">
-							Apply
-						</Button>
-					</div>
-				</div>
-				<div class="flex items-center justify-end gap-2">
-					<Button v-if="auth.impersonation" @click="clearImpersonation">
-						Stop Impersonation
-					</Button>
-					<Button @click="toggleAdminPanel">
-						Close
-					</Button>
-				</div>
-			</div>
+			<AdminPanel/>
 		</Popover>
 	</section>
 </template>
 
 <script lang="ts" setup>
-	import { customEndpoint } from '@directus/sdk';
 	import { defaults } from 'chart.js';
 	import capitalize from 'lodash/capitalize';
 	import { useNotifications } from '~/composables/useNotifications';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
 
-	const { $directus } = useNuxtApp();
 	const auth = useAuth();
-	const { user, adminMode, impersonation } = storeToRefs(auth);
+	const { user } = storeToRefs(auth);
 	const { headerNotifications, inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead, updateHeaderNotifications } = useNotifications();
 
-	const impersonateUsername = ref(auth.impersonation?.github_username || '');
-	const impersonationError = ref('');
-	const impersonationLoading = ref(false);
-	const impersonationList = ref<User[]>([]);
 	const isFormDirty = ref(false);
 	provide('form-dirty', isFormDirty);
 
-	// NOTIFICATIONS
-	const notificationsPanel = ref();
-	const toggleNotifications = async (event: Event) => {
-		notificationsPanel.value.toggle(event);
-	};
-
 	// ADMIN
-	watch([ adminMode ], () => {
-		impersonation.value = null;
-		auth.storeAdminConfig();
-		window.location.reload();
-	});
-
 	const adminPanel = ref();
 	const toggleAdminPanel = async (event: Event) => {
 		adminPanel.value.toggle(event);
 	};
 
-	const checkImpersonation = async () => {
-		impersonationError.value = '';
-		impersonationList.value = [];
-
-		try {
-			if (!auth.isAdmin) {
-				throw new Error('You are not authorized to impersonate users');
-			}
-
-			if (!impersonateUsername.value) {
-				throw new Error('Please enter a username to impersonate');
-			}
-
-			impersonationLoading.value = true;
-			const users = await $directus.request<User[]>(customEndpoint({
-				method: 'GET',
-				path: '/users',
-				params: {
-					filter: {
-						github_username: { _eq: impersonateUsername.value },
-					},
-				},
-			}));
-
-			if (!users.length) {
-				throw new Error('User not found');
-			}
-
-			impersonationList.value = users as (User & { github_username: string })[];
-
-			if (impersonationList.value.length === 1) {
-				applyImpersonation(impersonationList.value[0]);
-			}
-		} catch (error) {
-			console.error('Error during impersonation:', error instanceof Error ? error.message : 'Unknown error');
-			impersonationError.value = error instanceof Error ? error.message : 'An unknown error occurred';
-		} finally {
-			impersonationLoading.value = false;
-		}
-	};
-
-	const applyImpersonation = (user: User) => {
-		auth.impersonate(user);
-		adminPanel.value.close();
-	};
-
-	const clearImpersonation = () => {
-		auth.clearImpersonation();
-		impersonationList.value = [];
-		impersonateUsername.value = '';
+	// NOTIFICATIONS
+	const notificationsPanel = ref();
+	const toggleNotifications = async (event: Event) => {
+		notificationsPanel.value.toggle(event);
 	};
 
 	updateHeaderNotifications();

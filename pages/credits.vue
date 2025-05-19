@@ -187,44 +187,10 @@
 		loading.value = true;
 
 		try {
-			const [
-				{ changes },
-				[{ count: sponsorAdditionsCount }],
-				probeAdditionsCount,
-				[{ count: deductionsCount }],
-			] = await Promise.all([
-				$directus.request<{changes: CreditsChange[]}>(customEndpoint({ method: 'GET', path: '/credits-timeline', params: {
-					offset: first.value,
-					limit: itemsPerPage.value,
-				} })),
-				$directus.request<[{count: number}]>(aggregate('gp_credits_additions', {
-					aggregate: { count: '*' },
-					query: {
-						filter: {
-							github_id: { _eq: getUserFilter('github_id')?.github_id?._eq || 'admin' },
-							reason: { _neq: 'adopted_probe' },
-						},
-					},
-				})),
-				$directus.request<[{count: number}]>(aggregate('gp_credits_additions', {
-					aggregate: { count: '*' },
-					groupBy: [ 'date_created' ],
-					query: {
-						filter: {
-							github_id: { _eq: getUserFilter('github_id')?.github_id?._eq || 'admin' },
-							reason: { _eq: 'adopted_probe' },
-						},
-					},
-				})).then(additions => additions.length),
-				$directus.request<[{count: number}]>(aggregate('gp_credits_deductions', {
-					aggregate: { count: '*' },
-					query: {
-						filter: {
-							...getUserFilter('user_id'),
-						},
-					},
-				})),
-			]);
+			const { changes, count } = await $directus.request<{changes: CreditsChange[], count: number}>(customEndpoint({ method: 'GET', path: '/credits-timeline', params: {
+				offset: first.value,
+				limit: itemsPerPage.value,
+			} }));
 
 			creditsChanges.value = [
 				...changes.map(change => ({
@@ -233,7 +199,7 @@
 				})),
 			];
 
-			creditsChangesCount.value = sponsorAdditionsCount + probeAdditionsCount + deductionsCount;
+			creditsChangesCount.value = count;
 		} catch (e) {
 			sendErrorToast(e);
 		}

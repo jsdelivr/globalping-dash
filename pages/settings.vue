@@ -153,11 +153,11 @@
 			</div>
 			<div class="grow sm:w-3/5">
 				<p class="mb-2 font-bold max-sm:hidden">Delete account</p>
-				<Button severity="secondary" outlined label="Delete account" @click="deleteDialog = true"/>
+				<Button severity="secondary" outlined label="Delete account" :disabled="!!auth.impersonation" @click="deleteDialog = true"/>
 			</div>
 		</div>
 		<div class="mt-6 text-right">
-			<Button label="Apply settings" :loading="saveLoading" @click="save"/>
+			<Button label="Apply settings" :loading="saveLoading" :disabled="!!auth.impersonation" @click="save"/>
 		</div>
 		<GPDialog
 			v-model:visible="deleteDialog"

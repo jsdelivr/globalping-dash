@@ -74,21 +74,20 @@
 	import { readNotifications } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
 	import { useNotifications } from '~/composables/useNotifications';
-	import { useAuth } from '~/store/auth';
+	import { useUserFilter } from '~/composables/useUserFilter';
 	import { formatDateTime } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const route = useRoute();
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
-	const auth = useAuth();
-	const { user } = storeToRefs(auth);
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 	const displayedNotifications = ref<DirectusNotification[]>([]);
 	const notificationsCount = ref<number>(0);
 	const { inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead } = useNotifications();
 	const notificationBus = useEventBus<string[]>('notification-updated');
+	const { getUserFilter } = useUserFilter();
 
 	notificationBus.on((idsToArchive) => {
 		displayedNotifications.value.forEach((notification) => {
@@ -108,9 +107,7 @@
 			format: 'html',
 			limit: itemsPerPage.value,
 			offset: page.value * itemsPerPage.value,
-			filter: {
-				recipient: { _eq: user.value.id },
-			},
+			filter: getUserFilter('recipient'),
 			sort: [ '-timestamp' ],
 		}));
 	}, { default: () => [] });
@@ -126,9 +123,7 @@
 	// get the count of notifications
 	const { data: cntResponse } = await useAsyncData('directus_notifications_cnt', async () => {
 		return $directus.request(readNotifications({
-			filter: {
-				recipient: { _eq: user.value.id },
-			},
+			filter: getUserFilter('recipient'),
 			aggregate: {
 				count: [ 'id' ],
 			},
@@ -144,15 +139,11 @@
 					format: 'html',
 					limit: itemsPerPage.value,
 					offset: pageNumber * itemsPerPage.value,
-					filter: {
-						recipient: { _eq: user.value.id },
-					},
+					filter: getUserFilter('recipient'),
 					sort: [ '-timestamp' ],
 				})),
 				$directus.request<NotificationCntResponse>(readNotifications({
-					filter: {
-						recipient: { _eq: user.value.id },
-					},
+					filter: getUserFilter('recipient'),
 					aggregate: {
 						count: [ 'id' ],
 					},
@@ -167,7 +158,7 @@
 	};
 
 	// get notifications depending on the selected page in Paginator
-	watch(page, async () => {
+	watch([ page ], async () => {
 		await loadNotifications(page.value);
 	});
 </script>

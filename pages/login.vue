@@ -51,7 +51,7 @@
 	import { useAuth } from '~/store/auth';
 
 	definePageMeta({
-		layout: false,
+		layout: 'custom',
 	});
 
 	useHead({

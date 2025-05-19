@@ -13,6 +13,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 	}
 
 	if (!auth.isLoggedIn && to?.name !== 'login') {
+		auth.clearAdminConfig();
 		abortNavigation();
 		return navigateTo(`/login?redirect=${encodeURIComponent(location.href)}`);
 	}

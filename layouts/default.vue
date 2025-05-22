@@ -167,7 +167,7 @@
 								:pt="{content: '!p-0 !pt-2 text-sm font-normal leading-[18px] text-bluegray-900 overflow-hidden dark:text-bluegray-0'}"
 							>
 								<!-- eslint-disable-next-line vue/no-v-html -->
-								<span v-if="notification.message" v-interpolation class="[&_a]:text-primary-color [&_a]:font-semibold [&_p:last-child]:mb-0 [&_p]:mb-[18px] [&_p_strong]:break-all" v-html="notification.message"/>
+								<span v-if="notification.message" v-interpolation class="[&_a]:font-semibold [&_a]:text-primary [&_p:last-child]:mb-0 [&_p]:mb-[18px] [&_p_strong]:break-all" v-html="notification.message"/>
 							</AccordionContent>
 						</AccordionPanel>
 					</Accordion>

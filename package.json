@@ -30,6 +30,7 @@
 		"lodash": "^4.17.21",
 		"nuxt": "^3.13.2",
 		"nuxt-icons": "^3.2.1",
+		"nuxt3-interpolation": "^1.0.16",
 		"pinia": "^2.2.2",
 		"primeicons": "^7.0.0",
 		"primevue": "^4.0.7",

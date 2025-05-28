@@ -10,6 +10,7 @@
 			</span>
 			<Button
 				v-if="inboxNotificationIds.length"
+				:disabled="auth.adminMode"
 				severity="secondary"
 				outlined
 				label="Mark all as read"
@@ -75,9 +76,11 @@
 	import { usePagination } from '~/composables/pagination';
 	import { useNotifications } from '~/composables/useNotifications';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
 
+	const auth = useAuth();
 	const route = useRoute();
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();

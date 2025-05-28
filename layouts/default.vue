@@ -118,6 +118,7 @@
 						</span>
 						<Button
 							v-if="inboxNotificationIds.length"
+							:disabled="auth.adminMode"
 							severity="secondary"
 							outlined
 							label="Mark all as read"

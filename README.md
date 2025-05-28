@@ -17,4 +17,5 @@ You can run the project by following these steps:
 
 Other notes:
 
-- We are using [PrimeVue](https://primevue.org/) as a components library. While adding components make sure they are uncommented in [presets/aura/index.js](presets/aura/index.js). Unused components are commented out to reduce the bundle size.
+- We are using [PrimeVue](https://primevue.org/) as a component library. While adding components make sure they are uncommented in [presets/aura/index.js](presets/aura/index.js). Unused components are commented out to reduce the bundle size.
+- When adding features that modify data (especially if it's more than a single record), consider whether the feature should be disabled/enabled in admin/impersonation mode.

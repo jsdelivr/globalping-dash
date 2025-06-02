@@ -49,7 +49,7 @@
 					role="dialog"
 					:aria-label="probe.tags.length ? 'Edit tags dialog' : 'Add tags dialog'"
 				>
-					<div class="flex max-w-full flex-col">
+					<div class="flex w-full max-w-full flex-col">
 						<div
 							v-if="probe.tags[0]?.format === 'v1'"
 							role="alert"
@@ -131,7 +131,7 @@
 								</div>
 							</div>
 
-							<div v-else class="mb-6 h-[110px]">
+							<div v-else class="mb-6 w-full h-[110px]">
 								<div>The probe has no user tags</div>
 
 								<div class="col-span-4 mt-2">

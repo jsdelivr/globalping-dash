@@ -248,7 +248,7 @@
 	const updateProbeTags = async () => {
 		probeDetailsUpdating.value = true;
 
-		if (!probe.value || !probe.value) {
+		if (!probe.value) {
 			probeDetailsUpdating.value = false;
 
 			return;

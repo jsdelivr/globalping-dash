@@ -131,7 +131,7 @@
 								</div>
 							</div>
 
-							<div v-else class="mb-6 w-full h-[110px]">
+							<div v-else class="mb-6 h-[110px] w-full">
 								<div>The probe has no user tags</div>
 
 								<div class="col-span-4 mt-2">

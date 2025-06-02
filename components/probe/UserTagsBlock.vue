@@ -15,7 +15,7 @@
 			<div class="flex w-full gap-1">
 				<ProbeUserTagsList
 					:tags="probe.tags"
-					:tag-format="probe.tags[0].format"
+					:tag-format="probe.tags[0]?.format"
 					custom-class="text-bluegray-900 dark:border-dark-600 dark:text-bluegray-0"
 				>
 					<template #edit-button>
@@ -96,7 +96,7 @@
 										aria-label="Tag prefix"
 										aria-required="true"
 									/>
-									<div class="inline-flex w-6 justify-center">{{ probe.tags[0].format === 'v1' ? '-' : ':' }}</div>
+									<div class="inline-flex w-6 justify-center">{{ probe.tags[0]?.format === 'v1' ? '-' : ':' }}</div>
 									<div class="relative">
 										<InputText
 											v-model="tag.value"

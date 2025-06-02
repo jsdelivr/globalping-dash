@@ -191,6 +191,12 @@
 		>
 			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="loadLazyData"/>
 		</GPDialog>
+		<GPDialog
+			view-name="update-a-probe"
+			header="Update a probe"
+		>
+			<UpdateProbe/>
+		</GPDialog>
 	</div>
 </template>
 

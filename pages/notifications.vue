@@ -10,6 +10,7 @@
 			</span>
 			<Button
 				v-if="inboxNotificationIds.length"
+				:disabled="auth.adminMode"
 				severity="secondary"
 				outlined
 				label="Mark all as read"
@@ -51,7 +52,7 @@
 
 				<div class="overflow-hidden px-4 pb-6 text-sm font-normal leading-[18px] text-bluegray-900 sm:px-6 dark:text-bluegray-0">
 					<!-- eslint-disable-next-line vue/no-v-html -->
-					<span v-if="notification.message" class="[&_a]:font-semibold [&_a]:text-primary [&_p:last-child]:mb-0 [&_p]:mb-[18px] [&_p_strong]:break-all" v-html="notification.message"/>
+					<span v-if="notification.message" v-interpolation class="[&_a]:font-semibold [&_a]:text-primary [&_p:last-child]:mb-0 [&_p]:mb-[18px] [&_p_strong]:break-all" v-html="notification.message"/>
 				</div>
 			</div>
 		</div>
@@ -75,9 +76,11 @@
 	import { usePagination } from '~/composables/pagination';
 	import { useNotifications } from '~/composables/useNotifications';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
 
+	const auth = useAuth();
 	const route = useRoute();
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();

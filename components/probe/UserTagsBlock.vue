@@ -254,7 +254,7 @@
 			return;
 		}
 
-		const updTags = isEditingTags.value ? convertTags(tagsToEdit.value) : probe.value?.tags;
+		const updTags = convertTags(tagsToEdit.value);
 
 		// check if the tags are filled
 		if (!updTags || updTags.some(({ prefix, value }) => !prefix || !value)) {

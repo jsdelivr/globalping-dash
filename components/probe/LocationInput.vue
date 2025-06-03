@@ -100,7 +100,7 @@
 				@blur="cancelCityEditingOnBlur"
 			/>
 
-			<i v-if="!isEditingCity" class="pi pi-pencil cursor-pointer text-md absolute right-3 top-1/2 -translate-y-1/2" aria-hidden="true"/>
+			<i v-if="!isEditingCity" class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" aria-hidden="true"/>
 		</div>
 	</div>
 </template>

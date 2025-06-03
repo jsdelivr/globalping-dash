@@ -48,6 +48,13 @@
 								>
 									{{ tag }}
 								</span>
+
+								<span
+									v-if="!probe.systemTags || probe.systemTags.length === 0"
+									class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600 dark:text-bluegray-0"
+								>
+									No system tags
+								</span>
 							</div>
 						</div>
 					</div>

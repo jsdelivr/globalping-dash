@@ -91,7 +91,8 @@
 			<Tabs value="0">
 				<TabList class="!border-b !border-surface-300 dark:!border-dark-600">
 					<Tab value="0" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Details</Tab>
-					<Tab value="1" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Logs</Tab>
+					<!-- temporarily hide Logs tab while it's under construction -->
+					<!-- <Tab value="1" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Logs</Tab> -->
 				</TabList>
 
 				<TabPanels class="mt-6 !bg-transparent !p-0">

@@ -20,7 +20,7 @@
 						</span>
 					</span>
 
-					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900 dark:text-bluegray-0">
+					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900 dark:bg-dark-600 dark:text-bluegray-0">
 						v{{ probeDetails.version }}
 					</span>
 				</div>

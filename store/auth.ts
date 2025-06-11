@@ -135,6 +135,7 @@ export const useAuth = defineStore('auth', {
 		async logout () {
 			const { $directus } = useNuxtApp();
 
+			this.clearAdminConfig();
 			await $directus.logout();
 			this.$reset();
 			navigateTo('/login');

@@ -3,7 +3,7 @@
 		<div data-testid="tokens-table">
 			<div class="mb-4 flex">
 				<h1 class="page-title">Tokens</h1>
-				<Button class="ml-auto" label="Generate new token" @click="openTokenDetails('generate')"/>
+				<Button class="ml-auto" label="Generate new token" :disabled="!!auth.impersonation" @click="openTokenDetails('generate')"/>
 			</div>
 			<p class="xl:w-1/2">
 				Generate a token and use it in your API requests to get a higher hourly measurements limit.
@@ -217,6 +217,7 @@
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { useAuth } from '~/store/auth';
 	import { formatDate, getRelativeTimeString } from '~/utils/date-formatters';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
@@ -227,6 +228,7 @@
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 	const { getUserFilter } = useUserFilter();
+	const auth = useAuth();
 
 	const itemsPerPage = ref(Math.round(config.public.itemsPerTablePage / 2));
 
@@ -404,6 +406,7 @@
 
 		try {
 			const { applications, total } = await $directus.request<{applications: Application[], total: number}>(customEndpoint({ method: 'GET', path: '/applications', params: {
+				userId: getUserFilter('user_id').user_id?._eq || 'all',
 				offset: firstApp.value,
 				limit: itemsPerPage.value,
 			} }));
@@ -440,7 +443,14 @@
 	const revokeApp = async () => {
 		try {
 			if (appToRevoke.value && appToRevoke.value.id) {
-				await $directus.request<{applications: Application[]}>(customEndpoint({ method: 'POST', path: '/applications/revoke', body: JSON.stringify({ id: appToRevoke.value.id }) }));
+				await $directus.request<{applications: Application[]}>(customEndpoint({
+					method: 'POST',
+					path: '/applications/revoke',
+					body: JSON.stringify({
+						userId: appToRevoke.value.user_id,
+						id: appToRevoke.value.id,
+					}),
+				}));
 
 				// Go to prev page if that is last item.
 				if (apps.value.length === 1 && appsPage.value) {

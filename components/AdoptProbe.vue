@@ -226,6 +226,7 @@
 <script setup lang="ts">
 	import { customEndpoint, readItems } from '@directus/sdk';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 	import { smoothResize } from '~/utils/smooth-resize';
 	import { validateIp } from '~/utils/validate-ip';
@@ -233,6 +234,8 @@
 	const { $directus } = useNuxtApp();
 	const { getUserFilter } = useUserFilter();
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
+	const auth = useAuth();
+	const { user } = storeToRefs(auth);
 
 	const activeStep = ref('0');
 	const probeType = ref<'software' | 'hardware'>('software');
@@ -357,7 +360,16 @@
 		sendAdoptionCodeLoading.value = true;
 
 		try {
-			await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/send-code', body: JSON.stringify({ ip: ip.value }) }));
+			await $directus.request(customEndpoint({
+				method: 'POST',
+				path: '/adoption-code/send-code',
+				body: JSON.stringify({
+					// If getUserFilter returned {} send admin ID.
+					userId: getUserFilter('user_id').user_id?._eq || user.value.id,
+					ip: ip.value,
+				}),
+			}));
+
 			activateCallback('5');
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';
@@ -384,7 +396,15 @@
 		resetIsCodeValid();
 
 		try {
-			await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/send-code', body: JSON.stringify({ ip: ip.value }) }));
+			await $directus.request(customEndpoint({
+				method: 'POST',
+				path: '/adoption-code/send-code',
+				body: JSON.stringify({
+					userId: getUserFilter('user_id').user_id?._eq || user.value.id,
+					ip: ip.value,
+				}),
+			}));
+
 			sendToast('info', 'The code has been resent', 'Paste it to the input to adopt the probe');
 		} catch (e: any) {
 			const detail = e.errors ?? 'Request failed';
@@ -399,7 +419,13 @@
 		verifyCodeLoading.value = true;
 
 		try {
-			const response = await $directus.request(customEndpoint({ method: 'POST', path: '/adoption-code/verify-code', body: JSON.stringify({ code: code.value.substring(0, 6) }) })) as Probe;
+			const response = await $directus.request(customEndpoint({
+				method: 'POST',
+				path: '/adoption-code/verify-code', body: JSON.stringify({
+					userId: getUserFilter('user_id').user_id?._eq || user.value.id,
+					code: code.value.substring(0, 6),
+				}),
+			})) as Probe;
 			newProbes.value = [ response ];
 			isSuccess.value = true;
 

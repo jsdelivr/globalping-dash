@@ -137,6 +137,7 @@ declare global {
     date_last_used: string | null;
     owner_name: string;
     owner_url: string;
+		user_id: string;
   };
 
   type AppAppoval = {

@@ -25,6 +25,7 @@
 						label="Sync from GitHub"
 						:icon="loadingIconId === 1 ? 'pi pi-sync pi-spin' : 'pi pi-sync'"
 						class="!absolute right-8 top-[5px] h-6 bg-transparent !px-1 hover:bg-transparent"
+						:disabled="!!auth.impersonation"
 						@click="syncFromGithub(1)"
 					/>
 					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
@@ -49,6 +50,7 @@
 						label="Sync from GitHub"
 						:icon="loadingIconId === 2 ? 'pi pi-sync pi-spin' : 'pi pi-sync'"
 						class="!absolute right-8 top-2 h-6 bg-transparent !px-1 hover:bg-transparent"
+						:disabled="!!auth.impersonation"
 						@click="syncFromGithub(2)"
 					/>
 					<i class="pi pi-lock absolute right-3 top-3 text-bluegray-500"/>
@@ -88,6 +90,7 @@
 						label="Regenerate"
 						:icon="loadingIconId === 3 ? 'pi pi-sync pi-spin' : 'pi pi-sync'"
 						class="!absolute right-8 top-[5px] h-6 bg-transparent !px-1 hover:bg-transparent"
+						:disabled="!!auth.impersonation"
 						@click="regenerateAdoptionToken(3)"
 					/>
 					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
@@ -137,6 +140,7 @@
 					aria-labelledby="basic"
 					option-label="name"
 					option-value="value"
+					:disabled="!!auth.impersonation"
 					@update:model-value="auth.setAppearance"
 				>
 					<template #option="slotProps">

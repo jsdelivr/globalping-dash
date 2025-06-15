@@ -5,7 +5,7 @@ export function useUserFilter () {
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 
-	const getUserFilter = (filterField: string) => {
+	const getUserFilter = (filterField: string): Record<string, { _eq: string } | undefined> => {
 		if (auth.isAdmin && auth.adminMode) {
 			return {};
 		}
@@ -14,8 +14,14 @@ export function useUserFilter () {
 			throw new Error('User not found');
 		}
 
+		if (filterField === 'github_id') {
+			return {
+				github_id: { _eq: user.value.external_identifier || 'admin' },
+			};
+		}
+
 		return {
-			[filterField]: { _eq: filterField === 'github_id' ? user.value.external_identifier : user.value.id },
+			[filterField]: { _eq: user.value.id },
 		};
 	};
 

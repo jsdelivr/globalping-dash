@@ -103,7 +103,7 @@
 	import { usePagination } from '~/composables/pagination';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useMetadata } from '~/store/metadata';
-	import { formatDateForTable } from '~/utils/date-formatters';
+	import { formatDate } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	useHead({
@@ -132,7 +132,7 @@
 				$directus.request<[{sum: { amount: number }, date_created: 'datetime'}]>(aggregate('gp_credits_additions', {
 					query: {
 						filter: {
-							github_id: { _eq: getUserFilter('github_id')?.github_id?._eq || 'admin' },
+							...getUserFilter('github_id'),
 							date_created: { _gte: '$NOW(-30 day)' },
 						},
 					},
@@ -170,7 +170,12 @@
 				})),
 			]);
 
-			return { total: total[0]?.amount || 0, additions, deductions, todayOnlineProbes: todayOnlineProbes[0].count || 0 };
+			return {
+				total: total.reduce((sum, { amount }) => sum + amount, 0) || 0,
+				additions,
+				deductions,
+				todayOnlineProbes: todayOnlineProbes[0].count || 0,
+			};
 		} catch (e) {
 			sendErrorToast(e);
 			throw e;
@@ -188,6 +193,7 @@
 
 		try {
 			const { changes, count } = await $directus.request<{changes: CreditsChange[], count: number}>(customEndpoint({ method: 'GET', path: '/credits-timeline', params: {
+				userId: getUserFilter('user_id').user_id?._eq || 'all',
 				offset: first.value,
 				limit: itemsPerPage.value,
 			} }));
@@ -195,7 +201,7 @@
 			creditsChanges.value = [
 				...changes.map(change => ({
 					...change,
-					date_created: formatDateForTable(change.date_created),
+					date_created: formatDate(change.date_created),
 				})),
 			];
 

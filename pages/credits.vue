@@ -37,11 +37,7 @@
 				:total-records="creditsChangesCount"
 				:loading="loading"
 			>
-				<Column header="Date" field="date_created">
-					<template #body="slotProps">
-						{{ formatDate(slotProps.data.date_created) }}
-					</template>
-				</Column>
+				<Column header="Date" field="date_created"/>
 				<Column header="Comment" field="comment">
 					<template #body="slotProps">
 						{{ formatComment(slotProps.data) }}
@@ -107,7 +103,7 @@
 	import { usePagination } from '~/composables/pagination';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useMetadata } from '~/store/metadata';
-	import { formatDate, formatDateForTable } from '~/utils/date-formatters';
+	import { formatDate } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	useHead({
@@ -205,7 +201,7 @@
 			creditsChanges.value = [
 				...changes.map(change => ({
 					...change,
-					date_created: formatDateForTable(change.date_created),
+					date_created: formatDate(change.date_created),
 				})),
 			];
 

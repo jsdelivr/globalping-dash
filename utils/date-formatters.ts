@@ -16,18 +16,6 @@ export const formatDate = (date: string | Date | null, format: 'long' | 'short' 
 	return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
 };
 
-export const formatDateForTable = (date: string | Date | null) => {
-	if (!date) {
-		return '';
-	}
-
-	if (typeof date === 'object') {
-		date = date.toISOString();
-	}
-
-	return date.split('T')[0];
-};
-
 /**
  * Convert a date to a relative time string, such as
  * "a minute ago", "in 2 hours", "yesterday", "3 months ago", etc.

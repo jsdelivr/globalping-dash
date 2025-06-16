@@ -8,8 +8,6 @@
 			<p class="text-sm leading-[125%] text-bluegray-600 dark:text-bluegray-0">
 				Public user-defined tags that can be used to target the probe in measurements.
 				Each tag must be prefixed by your GitHub username or organization.
-				E.g., for a user with username <code class="font-bold">jimaek</code> and tag <code class="font-bold">home-1</code>
-				the final tag would be <code class="font-bold">u-jimaek:home-1</code>.
 			</p>
 
 			<div class="flex w-full gap-1">
@@ -20,10 +18,10 @@
 				>
 					<template #edit-button>
 						<Button
-							class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:bg-transparent dark:!border-dark-600 dark:bg-dark-600"
+							class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:border-surface-300 hover:bg-surface-300 dark:!border-dark-600 dark:bg-dark-600 dark:hover:!border-dark-400 dark:hover:bg-dark-400"
 							:aria-label="probe.tags.length ? 'Open edit tags dialog' : 'Open add tags dialog'"
-							aria-haspopup="dialog"
 							:aria-expanded="tagPopoverRef?.value?.visible || false"
+							aria-haspopup="dialog"
 							aria-controls="editTagsPopover"
 							@click="openEditTagsPopover($event)"
 						>
@@ -42,7 +40,7 @@
 				<Popover
 					id="editTagsPopover"
 					ref="tagPopoverRef"
-					class="w-[95%] sm:w-[500px]"
+					class="w-[95%] sm:w-[540px]"
 					:class="{
 						'!left-1/2 !-translate-x-1/2 !transform': windowSize.width.value < 768
 					}"
@@ -50,31 +48,27 @@
 					:aria-label="probe.tags.length ? 'Edit tags dialog' : 'Add tags dialog'"
 				>
 					<div class="flex w-full max-w-full flex-col">
-						<div
-							v-if="probe.tags[0]?.format === 'v1'"
-							role="alert"
-							class="mb-1 w-full rounded-t-lg border-b border-surface-200 bg-[#fefbd5] px-3 py-2 text-[#a16207] dark:border-dark-400 dark:bg-[#413e2b] dark:text-[#fde047]"
-						>
-							<p class="font-bold">The tags format has changed</p>
+						<Message v-if="probe.tags[0]?.format === 'v1'" severity="warn" class="rounded-b-none">
+							<p class="mt-2 font-bold">The tags format has changed</p>
 
-							<p class="mt-1">
+							<p class="mt-4">
 								Your tags use an outdated format and will be converted to the new format after saving.
 								Please be sure to use the updated tags in all future requests.
 							</p>
 
-							<p class="mb-1 mt-5">Outdated format:</p>
+							<p class="mt-4">Outdated format:</p>
 							<ProbeUserTagsList
 								:tags="probe.tags"
 								tag-format="v1"
-								custom-class="bg-white text-[#a16207] dark:border-dark-600 dark:bg-[#17233a] dark:text-[#fde047]"
+								custom-class="bg-white dark:border-dark-600 dark:bg-[#17233a]"
 							/>
 
-							<p class="mb-1 mt-4">New format:</p>
+							<p class="mt-4">New format:</p>
 							<ProbeUserTagsList
 								:tags="probe.tags"
-								custom-class="bg-white text-[#a16207] dark:border-dark-600 dark:bg-[#17233a] dark:text-[#fde047]"
+								custom-class="bg-white dark:border-dark-600 dark:bg-[#17233a]"
 							/>
-						</div>
+						</Message>
 
 						<div
 							v-if="probe"
@@ -82,11 +76,11 @@
 							tabindex="0"
 							class="grid w-full flex-1 grid-rows-[auto_1fr] p-4 focus-visible:outline-none focus-visible:ring-0"
 						>
-							<div v-if="tagsToEdit.length" class="mb-6 grid flex-1 grid-cols-[minmax(6rem,1fr)_auto_minmax(6rem,1fr)_auto] items-center gap-y-5">
+							<div v-if="tagsToEdit.length" class="mb-6 grid flex-1 grid-cols-[minmax(6rem,2fr)_auto_minmax(6rem,3fr)_auto] items-center gap-y-5">
 								<div class="-mb-2 content-center text-xs font-bold text-dark-800 dark:text-bluegray-0">Prefix</div>
 								<div class="mx-3 -mb-2"/>
 								<div class="-mb-2 content-center text-xs font-bold text-dark-800 dark:text-bluegray-0">Your tag</div>
-								<div class="-mb-2 "/>
+								<div class="-mb-2"/>
 
 								<template v-for="(tag, index) in tagsToEdit" :key="index">
 									<Select
@@ -112,6 +106,7 @@
 										<Button
 											icon="pi pi-trash"
 											text
+											:class="{ invisible: !index && !tag.value }"
 											aria-label="Remove tag"
 											class="text-surface-900 dark:text-surface-0"
 											@click="removeTag(index)"
@@ -122,7 +117,8 @@
 								<div class="col-span-4 -mt-3">
 									<Button
 										icon="pi pi-plus"
-										text
+										severity="secondary"
+										outlined
 										label="Add"
 										aria-label="Add tag"
 										class="text-surface-900 dark:text-surface-0"
@@ -131,27 +127,12 @@
 								</div>
 							</div>
 
-							<div v-else class="mb-6 h-[110px] w-full">
-								<div>The probe has no user tags</div>
-
-								<div class="col-span-4 mt-2">
-									<Button
-										icon="pi pi-plus"
-										text
-										label="Add"
-										aria-label="Add tag"
-										class="text-surface-900 dark:text-surface-0"
-										@click="addTag()"
-									/>
-								</div>
-							</div>
-
-							<div class="flex justify-between">
+							<div class="flex justify-end gap-2">
 								<Button
 									label="Cancel"
 									severity="secondary"
 									class="dark:!bg-dark-800"
-									outlined
+									text
 									aria-label="Cancel tag editing"
 									@click="closeEditTagsPopover"
 								/>
@@ -187,20 +168,22 @@
 		type: Boolean,
 		required: true,
 	});
-	const windowSize = useWindowSize();
+
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
+	const windowSize = useWindowSize();
 	const { $directus } = useNuxtApp();
-	const emit = defineEmits([ 'save' ]);
 
 	const uPrefixes = [ user.value.github_username, ...user.value.github_organizations ]
-		// Make default prefix the first option
+		// Make the default prefix the first option
 		.sort((prefixA, prefixB) => prefixA === user.value.default_prefix ? -1 : prefixB === user.value.default_prefix ? 1 : 0)
 		.map(value => `u-${value}`);
+
 	const tagPopoverRef = ref();
 	const tagsToEdit = ref<{ uPrefix: string, value: string, format?: string }[]>([]);
 	const isEditingTags = ref<boolean>(false);
 	const popoverContentRef = ref<HTMLElement>();
+	const getDefaultEmptyTags = () => [{ uPrefix: uPrefixes[0], value: '' }];
 
 	const openEditTagsPopover = (event: Event) => {
 		editTags();
@@ -228,7 +211,7 @@
 			uPrefix: `u-${prefix}`,
 			value,
 			format,
-		})) : [{ uPrefix: uPrefixes[0], value: '' }];
+		})) : getDefaultEmptyTags();
 	};
 
 	const addTag = () => {
@@ -238,55 +221,45 @@
 
 	const removeTag = (index: number) => {
 		tagsToEdit.value?.splice(index, 1);
+
+		if (tagsToEdit.value.length === 0) {
+			tagsToEdit.value = getDefaultEmptyTags();
+		}
 	};
 
 	const convertTags = (tagsToEdit: { uPrefix: string, value: string }[]) => tagsToEdit.map(({ uPrefix, value }) => ({
 		prefix: uPrefix.replace('u-', ''),
 		value,
-	}));
+	})).filter(({ prefix, value }) => prefix && value);
 
 	const updateProbeTags = async () => {
 		probeDetailsUpdating.value = true;
 
 		if (!probe.value) {
 			probeDetailsUpdating.value = false;
-
 			return;
 		}
 
-		const updTags = convertTags(tagsToEdit.value);
+		const updatedTags = convertTags(tagsToEdit.value);
 
-		// check if the tags are filled
-		if (!updTags || updTags.some(({ prefix, value }) => !prefix || !value)) {
-			sendToast('error', 'Tags are invalid', 'Some tag values are empty');
-			probeDetailsUpdating.value = false;
-
-			return;
-		}
-
-		// check if the tags have proper format
-		if (!updTags || updTags.some(({ value }) => !isTagValid(value))) {
+		if (updatedTags.some(({ value }) => !isTagValid(value))) {
 			sendToast('error', 'Tags are invalid', 'Some tag values have an invalid format');
 			probeDetailsUpdating.value = false;
-
 			return;
 		}
 
-		// close the Popover if tags are left the same
-		if (isEqual(updTags, probe.value.tags)) {
+		if (isEqual(updatedTags, probe.value.tags)) {
 			probeDetailsUpdating.value = false;
 			closeEditTagsPopover();
-
 			return;
 		}
 
 		try {
-			await $directus.request(updateItem('gp_probes', probe.value.id, { tags: updTags }));
+			await $directus.request(updateItem('gp_probes', probe.value.id, { tags: updatedTags }));
+			probe.value.tags = updatedTags;
 
-			sendToast('success', 'Done', 'The probe has been successfully updated');
-			emit('save');
-			probe.value.tags = updTags;
 			closeEditTagsPopover();
+			sendToast('success', 'Done', 'The probe has been successfully updated');
 		} catch (e) {
 			sendErrorToast(e);
 		} finally {

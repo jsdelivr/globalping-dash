@@ -172,7 +172,9 @@
 	};
 
 	const enableCityEditing = async () => {
-		if (isEditingCity.value === true) { return; }
+		if (isEditingCity.value) {
+			return;
+		}
 
 		isEditingCity.value = true;
 
@@ -184,7 +186,9 @@
 	};
 
 	const cancelCityEditing = () => {
-		if (isEditingCity.value === false) { return; }
+		if (!isEditingCity.value) {
+			return;
+		}
 
 		restoreOriginalLocation();
 		isEditingCity.value = false;

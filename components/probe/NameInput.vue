@@ -2,19 +2,19 @@
 	<div
 		v-if="probe"
 		ref="probeNameInput"
-		class="relative flex h-[42px] w-full cursor-pointer items-center gap-1 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--p-primary-color)] focus-visible:ring-offset-2 sm:w-auto"
+		class="relative flex h-[42px] w-full cursor-pointer items-center gap-1 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-offset-2 sm:w-auto"
 		:class="{
-			'[&>input]:outline-none [&>input]:ring-1 [&>input]:ring-[var(--p-primary-color)]': isEditingName,
+			'[&>input]:outline-none [&>input]:ring-1 [&>input]:ring-primary': isEditingName,
 			'[&>input]:dark:border-dark-600 [&>input]:dark:bg-dark-800': isEditingName,
 		}"
 		aria-label="Edit probe name"
 		aria-haspopup="true"
 		:aria-expanded="isEditingName"
 		:tabindex="isEditingName ? -1 : 0"
-		@click="!isEditingName && enableNameEditing()"
-		@keyup.enter="!isEditingName && enableNameEditing()"
-		@keyup.space="!isEditingName && enableNameEditing()"
-		@keyup.esc="isEditingName && cancelNameEditing()"
+		@click="enableNameEditing()"
+		@keyup.enter="enableNameEditing()"
+		@keyup.space="enableNameEditing()"
+		@keyup.esc="cancelNameEditing()"
 	>
 		<BigIcon :name="probe.hardwareDevice ? 'probe' : 'docker'" border/>
 
@@ -37,7 +37,7 @@
 			variant="text"
 			severity="secondary"
 			icon="pi pi-check"
-			class="!absolute !right-4 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[var(--p-primary-color)] focus:!ring-[var(--p-primary-color)]"
+			class="!absolute !right-4 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-primary focus:!ring-primary"
 			:loading="probeDetailsUpdating"
 			:disabled="probeDetailsUpdating"
 			aria-label="Save probe name"
@@ -78,7 +78,6 @@
 		required: true,
 	});
 
-	const emit = defineEmits([ 'save' ]);
 	const probeNameInput = ref<HTMLElement | null>(null);
 	const isEditingName = ref(false);
 	const editedName = ref('');
@@ -103,6 +102,10 @@
 	}, { immediate: true });
 
 	const enableNameEditing = async () => {
+		if (isEditingName.value) {
+			return;
+		}
+
 		isEditingName.value = true;
 
 		await nextTick();
@@ -113,6 +116,10 @@
 	};
 
 	const cancelNameEditing = () => {
+		if (!isEditingName.value) {
+			return;
+		}
+
 		editedName.value = originalName.value;
 		isEditingName.value = false;
 	};
@@ -152,7 +159,6 @@
 			await $directus.request(updateItem('gp_probes', probe.value.id, { name: editedName.value }));
 
 			sendToast('success', 'Done', 'The probe has been successfully updated');
-			emit('save');
 
 			originalName.value = editedName.value;
 			isEditingName.value = false;

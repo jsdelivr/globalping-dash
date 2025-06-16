@@ -148,7 +148,9 @@
 			return;
 		}
 
-		if (editedName.value === originalName.value) {
+		const trimmed = editedName.value.trim();
+
+		if (trimmed === originalName.value) {
 			isEditingName.value = false;
 			probeDetailsUpdating.value = false;
 
@@ -156,13 +158,13 @@
 		}
 
 		try {
-			await $directus.request(updateItem('gp_probes', probe.value.id, { name: editedName.value }));
+			await $directus.request(updateItem('gp_probes', probe.value.id, { name: trimmed }));
 
 			sendToast('success', 'Done', 'The probe has been successfully updated');
 
-			originalName.value = editedName.value;
+			originalName.value = trimmed;
 			isEditingName.value = false;
-			probe.value.name = editedName.value;
+			probe.value = { ...probe.value, name: trimmed };
 		} catch (e) {
 			sendErrorToast(e);
 

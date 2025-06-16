@@ -2,13 +2,16 @@
 	<div
 		v-if="probe"
 		class="absolute inset-x-4 bottom-9 flex"
+		:class="{
+			'flex-col gap-1 sm:flex-row sm:gap-0': probe.allowedCountries.length > 1,
+		}"
 	>
 		<span
-			class="flex h-full shrink-0 items-center justify-center rounded-l-md border border-r-0 border-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600 dark:bg-dark-800"
+			class="flex h-full shrink-0 items-center justify-center border border-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600 dark:bg-dark-800"
 			aria-hidden="true"
 			:class="{
-				'w-[38px]': probe.allowedCountries.length <= 1,
-				'w-24': probe.allowedCountries.length > 1
+				'w-[38px] rounded-l-md border-r-0': probe.allowedCountries.length <= 1,
+				'h-[35px] w-full rounded-md sm:h-auto sm:w-24 sm:rounded-r-none sm:border-r-0': probe.allowedCountries.length > 1,
 			}"
 		>
 			<InputGroupAddon
@@ -23,7 +26,10 @@
 				id="country"
 				v-model="editedCountry"
 				:options="probe.allowedCountries"
-				class="size-full !rounded-r-none rounded-l-md border-0 !border-r border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-primary dark:border-dark-600 dark:!bg-dark-800"
+				class="size-full border-0 border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-primary dark:border-dark-600 dark:!bg-dark-800"
+				:class="{
+					'rounded-md sm:!rounded-r-none sm:!border-r': probe.allowedCountries.length > 1,
+				}"
 				:pt="{ dropdown: 'w-8' }"
 				:pt-options="{ mergeProps: true }"
 				@change="onCountryChanged"
@@ -47,7 +53,11 @@
 
 		<div
 			ref="probeCityInput"
-			class="relative flex grow rounded-r-md border border-l-0 border-[#D1D5DB] focus:z-10 focus:ring-1 focus:ring-primary dark:border-dark-600"
+			class="relative flex grow border border-[#D1D5DB] focus:z-10 focus:ring-1 focus:ring-primary dark:border-dark-600"
+			:class="{
+				'rounded-r-md border-l-0': probe.allowedCountries.length <= 1,
+				'h-[35px] rounded-md sm:h-auto sm:rounded-l-none sm:border-l-0': probe.allowedCountries.length > 1,
+			}"
 			aria-label="Edit probe city"
 			aria-haspopup="true"
 			:aria-expanded="isEditingCity"
@@ -60,7 +70,11 @@
 			<input
 				ref="inputCityRef"
 				v-model="editedCity"
-				class="flex w-full rounded-r-md pl-3 pr-[72px] text-bluegray-900 outline-none focus:ring-1 focus:ring-primary dark:bg-dark-800 dark:text-bluegray-0 dark:focus:bg-dark-800"
+				class="flex w-full pl-3 pr-[72px] text-bluegray-900 outline-none focus:ring-1 focus:ring-primary dark:bg-dark-800 dark:text-bluegray-0 dark:focus:bg-dark-800"
+				:class="{
+					'rounded-r-md': probe.allowedCountries.length <= 1,
+					'h-full rounded-md sm:h-auto sm:rounded-l-none': probe.allowedCountries.length > 1,
+				}"
 				aria-label="City name input"
 				autocomplete="off"
 				@keyup.enter="updateProbeLocation"

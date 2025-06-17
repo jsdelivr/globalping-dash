@@ -7,6 +7,7 @@
 			'[&>input]:outline-none [&>input]:ring-1 [&>input]:ring-primary': isEditingName,
 			'[&>input]:dark:border-dark-600 [&>input]:dark:bg-dark-800': isEditingName,
 		}"
+		role="button"
 		aria-label="Edit probe name"
 		aria-haspopup="true"
 		:aria-expanded="isEditingName"

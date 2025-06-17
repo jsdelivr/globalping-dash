@@ -61,7 +61,6 @@
 			aria-label="Edit probe city"
 			aria-haspopup="true"
 			:aria-expanded="isEditingCity"
-			:tabindex="isEditingCity ? -1 : 0"
 			@click="enableCityEditing"
 			@keyup.enter="enableCityEditing"
 			@keyup.space="enableCityEditing"
@@ -94,6 +93,8 @@
 				@blur="cancelCityEditingOnBlur"
 			/>
 
+			<i v-else class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" aria-hidden="true"/>
+
 			<Button
 				v-if="isEditingCity && (((editedCity !== initialCity) || (originalCountry !== editedCountry)) && !probeDetailsUpdating)"
 				variant="text"
@@ -106,8 +107,6 @@
 				@click.stop="cancelCityEditing"
 				@blur="cancelCityEditingOnBlur"
 			/>
-
-			<i v-if="!isEditingCity" class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" aria-hidden="true"/>
 		</div>
 	</div>
 </template>

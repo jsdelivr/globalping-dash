@@ -56,14 +56,14 @@
 							</NuxtLink>
 						</template>
 					</Column>
-					<Column body-class="h-16" :style="{ width: `${columnWidths.tags}px` }">
+					<Column body-class="!py-0.5 h-16" :style="{ width: `${columnWidths.tags}px` }">
 						<template #header>
-							Tags <i ref="tagsHeaderContentRef" v-tooltip.top="'Public tags that can be used to target the probe in measurements.'" class="pi pi-info-circle"/>
+							Tags <i ref="desktopTagsHeaderContentRef" v-tooltip.top="'Public tags that can be used to target the probe in measurements.'" class="pi pi-info-circle"/>
 						</template>
 
 						<template #body="slotProps">
 							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
-								<TagsList :tags="getAllTags(slotProps.data)" :number-of-tags-to-show="numberOfTagsToShow"/>
+								<TagsList :tags="getAllTags(slotProps.data)" :wrapper="desktopTagsWrapperRef"/>
 							</NuxtLink>
 						</template>
 					</Column>
@@ -120,8 +120,8 @@
 												<span class="mr-6 font-semibold">Version:</span>
 												<span>{{ probe.version }}</span>
 											</div>
-											<div ref="mobileTagsWrapperRef">
-												<TagsList :tags="getAllTags(probe)" :number-of-tags-to-show="numberOfTagsToShowMobile"/>
+											<div>
+												<TagsList :tags="getAllTags(probe)"/>
 											</div>
 										</div>
 									</NuxtLink>
@@ -314,17 +314,8 @@
 	};
 
 	// Calculate the number of tags to show, based on the expected average tag width <= 200px (in two rows).
-	const tagsHeaderContentRef = ref(null);
-	const tagsHeaderRef = useParentElement(tagsHeaderContentRef);
-	const mobileTagsWrapperRef = ref(null);
-
-	const getNumberOfTagsToShow = (elem: Ref<HTMLElement | SVGElement | null | undefined>) => {
-		const { width } = useElementSize(elem);
-		return computed(() => Math.max(Math.floor(width.value / 100), 1));
-	};
-
-	const numberOfTagsToShow = getNumberOfTagsToShow(tagsHeaderRef);
-	const numberOfTagsToShowMobile = getNumberOfTagsToShow(mobileTagsWrapperRef);
+	const desktopTagsHeaderContentRef = ref(null);
+	const desktopTagsWrapperRef = useParentElement(desktopTagsHeaderContentRef);
 
 	// Calculate the column widths based on the table size.
 	const dataTableRef = ref(null);

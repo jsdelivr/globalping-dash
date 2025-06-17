@@ -1,7 +1,7 @@
 <template>
 	<div
 		v-if="probe"
-		class="absolute inset-x-4 bottom-9 flex"
+		class="absolute inset-x-4 bottom-9 flex h-[34px]"
 	>
 		<span
 			class="flex h-full shrink-0 items-center justify-center rounded-l-md border border-r-0 border-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600 dark:bg-dark-800"
@@ -13,7 +13,7 @@
 		>
 			<InputGroupAddon
 				v-if="probe.allowedCountries.length <= 1"
-				class="!bg-transparent"
+				class="border-none !bg-transparent"
 			>
 				<CountryFlag :country="probe.country" size="small"/>
 			</InputGroupAddon>
@@ -47,7 +47,7 @@
 
 		<div
 			ref="probeCityInput"
-			class="relative flex grow rounded-r-md border border-l-0 border-[#D1D5DB] focus:z-10 focus:ring-1 focus:ring-primary dark:border-dark-600"
+			class="relative flex grow rounded-r-md border border-l-0 border-[#D1D5DB] bg-white focus:z-10 focus:ring-1 focus:ring-primary dark:border-dark-600 dark:bg-dark-800"
 			aria-label="Edit probe city"
 			aria-haspopup="true"
 			:aria-expanded="isEditingCity"
@@ -60,7 +60,7 @@
 			<input
 				ref="inputCityRef"
 				v-model="editedCity"
-				class="flex w-full rounded-r-md pl-3 pr-[72px] text-bluegray-900 outline-none focus:ring-1 focus:ring-primary dark:bg-dark-800 dark:text-bluegray-0 dark:focus:bg-dark-800"
+				class="flex w-full rounded-r-md pl-3 pr-[72px] text-bluegray-900 outline-none focus:ring-1 focus:ring-primary dark:bg-dark-800 dark:text-bluegray-0"
 				aria-label="City name input"
 				autocomplete="off"
 				@keyup.enter="updateProbeLocation"

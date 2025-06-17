@@ -50,7 +50,7 @@
 								</span>
 
 								<span
-									v-if="!probe.systemTags || probe.systemTags.length === 0"
+									v-if="!probe.systemTags.length"
 									class="flex h-6 items-center whitespace-nowrap rounded-md border border-surface-300 px-2 text-xs text-bluegray-900 dark:border-dark-600 dark:text-bluegray-0"
 								>
 									No system tags
@@ -143,7 +143,6 @@
 		required: true,
 	});
 
-	const emit = defineEmits([ 'delete' ]);
 	const router = useRouter();
 
 	const deleteProbe = async () => {
@@ -153,7 +152,6 @@
 			if (probe.value) {
 				await $directus.request(updateItem('gp_probes', probe.value.id, { userId: null }));
 				sendToast('success', 'Done', 'The probe has been deleted');
-				emit('delete');
 				router.push('/probes');
 			}
 		} catch (e) {

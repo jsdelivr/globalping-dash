@@ -16,7 +16,7 @@
 		>
 			<InputGroupAddon
 				v-if="probe.allowedCountries.length <= 1"
-				class="!bg-transparent"
+				class="border-none !bg-transparent"
 			>
 				<CountryFlag :country="probe.country" size="small"/>
 			</InputGroupAddon>
@@ -53,7 +53,7 @@
 
 		<div
 			ref="probeCityInput"
-			class="relative flex grow border border-[#D1D5DB] focus:z-10 focus:ring-1 focus:ring-primary dark:border-dark-600"
+			class="relative flex grow border border-[#D1D5DB] bg-white focus:z-10 focus:ring-1 focus:ring-primary dark:border-dark-600 dark:bg-dark-800"
 			:class="{
 				'rounded-r-md border-l-0': probe.allowedCountries.length <= 1,
 				'h-[35px] rounded-md sm:h-auto sm:rounded-l-none sm:border-l-0': probe.allowedCountries.length > 1,
@@ -70,7 +70,7 @@
 			<input
 				ref="inputCityRef"
 				v-model="editedCity"
-				class="flex w-full pl-3 pr-[72px] text-bluegray-900 outline-none focus:ring-1 focus:ring-primary dark:bg-dark-800 dark:text-bluegray-0 dark:focus:bg-dark-800"
+				class="flex w-full pl-3 pr-[72px] text-bluegray-900 outline-none focus:ring-1 focus:ring-primary dark:bg-dark-800 dark:text-bluegray-0"
 				:class="{
 					'rounded-r-md': probe.allowedCountries.length <= 1,
 					'h-full rounded-md sm:h-auto sm:rounded-l-none': probe.allowedCountries.length > 1,

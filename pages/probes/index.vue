@@ -212,6 +212,7 @@
 	const config = useRuntimeConfig();
 
 	const { $directus } = useNuxtApp();
+	const router = useRouter();
 	const route = useRoute();
 
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
@@ -264,6 +265,11 @@
 					aggregate: { sum: 'amount' },
 				})),
 			]);
+
+			// If we somehow ended up too far, go back to the beginning.
+			if (!adoptedProbes.length && page.value) {
+				return router.replace('/probes');
+			}
 
 			const creditsByProbeId: Record<string, number> = {};
 

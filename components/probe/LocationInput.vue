@@ -7,11 +7,11 @@
 		}"
 	>
 		<span
-			class="flex h-full shrink-0 items-center justify-center border border-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600 dark:bg-dark-800"
+			class="flex h-[34px] shrink-0 items-center justify-center border border-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600 dark:bg-dark-800"
 			aria-hidden="true"
 			:class="{
 				'w-[38px] rounded-l-md border-r-0': probe.allowedCountries.length <= 1,
-				'h-[35px] w-full rounded-md sm:h-auto sm:w-24 sm:rounded-r-none sm:border-r-0': probe.allowedCountries.length > 1,
+				'w-full rounded-md sm:h-auto sm:w-24 sm:rounded-r-none sm:border-r-0': probe.allowedCountries.length > 1,
 			}"
 		>
 			<InputGroupAddon
@@ -53,10 +53,10 @@
 
 		<div
 			ref="probeCityInput"
-			class="relative flex grow border border-[#D1D5DB] bg-white focus:z-10 focus:ring-1 focus:ring-primary dark:border-dark-600 dark:bg-dark-800"
+			class="relative flex h-[34px] grow border border-[#D1D5DB] bg-white focus:z-10 focus:ring-1 focus:ring-primary dark:border-dark-600 dark:bg-dark-800"
 			:class="{
 				'rounded-r-md border-l-0': probe.allowedCountries.length <= 1,
-				'h-[35px] rounded-md sm:h-auto sm:rounded-l-none sm:border-l-0': probe.allowedCountries.length > 1,
+				'rounded-md sm:h-auto sm:rounded-l-none sm:border-l-0': probe.allowedCountries.length > 1,
 			}"
 			aria-label="Edit probe city"
 			aria-haspopup="true"

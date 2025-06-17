@@ -58,13 +58,6 @@
 				'rounded-r-md border-l-0': probe.allowedCountries.length <= 1,
 				'rounded-md sm:h-auto sm:rounded-l-none sm:border-l-0': probe.allowedCountries.length > 1,
 			}"
-			aria-label="Edit probe city"
-			aria-haspopup="true"
-			:aria-expanded="isEditingCity"
-			@click="enableCityEditing"
-			@keyup.enter="enableCityEditing"
-			@keyup.space="enableCityEditing"
-			@keyup.esc="cancelCityEditing"
 		>
 			<input
 				ref="inputCityRef"
@@ -76,8 +69,10 @@
 				}"
 				aria-label="City name input"
 				autocomplete="off"
-				@keyup.enter="updateProbeLocation"
+				@focus="enableCityEditing"
 				@blur="cancelCityEditingOnBlur"
+				@keyup.enter="updateProbeLocation"
+				@keyup.esc="cancelCityEditing"
 			>
 
 			<Button

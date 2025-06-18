@@ -297,6 +297,10 @@
 			}
 		} finally {
 			probeDetailsUpdating.value = false;
+
+			if (event.target instanceof HTMLElement) {
+				event.target.blur();
+			}
 		}
 	};
 </script>

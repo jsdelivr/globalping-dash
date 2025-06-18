@@ -88,9 +88,7 @@
 				outlined
 				label="Remove probe"
 				icon="pi pi-trash"
-				:loading="deleteProbeLoading"
 				aria-label="Remove probe"
-				:aria-disabled="deleteProbeLoading"
 				aria-haspopup="dialog"
 				:aria-expanded="deleteDialog"
 				aria-controls="removeProbeDialog"
@@ -116,7 +114,7 @@
 			</div>
 			<div class="mt-7 text-right">
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
-				<Button label="Delete probe" severity="danger" @click="deleteProbe"/>
+				<Button :loading="deleteProbeLoading" :aria-disabled="deleteProbeLoading" label="Delete probe" severity="danger" @click="deleteProbe"/>
 			</div>
 		</GPDialog>
 	</div>

@@ -293,6 +293,10 @@
 			probe.value = updProbeDetails;
 
 			updateMapMarker(updProbeDetails.latitude, updProbeDetails.longitude, mapCenterYOffsetPx.value);
+
+			if (event.target instanceof HTMLElement) {
+				event.target.blur();
+			}
 		} catch (e) {
 			sendErrorToast(e);
 
@@ -301,10 +305,6 @@
 			}
 		} finally {
 			probeDetailsUpdating.value = false;
-
-			if (event.target instanceof HTMLElement) {
-				event.target.blur();
-			}
 		}
 	};
 </script>

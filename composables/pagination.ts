@@ -1,5 +1,3 @@
-const route = useRoute();
-
 export interface PaginationOptions {
 	active?: () => boolean;
 	itemsPerPage: Ref<number>;
@@ -9,6 +7,7 @@ export interface PaginationOptions {
 
 export const usePagination = ({ active = () => true, itemsPerPage, limitKey = 'limit', pageKey = 'page' }: PaginationOptions) => {
 	const page = ref(0);
+	const route = useRoute();
 	const windowSize = useWindowSize();
 
 	watch(() => route.query[pageKey], () => {

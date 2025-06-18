@@ -1,6 +1,5 @@
-const config = useRuntimeConfig();
-
 export const useGoogleMaps = (callback: () => void) => {
+	const config = useRuntimeConfig();
 	window.googleMapsLoadCallback = callback;
 
 	if (window.google?.maps) {

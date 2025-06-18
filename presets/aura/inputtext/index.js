@@ -25,7 +25,7 @@ export default {
 			{ 'first:ml-0 -ml-px': parent.instance.$name === 'InputGroup' && !props.showButtons },
 
 			// Colors
-			'placeholder:text-bluegray-400 dark:placeholder:text-surface-500',
+			'placeholder:text-bluegray-400',
 			{ 'text-bluegray-900 dark:text-surface-0 bg-surface-0 dark:bg-dark-900': !context.disabled },
 			'border',
 			{ 'border-surface-300 dark:border-dark-600': !props.invalid },

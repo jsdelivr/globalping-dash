@@ -25,7 +25,8 @@
 	});
 
 	const copyTooltip = ref(false);
-	const copyCommand = async () => {
+	const copyCommand = async (event: Event) => {
+		const button = event.currentTarget as HTMLButtonElement;
 		let result: string;
 
 		if (Array.isArray(props.content)) {
@@ -36,6 +37,10 @@
 
 		await navigator.clipboard.writeText(result);
 		copyTooltip.value = true;
-		setTimeout(() => copyTooltip.value = false, 1000);
+
+		setTimeout(() => {
+			copyTooltip.value = false;
+			button.blur();
+		}, 1000);
 	};
 </script>

@@ -30,7 +30,7 @@
 						</template>
 
 						<template #body="slotProps">
-							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
+							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
 								<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3">
 									<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'probe' : 'docker'" border :status="getProbeStatus(slotProps.data)"/>
 									<p class="col-start-2 col-end-3 flex items-center font-bold">{{ slotProps.data.name || slotProps.data.city }}</p>
@@ -45,7 +45,7 @@
 						</template>
 
 						<template #body="slotProps">
-							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
+							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
 								<div class="px-2 py-3">
 									<div class="mb-1 flex items-center">
 										<CountryFlag :country="slotProps.data.country" size="small"/>
@@ -62,7 +62,7 @@
 						</template>
 
 						<template #body="slotProps">
-							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center" @click="openProbeDetails(slotProps.data.id)">
+							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
 								<TagsList :tags="getAllTags(slotProps.data)" :wrapper="desktopTagsWrapperRef"/>
 							</NuxtLink>
 						</template>
@@ -100,7 +100,7 @@
 						<div class="px-4 pb-3 pt-1">
 							<div v-if="probes.length">
 								<div v-for="probe in probes" :key="probe.id" class="probe box-content block pb-2 pt-4">
-									<NuxtLink :to="`/probes/${probe.id}`" @click="openProbeDetails(probe.id)">
+									<NuxtLink :to="`/probes/${probe.id}`">
 										<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
 											<BigIcon class="col-span-1 row-span-2" :name="probe.hardwareDevice ? 'probe' : 'docker'" border :status="probe.status"/>
 											<div class="col-start-2 col-end-3 flex items-center font-bold">
@@ -176,16 +176,7 @@
 				<Button class="mt-6" label="Start a probe" @click="startProbeDialog = true"/>
 			</div>
 		</div>
-		<div v-if="probeDetails">
-			<NuxtPage
-				:credits="credits[probeDetails!.id] || 0"
-				:probe="probeDetails"
-				:gmaps-loaded="gmapsLoaded"
-				@save="loadLazyData"
-				@hide="onHide"
-				@delete="onDelete"
-			/>
-		</div>
+
 		<GPDialog
 			v-model:visible="startProbeDialog"
 			view-name="start-a-probe"
@@ -210,7 +201,7 @@
 </template>
 
 <script setup lang="ts">
-	import { aggregate, readItem, readItems } from '@directus/sdk';
+	import { aggregate, readItems } from '@directus/sdk';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
@@ -221,6 +212,7 @@
 	const config = useRuntimeConfig();
 
 	const { $directus } = useNuxtApp();
+	const router = useRouter();
 	const route = useRoute();
 
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
@@ -273,6 +265,11 @@
 					aggregate: { sum: 'amount' },
 				})),
 			]);
+
+			// If we somehow ended up too far, go back to the beginning.
+			if (!adoptedProbes.length && page.value) {
+				return router.replace('/probes');
+			}
 
 			const creditsByProbeId: Record<string, number> = {};
 
@@ -352,64 +349,6 @@
 			tags: columns[2].width,
 		};
 	});
-
-	// PROBE DETAILS
-	onMounted(async () => {
-		const probeId = route.params.id as string;
-
-		if (probeId) {
-			await loadProbeData(probeId);
-		}
-	});
-
-	watch(() => route.path, async () => {
-		const probeId = route.params.id as string;
-
-		if (probeId) {
-			await loadProbeData(probeId);
-		} else {
-			probeDetails.value = null;
-		}
-	});
-
-	const loadProbeData = async (id: string) => {
-		try {
-			const probe = await $directus.request(readItem('gp_probes', id));
-
-			probeDetails.value = probe;
-		} catch (e) {
-			const response = (e as { response?: Response } | undefined)?.response;
-
-			if (response?.status === 403) {
-				return navigateTo('/probes');
-			}
-
-			sendErrorToast(e);
-		}
-	};
-
-	const probeDetails = ref<Probe | null>(null);
-
-	const openProbeDetails = (id: string) => {
-		const probe = probes.value.find(probe => probe.id === id);
-
-		if (probe) {
-			probeDetails.value = probe;
-		}
-	};
-
-	const onHide = async () => {
-		await navigateTo(page.value ? `/probes?page=${page.value + 1}` : '/probes');
-	};
-
-	const onDelete = async () => {
-		// Go to prev page if that is last item.
-		if (probes.value.length === 1 && page.value) {
-			page.value--;
-		}
-
-		await loadLazyData();
-	};
 </script>
 
 <style scoped>

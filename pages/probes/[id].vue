@@ -1,414 +1,219 @@
 <template>
-	<GPDialog
-		v-model:visible="probeDetailsDialog"
-		position="center"
-		header="Probe details"
-		content-class="!p-0"
-		@after-hide="emit('hide')"
-	>
-		<div class="relative border-y">
-			<div class="flex flex-wrap justify-between gap-4 border-b px-6 py-2">
-				<div>
-					Status:<span class="ml-2 font-bold">{{ capitalize(getProbeStatus(probe).replaceAll('-', ' ')) }}</span>
-					<StatusIcon class="ml-2 text-3xs" :status="getProbeStatus(probe)"/>
-				</div>
-				<div class="flex items-center">
-					Credits per month:
-					<nuxt-icon class="ml-2 text-green-500" name="coin"/>
-					<span class="ml-2 font-bold text-green-500">+{{ props.credits }}</span>
-				</div>
-				<div>Type:<span class="ml-2 font-bold">{{ probe.hardwareDevice || 'Container' }}</span></div>
-				<div>Version:<span class="ml-2 font-bold">{{ probe.version }}</span></div>
-			</div>
-			<div id="gp-map" class="h-48"/>
-		</div>
-
-		<div class="px-6 py-7 dark:text-surface-0">
-			<label for="probeName" class="text-xs">Probe name</label>
-			<InputText
-				id="probeName"
-				v-model="probe.name"
-				class="mt-1 w-full"
-			/>
-			<p class="mt-2 text-xs text-bluegray-400">
-				Private name of the probe, visible only to you.
-			</p>
-
-			<label for="primary-ip" class="mt-4 inline-block text-xs">{{ probe.altIps.length ? 'Primary IP' : 'IP address' }}</label>
-			<div class="relative mt-1">
-				<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
-				<InputText
-					id="primary-ip"
-					v-model="probe.ip"
-					disabled
-					class="pointer-events-auto w-full cursor-text select-auto bg-transparent dark:bg-transparent"
-				/>
-			</div>
-			<p class="mt-2 text-xs text-bluegray-400">
-				The IP address from which the probe connected.
-			</p>
-
-			<div v-if="probe.altIps.length">
-				<label for="alternative-ips" class="mt-4 inline-block text-xs">Alternative IPs</label>
-				<div class="relative mt-1">
-					<i class="pi pi-lock absolute right-3 top-[13px] text-bluegray-500"/>
-					<ReadOnlyAutoComplete
-						id="alternative-ips"
-						v-model="probe.altIps"
-					/>
-				</div>
-				<p class="mt-2 text-xs text-bluegray-400">
-					Additional public IP addresses reported by the probe.
-				</p>
-			</div>
-
-			<label for="city" class="mt-4 inline-block text-xs">Location</label>
-			<InputGroup class="mt-1">
-				<InputGroupAddon v-if="probe.allowedCountries.length <= 1" class="!bg-transparent">
-					<CountryFlag :country="probe.country" size="small"/>
-				</InputGroupAddon>
-				<Select
-					v-if="probe.allowedCountries.length > 1"
-					id="country"
-					v-model="probe.country"
-					:options="probe.allowedCountries"
-					class="border-r"
-					:pt="{ dropdown: 'w-8' }"
-					:pt-options="{ mergeProps: true }"
+	<div class="min-h-full p-6">
+		<div class="flex flex-col gap-4">
+			<div class="flex gap-2">
+				<NuxtLink
+					:to="getBackToProbesHref()"
+					class="mr-auto flex cursor-pointer items-center gap-2 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-offset-2"
+					aria-label="Go back to the list of probes"
 				>
-					<template #value="slotProps">
-						<div class="flex items-center">
-							<CountryFlag :country="slotProps.value" size="small"/>
-							<div class="ml-2">{{ slotProps.value }}</div>
-						</div>
-					</template>
-					<template #option="slotProps">
-						<div class="flex items-center">
-							<CountryFlag :country="slotProps.option" size="small"/>
-							<div class="ml-2">{{ slotProps.option }}</div>
-						</div>
-					</template>
-				</Select>
-				<InputText
-					id="city"
-					ref="cityInputRef"
-					v-model="probe.city"
-					class="w-full"
-					placeholder="City"
-				/>
-			</InputGroup>
-			<p class="mt-2 text-xs text-bluegray-400">
-				Location of the probe. If the auto-detected value is wrong, you can adjust it here.
-				<span v-if="probe.allowedCountries.length > 1">The country can only be changed to one of the values reported by our GeoIP providers.</span>
-			</p>
+					<i class="pi pi-arrow-left text-bluegray-500"/>
+					<span class="font-bold text-bluegray-500">Back to probes</span>
+				</NuxtLink>
 
-			<label for="systemTags" class="mt-4 inline-block text-xs">System tags</label>
-			<div class="relative mt-1">
-				<i class="pi pi-lock absolute right-3 top-[13px] text-bluegray-500"/>
-				<ReadOnlyAutoComplete
-					id="systemTags"
-					v-model="probe.systemTags"
-				/>
-			</div>
-			<p class="mt-2 text-xs text-bluegray-400">
-				Public tags that can be used to target the probe in measurements.
-			</p>
+				<div v-if="probeDetails" class="flex h-8 items-center gap-1 rounded-full border border-surface-300 md:hidden dark:border-dark-600">
+					<span class="flex items-center gap-2 pl-3">
+						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails.status)"/>
 
-			<label for="userTags" class="mt-4 inline-block text-xs">User tags</label>
-			<div v-if="isEditingTags" class="mt-1">
-				<div>
-					<Message v-if="probe.tags[0]?.format === 'v1'" severity="warn" class="mb-1 mt-2">
-						<p class="font-bold">The tags format has changed</p>
+						<span class="font-bold text-bluegray-900 dark:text-bluegray-0">
+							{{ capitalize(probeDetails.status) }}
+						</span>
+					</span>
 
-						<div class="mt-1">
-							Your tags use an outdated format and will be converted to the new format after saving.
-							Please be sure to use the updated tags in all future requests.
-							<br>
-							<br>
-
-							Outdated format:<br>
-							<span v-for="(tag, index) in probe.tags" :key="index">
-								<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${tag.prefix}-${tag.value}`"/>
-							</span>
-							<br>
-							<br>
-
-							New format:<br>
-							<span v-for="(tag, index) in probe.tags" :key="index">
-								<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${tag.prefix}:${tag.value}`"/>
-							</span>
-						</div>
-					</Message>
-
-					<div class="flex text-xs">
-						<div class="flex-1 content-center">Prefix</div>
-						<div class="mx-3"/>
-						<div class="flex-1 content-center">Your tag</div>
-						<Button icon="pi pi-trash" text class="invisible"/>
-					</div>
-					<div v-for="(tag, index) in tagsToEdit" :key="index" class="mb-2 flex items-center" :class="{ 'mb-5': !isTagValid(tag.value) }">
-						<Select v-model="tag.uPrefix" class="flex-1" :options="uPrefixes" :scroll-height="'200px'"/>
-						<div class="mx-2">{{ probe.tags[0]?.format === 'v1' ? '-' : ':' }}</div>
-						<div class="relative flex-1">
-							<InputText v-model="tag.value" :invalid="!isTagValid(tag.value)" class="w-full" placeholder="my-tag"/>
-							<p v-if="!isTagValid(tag.value)" class="absolute pl-1 text-red-500">Invalid tag</p>
-						</div>
-						<Button icon="pi pi-trash" text aria-label="Remove" class="text-surface-900 dark:text-surface-0" @click="removeTag(index)"/>
-					</div>
-				</div>
-				<div class="mt-1 flex">
-					<Button
-						label="Add tag"
-						icon="pi pi-plus"
-						severity="secondary"
-						class="dark:!bg-dark-800"
-						outlined
-						@click="addTag"
-					/>
+					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900 dark:bg-dark-600 dark:text-bluegray-0">
+						v{{ probeDetails.version }}
+					</span>
 				</div>
 			</div>
-			<div v-else-if="!isEditingTags && probe.tags.length === 0">
-				<Button
-					label="Add tag"
-					icon="pi pi-plus"
-					severity="secondary"
-					class="mt-1 dark:!bg-dark-800"
-					outlined
-					@click="addTag"
-				/>
-			</div>
-			<div v-else class="relative mt-1">
-				<ReadOnlyAutoComplete
-					id="userTags"
-					v-model="userTags"
-				/>
-				<Button
-					label="Edit"
-					icon="pi pi-pencil"
-					icon-pos="right"
-					class="!absolute right-1.5 top-1.5 bg-transparent hover:bg-transparent"
-					severity="contrast"
-					text
-					aria-label="Edit"
-					size="small"
-					@click="editTags"
-				/>
-			</div>
-			<p class="mt-2 text-xs text-bluegray-400">
-				Public user-defined tags that can be used to target the probe in measurements.
-				Each tag must be prefixed by your GitHub username or organization.
-				E.g., for a user with username <code class="font-bold">jimaek</code>
-				and tag <code class="font-bold">home-1</code> the final tag would be <code class="whitespace-nowrap font-bold">u-jimaek:home-1</code>.
-			</p>
 
-			<div class="mt-7 flex justify-end">
-				<Button
-					class="mr-auto"
-					label="Delete probe"
-					severity="danger"
-					icon="pi pi-trash"
-					text
-					:loading="deleteProbeLoading"
-					@click="deleteDialog = true"
-				/>
-				<Button class="mr-2" label="Close" severity="secondary" text @click="probeDetailsDialog = false"/>
-				<Button label="Save" :loading="updateProbeLoading" :disabled="!isSaveEnabled" @click="updateProbe"/>
+			<div v-if="probeDetails" class="flex w-full flex-col items-center gap-4 sm:flex-row sm:flex-wrap">
+				<ProbeNameInput v-model:probe-details-updating="probeDetailsUpdating" v-model:probe="probeDetails"/>
+
+				<div class="hidden h-8 items-center gap-1 rounded-full border border-surface-300 md:flex dark:border-dark-600">
+					<span class="flex items-center gap-2 pl-3">
+						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails.status)"/>
+
+						<span class="font-bold text-bluegray-900 dark:text-bluegray-0">
+							{{ capitalize(probeDetails.status) }}
+						</span>
+					</span>
+
+					<span class="mx-1 rounded-full bg-surface-200 px-2 py-0.5 font-bold text-bluegray-900 dark:bg-dark-600 dark:text-bluegray-0">
+						v{{ probeDetails.version }}
+					</span>
+				</div>
+
+				<div v-if="probeCreditsPerMonth" class="ml-auto flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-normal">
+					<span class="whitespace-nowrap text-bluegray-900 dark:text-bluegray-0">
+						Credits per month
+					</span>
+
+					<span class="flex h-[30px] items-center gap-2 rounded-md border border-surface-300 px-2 dark:border-dark-600">
+						<nuxt-icon class="text-green-500" name="coin"/>
+						<span class="font-bold text-green-500">+{{ probeCreditsPerMonth }}</span>
+					</span>
+				</div>
 			</div>
+
+			<show-more v-if="probeDetails" v-model:expanded="showMoreIps">
+				<div
+					class="flex flex-wrap content-start gap-2 rounded-xl bg-surface-100 p-4 dark:bg-dark-600"
+				>
+					<span class="flex h-[38px] w-full items-center whitespace-nowrap sm:w-auto">Primary IP:</span>
+					<span class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800 dark:text-bluegray-0">
+						{{ probeDetails.ip }}
+						<CopyButton :content="probeDetails.ip" class="!top-[7px] size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
+					</span>
+
+					<template v-if="probeDetails?.altIps?.length">
+						<span class="flex h-[38px] w-full items-center whitespace-nowrap sm:w-auto">Alternative IPs:</span>
+						<span
+							v-for="(altIp, index) in limitIpsToShow()"
+							:key="index"
+							class="relative flex h-9 items-center rounded-xl border border-surface-300 bg-white pl-3 pr-8 font-bold text-dark-800 dark:border-dark-600 dark:bg-dark-800 dark:text-bluegray-0"
+						>
+							{{ altIp }}
+							<CopyButton :content="altIp" class="!top-[7px] mb-px size-5 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
+						</span>
+					</template>
+
+					<button
+						v-if="probeDetails.altIps.length > 1"
+						:aria-label="showMoreIps ? 'Show fewer IPs' : 'Show more IPs'"
+						class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary dark:text-bluegray-0"
+						@click="showMoreIps = !showMoreIps"
+					>
+						{{ showMoreIps ? 'Show less' : 'Show more' }}
+					</button>
+				</div>
+			</show-more>
+
+			<Tabs value="0">
+				<TabList ref="tabListRef" class="!border-b !border-surface-300 dark:!border-dark-600 [&_[data-pc-section='tablist']]:!border-none">
+					<Tab value="0" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Details</Tab>
+					<!-- temporarily hide Logs tab while it's under construction -->
+					<!-- <Tab value="1" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Logs</Tab> -->
+				</TabList>
+
+				<TabPanels class="mt-6 !bg-transparent !p-0">
+					<TabPanel v-if="probeDetails" value="0" tabindex="-1">
+						<ProbeTabDetails v-model:probe-details-updating="probeDetailsUpdating" v-model:probe="probeDetails"/>
+					</TabPanel>
+
+					<TabPanel value="1" tabindex="-1">
+						NO LOGS FOR NOW
+					</TabPanel>
+				</TabPanels>
+			</Tabs>
 		</div>
-		<GPDialog
-			v-model:visible="deleteDialog"
-			header="Delete probe"
-		>
-			<div class="flex items-center">
-				<div>
-					<i class="pi pi-exclamation-triangle text-xl text-primary"/>
-				</div>
-				<div class="ml-3">
-					<p>You are about to delete probe <span class="font-bold">{{ probe.name || probe.city }}</span> ({{ probe.ip }}).</p>
-					<p>Are you sure you want to delete this probe? You will not be able to undo this action.</p>
-				</div>
-			</div>
-			<div class="mt-7 text-right">
-				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
-				<Button label="Delete probe" severity="danger" @click="deleteProbe"/>
-			</div>
-		</GPDialog>
-	</GPDialog>
+	</div>
 </template>
 
 <script setup lang="ts">
-	/* eslint-disable no-extra-parens */
-	import { updateItem } from '@directus/sdk';
+	import { readItem, aggregate } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
-	import isEqual from 'lodash/isEqual';
-	import memoize from 'lodash/memoize';
-	import CountryFlag from 'vue-country-flag-next';
 	import { useAuth } from '~/store/auth';
-	import { initGoogleMap } from '~/utils/init-google-map';
-	import { getProbeStatus } from '~/utils/probe-status';
-	import { sendErrorToast, sendToast } from '~/utils/send-toast';
+	import { sendErrorToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();
-
-	const props = defineProps({
-		probe: {
-			type: Object as PropType<Probe>,
-			required: true,
-		},
-		credits: {
-			type: Number,
-			default: 0,
-		},
-		gmapsLoaded: {
-			type: Boolean,
-			default: false,
-		},
-	});
-
-	const emit = defineEmits([ 'save', 'hide', 'delete' ]);
-
+	const route = useRoute();
+	const router = useRouter();
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
-	// ROOT
-
-	const probeDetailsDialog = ref(true);
-	const cityInputRef = ref();
-
-	const probe = ref({ ...props.probe });
-	watch(() => props.probe, () => {
-		probe.value = { ...props.probe };
-	});
-
-	// Reset the city on country change.
-	watch(() => probe.value.country, () => {
-		probe.value.city = '';
-
-		setTimeout(() => {
-			cityInputRef.value?.rootEl.focus();
-		});
-	});
+	const probeId = route.params.id as string;
+	const probeDetails = ref<Probe | null>(null);
+	const probeDetailsUpdating = ref(false);
+	const showMoreIps = ref(false);
+	const windowSize = useWindowSize();
+	const tabListRef = useTemplateRef('tabListRef');
 
 	useHead(() => {
 		return {
-			title: `Probe '${props.probe.name || props.probe.city}' -`,
+			title: probeDetails.value ? `Probe '${probeDetails.value.name || probeDetails.value.city}' -` : 'Probe -',
 		};
 	});
 
-	// GOOGLE MAP
+	watch(windowSize.width, () => {
+		// @ts-expect-error small hack to fix the tab underline on resize: https://github.com/primefaces/primevue/issues/6310
+		tabListRef.value?.updateInkBar();
+	}, { flush: 'post' });
 
-	let removeWatcher: (() => void) | undefined;
-	watch(() => props.gmapsLoaded, async () => {
-		removeWatcher = await initGoogleMap(probe.value);
-	});
-
-	onMounted(async () => {
-		if (props.gmapsLoaded) {
-			removeWatcher = await initGoogleMap(probe.value);
-		}
-	});
-
-	onUnmounted(() => {
-		removeWatcher && removeWatcher();
-	});
-
-	// TAGS
-
-	const isEditingTags = ref<boolean>(false);
-	const userTags = computed(() => probe.value.tags.map(({ prefix, value, format }) => format === 'v1' ? `u-${prefix}-${value}` : `u-${prefix}:${value}`));
-	const tagsToEdit = ref<{ uPrefix: string, value: string }[]>([]);
-
-	const uPrefixes = [ user.value.github_username, ...user.value.github_organizations ]
-		// Make default prefix the first option
-		.sort((prefixA, prefixB) => prefixA === user.value.default_prefix ? -1 : prefixB === user.value.default_prefix ? 1 : 0)
-		.map(value => `u-${value}`);
-
-	const editTags = () => {
-		isEditingTags.value = true;
-
-		tagsToEdit.value = probe.value.tags.map(({ prefix, value }) => ({
-			uPrefix: `u-${prefix}`,
-			value,
-		}));
-	};
-
-	const addTag = () => {
-		isEditingTags.value = true;
-		tagsToEdit.value.push({ uPrefix: `u-${user.value.default_prefix}`, value: '' });
-	};
-
-	const removeTag = (index: number) => {
-		tagsToEdit.value?.splice(index, 1);
-	};
-
-	const convertTags = (tagsToEdit: { uPrefix: string, value: string }[]) => tagsToEdit.map(({ uPrefix, value }) => ({
-		prefix: uPrefix.replace('u-', ''),
-		value,
-	}));
-
-	const tagRegex = /^[a-zA-Z0-9-]+$/;
-	const isTagValid = memoize((value: string) => {
-		return value === '' || (value.length <= 32 && tagRegex.test(value));
-	});
-
-	const areTagsEmpty = (tags: Probe['tags']) => tags.some(({ prefix, value }) => !prefix || !value);
-
-	// ACTIONS
-
-	const isSaveEnabled = computed(() => (
-		probe.value.name !== props.probe.name
-		|| probe.value.country !== props.probe.country
-		|| probe.value.city !== props.probe.city
-		|| !isEqual(probe.value.tags, props.probe.tags)
-		|| isEditingTags.value
-	));
-
-
-	const updateProbeLoading = ref(false);
-	const updateProbe = async () => {
-		updateProbeLoading.value = true;
-		const tags = isEditingTags.value ? convertTags(tagsToEdit.value) : probe.value.tags;
-
-		if (areTagsEmpty(tags)) {
-			updateProbeLoading.value = false;
-			sendToast('error', 'Tags are invalid', 'Some tag values are empty');
-			return;
-		}
-
+	const loadProbeData = async (id: string) => {
 		try {
-			await $directus.request(updateItem('gp_probes', probe.value.id, {
-				...(probe.value.name !== props.probe.name && { name: probe.value.name }),
-				...(probe.value.country !== props.probe.country && { country: probe.value.country }),
-				...(probe.value.city !== props.probe.city && { city: probe.value.city }),
-				...(!isEqual(tags, props.probe.tags) && { tags }),
+			probeDetails.value = await $directus.request(readItem('gp_probes', id));
+		} catch (e) {
+			const response = (e as { response?: Response } | undefined)?.response;
+
+			if (response?.status === 403) {
+				return navigateTo('/probes');
+			}
+
+			sendErrorToast(e);
+		}
+	};
+
+	await loadProbeData(probeId);
+
+	// HANDLE PRIMARY, ALT IPS
+	const limitIpsToShow = () => {
+		if (showMoreIps.value) {
+			return probeDetails?.value?.altIps;
+		}
+
+		return probeDetails?.value?.altIps?.slice(0, 1) ?? [];
+	};
+
+
+	// HANDLE STATUS COLORS
+	const getProbeStatusColor = (status: string) => {
+		switch (status.toLowerCase()) {
+		case 'ready':
+			return 'text-green-500';
+
+		case 'offline':
+			return 'text-bluegray-500';
+
+		case 'ping-test-failed':
+			return 'text-red-500';
+
+		default:
+			return 'text-yellow-600';
+		}
+	};
+
+	// HANDLE CREDITS
+	const probeCreditsPerMonth = ref<number | null>(null);
+
+	const loadCreditsData = async () => {
+		try {
+			const creditsResponse = await $directus.request<[{ sum: { amount: number }, adopted_probe: string}]>(aggregate('gp_credits_additions', {
+				query: {
+					filter: {
+						github_id: { _eq: user.value.external_identifier || 'admin' },
+						adopted_probe: { _eq: probeDetails?.value?.id },
+						date_created: { _gte: '$NOW(-30 day)' },
+					},
+				},
+				groupBy: [ 'adopted_probe' ],
+				aggregate: { sum: 'amount' },
 			}));
 
-			sendToast('success', 'Done', 'The probe has been successfully updated');
-			emit('save');
-			probeDetailsDialog.value = false;
+			probeCreditsPerMonth.value = creditsResponse[0]?.sum.amount;
 		} catch (e) {
 			sendErrorToast(e);
 		}
-
-		updateProbeLoading.value = false;
 	};
 
-	const deleteDialog = ref(false);
-	const deleteProbeLoading = ref(false);
-	const deleteProbe = async () => {
-		deleteProbeLoading.value = true;
+	watch(probeDetails, async () => {
+		await loadCreditsData();
+	}, { immediate: true });
 
-		try {
-			await $directus.request(updateItem('gp_probes', probe.value.id, {
-				userId: null,
-			}));
+	// HANDLE GO BACK TO PROBES
+	const getBackToProbesHref = () => {
+		const defaultPath = '/probes';
+		const prevPath = typeof router.options.history.state.back === 'string' ? router.options.history.state.back : defaultPath;
+		const isPrevPathValid = prevPath.startsWith(defaultPath);
 
-			sendToast('success', 'Done', 'The probe has been deleted');
-			emit('delete');
-			probeDetailsDialog.value = false;
-		} catch (e) {
-			sendErrorToast(e);
-		}
-
-		deleteProbeLoading.value = false;
+		return isPrevPathValid ? prevPath : defaultPath;
 	};
 </script>

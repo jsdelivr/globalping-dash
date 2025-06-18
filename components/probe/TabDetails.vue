@@ -76,19 +76,14 @@
 			</div>
 		</div>
 
-		<div class="flex flex-col gap-4 rounded-xl bg-surface-100 px-6 py-4 sm:h-[68px] sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-0 dark:bg-dark-600">
-			<span class="flex gap-2">
-				<i class="pi pi-info-circle text-lg text-bluegray-900 dark:text-bluegray-0"/>
-				<span class="text-bluegray-900 dark:text-bluegray-0">Removing the probe will result in data loss.</span>
-			</span>
-
+		<div class="flex flex-col gap-4 border-t py-4 sm:flex-row sm:items-center sm:justify-end dark:bg-dark-600">
 			<Button
 				class="!h-9"
 				severity="secondary"
 				outlined
-				label="Remove probe"
+				label="Delete probe"
 				icon="pi pi-trash"
-				aria-label="Remove probe"
+				aria-label="Delete probe"
 				aria-haspopup="dialog"
 				:aria-expanded="deleteDialog"
 				aria-controls="removeProbeDialog"

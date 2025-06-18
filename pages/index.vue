@@ -227,7 +227,7 @@
 			if (user.value.user_type !== 'member') {
 				fromSponsorshipPromise = $directus.request(readItems('gp_credits_additions', {
 					filter: {
-						github_id: { _eq: getUserFilter('github_id')?.github_id?._eq || 'admin' },
+						...getUserFilter('github_id'),
 						reason: { _eq: 'recurring_sponsorship' },
 						date_created: { _gte: '$NOW(-35 day)' },
 					},

@@ -31,12 +31,21 @@
 	const dark = document.documentElement.classList.contains('dark');
 
 	const changes = computed(() => {
-		const dayToAddition = new Map(props.additions.map((addition) => {
-			return [ formatDate(addition.date_created, 'short'), addition ];
-		}));
-		const dayToDeduction = new Map(props.deductions.map((deduction) => {
-			return [ formatDate(deduction.date, 'short'), deduction ];
-		}));
+		const dayToAddition = new Map<string, number>();
+		const dayToDeduction = new Map<string, number>();
+
+		for (const addition of props.additions) {
+			const day = formatDate(addition.date_created, 'short');
+			const current = dayToAddition.get(day) ?? 0;
+			dayToAddition.set(day, current + addition.amount);
+		}
+
+		for (const deduction of props.deductions) {
+			const day = formatDate(deduction.date, 'short');
+			const current = dayToDeduction.get(day) ?? 0;
+			dayToDeduction.set(day, current + deduction.amount);
+		}
+
 		const last30Days = getLast30Days();
 
 		const data: {
@@ -44,21 +53,23 @@
 			total: number;
 			generated: number;
 			spent: number;
-		}[] = [{
-			label: last30Days[0],
-			total: props.start,
-			generated: dayToAddition.get(last30Days[0])?.amount ?? 0,
-			spent: dayToDeduction.get(last30Days[0])?.amount ?? 0,
-		}];
+		}[] = [];
 
-		for (let i = 1; i < last30Days.length; i++) {
+		for (let i = 0; i < last30Days.length; i++) {
 			const day = last30Days[i];
-			const addition = dayToAddition.get(day)?.amount ?? 0;
-			const deduction = dayToDeduction.get(day)?.amount ?? 0;
+			const addition = dayToAddition.get(day) ?? 0;
+			const deduction = dayToDeduction.get(day) ?? 0;
+			let total;
+
+			if (i === 0) {
+				total = props.start + addition - deduction;
+			} else {
+				total = data[i - 1].total + addition - deduction;
+			}
 
 			data.push({
 				label: day,
-				total: data[i - 1].total + addition - deduction,
+				total,
 				generated: addition,
 				spent: deduction,
 			});

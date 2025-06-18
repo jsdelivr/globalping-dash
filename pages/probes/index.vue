@@ -256,7 +256,7 @@
 				$directus.request<[{ sum: { amount: number }, adopted_probe: string }]>(aggregate('gp_credits_additions', {
 					query: {
 						filter: {
-							github_id: { _eq: getUserFilter('github_id')?.github_id?._eq || 'admin' },
+							...getUserFilter('github_id'),
 							reason: { _eq: 'adopted_probe' },
 							date_created: { _gte: '$NOW(-30 day)' },
 						},

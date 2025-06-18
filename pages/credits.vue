@@ -103,7 +103,7 @@
 	import { usePagination } from '~/composables/pagination';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useMetadata } from '~/store/metadata';
-	import { formatDate } from '~/utils/date-formatters';
+	import { formatDateForTable } from '~/utils/date-formatters';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	useHead({
@@ -201,7 +201,7 @@
 			creditsChanges.value = [
 				...changes.map(change => ({
 					...change,
-					date_created: formatDate(change.date_created),
+					date_created: formatDateForTable(change.date_created),
 				})),
 			];
 

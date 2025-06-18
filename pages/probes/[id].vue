@@ -7,8 +7,8 @@
 					class="mr-auto flex cursor-pointer items-center gap-2 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-offset-2"
 					aria-label="Go back to the list of probes"
 				>
-					<i class="pi pi-arrow-left text-bluegray-500"/>
-					<span class="font-bold text-bluegray-500">Back to probes</span>
+					<i class="pi pi-arrow-left text-bluegray-500 dark:text-bluegray-300"/>
+					<span class="font-bold text-bluegray-500 dark:text-bluegray-300">Back to probes</span>
 				</NuxtLink>
 
 				<div v-if="probeDetails" class="flex h-8 items-center gap-1 rounded-full border border-surface-300 md:hidden dark:border-dark-600">

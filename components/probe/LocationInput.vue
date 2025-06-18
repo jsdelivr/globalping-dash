@@ -67,12 +67,12 @@
 					'rounded-r-md': probe.allowedCountries.length <= 1,
 					'h-full rounded-md sm:h-auto sm:rounded-l-none': probe.allowedCountries.length > 1,
 				}"
-				aria-label="City name input"
+				aria-label="City name"
 				autocomplete="off"
-				@focus="enableCityEditing"
+				@focus="enableCityEditing(false)"
 				@blur="cancelCityEditingOnBlur"
 				@keyup.enter="updateProbeLocation"
-				@keyup.esc="cancelCityEditing"
+				@keyup.esc="cancelCityEditing()"
 			>
 
 			<Button
@@ -83,12 +83,12 @@
 				class="!absolute !right-2 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-primary focus:!ring-primary"
 				:loading="probeDetailsUpdating"
 				:disabled="probeDetailsUpdating"
-				aria-label="Save city name"
+				aria-label="Save"
 				@click.stop="updateProbeLocation"
 				@blur="cancelCityEditingOnBlur"
 			/>
 
-			<i v-else class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" aria-hidden="true"/>
+			<i v-else class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" aria-hidden="true" @click="enableCityEditing(false)"/>
 
 			<Button
 				v-if="isEditingCity && (((editedCity !== initialCity) || (originalCountry !== editedCountry)) && !probeDetailsUpdating)"
@@ -97,9 +97,9 @@
 				icon="pi pi-times"
 				class="!absolute !right-2 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:!ring-[#ef4444]"
 				:disabled="probeDetailsUpdating"
-				aria-label="Cancel editing city"
-				@keyup.enter="cancelCityEditing"
-				@click.stop="cancelCityEditing"
+				aria-label="Cancel"
+				@keyup.enter="cancelCityEditing()"
+				@click.stop="cancelCityEditing()"
 				@blur="cancelCityEditingOnBlur"
 			/>
 		</div>
@@ -107,7 +107,7 @@
 </template>
 
 <script setup lang="ts">
-	import { readItem, updateItem } from '@directus/sdk';
+	import { updateItem } from '@directus/sdk';
 	import CountryFlag from 'vue-country-flag-next';
 	import { updateMapMarker } from '~/utils/init-google-map';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
@@ -129,8 +129,6 @@
 		required: true,
 	});
 
-	const emit = defineEmits([ 'save' ]);
-
 	const probeCityInput = ref<HTMLElement | null>(null);
 	const isEditingCity = ref(false);
 	const editedCity = ref('');
@@ -140,25 +138,15 @@
 	const inputCityRef = ref<HTMLInputElement | null>(null);
 	const ignoreSelectEnter = ref(false);
 	const selectEnterPressed = ref(false);
-	const city = computed(() => {
-		return probe.value ? probe.value.city : '';
-	});
-	const country = computed(() => {
-		return probe.value ? probe.value.country : '';
-	});
 
-	watch(city, (newCity) => {
-		if (isEditingCity.value === false) {
-			initialCity.value = newCity;
-			editedCity.value = newCity;
-		}
+	watch(() => probe.value.city, (newCity) => {
+		initialCity.value = newCity;
+		editedCity.value = newCity;
 	}, { immediate: true });
 
-	watch(country, (newCountry) => {
-		if (isEditingCity.value === false) {
-			originalCountry.value = newCountry;
-			editedCountry.value = newCountry;
-		}
+	watch(() => probe.value.country, (newCountry) => {
+		originalCountry.value = newCountry;
+		editedCountry.value = newCountry;
 	}, { immediate: true });
 
 	const onCountryChanged = async () => {
@@ -167,14 +155,14 @@
 
 		// then delay again to let Select finish its focus handling
 		setTimeout(() => {
-			enableCityEditing();
+			enableCityEditing(true);
 
 			if (selectEnterPressed.value) {
 				// flag to suppress unintended Enter on sibling input after keyboard selection in PrimeVue Select
 				ignoreSelectEnter.value = true;
 				selectEnterPressed.value = false;
 			}
-		}, 0);
+		});
 	};
 
 	const handleSelectEnterKey = (event: KeyboardEvent) => {
@@ -183,26 +171,22 @@
 		}
 	};
 
-	const enableCityEditing = async () => {
+	const enableCityEditing = async (select: boolean) => {
 		if (isEditingCity.value) {
 			return;
 		}
 
 		isEditingCity.value = true;
-
-		await nextTick();
-
-		if (inputCityRef.value) {
-			inputCityRef.value.focus();
-		}
+		inputCityRef.value?.focus();
+		select && inputCityRef.value?.select();
 	};
 
-	const cancelCityEditing = () => {
+	const cancelCityEditing = (revert: boolean = true) => {
 		if (!isEditingCity.value) {
 			return;
 		}
 
-		restoreOriginalLocation();
+		revert && restoreOriginalLocation();
 		isEditingCity.value = false;
 		inputCityRef.value?.blur();
 	};
@@ -220,17 +204,12 @@
 	};
 
 	const restoreOriginalLocation = () => {
-		if (editedCity.value !== initialCity.value) {
-			editedCity.value = initialCity.value;
-		}
-
-		if (originalCountry.value !== editedCountry.value) {
-			editedCountry.value = originalCountry.value;
-		}
+		editedCity.value = initialCity.value;
+		editedCountry.value = originalCountry.value;
 	};
 
 	const updateProbeLocation = async (event: MouseEvent | KeyboardEvent) => {
-		// prevent Enter key from triggering input's handler right after Select change via keyboard
+		// prevent the Enter key from triggering input's handler right after Select change via keyboard
 		// required because PrimeVue Select doesn't fully isolate Enter behavior
 		if (ignoreSelectEnter.value && 'key' in event && event.key === 'Enter') {
 			ignoreSelectEnter.value = false;
@@ -246,7 +225,7 @@
 		const prepEditedCity = editedCity.value.trim();
 		const prepInitialCity = initialCity.value.trim();
 
-		// check if city is empty
+		// check if the city is empty
 		if (prepEditedCity === '') {
 			sendToast('warn', 'Invalid input', 'City name cannot be empty');
 
@@ -261,7 +240,7 @@
 			return;
 		}
 
-		// check if nothing were changed
+		// check if nothing was changed
 		if (prepEditedCity === prepInitialCity && editedCountry.value === originalCountry.value) {
 			isEditingCity.value = false;
 
@@ -281,22 +260,20 @@
 		}
 
 		try {
-			await $directus.request(updateItem('gp_probes', probe.value.id, updProbePart));
-
-			// on a successful update fetch updated probe's data and then update map marker, city, etc.
-			const updProbeDetails = await $directus.request(readItem('gp_probes', probe.value.id));
+			const updProbeDetails = await $directus.request(updateItem('gp_probes', probe.value.id, updProbePart));
 
 			sendToast('success', 'Done', 'The probe has been successfully updated');
-			emit('save');
+			cancelCityEditing(false);
 
-			isEditingCity.value = false;
-			probe.value = updProbeDetails;
+			// First, update the probe with the set values. This is necessary because the server may adjust the value,
+			// and it may end up being equal to our original state, in which case our watchers wouldn't fire.
+			probe.value = { ...probe.value, ...updProbePart };
 
-			updateMapMarker(updProbeDetails.latitude, updProbeDetails.longitude, mapCenterYOffsetPx.value);
-
-			if (event.target instanceof HTMLElement) {
-				event.target.blur();
-			}
+			// Then set the updated version from the server.
+			setTimeout(() => {
+				probe.value = updProbeDetails;
+				updateMapMarker(updProbeDetails.latitude, updProbeDetails.longitude, mapCenterYOffsetPx.value);
+			});
 		} catch (e) {
 			sendErrorToast(e);
 

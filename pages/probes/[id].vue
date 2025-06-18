@@ -4,7 +4,7 @@
 			<div class="flex gap-2">
 				<NuxtLink
 					:to="getBackToProbesHref()"
-					class="mr-auto flex cursor-pointer items-center gap-2 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--p-primary-color)] focus-visible:ring-offset-2"
+					class="mr-auto flex cursor-pointer items-center gap-2 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-offset-2"
 					aria-label="Go back to the list of probes"
 				>
 					<i class="pi pi-arrow-left text-bluegray-500"/>
@@ -80,7 +80,7 @@
 					<button
 						v-if="probeDetails.altIps.length > 1"
 						:aria-label="showMoreIps ? 'Show fewer IPs' : 'Show more IPs'"
-						class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--p-primary-color)] dark:text-bluegray-0"
+						class="flex h-[38px] w-28 cursor-pointer items-center justify-center font-bold text-bluegray-900 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary dark:text-bluegray-0"
 						@click="showMoreIps = !showMoreIps"
 					>
 						{{ showMoreIps ? 'Show less' : 'Show more' }}
@@ -177,7 +177,6 @@
 	// HANDLE CREDITS
 	const probeCreditsPerMonth = ref<number | null>(null);
 
-	// TODO: update loadCreditsData once BE is ready
 	const loadCreditsData = async () => {
 		try {
 			const creditsResponse = await $directus.request<[{ sum: { amount: number }, adopted_probe: string}]>(aggregate('gp_credits_additions', {
@@ -192,14 +191,14 @@
 				aggregate: { sum: 'amount' },
 			}));
 
-			probeCreditsPerMonth.value = creditsResponse[0]?.sum?.amount;
+			probeCreditsPerMonth.value = creditsResponse[0]?.sum.amount;
 		} catch (e) {
 			sendErrorToast(e);
 		}
 	};
 
 	watch(probeDetails, async () => {
-		loadCreditsData();
+		await loadCreditsData();
 	}, { immediate: true });
 
 	// HANDLE GO BACK TO PROBES

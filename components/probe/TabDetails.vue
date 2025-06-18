@@ -76,7 +76,7 @@
 			</div>
 		</div>
 
-		<div class="flex flex-col gap-4 border-t py-4 sm:flex-row sm:items-center sm:justify-end dark:bg-dark-600">
+		<div class="flex flex-col gap-4 border-t py-4 sm:flex-row sm:items-center sm:justify-end">
 			<Button
 				class="!h-9"
 				severity="secondary"

@@ -1,8 +1,8 @@
 <template>
 	<div
 		ref="wrapperRef"
-		class="transition-all ease-in-out"
-		:class="{ [`duration-${props.duration}`]: true, 'overflow-hidden': isExpanding }"
+		class="ease-in-out"
+		:class="{ 'transition-all': isExpanding, [`duration-${props.duration}`]: isExpanding, 'overflow-hidden': isExpanding }"
 		:style="{ height: wrapperHeight, maxHeight: wrapperHeight }"
 	>
 		<slot/>

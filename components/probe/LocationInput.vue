@@ -148,13 +148,17 @@
 	});
 
 	watch(city, (newCity) => {
-		initialCity.value = newCity;
-		editedCity.value = newCity;
+		if (isEditingCity.value === false) {
+			initialCity.value = newCity;
+			editedCity.value = newCity;
+		}
 	}, { immediate: true });
 
 	watch(country, (newCountry) => {
-		originalCountry.value = newCountry;
-		editedCountry.value = newCountry;
+		if (isEditingCity.value === false) {
+			originalCountry.value = newCountry;
+			editedCountry.value = newCountry;
+		}
 	}, { immediate: true });
 
 	const onCountryChanged = async () => {

@@ -89,7 +89,7 @@
 			</show-more>
 
 			<Tabs value="0">
-				<TabList class="!border-b !border-surface-300 dark:!border-dark-600 [&_[data-pc-section='tablist']]:!border-none">
+				<TabList ref="tabListRef" class="!border-b !border-surface-300 dark:!border-dark-600 [&_[data-pc-section='tablist']]:!border-none">
 					<Tab value="0" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Details</Tab>
 					<!-- temporarily hide Logs tab while it's under construction -->
 					<!-- <Tab value="1" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Logs</Tab> -->
@@ -124,12 +124,19 @@
 	const probeDetails = ref<Probe | null>(null);
 	const probeDetailsUpdating = ref(false);
 	const showMoreIps = ref(false);
+	const windowSize = useWindowSize();
+	const tabListRef = useTemplateRef('tabListRef');
 
 	useHead(() => {
 		return {
 			title: probeDetails.value ? `Probe '${probeDetails.value.name || probeDetails.value.city}' -` : 'Probe -',
 		};
 	});
+
+	watch(windowSize.width, () => {
+		// @ts-expect-error small hack to fix the tab underline on resize: https://github.com/primefaces/primevue/issues/6310
+		tabListRef.value?.updateInkBar();
+	}, { flush: 'post' });
 
 	const loadProbeData = async (id: string) => {
 		try {

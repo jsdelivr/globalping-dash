@@ -1,3 +1,4 @@
+import capitalize from 'lodash/capitalize';
 import { useMetadata } from '~/store/metadata.js';
 
 const compareSemver = (a: string, b: string) => {
@@ -25,7 +26,7 @@ const isOutdated = (probeValue: string | null, metadataValue: string) => {
 	return result === -1;
 };
 
-export const getProbeStatus = (probe: Probe) => {
+export const getExtendedProbeStatus = (probe: Probe) => {
 	const metadata = useMetadata();
 
 	if (
@@ -37,4 +38,24 @@ export const getProbeStatus = (probe: Probe) => {
 	}
 
 	return probe.status;
+};
+
+export const getProbeStatusColor = (probe: Probe) => {
+	switch (getExtendedProbeStatus(probe)) {
+		case 'ready':
+			return 'text-green-500';
+
+		case 'offline':
+			return 'text-bluegray-500';
+
+		case 'ping-test-failed':
+			return 'text-red-500';
+
+		default:
+			return 'text-yellow-600';
+	}
+};
+
+export const getProbeStatusText = (probe: Probe) => {
+	return capitalize(getExtendedProbeStatus(probe).replaceAll('-', ' '));
 };

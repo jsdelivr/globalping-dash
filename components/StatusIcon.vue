@@ -1,27 +1,15 @@
 <template>
-	<i v-if="statusColor" v-tooltip.top="capitalize(props.status.replaceAll('-', ' '))" class="pi pi-circle-fill rounded-full text-2xs" :class="[statusColor, {'border-2 border-surface-0 dark:border-dark-900': props.border}]"/>
+	<i v-tooltip.top="getProbeStatusText(probe)" class="pi pi-circle-fill rounded-full text-2xs" :class="[getProbeStatusColor(probe), {'border-2 border-surface-0 dark:border-dark-900': border}]"/>
 </template>
 
 <script setup lang="ts">
-	import capitalize from 'lodash/capitalize';
+	import { getProbeStatusColor, getProbeStatusText } from '~/utils/probe-status';
 
-	const props = defineProps({
-		status: {
-			type: String,
-			default: '',
+	defineProps({
+		probe: {
+			type: Object as PropType<Probe>,
+			required: true,
 		},
 		border: Boolean,
-	});
-
-	const statusColor = computed(() => {
-		if (props.status === '') {
-			return '';
-		} else if (props.status === 'ready') {
-			return 'text-green-500';
-		} else if (props.status === 'offline') {
-			return 'text-bluegray-500';
-		}
-
-		return 'text-yellow-600';
 	});
 </script>

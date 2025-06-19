@@ -32,7 +32,7 @@
 						<template #body="slotProps">
 							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
 								<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3">
-									<BigIcon class="col-span-1 row-span-2" :name="slotProps.data.hardwareDevice ? 'probe' : 'docker'" border :status="getProbeStatus(slotProps.data)"/>
+									<BigProbeIcon class="col-span-1 row-span-2" :probe="slotProps.data" border/>
 									<p class="col-start-2 col-end-3 flex items-center font-bold">{{ slotProps.data.name || slotProps.data.city }}</p>
 									<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-900 dark:text-bluegray-400">{{ slotProps.data.ip }}</p>
 								</div>
@@ -102,7 +102,7 @@
 								<div v-for="probe in probes" :key="probe.id" class="probe box-content block pb-2 pt-4">
 									<NuxtLink :to="`/probes/${probe.id}`">
 										<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
-											<BigIcon class="col-span-1 row-span-2" :name="probe.hardwareDevice ? 'probe' : 'docker'" border :status="probe.status"/>
+											<BigProbeIcon class="col-span-1 row-span-2" :probe="probe" border/>
 											<div class="col-start-2 col-end-3 flex items-center font-bold">
 												<p>{{ probe.name || probe.city }}</p>
 											</div>
@@ -203,10 +203,10 @@
 <script setup lang="ts">
 	import { aggregate, readItems } from '@directus/sdk';
 	import CountryFlag from 'vue-country-flag-next';
+	import BigProbeIcon from '~/components/BigProbeIcon.vue';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
 	import { useUserFilter } from '~/composables/useUserFilter';
-	import { getProbeStatus } from '~/utils/probe-status';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const config = useRuntimeConfig();

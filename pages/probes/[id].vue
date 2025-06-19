@@ -13,10 +13,10 @@
 
 				<div v-if="probeDetails" class="flex h-8 items-center gap-1 rounded-full border border-surface-300 md:hidden dark:border-dark-600">
 					<span class="flex items-center gap-2 pl-3">
-						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails.status)"/>
+						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails)"/>
 
 						<span class="font-bold text-bluegray-900 dark:text-bluegray-0">
-							{{ capitalize(probeDetails.status) }}
+							{{ getProbeStatusText(probeDetails) }}
 						</span>
 					</span>
 
@@ -31,10 +31,10 @@
 
 				<div class="hidden h-8 items-center gap-1 rounded-full border border-surface-300 md:flex dark:border-dark-600">
 					<span class="flex items-center gap-2 pl-3">
-						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails.status)"/>
+						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails)"/>
 
 						<span class="font-bold text-bluegray-900 dark:text-bluegray-0">
-							{{ capitalize(probeDetails.status) }}
+							{{ getProbeStatusText(probeDetails) }}
 						</span>
 					</span>
 
@@ -111,8 +111,8 @@
 
 <script setup lang="ts">
 	import { readItem, aggregate } from '@directus/sdk';
-	import capitalize from 'lodash/capitalize';
 	import { useAuth } from '~/store/auth';
+	import { getProbeStatusColor, getProbeStatusText } from '~/utils/probe-status';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();
@@ -161,24 +161,6 @@
 		}
 
 		return probeDetails?.value?.altIps?.slice(0, 1) ?? [];
-	};
-
-
-	// HANDLE STATUS COLORS
-	const getProbeStatusColor = (status: string) => {
-		switch (status.toLowerCase()) {
-		case 'ready':
-			return 'text-green-500';
-
-		case 'offline':
-			return 'text-bluegray-500';
-
-		case 'ping-test-failed':
-			return 'text-red-500';
-
-		default:
-			return 'text-yellow-600';
-		}
 	};
 
 	// HANDLE CREDITS

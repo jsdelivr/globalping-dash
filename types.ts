@@ -83,7 +83,7 @@ declare global {
     network: string;
     onlineTimesToday: number;
     state: string | null;
-    status: 'initializing' | 'ready' | 'unbuffer-missing' | 'ping-test-failed' | 'sigterm';
+    status: 'initializing' | 'ready' | 'unbuffer-missing' | 'ping-test-failed' | 'sigterm' | 'offline';
     tags: {
         value: string;
         prefix: string;

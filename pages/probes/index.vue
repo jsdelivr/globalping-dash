@@ -247,13 +247,13 @@
 					offset: first.value,
 					limit: itemsPerPage.value,
 				})),
-				$directus.request<[{count: number}]>(aggregate('gp_probes', {
+				$directus.request<[{ count: number }]>(aggregate('gp_probes', {
 					query: {
 						filter: getUserFilter('userId'),
 					},
 					aggregate: { count: '*' },
 				})),
-				$directus.request<[{ sum: { amount: number }, adopted_probe: string }]>(aggregate('gp_credits_additions', {
+				$directus.request<[{ sum: { amount: number }; adopted_probe: string }]>(aggregate('gp_credits_additions', {
 					query: {
 						filter: {
 							...getUserFilter('github_id'),

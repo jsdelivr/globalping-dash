@@ -24,10 +24,10 @@
 	defineProps({
 		pt: {
 			type: Object as PropType<{
-				inputMultiple?: Record<string, unknown>,
-				inputChip?: Record<string, unknown>,
-				chipItem?: Record<string, unknown>,
-				[field: string]: unknown
+				inputMultiple?: Record<string, unknown>;
+				inputChip?: Record<string, unknown>;
+				chipItem?: Record<string, unknown>;
+				[field: string]: unknown;
 			}>,
 			default: () => ({}),
 		},

@@ -180,7 +180,7 @@
 		.map(value => `u-${value}`);
 
 	const tagPopoverRef = ref();
-	const tagsToEdit = ref<{ uPrefix: string, value: string, format?: string }[]>([]);
+	const tagsToEdit = ref<{ uPrefix: string; value: string; format?: string }[]>([]);
 	const isEditingTags = ref<boolean>(false);
 	const popoverContentRef = ref<HTMLElement>();
 	const getDefaultEmptyTags = () => [{ uPrefix: uPrefixes[0], value: '' }];
@@ -227,7 +227,7 @@
 		}
 	};
 
-	const convertTags = (tagsToEdit: { uPrefix: string, value: string }[]) => tagsToEdit.map(({ uPrefix, value }) => ({
+	const convertTags = (tagsToEdit: { uPrefix: string; value: string }[]) => tagsToEdit.map(({ uPrefix, value }) => ({
 		prefix: uPrefix.replace('u-', ''),
 		value,
 	})).filter(({ prefix, value }) => prefix && value);

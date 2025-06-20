@@ -168,7 +168,7 @@
 
 	const loadCreditsData = async () => {
 		try {
-			const creditsResponse = await $directus.request<[{ sum: { amount: number }, adopted_probe: string}]>(aggregate('gp_credits_additions', {
+			const creditsResponse = await $directus.request<[{ sum: { amount: number }; adopted_probe: string }]>(aggregate('gp_credits_additions', {
 				query: {
 					filter: {
 						github_id: { _eq: user.value.external_identifier || 'admin' },

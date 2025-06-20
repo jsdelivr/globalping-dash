@@ -2,22 +2,22 @@ import { readMe, readRolesMe, deleteUser } from '@directus/sdk';
 import { defineStore } from 'pinia';
 
 interface AuthState {
-	isLoggedIn: boolean,
-	expiresAt: number,
-	isAdmin: boolean,
+	isLoggedIn: boolean;
+	expiresAt: number;
+	isAdmin: boolean;
 	impersonation: {
 		originalUser: User & {
-			last_page: string | null,
-		},
-		github_username: string,
+			last_page: string | null;
+		};
+		github_username: string;
 		impersonatedUser: User & {
-			last_page: string | null,
-		} | null,
-	} | null,
-	adminMode: boolean,
+			last_page: string | null;
+		} | null;
+	} | null;
+	adminMode: boolean;
 	user: User & {
-		last_page: string | null,
-	}
+		last_page: string | null;
+	};
 }
 
 export const useAuth = defineStore('auth', {

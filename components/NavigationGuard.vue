@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-	import { type RouteLocationNormalized, type NavigationGuardNext } from 'vue-router';
+	import type { RouteLocationNormalized, NavigationGuardNext } from 'vue-router';
 
 	const router = useRouter();
 	const showNavigationConfirm = ref(false);

@@ -281,7 +281,7 @@
 		return result;
 	}, { default: () => [] });
 
-	const searchNewProbes = async (activateCallback: (step?: string) => void) => {
+	const searchNewProbes = async (activateCallback: (step: string | number) => void) => {
 		activateCallback('2');
 		const startTime = Date.now();
 
@@ -348,7 +348,7 @@
 	};
 
 	const sendAdoptionCodeLoading = ref(false);
-	const sendAdoptionCode = async (activateCallback: (step?: string) => void) => {
+	const sendAdoptionCode = async (activateCallback: (step: string | number) => void) => {
 		const isValid = validateIp(ip.value);
 
 		if (!isValid) {

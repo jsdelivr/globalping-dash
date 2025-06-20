@@ -18,10 +18,10 @@
 
 <script setup lang="ts">
 	type Tag = {
-		prefix: string
-		value?: string
-		format?: string
-	}
+		prefix: string;
+		value?: string;
+		format?: string;
+	};
 
 	const { tags, tagFormat, customClass } = defineProps({
 		tags: {

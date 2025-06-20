@@ -126,10 +126,10 @@
 	const { data: credits } = await useLazyAsyncData('credits-stats', async () => {
 		try {
 			const [ total, additions, deductions, todayOnlineProbes ] = await Promise.all([
-				$directus.request<{amount: number}[]>(readItems('gp_credits', {
+				$directus.request<{ amount: number }[]>(readItems('gp_credits', {
 					filter: getUserFilter('user_id'),
 				})),
-				$directus.request<[{sum: { amount: number }, date_created: 'datetime'}]>(aggregate('gp_credits_additions', {
+				$directus.request<[{ sum: { amount: number }; date_created: 'datetime' }]>(aggregate('gp_credits_additions', {
 					query: {
 						filter: {
 							...getUserFilter('github_id'),
@@ -144,7 +144,7 @@
 						return { ...rest, amount: sum.amount };
 					});
 				}),
-				$directus.request<[{sum: { amount: number }, date: 'datetime'}]>(aggregate('gp_credits_deductions', {
+				$directus.request<[{ sum: { amount: number }; date: 'datetime' }]>(aggregate('gp_credits_deductions', {
 					query: {
 						filter: {
 							...getUserFilter('user_id'),
@@ -159,7 +159,7 @@
 						return { ...rest, amount: sum.amount };
 					});
 				}),
-				$directus.request<[{count: number}]>(aggregate('gp_probes', {
+				$directus.request<[{ count: number }]>(aggregate('gp_probes', {
 					query: {
 						filter: {
 							...getUserFilter('userId'),
@@ -192,11 +192,15 @@
 		loading.value = true;
 
 		try {
-			const { changes, count } = await $directus.request<{changes: CreditsChange[], count: number}>(customEndpoint({ method: 'GET', path: '/credits-timeline', params: {
-				userId: getUserFilter('user_id').user_id?._eq || 'all',
-				offset: first.value,
-				limit: itemsPerPage.value,
-			} }));
+			const { changes, count } = await $directus.request<{ changes: CreditsChange[]; count: number }>(customEndpoint({
+				method: 'GET',
+				path: '/credits-timeline',
+				params: {
+					userId: getUserFilter('user_id').user_id?._eq || 'all',
+					offset: first.value,
+					limit: itemsPerPage.value,
+				},
+			}));
 
 			creditsChanges.value = [
 				...changes.map(change => ({

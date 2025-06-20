@@ -253,7 +253,7 @@
 					limit: itemsPerPage.value,
 					sort: '-date_created',
 				})),
-				$directus.request<[{count: number}]>(aggregate('gp_tokens', {
+				$directus.request<[{ count: number }]>(aggregate('gp_tokens', {
 					query: {
 						filter: {
 							...getUserFilter('user_created'),
@@ -303,7 +303,7 @@
 	const tokenDetailsDialog = ref(false);
 
 	const expandedTokens = ref({});
-	const generatedToken = ref<{id: number, value: string} | null>(null);
+	const generatedToken = ref<{ id: number; value: string } | null>(null);
 
 	const handleGenerate = async (id: number, tokenValue: string) => {
 		await navigateTo('/tokens');
@@ -405,11 +405,15 @@
 		loadingApplications.value = true;
 
 		try {
-			const { applications, total } = await $directus.request<{applications: Application[], total: number}>(customEndpoint({ method: 'GET', path: '/applications', params: {
-				userId: getUserFilter('user_id').user_id?._eq || 'all',
-				offset: firstApp.value,
-				limit: itemsPerPage.value,
-			} }));
+			const { applications, total } = await $directus.request<{ applications: Application[]; total: number }>(customEndpoint({
+				method: 'GET',
+				path: '/applications',
+				params: {
+					userId: getUserFilter('user_id').user_id?._eq || 'all',
+					offset: firstApp.value,
+					limit: itemsPerPage.value,
+				},
+			}));
 
 			apps.value = applications;
 			appsCount.value = total;
@@ -443,7 +447,7 @@
 	const revokeApp = async () => {
 		try {
 			if (appToRevoke.value && appToRevoke.value.id) {
-				await $directus.request<{applications: Application[]}>(customEndpoint({
+				await $directus.request<{ applications: Application[] }>(customEndpoint({
 					method: 'POST',
 					path: '/applications/revoke',
 					body: JSON.stringify({

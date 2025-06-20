@@ -281,7 +281,7 @@
 		return result;
 	}, { default: () => [] });
 
-	const searchNewProbes = async (activateCallback: Function) => {
+	const searchNewProbes = async (activateCallback: (step: string | number) => void) => {
 		activateCallback('2');
 		const startTime = Date.now();
 
@@ -348,7 +348,7 @@
 	};
 
 	const sendAdoptionCodeLoading = ref(false);
-	const sendAdoptionCode = async (activateCallback: Function) => {
+	const sendAdoptionCode = async (activateCallback: (step: string | number) => void) => {
 		const isValid = validateIp(ip.value);
 
 		if (!isValid) {
@@ -421,7 +421,8 @@
 		try {
 			const response = await $directus.request(customEndpoint({
 				method: 'POST',
-				path: '/adoption-code/verify-code', body: JSON.stringify({
+				path: '/adoption-code/verify-code',
+				body: JSON.stringify({
 					userId: getUserFilter('user_id').user_id?._eq || user.value.id,
 					code: code.value.substring(0, 6),
 				}),

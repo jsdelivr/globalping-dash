@@ -1,11 +1,10 @@
 import typescript from '@martin-kolarik/eslint-config/typescript.js';
 import { createConfigForNuxt } from '@nuxt/eslint-config';
-import eslintImport from 'eslint-plugin-import';
 import tailwindcss from 'eslint-plugin-tailwindcss';
 
 export default createConfigForNuxt().prepend(
 	tailwindcss.configs['flat/recommended'],
-	typescript,
+	typescript.forFiles([ '**/*.ts', '**/*.vue' ]),
 ).append(
 	{
 		ignores: [
@@ -16,10 +15,6 @@ export default createConfigForNuxt().prepend(
 		],
 	},
 	{
-		plugins: [
-			eslintImport,
-		],
-
 		rules: {
 			'import/order': [ 'error', {
 				distinctGroup: false,
@@ -40,7 +35,6 @@ export default createConfigForNuxt().prepend(
 			'jsonc/no-comments': 'off',
 			'n/no-missing-import': 'off',
 			'@typescript-eslint/no-explicit-any': 'off',
-			'@typescript-eslint/no-unused-expressions': 'off',
 			'@typescript-eslint/no-unused-vars': [
 				'warn',
 				{

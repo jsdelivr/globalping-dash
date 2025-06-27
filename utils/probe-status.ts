@@ -29,12 +29,10 @@ const isOutdated = (probeValue: string | null, metadataValue: string) => {
 export const getExtendedProbeStatus = (probe: Probe) => {
 	const metadata = useMetadata();
 
-	if (
-		probe.status === 'ready'
-		&& (isOutdated(probe.hardwareDeviceFirmware, metadata.targetHardwareDeviceFirmware)
-		|| isOutdated(probe.nodeVersion, metadata.targetNodeVersion)
-		)) {
-		return 'ready (outdated)';
+	if (probe.status === 'ready' && isOutdated(probe.hardwareDeviceFirmware, metadata.targetHardwareDeviceFirmware)) {
+		return 'ready (outdated firmware)';
+	} else if (probe.status === 'ready' && isOutdated(probe.nodeVersion, metadata.targetNodeVersion)) {
+		return 'ready (outdated container)';
 	}
 
 	return probe.status;

@@ -11,7 +11,7 @@
 					<span class="font-bold text-bluegray-500 dark:text-bluegray-300">Back to probes</span>
 				</NuxtLink>
 
-				<div v-if="probeDetails" class="flex h-8 items-center gap-1 rounded-full border border-surface-300 md:hidden dark:border-dark-600">
+				<div v-if="probeDetails" class="flex items-center gap-1 rounded-full border border-surface-300 py-1 md:hidden dark:border-dark-600">
 					<span class="flex items-center gap-2 pl-3">
 						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails)"/>
 
@@ -29,7 +29,7 @@
 			<div v-if="probeDetails" class="flex w-full flex-col items-center gap-4 sm:flex-row sm:flex-wrap">
 				<ProbeNameInput v-model:probe-details-updating="probeDetailsUpdating" v-model:probe="probeDetails"/>
 
-				<div class="hidden h-8 items-center gap-1 rounded-full border border-surface-300 md:flex dark:border-dark-600">
+				<div class="hidden items-center gap-1 rounded-full border border-surface-300 py-1 md:flex dark:border-dark-600">
 					<span class="flex items-center gap-2 pl-3">
 						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails)"/>
 

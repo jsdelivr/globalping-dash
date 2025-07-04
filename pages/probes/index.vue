@@ -2,6 +2,7 @@
 	<div class="min-h-full p-4 sm:p-6" :class="{'md:min-w-[940px]': probes?.length}">
 		<div class="mb-4 flex">
 			<h1 class="page-title">Probes</h1>
+
 			<Button class="ml-auto" @click="adoptProbeDialog = true">
 				<nuxt-icon class="pi" name="capture"/>
 				<span class="font-bold">Adopt a probe</span>
@@ -9,6 +10,9 @@
 		</div>
 		<div v-if="probes.length || loading">
 			<div class="max-md:hidden">
+				<!--
+				filter-display="menu"
+				-->
 				<DataTable
 					ref="dataTableRef"
 					:value="probes"
@@ -16,15 +20,48 @@
 					:rows="itemsPerPage"
 					data-key="id"
 					:total-records="probesCount"
+					sort-mode="single"
+					sort-field="name"
+					:sort-order="1"
 					:loading="loading"
 					:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"
 					:pt="{footer: '!pt-0 border-t-0'}"
 					:pt-options="{ mergeProps: true }"
 				>
 					<template #header>
-						<h3 class="px-2">List of probes</h3>
+						<div class="flex w-full items-center">
+							<h3 class="px-2">List of probes</h3>
+
+							<div class="ml-auto flex gap-x-4 self-end">
+								<!-- TODO: v-if any selected -->
+								<!-- TODO: confirmation modal -->
+								<Button
+									label="Delete selected"
+									severity="danger"
+									icon="pi pi-trash"
+									text
+								/>
+
+								<!-- TODO: Filter on (case insensitive contains): probe name, all location fields, all tags -->
+								<!-- For country/state/continent both the full name and ISO code should work -->
+								<!-- Might be worth adding a persistent generated column that contains all of this -->
+								<div class="font-normal">
+									<InputGroup>
+										<IconField>
+											<InputIcon class="pi pi-search"/>
+											<InputText class="m-0 min-w-[280px]" placeholder="Filter by name, location, or tags"/>
+										</IconField>
+									</InputGroup>
+								</div>
+							</div>
+						</div>
 					</template>
-					<Column class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.name}px` }">
+
+					<!-- TODO: make these work -->
+					<Column selection-mode="multiple" class="px-3"/>
+
+					<!-- TODO: sort by name -->
+					<Column field="name" :sortable="true" class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.name}px` }">
 						<template #header>
 							Name <i v-tooltip.top="'Private name of the probe, visible only to you'" class="pi pi-info-circle"/>
 						</template>
@@ -39,7 +76,9 @@
 							</NuxtLink>
 						</template>
 					</Column>
-					<Column class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.location}px` }">
+
+					<!-- TODO: sort by country, city, network -->
+					<Column field="location" :sortable="true" class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.location}px` }">
 						<template #header>
 							Location <i v-tooltip.top="'Current probe location. If the auto-detected value is wrong, you can adjust it in probe details.'" class="pi pi-info-circle"/>
 						</template>
@@ -56,7 +95,9 @@
 							</NuxtLink>
 						</template>
 					</Column>
-					<Column body-class="!py-0.5 h-16" :style="{ width: `${columnWidths.tags}px` }">
+
+					<!-- TODO: sort by tag count -->
+					<Column field="tags" :sortable="true" body-class="!py-0.5 h-16" :style="{ width: `${columnWidths.tags}px` }">
 						<template #header>
 							Tags <i ref="desktopTagsHeaderContentRef" v-tooltip.top="'Public tags that can be used to target the probe in measurements.'" class="pi pi-info-circle"/>
 						</template>

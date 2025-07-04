@@ -33,7 +33,7 @@ import drawer from './drawer';
 // import floatlabel from './floatlabel';
 // import galleria from './galleria';
 import global from './global';
-// import iconfield from './iconfield';
+import iconfield from './iconfield';
 // import image from './image';
 // import inplace from './inplace';
 import inputgroup from './inputgroup';
@@ -136,7 +136,7 @@ export default {
 	// treeselect,
 	// textarea,
 	// password,
-	// iconfield,
+	iconfield,
 	// floatlabel,
 	inputotp,
 

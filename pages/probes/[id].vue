@@ -88,6 +88,14 @@
 				</div>
 			</show-more>
 
+			<Message v-if="isOutdated(probeDetails?.hardwareDeviceFirmware, metadata.targetHardwareDeviceFirmware)" severity="warn" icon="pi pi-exclamation-triangle">
+				Your hardware probe is running an outdated firmware and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="https://github.com/jsdelivr/globalping-hwprobe#download-the-latest-firmware" target="_blank">our guide</NuxtLink> to update it manually.
+			</Message>
+
+			<Message v-else-if="isOutdated(probeDetails?.nodeVersion, metadata.targetNodeVersion)" severity="warn" icon="pi pi-exclamation-triangle">
+				Your probe container is running an outdated software and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="#" @click="updateProbeDialog = true">our guide</NuxtLink> to update it manually.
+			</Message>
+
 			<Tabs value="0">
 				<TabList ref="tabListRef" class="!border-b !border-surface-300 dark:!border-dark-600 [&_[data-pc-section='tablist']]:!border-none">
 					<Tab value="0" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Details</Tab>
@@ -106,13 +114,21 @@
 				</TabPanels>
 			</Tabs>
 		</div>
+
+		<GPDialog
+			v-model:visible="updateProbeDialog"
+			header="Update a probe"
+		>
+			<UpdateProbe/>
+		</GPDialog>
 	</div>
 </template>
 
 <script setup lang="ts">
 	import { readItem, aggregate } from '@directus/sdk';
 	import { useAuth } from '~/store/auth';
-	import { getProbeStatusColor, getProbeStatusText } from '~/utils/probe-status';
+	import { useMetadata } from '~/store/metadata.js';
+	import { getProbeStatusColor, getProbeStatusText, isOutdated } from '~/utils/probe-status';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();
@@ -120,9 +136,11 @@
 	const router = useRouter();
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
+	const metadata = useMetadata();
 	const probeId = route.params.id as string;
 	const probeDetails = ref<Probe | null>(null);
 	const probeDetailsUpdating = ref(false);
+	const updateProbeDialog = ref(false);
 	const showMoreIps = ref(false);
 	const windowSize = useWindowSize();
 	const tabListRef = useTemplateRef('tabListRef');

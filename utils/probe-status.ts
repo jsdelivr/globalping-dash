@@ -17,7 +17,7 @@ const compareSemver = (a: string, b: string) => {
 	return 0;
 };
 
-const isOutdated = (probeValue: string | null, metadataValue: string) => {
+export const isOutdated = (probeValue: string | null | undefined, metadataValue: string) => {
 	if (!probeValue || !metadataValue) {
 		return false;
 	}

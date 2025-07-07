@@ -84,7 +84,7 @@
 							<nuxt-icon class="mt-2 inline-block text-6xl text-[#099CEC]" name="docker"/>
 						</div>
 					</button>
-					<button class="group relative flex flex-row items-stretch overflow-hidden rounded-xl border hover:border-[#17d4a7] dark:bg-dark-900" @click="() => { probeType = 'software'; activateCallback('3'); }">
+					<button class="group relative flex flex-row items-stretch overflow-hidden rounded-xl border hover:border-[#17d4a7] dark:bg-dark-900" @click="() => { probeType = 'hardware'; activateCallback('3'); }">
 						<div class="w-14 bg-surface-100 group-hover:bg-[#E5FCF6] dark:bg-dark-600 dark:group-hover:bg-dark-600">
 							<Checkbox class="mt-6" size="large"/>
 						</div>

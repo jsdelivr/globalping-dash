@@ -77,6 +77,7 @@
 
 			<Button
 				v-if="isEditingCity && ((editedCity !== initialCity) || (originalCountry !== editedCountry))"
+				v-tooltip.top="'Save'"
 				variant="text"
 				severity="secondary"
 				icon="pi pi-check"
@@ -92,6 +93,7 @@
 
 			<Button
 				v-if="isEditingCity && (((editedCity !== initialCity) || (originalCountry !== editedCountry)) && !probeDetailsUpdating)"
+				v-tooltip.top="'Cancel'"
 				variant="text"
 				severity="secondary"
 				icon="pi pi-times"

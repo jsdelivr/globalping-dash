@@ -35,6 +35,7 @@
 
 		<Button
 			v-if="isEditingName && editedName !== originalName"
+			v-tooltip.top="'Save'"
 			variant="text"
 			severity="secondary"
 			icon="pi pi-check"
@@ -48,6 +49,7 @@
 
 		<Button
 			v-if="isEditingName && editedName !== originalName && !probeDetailsUpdating"
+			v-tooltip.top="'Cancel'"
 			variant="text"
 			severity="secondary"
 			icon="pi pi-times"

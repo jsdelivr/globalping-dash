@@ -92,7 +92,7 @@
 			<i v-else class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" aria-hidden="true" @click="enableCityEditing(false)"/>
 
 			<Button
-				v-if="isEditingCity && (((editedCity !== initialCity) || (originalCountry !== editedCountry)) && !probeDetailsUpdating)"
+				v-if="isEditingCity && (((editedCity !== initialCity) || (originalCountry !== editedCountry)))"
 				v-tooltip.top="'Cancel'"
 				variant="text"
 				severity="secondary"

@@ -90,7 +90,7 @@ declare global {
 			format?: string;
 		}[];
 		systemTags: string[];
-		userId: string;
+		userId: string | null;
 		uuid: string;
 		version: string;
 		hardwareDevice: string | null;

@@ -43,6 +43,7 @@
 										severity="danger"
 										icon="pi pi-trash"
 										text
+										@click="deleteProbesDialog = true"
 									/>
 								</div>
 
@@ -234,6 +235,35 @@
 			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="loadLazyData"/>
 		</GPDialog>
 		<GPDialog
+			v-model:visible="deleteProbesDialog"
+			header="Delete selected probes"
+		>
+			<div class="flex items-center gap-4">
+				<div>
+					<i class="pi pi-exclamation-triangle text-4xl text-primary"/>
+				</div>
+				<div class="ml-3">
+					<div v-if="selectedProbes.length === 1" class="flex flex-col gap-4">
+						<p>You are about to delete probe <span class="font-bold">{{ selectedProbes[0].name || selectedProbes[0].city }}</span> ({{ selectedProbes[0].ip }}).</p>
+						<p>Are you sure you want to delete this probe? You will not be able to undo this action.</p>
+					</div>
+					<div v-else class="flex flex-col gap-4">
+						<p>You are about to delete the following probes:</p>
+						<ul class="ml-4 list-disc">
+							<li v-for="probe in selectedProbes" :key="probe.id" class="leading-[2rem]">
+								<span class="font-bold">{{ probe.name || probe.city }}</span> ({{ probe.ip }}).
+							</li>
+						</ul>
+						<p>Are you sure you want to delete these probes? You will not be able to undo this action.</p>
+					</div>
+				</div>
+			</div>
+			<div class="mt-7 text-right">
+				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteProbesDialog = false"/>
+				<Button :loading="deleteProbesLoading" :aria-disabled="deleteProbesLoading" :label="selectedProbes.length === 1 ? 'Delete probe' : 'Delete probes'" severity="danger" @click="deleteSelectedProbes"/>
+			</div>
+		</GPDialog>
+		<GPDialog
 			view-name="update-a-probe"
 			header="Update a probe"
 		>
@@ -243,16 +273,17 @@
 </template>
 
 <script setup lang="ts">
-	import { aggregate, readItems } from '@directus/sdk';
+	import { aggregate, readItems, updateItems } from '@directus/sdk';
 	import type { DataTableSortEvent } from 'primevue/datatable';
 	import CountryFlag from 'vue-country-flag-next';
 	import BigProbeIcon from '~/components/BigProbeIcon.vue';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
 	import { useUserFilter } from '~/composables/useUserFilter';
-	import { sendErrorToast } from '~/utils/send-toast';
+	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const SORTABLE_FIELDS = [ 'default', 'location', 'tags', 'name' ];
+
 	const config = useRuntimeConfig();
 
 	const { $directus } = useNuxtApp();
@@ -262,6 +293,8 @@
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const startProbeDialog = ref(false);
 	const adoptProbeDialog = ref(false);
+	const deleteProbesDialog = ref(false);
+	const deleteProbesLoading = ref(false);
 	const loading = ref(false);
 	const probesCount = ref(0);
 	const probes = ref<Probe[]>([]);
@@ -272,7 +305,7 @@
 	const sortState = ref({ sortField: 'default', sortOrder: 1 });
 	const inputFilter = ref<string>('');
 	const appliedFilter = ref<string>('');
-	const selectedProbes = ref([]);
+	const selectedProbes = ref<Probe[]>([]);
 
 	const { getUserFilter } = useUserFilter();
 
@@ -292,6 +325,7 @@
 			return;
 		}
 
+		page.value = 0;
 		sortState.value = { sortField, sortOrder };
 		loadLazyData();
 	};
@@ -299,24 +333,45 @@
 	const onFilterChange = (event: KeyboardEvent) => {
 		if (event.key === 'Enter') {
 			appliedFilter.value = inputFilter.value;
+			page.value = 0;
 			loadLazyData();
 		}
 	};
 
-	const getCurrentFilter = () => {
-		return appliedFilter.value ? { ...getUserFilter('userId'), searchIndex: { _icontains: appliedFilter.value } } : getUserFilter('userId');
-	};
+	const getCurrentFilter = () => ({
+		...getUserFilter('userId'),
+		...appliedFilter.value && { searchIndex: { _icontains: appliedFilter.value } },
+	});
 
+	// preserve filtering & sorting options in the URL
 	watch([ appliedFilter, sortState ], async () => {
 		const query = {
 			...route.query,
-			page: 1,
 			filterBy: appliedFilter.value,
 			...sortState.value,
 		};
 
 		await router.replace({ query });
 	});
+
+	const deleteSelectedProbes = async () => {
+		deleteProbesLoading.value = true;
+		const selectedProbesCount = selectedProbes.value?.length ?? 0;
+
+		try {
+			if (selectedProbesCount) {
+				await $directus.request(updateItems('gp_probes', selectedProbes.value.map(p => p.id), { userId: null }));
+				sendToast('success', 'Done', `The ${selectedProbesCount === 1 ? 'probe has' : 'probes have'} been deleted`);
+				selectedProbes.value = [];
+				loadLazyData();
+			}
+		} catch (e) {
+			sendErrorToast(e);
+		}
+
+		deleteProbesLoading.value = false;
+		deleteProbesDialog.value = false;
+	};
 
 	const getSortFields = () => {
 		const { sortField, sortOrder } = sortState.value;
@@ -327,7 +382,11 @@
 		}
 
 		case 'tags': {
-			return [ sortOrder === -1 ? '-count(tags)' : 'count(tags)', 'status' ];
+			if (sortOrder === -1) {
+				return [ '-count(tags)', '-count(systemTags)', 'status', 'name' ];
+			}
+
+			return [ 'count(tags)', 'count(systemTags)', 'status', 'name' ];
 		}
 
 		case 'location': {
@@ -353,7 +412,7 @@
 			const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
 				$directus.request(readItems('gp_probes', {
 					filter: getCurrentFilter(),
-					sort: getSortFields(),
+					sort: getSortFields() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
 					offset: first.value,
 					limit: itemsPerPage.value,
 				})),
@@ -410,14 +469,18 @@
 		}
 
 		const { filterBy = '', sortField = 'default' } = route.query;
-		const sortOrder = Number(route.query?.sortOrder);
+		let sortOrder = Number(route.query?.sortOrder);
+
+		if (![ -1, 1 ].includes(sortOrder)) {
+			sortOrder = 1;
+		}
 
 		if (typeof filterBy === 'string') {
 			inputFilter.value = filterBy;
 			appliedFilter.value = filterBy;
 		}
 
-		if (typeof sortField === 'string' && sortOrder) {
+		if (typeof sortField === 'string' && SORTABLE_FIELDS.includes(sortField)) {
 			sortState.value = { sortField, sortOrder };
 		}
 
@@ -430,7 +493,6 @@
 		() => route.params.id,
 	], async ([ newPage, newId ], [ oldPage, oldId ]) => {
 		if (newPage !== oldPage && !oldId && !newId) {
-			console.log('updating in watch');
 			await loadLazyData();
 		}
 	});

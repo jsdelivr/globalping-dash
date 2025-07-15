@@ -59,8 +59,7 @@
 						</div>
 					</template>
 
-					<!-- TODO: make these work -->
-					<Column selection-mode="multiple" class="px-3"/>
+					<Column v-if="!loading" selection-mode="multiple" class="px-3"/>
 
 					<Column field="name" :sortable="true" class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.name}px` }">
 						<template #header>
@@ -407,6 +406,7 @@
 
 	const loadLazyData = async () => {
 		loading.value = true;
+		selectedProbes.value = [];
 
 		try {
 			const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
@@ -468,7 +468,7 @@
 			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 420) / 65), 5), 15);
 		}
 
-		const { filterBy = '', sortField = 'default' } = route.query;
+		const { filterBy, sortField } = route.query;
 		let sortOrder = Number(route.query?.sortOrder);
 
 		if (![ -1, 1 ].includes(sortOrder)) {

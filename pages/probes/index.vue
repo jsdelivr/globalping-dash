@@ -1,5 +1,5 @@
 <template>
-	<div class="min-h-full p-4 sm:p-6" :class="{'md:min-w-[940px]': probes?.length}">
+	<div class="min-h-full p-4 sm:p-6" :class="{'md:min-w-[940px]': probes.length}">
 		<div class="mb-4 flex">
 			<h1 class="page-title">Probes</h1>
 
@@ -8,25 +8,27 @@
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
 		</div>
-		<div v-if="probes.length || loading">
+		<div v-if="appliedFilter || loading || probes.length">
 			<div class="max-md:hidden">
 				<!--
 				filter-display="menu"
 				-->
 				<DataTable
 					ref="dataTableRef"
+					v-model:selection="selectedProbes"
 					:value="probes"
 					lazy
 					:rows="itemsPerPage"
 					data-key="id"
 					:total-records="probesCount"
 					sort-mode="single"
-					sort-field="name"
-					:sort-order="1"
+					:sort-field="sortState.sortField === 'default' ? 'name' : sortState.sortField"
+					:sort-order="sortState.sortOrder"
 					:loading="loading"
 					:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"
 					:pt="{footer: '!pt-0 border-t-0'}"
 					:pt-options="{ mergeProps: true }"
+					@sort="onSortChange"
 				>
 					<template #header>
 						<div class="flex w-full items-center">
@@ -35,21 +37,20 @@
 							<div class="ml-auto flex gap-x-4 self-end">
 								<!-- TODO: v-if any selected -->
 								<!-- TODO: confirmation modal -->
-								<Button
-									label="Delete selected"
-									severity="danger"
-									icon="pi pi-trash"
-									text
-								/>
+								<div v-if="selectedProbes.length">
+									<Button
+										label="Delete selected"
+										severity="danger"
+										icon="pi pi-trash"
+										text
+									/>
+								</div>
 
-								<!-- TODO: Filter on (case insensitive contains): probe name, all location fields, all tags -->
-								<!-- For country/state/continent both the full name and ISO code should work -->
-								<!-- Might be worth adding a persistent generated column that contains all of this -->
 								<div class="font-normal">
 									<InputGroup>
 										<IconField>
 											<InputIcon class="pi pi-search"/>
-											<InputText class="m-0 min-w-[280px]" placeholder="Filter by name, location, or tags"/>
+											<InputText v-model="inputFilter" class="m-0 min-w-[280px]" placeholder="Filter by name, location, or tags" @keyup="onFilterChange"/>
 										</IconField>
 									</InputGroup>
 								</div>
@@ -60,7 +61,6 @@
 					<!-- TODO: make these work -->
 					<Column selection-mode="multiple" class="px-3"/>
 
-					<!-- TODO: sort by name -->
 					<Column field="name" :sortable="true" class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.name}px` }">
 						<template #header>
 							Name <i v-tooltip.top="'Private name of the probe, visible only to you'" class="pi pi-info-circle"/>
@@ -77,7 +77,6 @@
 						</template>
 					</Column>
 
-					<!-- TODO: sort by country, city, network -->
 					<Column field="location" :sortable="true" class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.location}px` }">
 						<template #header>
 							Location <i v-tooltip.top="'Current probe location. If the auto-detected value is wrong, you can adjust it in probe details.'" class="pi pi-info-circle"/>
@@ -130,6 +129,8 @@
 							/>
 						</div>
 					</template>
+
+					<template #empty><div class="p-6 text-center">No probes match the filter. </div></template>
 				</DataTable>
 			</div>
 			<div class="hidden max-md:block">
@@ -243,6 +244,7 @@
 
 <script setup lang="ts">
 	import { aggregate, readItems } from '@directus/sdk';
+	import type { DataTableSortEvent } from 'primevue/datatable';
 	import CountryFlag from 'vue-country-flag-next';
 	import BigProbeIcon from '~/components/BigProbeIcon.vue';
 	import { useGoogleMaps } from '~/composables/maps';
@@ -250,6 +252,7 @@
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { sendErrorToast } from '~/utils/send-toast';
 
+	const SORTABLE_FIELDS = [ 'default', 'location', 'tags', 'name' ];
 	const config = useRuntimeConfig();
 
 	const { $directus } = useNuxtApp();
@@ -266,6 +269,10 @@
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage, active: () => !route.params.id });
 	const totalCredits = ref(0);
 	const gmapsLoaded = ref(false);
+	const sortState = ref({ sortField: 'default', sortOrder: 1 });
+	const inputFilter = ref<string>('');
+	const appliedFilter = ref<string>('');
+	const selectedProbes = ref([]);
 
 	const { getUserFilter } = useUserFilter();
 
@@ -277,20 +284,82 @@
 
 	useGoogleMaps(() => { gmapsLoaded.value = true; });
 
+	const onSortChange = (event: DataTableSortEvent) => {
+		const { sortField = '', sortOrder = 1 } = event;
+
+
+		if (!sortOrder || typeof sortField !== 'string' || !SORTABLE_FIELDS.includes(sortField)) {
+			return;
+		}
+
+		sortState.value = { sortField, sortOrder };
+		loadLazyData();
+	};
+
+	const onFilterChange = (event: KeyboardEvent) => {
+		if (event.key === 'Enter') {
+			appliedFilter.value = inputFilter.value;
+			loadLazyData();
+		}
+	};
+
+	const getCurrentFilter = () => {
+		return appliedFilter.value ? { ...getUserFilter('userId'), searchIndex: { _icontains: appliedFilter.value } } : getUserFilter('userId');
+	};
+
+	watch([ appliedFilter, sortState ], async () => {
+		const query = {
+			...route.query,
+			page: 1,
+			filterBy: appliedFilter.value,
+			...sortState.value,
+		};
+
+		await router.replace({ query });
+	});
+
+	const getSortFields = () => {
+		const { sortField, sortOrder } = sortState.value;
+
+		switch (sortField) {
+		case 'name': {
+			return [ sortOrder === -1 ? '-name' : 'name', 'status' ];
+		}
+
+		case 'tags': {
+			return [ sortOrder === -1 ? '-count(tags)' : 'count(tags)', 'status' ];
+		}
+
+		case 'location': {
+			let locationFields = [ 'country', 'city', 'network' ];
+
+			if (sortOrder === -1) {
+				locationFields = locationFields.map(el => '-' + el);
+			}
+
+			return [ ...locationFields, 'status', 'name' ];
+		}
+
+		default: {
+			return [ 'status', 'name' ];
+		}
+		}
+	};
+
 	const loadLazyData = async () => {
 		loading.value = true;
 
 		try {
 			const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
 				$directus.request(readItems('gp_probes', {
-					filter: getUserFilter('userId'),
-					sort: [ 'status', 'name' ],
+					filter: getCurrentFilter(),
+					sort: getSortFields(),
 					offset: first.value,
 					limit: itemsPerPage.value,
 				})),
 				$directus.request<[{ count: number }]>(aggregate('gp_probes', {
 					query: {
-						filter: getUserFilter('userId'),
+						filter: getCurrentFilter(),
 					},
 					aggregate: { count: '*' },
 				})),
@@ -340,6 +409,18 @@
 			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 420) / 65), 5), 15);
 		}
 
+		const { filterBy = '', sortField = 'default' } = route.query;
+		const sortOrder = Number(route.query?.sortOrder);
+
+		if (typeof filterBy === 'string') {
+			inputFilter.value = filterBy;
+			appliedFilter.value = filterBy;
+		}
+
+		if (typeof sortField === 'string' && sortOrder) {
+			sortState.value = { sortField, sortOrder };
+		}
+
 		await loadLazyData();
 	});
 
@@ -349,6 +430,7 @@
 		() => route.params.id,
 	], async ([ newPage, newId ], [ oldPage, oldId ]) => {
 		if (newPage !== oldPage && !oldId && !newId) {
+			console.log('updating in watch');
 			await loadLazyData();
 		}
 	});

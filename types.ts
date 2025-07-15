@@ -97,6 +97,7 @@ declare global {
 		hardwareDeviceFirmware: string | null;
 		nodeVersion: string;
 		allowedCountries: string[];
+		searchIndex: string;
 	};
 
 	type User = {

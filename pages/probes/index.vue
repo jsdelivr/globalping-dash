@@ -1,5 +1,5 @@
 <template>
-	<div class="min-h-full p-4 sm:p-6" :class="{'md:min-w-[940px]': probes.length}">
+	<div class="min-h-full p-4 sm:p-6" :class="{'md:min-w-[940px]': probes?.length}">
 		<div class="mb-4 flex">
 			<h1 class="page-title">Probes</h1>
 
@@ -8,7 +8,7 @@
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
 		</div>
-		<div v-if="appliedFilter || loading || probes.length">
+		<div v-if="selectedStatus.count || filterApplied || loading">
 			<div class="max-md:hidden">
 				<!--
 				filter-display="menu"
@@ -20,7 +20,7 @@
 					lazy
 					:rows="itemsPerPage"
 					data-key="id"
-					:total-records="probesCount"
+					:total-records="selectedStatus.count"
 					sort-mode="single"
 					:sort-field="sortState.sortField === 'default' ? 'name' : sortState.sortField"
 					:sort-order="sortState.sortOrder"
@@ -35,10 +35,9 @@
 							<h3 class="px-2">List of probes</h3>
 
 							<div class="ml-auto flex gap-x-4 self-end">
-								<!-- TODO: v-if any selected -->
-								<!-- TODO: confirmation modal -->
 								<div v-if="selectedProbes.length">
 									<Button
+										class="h-[2.4rem]"
 										label="Delete selected"
 										severity="danger"
 										icon="pi pi-trash"
@@ -47,11 +46,40 @@
 									/>
 								</div>
 
-								<div class="font-normal">
+								<div class="flex items-stretch gap-4 font-normal">
+									<span class="flex items-center font-bold">Show:</span>
+									<Select
+										v-model="selectedStatus"
+										:options="statusOptions"
+										class="min-w-64"
+										@change="onStatusChange"
+									>
+										<template #option="slotProps">
+											<div class="flex w-full items-center gap-2">
+												<span
+													:class="{
+														'font-bold text-bluegray-900 dark:text-white': slotProps.option.code === selectedStatus.code,
+														'text-bluegray-400': slotProps.option.code !== selectedStatus.code
+													}">{{ slotProps.option.name }} probes</span>
+												<Tag
+													class="-my-0.5"
+													:class="{
+														'bg-primary text-white dark:bg-white dark:text-bluegray-900 ': slotProps.option.code === selectedStatus.code,
+														'border border-surface-300 bg-surface-0 text-bluegray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-surface-0': slotProps.option.code !== selectedStatus.code
+													}">{{ slotProps.option.count }}</Tag>
+											</div>
+										</template>
+
+										<template #value="slotProps">
+											<div class="flex w-full items-center gap-2">
+												<span class="text-bluegray-400">{{ slotProps.value.name }} probes</span>
+												<Tag class="-my-1 border ">{{ slotProps.value.count }}</Tag></div>
+										</template>
+									</Select>
 									<InputGroup>
 										<IconField>
 											<InputIcon class="pi pi-search"/>
-											<InputText v-model="inputFilter" class="m-0 min-w-[280px]" placeholder="Filter by name, location, or tags" @keyup="onFilterChange"/>
+											<InputText v-model="inputFilter" class="m-0 h-full min-w-[280px]" placeholder="Filter by name, location, or tags" @keyup="onFilterChange"/>
 										</IconField>
 									</InputGroup>
 								</div>
@@ -95,7 +123,6 @@
 						</template>
 					</Column>
 
-					<!-- TODO: sort by tag count -->
 					<Column field="tags" :sortable="true" body-class="!py-0.5 h-16" :style="{ width: `${columnWidths.tags}px` }">
 						<template #header>
 							Tags <i ref="desktopTagsHeaderContentRef" v-tooltip.top="'Public tags that can be used to target the probe in measurements.'" class="pi pi-info-circle"/>
@@ -115,10 +142,6 @@
 									<nuxt-icon class="mr-2" name="coin"/>+{{ totalCredits.toLocaleString('en-US') }}
 								</Tag>
 							</div>
-							<div class="ml-8">
-								<span>Number of probes:</span>
-								<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ probesCount }}</Tag>
-							</div>
 							<Button
 								class="ml-auto"
 								severity="secondary"
@@ -130,7 +153,7 @@
 						</div>
 					</template>
 
-					<template #empty><div class="p-6 text-center">No probes match the filter. </div></template>
+					<template #empty><div class="p-6 text-center">No probes match the filter.</div></template>
 				</DataTable>
 			</div>
 			<div class="hidden max-md:block">
@@ -178,7 +201,7 @@
 								</div>
 								<div class="mt-2 flex items-center justify-between">
 									<span class="text-xs font-bold">Number of probes:</span>
-									<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ probesCount }}</Tag>
+									<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ selectedStatus.count }}</Tag>
 								</div>
 								<Button
 									class="mt-2 w-full"
@@ -194,11 +217,11 @@
 				</div>
 			</div>
 			<Paginator
-				v-if="probes.length !== probesCount"
+				v-if="displayPagination"
 				class="mt-6"
 				:first="first"
 				:rows="itemsPerPage"
-				:total-records="probesCount"
+				:total-records="selectedStatus.count"
 				:page-link-size="pageLinkSize"
 				:template="template"
 				@page="page = $event.page"
@@ -301,10 +324,24 @@
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage, active: () => !route.params.id });
 	const totalCredits = ref(0);
 	const gmapsLoaded = ref(false);
+
 	const sortState = ref({ sortField: 'default', sortOrder: 1 });
 	const inputFilter = ref<string>('');
 	const appliedFilter = ref<string>('');
 	const selectedProbes = ref<Probe[]>([]);
+	const displayPagination = ref<boolean>(true);
+
+	type statusCode = 'all' | 'online' | 'ping-test-failed' | 'offline';
+
+	const statusOptions = ref<Array<{ name: string; count: number; code: statusCode; options: StatusOption[] }>>([
+		{ name: 'All', count: 0, code: 'all', options: [] },
+		{ name: 'Online', count: 0, code: 'online', options: [ 'ready', 'initializing' ] },
+		{ name: 'Ping test failed', count: 0, code: 'ping-test-failed', options: [ 'ping-test-failed' ] },
+		{ name: 'Offline', count: 0, code: 'offline', options: [ 'offline' ] },
+	]);
+
+	const selectedStatus = ref(statusOptions.value[0]);
+	const filterApplied = computed(() => { return selectedStatus.value.code !== 'all' || appliedFilter.value; });
 
 	const { getUserFilter } = useUserFilter();
 
@@ -324,34 +361,42 @@
 			return;
 		}
 
-		page.value = 0;
 		sortState.value = { sortField, sortOrder };
-		loadLazyData();
+		resetPage();
 	};
 
 	const onFilterChange = (event: KeyboardEvent) => {
 		if (event.key === 'Enter') {
 			appliedFilter.value = inputFilter.value;
-			page.value = 0;
-			loadLazyData();
+			resetPage();
 		}
 	};
 
-	const getCurrentFilter = () => ({
-		...getUserFilter('userId'),
-		...appliedFilter.value && { searchIndex: { _icontains: appliedFilter.value } },
-	});
+	const onStatusChange = () => {
+		if (selectedStatus.value.count <= probes.value.length) {
+			displayPagination.value = false;
+		}
 
-	// preserve filtering & sorting options in the URL
-	watch([ appliedFilter, sortState ], async () => {
-		const query = {
-			...route.query,
-			filterBy: appliedFilter.value,
-			...sortState.value,
-		};
+		resetPage();
+	};
 
-		await router.replace({ query });
-	});
+	const resetPage = async () => {
+		await router.replace({
+			query: {
+				...route.query,
+				filterBy: appliedFilter.value,
+				...sortState.value,
+				status: selectedStatus.value.code,
+				page: 1,
+			},
+		});
+
+		if (page.value) {
+			page.value = 0; // triggers data refetch via a watcher
+		} else {
+			await loadLazyData();
+		}
+	};
 
 	const deleteSelectedProbes = async () => {
 		deleteProbesLoading.value = true;
@@ -404,21 +449,28 @@
 		}
 	};
 
+	const getCurrentFilter = (includeStatus: boolean = false) => ({
+		...getUserFilter('userId'),
+		...appliedFilter.value && { searchIndex: { _icontains: appliedFilter.value } },
+		...includeStatus && selectedStatus.value.code !== 'all' && { status: { _in: selectedStatus.value.options } },
+	});
+
 	const loadLazyData = async () => {
 		loading.value = true;
 		selectedProbes.value = [];
 
 		try {
-			const [ adoptedProbes, [{ count }], creditsAdditions ] = await Promise.all([
+			const [ adoptedProbes, statusCounts, creditsAdditions ] = await Promise.all([
 				$directus.request(readItems('gp_probes', {
-					filter: getCurrentFilter(),
+					filter: getCurrentFilter(true),
 					sort: getSortFields() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
 					offset: first.value,
 					limit: itemsPerPage.value,
 				})),
-				$directus.request<[{ count: number }]>(aggregate('gp_probes', {
+				$directus.request<[{ count: 'string'; status: StatusOption }]>(aggregate('gp_probes', {
 					query: {
 						filter: getCurrentFilter(),
+						groupBy: [ 'status' ],
 					},
 					aggregate: { count: '*' },
 				})),
@@ -453,11 +505,22 @@
 
 			credits.value = creditsByProbeId;
 			probes.value = adoptedProbes;
-			probesCount.value = count;
+			probesCount.value = 0;
+
+			statusOptions.value.forEach((opt, index) => {
+				if (opt.code === 'all') {
+					statusOptions.value[index].count = statusCounts.reduce((sum, r) => sum + Number(r.count), 0);
+					probesCount.value = statusOptions.value[index].count;
+					return;
+				}
+
+				statusOptions.value[index].count = statusCounts.reduce((sum, r) => opt.options.includes(r.status) ? sum + Number(r.count) : sum, 0);
+			});
 		} catch (e) {
 			sendErrorToast(e);
 		}
 
+		displayPagination.value = probes.value.length !== selectedStatus.value.count;
 		loading.value = false;
 	};
 
@@ -468,7 +531,7 @@
 			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 420) / 65), 5), 15);
 		}
 
-		const { filterBy, sortField } = route.query;
+		const { filterBy, sortField, status } = route.query;
 		let sortOrder = Number(route.query?.sortOrder);
 
 		if (![ -1, 1 ].includes(sortOrder)) {
@@ -483,6 +546,12 @@
 		if (typeof sortField === 'string' && SORTABLE_FIELDS.includes(sortField)) {
 			sortState.value = { sortField, sortOrder };
 		}
+
+		statusOptions.value.forEach((opt, _) => {
+			if (opt.code === status) {
+				selectedStatus.value = opt;
+			}
+		});
 
 		await loadLazyData();
 	});

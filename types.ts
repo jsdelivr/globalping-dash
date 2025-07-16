@@ -67,6 +67,8 @@ declare global {
 		};
 	};
 
+	type StatusOption = 'initializing' | 'ready' | 'unbuffer-missing' | 'ping-test-failed' | 'sigterm' | 'offline';
+
 	type Probe = {
 		id: string;
 		asn: number;
@@ -83,7 +85,7 @@ declare global {
 		network: string;
 		onlineTimesToday: number;
 		state: string | null;
-		status: 'initializing' | 'ready' | 'unbuffer-missing' | 'ping-test-failed' | 'sigterm' | 'offline';
+		status: StatusOption;
 		tags: {
 			value: string;
 			prefix: string;

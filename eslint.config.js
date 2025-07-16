@@ -71,6 +71,7 @@ export default createConfigForNuxt().prepend(
 				'tab',
 				{
 					baseIndent: 1,
+					switchCase: 1,
 				},
 			],
 			'vue/html-closing-bracket-spacing': [

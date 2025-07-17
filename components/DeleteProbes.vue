@@ -31,8 +31,11 @@
 	import { pluralize } from '~/utils/pluralize';
 	import { sendToast, sendErrorToast } from '~/utils/send-toast';
 
-	const { probes } = defineProps({
-		probes: { type: Array<Probe>, default: () => [] },
+	const props = defineProps({
+		probes: {
+			type: Array<Probe>,
+			default: () => [],
+		},
 	});
 
 	const emit = defineEmits<{
@@ -41,17 +44,16 @@
 	}>();
 
 	const { $directus } = useNuxtApp();
-
 	const deleteLoading = ref(false);
 
 	const deleteProbes = async () => {
 		deleteLoading.value = true;
-		const selectedProbesCount = probes.length;
+		const selectedProbesCount = props.probes.length;
 
 		try {
 			if (selectedProbesCount) {
-				await $directus.request(updateItems('gp_probes', probes.map(p => p.id), { userId: null }));
-				sendToast('success', 'Done', `The ${pluralize('probe has', 'probes have', probes.length)} been deleted`);
+				await $directus.request(updateItems('gp_probes', props.probes.map(p => p.id), { userId: null }));
+				sendToast('success', 'Done', `The ${pluralize('probe has', 'probes have', selectedProbesCount)} been deleted`);
 				emit('update:probes', []);
 				emit('success');
 			}

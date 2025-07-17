@@ -8,7 +8,8 @@
 
 				<div class="flex grow flex-col gap-3 p-6">
 					<p class="text-sm leading-[125%] text-bluegray-600 dark:text-bluegray-0">
-						City where the probe is located. If the auto-detected value is wrong, you can adjust it here.
+						Location of the probe. If the auto-detected value is wrong, you can adjust it here.
+						<span v-if="probe.allowedCountries.length > 1">The country can only be changed to one of the values reported by our GeoIP providers.</span>
 					</p>
 
 					<div class="relative h-80 min-h-80 w-full grow overflow-hidden rounded-md bg-surface-200 sm:h-auto dark:bg-dark-950">

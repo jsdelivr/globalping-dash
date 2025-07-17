@@ -21,11 +21,11 @@ export const formatDateForTable = (date: string | Date | null) => {
 		return '';
 	}
 
-	if (typeof date === 'object') {
-		date = date.toISOString();
+	if (typeof date === 'string') {
+		date = new Date(date);
 	}
 
-	return date.split('T')[0];
+	return date.toISOString().split('T')[0];
 };
 
 /**

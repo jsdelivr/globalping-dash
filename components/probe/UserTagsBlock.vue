@@ -104,6 +104,7 @@
 
 									<div class="ml-2 flex gap-1">
 										<Button
+											v-tooltip.top="'Remove'"
 											icon="pi pi-trash"
 											text
 											:class="{ invisible: !index && !tag.value }"

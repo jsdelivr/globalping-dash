@@ -34,44 +34,50 @@
 						<div class="flex w-full items-center">
 							<h3 class="px-2">List of probes</h3>
 
-							<div class="ml-auto flex gap-x-4 self-end">
-								<div class="flex items-stretch gap-4 font-normal">
-									<span class="flex items-center font-bold">Show:</span>
-									<Select
-										v-model="selectedStatus"
-										:options="statusOptions"
-										class="min-w-64"
-										@change="onStatusChange"
-									>
-										<template #option="slotProps">
-											<div class="flex w-full items-center gap-2">
-												<span
-													:class="{
-														'font-bold text-bluegray-900 dark:text-white': slotProps.option.code === selectedStatus.code,
-														'text-bluegray-400': slotProps.option.code !== selectedStatus.code
-													}">{{ slotProps.option.name }} probes</span>
-												<Tag
-													class="-my-0.5"
-													:class="{
-														'bg-primary text-white dark:bg-white dark:text-bluegray-900 ': slotProps.option.code === selectedStatus.code,
-														'border border-surface-300 bg-surface-0 text-bluegray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-surface-0': slotProps.option.code !== selectedStatus.code
-													}">{{ slotProps.option.count }}</Tag>
-											</div>
-										</template>
+							<div class="ml-auto flex h-9 items-stretch gap-x-4 self-end font-normal">
+								<Button
+									v-if="selectedProbes.length"
+									label="Delete selected"
+									severity="danger"
+									icon="pi pi-trash"
+									text
+									@click="deleteProbesDialog = true"
+								/>
+								<span class="flex items-center font-bold">Show:</span>
+								<Select
+									v-model="selectedStatus"
+									:options="statusOptions"
+									class="min-w-64"
+									@change="onStatusChange"
+								>
+									<template #option="slotProps">
+										<div class="flex h-full items-center gap-2">
+											<span
+												:class="{
+													'font-bold text-bluegray-900 dark:text-white': slotProps.option.code === selectedStatus.code,
+													'text-bluegray-400': slotProps.option.code !== selectedStatus.code
+												}">{{ slotProps.option.name }} probes</span>
+											<Tag
+												class="-my-0.5"
+												:class="{
+													'bg-primary text-white dark:bg-white dark:text-bluegray-900 ': slotProps.option.code === selectedStatus.code,
+													'border border-surface-300 bg-surface-0 text-bluegray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-surface-0': slotProps.option.code !== selectedStatus.code
+												}">{{ slotProps.option.count }}</Tag>
+										</div>
+									</template>
 
-										<template #value="slotProps">
-											<div class="flex w-full items-center gap-2">
-												<span class="text-bluegray-400">{{ slotProps.value.name }} probes</span>
-												<Tag class="-my-1 border ">{{ slotProps.value.count }}</Tag></div>
-										</template>
-									</Select>
-									<InputGroup>
-										<IconField>
-											<InputIcon class="pi pi-search"/>
-											<InputText v-model="inputFilter" class="m-0 h-full min-w-[280px]" placeholder="Filter by name, location, or tags" @keydown="onFilterChange"/>
-										</IconField>
-									</InputGroup>
-								</div>
+									<template #value="slotProps">
+										<div class="flex h-full items-center gap-2">
+											<span class="text-bluegray-400">{{ slotProps.value.name }} probes</span>
+											<Tag class="-my-1 border ">{{ slotProps.value.count }}</Tag></div>
+									</template>
+								</Select>
+								<InputGroup class="h-full !w-auto">
+									<IconField>
+										<InputIcon class="pi pi-search"/>
+										<InputText v-model="inputFilter" class="m-0 h-full min-w-[280px]" placeholder="Filter by name, location, or tags" @keydown="onFilterChange"/>
+									</IconField>
+								</InputGroup>
 							</div>
 						</div>
 					</template>
@@ -132,24 +138,14 @@
 								</Tag>
 							</div>
 
-							<div class="flex gap-4">
-								<Button
-									v-if="selectedProbes.length"
-									label="Delete selected"
-									severity="danger"
-									icon="pi pi-trash"
-									text
-									@click="deleteProbesDialog = true"
-								/>
-								<Button
-									class="ml-auto"
-									severity="secondary"
-									outlined
-									label="Start a probe"
-									icon="pi pi-question-circle"
-									@click="startProbeDialog = true"
-								/>
-							</div>
+							<Button
+								class="ml-auto"
+								severity="secondary"
+								outlined
+								label="Start a probe"
+								icon="pi pi-question-circle"
+								@click="startProbeDialog = true"
+							/>
 						</div>
 					</template>
 

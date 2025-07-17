@@ -24,11 +24,11 @@ export default {
 			{ 'border-red-500 dark:border-red-400': props.invalid },
 
 			// Transitions
-			'transition-all',
+			'transition-colors transition-shadow',
 			'duration-200',
 
 			// States
-			{ 'hover:border-surface-400 dark:hover:border-dark-400': !props.invalid },
+			{ 'hover:[&:not(:focus-within)]:border-surface-400 dark:hover:[&:not(:focus-within)]:border-dark-400': !props.invalid },
 			{ 'outline-none outline-offset-0 ring-1 ring-primary-500 dark:ring-primary-400 z-10': state.focused },
 
 			// Misc

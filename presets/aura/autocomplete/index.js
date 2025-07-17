@@ -53,7 +53,7 @@ export default {
 			{ 'border-red-500 dark:border-red-400': props.invalid },
 
 			// States
-			{ 'hover:border-surface-400 dark:hover:border-dark-600': !props.invalid && !props.disabled },
+			{ 'hover:[&:not(:focus-within)]:border-surface-400 dark:hover:[&:not(:focus-within)]:border-dark-600': !props.invalid && !props.disabled },
 			{ 'outline-none outline-offset-0 z-10 ring-1 ring-primary-500 dark:ring-primary-400': state.focused },
 
 			// Transition

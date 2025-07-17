@@ -14,9 +14,10 @@ interface StatusOption {
 
 interface useProbeFiltersInterface {
 	fetch: () => Promise<void>;
+	skipFetchOnMount?: boolean;
 }
 
-export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
+export const useProbeFilters = ({ fetch, skipFetchOnMount = true }: useProbeFiltersInterface) => {
 	const router = useRouter();
 	const route = useRoute();
 	const { getUserFilter } = useUserFilter();
@@ -26,6 +27,8 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 
 	const inputFilter = ref('');
 	const appliedFilter = ref('');
+
+	const isMounted = ref(!skipFetchOnMount);
 
 	const statusOptions = ref<StatusOption[]>([
 		{ name: 'All', count: 0, code: 'all', options: [ ...ONLINE_STATUSES, ...OFFLINE_STATUSES ] },
@@ -113,7 +116,7 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 		() => route.query,
 		(query) => {
 			const { filter = '', by = 'default', desc = '', status = 'all' } = query;
-			const shouldReset = filter !== appliedFilter.value || by !== sortState.value.by || (desc === 'true' && !desc) || status !== selectedStatus.value.code;
+			const shouldReset = filter !== appliedFilter.value || by !== sortState.value.by || (desc === 'true' && !sortState.value.desc) || status !== selectedStatus.value.code;
 
 			if (typeof filter === 'string') {
 				inputFilter.value = filter;
@@ -137,8 +140,10 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 				selectedStatus.value = statusOptions.value[0];
 			}
 
-			if (shouldReset) {
+			if (shouldReset && isMounted.value) {
 				onParamChange(false);
+			} else {
+				isMounted.value = true;
 			}
 		},
 		{ immediate: true },

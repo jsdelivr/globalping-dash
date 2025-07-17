@@ -33,7 +33,7 @@ export const useProbeFilters = ({ fetch, skipFetchOnMount = true }: useProbeFilt
 	const statusOptions = ref<StatusOption[]>([
 		{ name: 'All', count: 0, code: 'all', options: [ ...ONLINE_STATUSES, ...OFFLINE_STATUSES ] },
 		{ name: 'Online', count: 0, code: 'online', options: ONLINE_STATUSES },
-		{ name: 'Ping test failed', count: 0, code: 'ping-test-failed', options: [ 'ping-test-failed' ] },
+		{ name: 'Online - ping test failed', count: 0, code: 'ping-test-failed', options: [ 'ping-test-failed' ] },
 		{ name: 'Offline', count: 0, code: 'offline', options: OFFLINE_STATUSES },
 	]);
 	const selectedStatus = ref(statusOptions.value[0]);

@@ -221,7 +221,7 @@
 				class="mt-6"
 				:first="first"
 				:rows="itemsPerPage"
-				:total-records="selectedStatus.count"
+				:total-records="probeCount"
 				:page-link-size="pageLinkSize"
 				:template="template"
 				@page="page = $event.page"
@@ -315,8 +315,6 @@
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const startProbeDialog = ref(false);
 	const adoptProbeDialog = ref(false);
-	const deleteProbesDialog = ref(false);
-	const deleteProbesLoading = ref(false);
 	const loading = ref(false);
 	const probesCount = ref(0);
 	const probes = ref<Probe[]>([]);
@@ -328,8 +326,9 @@
 	const sortState = ref({ sortField: 'default', sortOrder: 1 });
 	const inputFilter = ref<string>('');
 	const appliedFilter = ref<string>('');
-	const selectedProbes = ref<Probe[]>([]);
+
 	const displayPagination = ref<boolean>(true);
+	const probeCount = ref(0);
 
 	type statusCode = 'all' | 'online' | 'ping-test-failed' | 'offline';
 
@@ -352,6 +351,8 @@
 	});
 
 	useGoogleMaps(() => { gmapsLoaded.value = true; });
+
+	// FILTERING & SORTING HANDLERS
 
 	const onSortChange = (event: DataTableSortEvent) => {
 		const { sortField = '', sortOrder = 1 } = event;
@@ -381,6 +382,8 @@
 	};
 
 	const resetPage = async () => {
+		const prevPage = page.value;
+
 		await router.replace({
 			query: {
 				...route.query,
@@ -391,31 +394,13 @@
 			},
 		});
 
-		if (page.value) {
-			page.value = 0; // triggers data refetch via a watcher
-		} else {
+		// when navigating from a non-zero page the refetch is performed automatically via the page watcher
+		if (!prevPage) {
 			await loadLazyData();
 		}
 	};
 
-	const deleteSelectedProbes = async () => {
-		deleteProbesLoading.value = true;
-		const selectedProbesCount = selectedProbes.value?.length ?? 0;
-
-		try {
-			if (selectedProbesCount) {
-				await $directus.request(updateItems('gp_probes', selectedProbes.value.map(p => p.id), { userId: null }));
-				sendToast('success', 'Done', `The ${selectedProbesCount === 1 ? 'probe has' : 'probes have'} been deleted`);
-				selectedProbes.value = [];
-				loadLazyData();
-			}
-		} catch (e) {
-			sendErrorToast(e);
-		}
-
-		deleteProbesLoading.value = false;
-		deleteProbesDialog.value = false;
-	};
+	// DATA LOADING & HELPERS
 
 	const getSortFields = () => {
 		const { sortField, sortOrder } = sortState.value;
@@ -521,7 +506,33 @@
 		}
 
 		displayPagination.value = probes.value.length !== selectedStatus.value.count;
+		probeCount.value = selectedStatus.value.count;
 		loading.value = false;
+	};
+
+	// PROBE BATCH DELETE
+
+	const selectedProbes = ref<Probe[]>([]);
+	const deleteProbesDialog = ref(false);
+	const deleteProbesLoading = ref(false);
+
+	const deleteSelectedProbes = async () => {
+		deleteProbesLoading.value = true;
+		const selectedProbesCount = selectedProbes.value?.length ?? 0;
+
+		try {
+			if (selectedProbesCount) {
+				await $directus.request(updateItems('gp_probes', selectedProbes.value.map(p => p.id), { userId: null }));
+				sendToast('success', 'Done', `The ${selectedProbesCount === 1 ? 'probe has' : 'probes have'} been deleted`);
+				selectedProbes.value = [];
+				loadLazyData();
+			}
+		} catch (e) {
+			sendErrorToast(e);
+		}
+
+		deleteProbesLoading.value = false;
+		deleteProbesDialog.value = false;
 	};
 
 	// PROBES LIST
@@ -531,6 +542,7 @@
 			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 420) / 65), 5), 15);
 		}
 
+		// apply filters from the url
 		const { filterBy, sortField, status } = route.query;
 		let sortOrder = Number(route.query?.sortOrder);
 

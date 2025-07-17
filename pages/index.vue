@@ -12,25 +12,26 @@
 							<BigIcon name="gp" border/>
 							<div><span data-testid="probes-count" class="mx-2 text-3xl font-bold">{{ adoptedProbes.length }}</span>{{ pluralize('Probe', adoptedProbes.length) }}</div>
 						</div>
-						<div class="ml-auto mr-6 flex items-center max-sm:ml-0 max-sm:mt-3">
+						<NuxtLink to="/probes?status=online" class="group ml-auto mr-6 flex items-center gap-2 max-sm:ml-0 max-sm:mt-3">
 							<BigIcon name="point-online" filled/>
-							<div><span data-testid="online-probes-count" class="mx-2 text-3xl font-bold">{{ onlineProbes.length }}</span>Online</div>
-						</div>
-						<div class="flex items-center max-sm:mt-3">
+							<p class="group-hover:underline"><span data-testid="online-probes-count" class="text-3xl font-bold">{{ onlineProbes.length }}</span> Online</p>
+						</NuxtLink>
+						<NuxtLink to="/probes?status=offline" class="group flex items-center gap-2 max-sm:mt-3">
 							<BigIcon name="point-offline" filled/>
-							<div><span data-testid="offline-probes-count" class="mx-2 text-3xl font-bold">{{ offlineProbes.length }}</span>Offline</div>
-						</div>
+							<p class="group-hover:underline"><span data-testid="offline-probes-count" class="text-3xl font-bold">{{ offlineProbes.length }}</span> Offline</p>
+						</NuxtLink>
 					</div>
 					<div class="mt-6 flex items-center text-nowrap max-sm:flex-wrap">
 						<div class="fade-out flex grow items-center overflow-hidden max-sm:basis-full">
 							<div>Locations: </div>
-							<div
+							<NuxtLink
 								v-for="({ city, count }) in cities"
 								:key="city"
-								class="ml-3 rounded-full border px-3 py-2 dark:border-dark-600"
+								:to="`/probes?filterBy=${encodeURIComponent(city.toLowerCase())}`"
+								class="ml-3 rounded-full border px-3 py-2 hover:underline dark:border-dark-600"
 							>
-								{{ city }}<span class="ml-1.5 text-bluegray-500 dark:text-bluegray-400">{{ count }}</span>
-							</div>
+								{{ city }} <span class="text-bluegray-500 dark:text-bluegray-400">{{ count }}</span>
+							</NuxtLink>
 							<div v-if="isEmpty(cities)" class="ml-2">No locations to show</div>
 						</div>
 						<Button

@@ -4,7 +4,7 @@
 			<i class="pi pi-exclamation-triangle text-xl text-primary"/>
 		</div>
 		<div class="ml-3">
-			<div v-if="usePlural" class="flex flex-col gap-4">
+			<div v-if="probes.length > 1" class="flex flex-col">
 				<p>You are about to delete the following probes:</p>
 				<ul class="mb-4 ml-8 list-disc">
 					<li v-for="probe in probes" :key="probe.id" class="leading-7">
@@ -43,7 +43,6 @@
 	const { $directus } = useNuxtApp();
 
 	const deleteLoading = ref(false);
-	const usePlural = computed(() => probes.length > 1);
 
 	const deleteProbes = async () => {
 		deleteLoading.value = true;
@@ -52,7 +51,7 @@
 		try {
 			if (selectedProbesCount) {
 				await $directus.request(updateItems('gp_probes', probes.map(p => p.id), { userId: null }));
-				sendToast('success', 'Done', `The ${usePlural.value ? 'probes have' : 'probe has'} been deleted`);
+				sendToast('success', 'Done', `The ${pluralize('probe has', 'probes have', probes.length)} been deleted`);
 				emit('update:probes', []);
 				emit('success');
 			}

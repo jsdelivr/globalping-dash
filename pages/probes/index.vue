@@ -76,7 +76,7 @@
 						</div>
 					</template>
 
-					<Column selection-mode="multiple" class="px-3"/>
+					<Column :selection-mode="loading ? undefined : 'multiple'" class="px-3"/>
 
 					<Column field="name" :sortable="true" class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.name}px` }">
 						<template #header>

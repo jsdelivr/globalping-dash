@@ -254,7 +254,7 @@
 		</GPDialog>
 		<GPDialog
 			v-model:visible="deleteProbesDialog"
-			:header="`Delete selected ${pluralize('probe', selectedProbes.length)}`"
+			:header="`Delete ${pluralize('probe', selectedProbes.length)}`"
 		>
 			<DeleteProbes v-model:probes="selectedProbes" @close="deleteProbesDialog = false" @success="loadLazyData"/>
 		</GPDialog>
@@ -404,7 +404,7 @@
 		getCurrentFilter,
 	} = useProbeFilters({ fetch: loadLazyData });
 
-	const onFilterChangeDebounced = debounce(onFilterChange, 200);
+	const onFilterChangeDebounced = debounce(onFilterChange, 500);
 
 	// PROBES LIST
 	onMounted(async () => {

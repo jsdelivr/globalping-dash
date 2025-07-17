@@ -61,10 +61,11 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 		const { sortField = '', sortOrder = 1 } = event;
 
 		if (!sortOrder || typeof sortField !== 'string' || !SORTABLE_FIELDS.includes(sortField)) {
-			return;
+			sortState.value = { by: 'default', desc: false };
+		} else {
+			sortState.value = { by: sortField, desc: sortOrder === -1 };
 		}
 
-		sortState.value = { by: sortField, desc: sortOrder === -1 };
 		resetPage();
 	};
 

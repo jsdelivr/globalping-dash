@@ -76,7 +76,7 @@
 						</div>
 					</template>
 
-					<Column selection-mode="multiple" class="px-3" :class="loading && 'transition-none'"/>
+					<Column selection-mode="multiple" class="px-3"/>
 
 					<Column field="name" :sortable="true" class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.name}px` }">
 						<template #header>
@@ -379,12 +379,12 @@
 
 			statusOptions.value.forEach((opt, index) => {
 				if (opt.code === 'all') {
-					statusOptions.value[index].count = statusCounts.reduce((sum, r) => sum + Number(r.count), 0);
+					statusOptions.value[index].count = statusCounts.reduce((sum, status) => sum + Number(status.count), 0);
 					hasAnyProbes.value = hasAnyProbes.value || !!statusOptions.value[index].count;
 					return;
 				}
 
-				statusOptions.value[index].count = statusCounts.reduce((sum, r) => opt.options.includes(r.status) ? sum + Number(r.count) : sum, 0);
+				statusOptions.value[index].count = statusCounts.reduce((sum, status) => opt.options.includes(status.status) ? sum + Number(status.count) : sum, 0);
 			});
 		} catch (e) {
 			sendErrorToast(e);
@@ -413,14 +413,14 @@
 			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 420) / 65), 5), 15);
 		}
 
-		const probeCount = await $directus.request<[{ count: number }]>(aggregate('gp_probes', {
+		const [{ count }] = await $directus.request<[{ count: number }]>(aggregate('gp_probes', {
 			query: {
 				filter: getUserFilter('userId'),
 			},
 			aggregate: { count: '*' },
 		}));
 
-		if (probeCount[0].count) {
+		if (count) {
 			hasAnyProbes.value = true;
 			await loadLazyData();
 		} else {

@@ -77,10 +77,6 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 		}
 	};
 
-	const onStatusChange = () => {
-		resetPage();
-	};
-
 	const resetPage = async () => {
 		const prevPage = route.query.page ?? '1';
 
@@ -118,8 +114,9 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 				return sortOrder === -1 ? fields.map(f => `-${f}`) : fields;
 			}
 
-			default:
+			default: {
 				return [ 'status', 'name' ];
+			}
 		}
 	};
 
@@ -139,7 +136,7 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 		// handlers
 		onSortChange,
 		onFilterChange,
-		onStatusChange,
+		onStatusChange: resetPage,
 		// builders
 		getSortSettings,
 		getCurrentFilter,

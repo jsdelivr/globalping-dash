@@ -35,37 +35,6 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 	]);
 	const selectedStatus = ref(statusOptions.value[0]);
 
-	// apply filters from URL params
-	watch(
-		() => route.query,
-		(query) => {
-			const { filter = '', by = 'default', desc = '', status = 'all' } = query;
-
-			if (typeof filter === 'string') {
-				inputFilter.value = filter;
-				appliedFilter.value = filter;
-			} else {
-				inputFilter.value = '';
-				appliedFilter.value = '';
-			}
-
-			if (typeof by === 'string' && SORTABLE_FIELDS.includes(by)) {
-				sortState.value = { by, desc: desc === 'true' };
-			} else {
-				sortState.value = { by: 'default', desc: false };
-			}
-
-			const usedOption = statusOptions.value.find(opt => opt.code === status);
-
-			if (usedOption) {
-				selectedStatus.value = usedOption;
-			} else {
-				selectedStatus.value = statusOptions.value[0];
-			}
-		},
-		{ immediate: true },
-	);
-
 	const onSortChange = (event: DataTableSortEvent) => {
 		const { sortField = '', sortOrder = 1 } = event;
 
@@ -75,16 +44,16 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 			sortState.value = { by: sortField, desc: sortOrder === -1 };
 		}
 
-		resetPage();
+		onParamChange();
 	};
 
 	const onFilterChange = () => {
 		appliedFilter.value = inputFilter.value;
-		resetPage();
+		onParamChange();
 	};
 
-	const constructQuery = () => {
-		const { value, by, desc, status, page, ...queryRemainder } = route.query;
+	const constructQuery = (resetPageNumber: boolean = true) => {
+		const { filter, value, by, desc, status, page, ...queryRemainder } = route.query;
 
 		return {
 			...queryRemainder,
@@ -92,18 +61,19 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 			...sortState.value.by !== 'default' && { by: sortState.value.by },
 			...sortState.value.desc && { desc: 'true' },
 			...selectedStatus.value.code !== 'all' && { status: selectedStatus.value.code },
+			...!resetPageNumber && { page: route.query.page },
 		};
 	};
 
-	const resetPage = async () => {
+	const onParamChange = async (resetPageNumber = true) => {
 		const prevPage = route.query.page ?? '1';
 
 		await router.push({
-			query: constructQuery(),
+			query: constructQuery(resetPageNumber),
 		});
 
 		// when navigating from a non-first page the refetch is performed automatically via the page watcher
-		if (prevPage === '1') {
+		if (prevPage === '1' || !resetPageNumber) {
 			await fetch();
 		}
 	};
@@ -138,6 +108,42 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 		...includeStatus && selectedStatus.value.code !== 'all' && { status: { _in: selectedStatus.value.options } },
 	});
 
+	// apply filters from URL params
+	watch(
+		() => route.query,
+		(query) => {
+			const { filter = '', by = 'default', desc = '', status = 'all' } = query;
+			const shouldReset = filter !== appliedFilter.value || by !== sortState.value.by || (desc === 'true' && !desc) || status !== selectedStatus.value.code;
+
+			if (typeof filter === 'string') {
+				inputFilter.value = filter;
+				appliedFilter.value = filter;
+			} else {
+				inputFilter.value = '';
+				appliedFilter.value = '';
+			}
+
+			if (typeof by === 'string' && SORTABLE_FIELDS.includes(by)) {
+				sortState.value = { by, desc: desc === 'true' };
+			} else {
+				sortState.value = { by: 'default', desc: true };
+			}
+
+			const usedOption = statusOptions.value.find(opt => opt.code === status);
+
+			if (usedOption) {
+				selectedStatus.value = usedOption;
+			} else {
+				selectedStatus.value = statusOptions.value[0];
+			}
+
+			if (shouldReset) {
+				onParamChange(false);
+			}
+		},
+		{ immediate: true },
+	);
+
 	return {
 		// state
 		sortState,
@@ -148,7 +154,7 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 		// handlers
 		onSortChange,
 		onFilterChange,
-		onStatusChange: resetPage,
+		onStatusChange: () => onParamChange(),
 		// builders
 		getSortSettings,
 		getCurrentFilter,

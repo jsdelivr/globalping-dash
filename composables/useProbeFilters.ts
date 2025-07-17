@@ -1,6 +1,6 @@
 import type { DataTableSortEvent } from 'primevue/datatable';
-import { ref, watch } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
 import { useUserFilter } from '~/composables/useUserFilter';
 import { ONLINE_STATUSES, OFFLINE_STATUSES } from '~/constants/probes';
 
@@ -12,13 +12,7 @@ interface StatusOption {
 	options: Status[];
 }
 
-interface useProbeFiltersInterface {
-	fetch: () => Promise<void>;
-	skipFetchOnMount?: boolean;
-}
-
-export const useProbeFilters = ({ fetch, skipFetchOnMount = true }: useProbeFiltersInterface) => {
-	const router = useRouter();
+export const useProbeFilters = () => {
 	const route = useRoute();
 	const { getUserFilter } = useUserFilter();
 
@@ -27,8 +21,6 @@ export const useProbeFilters = ({ fetch, skipFetchOnMount = true }: useProbeFilt
 
 	const inputFilter = ref('');
 	const appliedFilter = ref('');
-
-	const isMounted = ref(!skipFetchOnMount);
 
 	const statusOptions = ref<StatusOption[]>([
 		{ name: 'All', count: 0, code: 'all', options: [ ...ONLINE_STATUSES, ...OFFLINE_STATUSES ] },
@@ -55,8 +47,8 @@ export const useProbeFilters = ({ fetch, skipFetchOnMount = true }: useProbeFilt
 		onParamChange();
 	};
 
-	const constructQuery = (resetPageNumber: boolean = true) => {
-		const { filter, value, by, desc, status, page, ...queryRemainder } = route.query;
+	const constructQuery = () => {
+		const { filter, value, by, desc, status, ...queryRemainder } = route.query;
 
 		return {
 			...queryRemainder,
@@ -64,21 +56,13 @@ export const useProbeFilters = ({ fetch, skipFetchOnMount = true }: useProbeFilt
 			...sortState.value.by !== 'default' && { by: sortState.value.by },
 			...sortState.value.desc && { desc: 'true' },
 			...selectedStatus.value.code !== 'all' && { status: selectedStatus.value.code },
-			...!resetPageNumber && { page: route.query.page },
 		};
 	};
 
-	const onParamChange = async (resetPageNumber = true) => {
-		const prevPage = route.query.page ?? '1';
-
-		await router.push({
-			query: constructQuery(resetPageNumber),
+	const onParamChange = async () => {
+		navigateTo({
+			query: constructQuery(),
 		});
-
-		// when navigating from a non-first page the refetch is performed automatically via the page watcher
-		if (prevPage === '1' || !resetPageNumber) {
-			await fetch();
-		}
 	};
 
 	const getSortSettings = () => {
@@ -111,43 +95,34 @@ export const useProbeFilters = ({ fetch, skipFetchOnMount = true }: useProbeFilt
 		...includeStatus && selectedStatus.value.code !== 'all' && { status: { _in: selectedStatus.value.options } },
 	});
 
-	// apply filters from URL params
-	watch(
-		() => route.query,
-		(query) => {
-			const { filter = '', by = 'default', desc = '', status = 'all' } = query;
-			const shouldReset = filter !== appliedFilter.value || by !== sortState.value.by || (desc === 'true' && !sortState.value.desc) || status !== selectedStatus.value.code;
+	watch([
+		() => route.query.filter,
+		() => route.query.by,
+		() => route.query.desc,
+		() => route.query.status,
+	], async ([ filter, by, desc, status ]) => {
+		if (typeof filter === 'string') {
+			inputFilter.value = filter;
+			appliedFilter.value = filter;
+		} else {
+			inputFilter.value = '';
+			appliedFilter.value = '';
+		}
 
-			if (typeof filter === 'string') {
-				inputFilter.value = filter;
-				appliedFilter.value = filter;
-			} else {
-				inputFilter.value = '';
-				appliedFilter.value = '';
-			}
+		if (typeof by === 'string' && SORTABLE_FIELDS.includes(by)) {
+			sortState.value = { by, desc: desc === 'true' };
+		} else {
+			sortState.value = { by: 'default', desc: true };
+		}
 
-			if (typeof by === 'string' && SORTABLE_FIELDS.includes(by)) {
-				sortState.value = { by, desc: desc === 'true' };
-			} else {
-				sortState.value = { by: 'default', desc: true };
-			}
+		const usedOption = statusOptions.value.find(opt => opt.code === status);
 
-			const usedOption = statusOptions.value.find(opt => opt.code === status);
-
-			if (usedOption) {
-				selectedStatus.value = usedOption;
-			} else {
-				selectedStatus.value = statusOptions.value[0];
-			}
-
-			if (shouldReset && isMounted.value) {
-				onParamChange(false);
-			} else {
-				isMounted.value = true;
-			}
-		},
-		{ immediate: true },
-	);
+		if (usedOption) {
+			selectedStatus.value = usedOption;
+		} else {
+			selectedStatus.value = statusOptions.value[0];
+		}
+	}, { immediate: true });
 
 	return {
 		// state

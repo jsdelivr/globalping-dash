@@ -394,15 +394,16 @@
 
 	const {
 		sortState,
+		appliedFilter,
+		selectedStatus,
 		inputFilter,
 		statusOptions,
-		selectedStatus,
 		onSortChange,
 		onFilterChange,
 		onStatusChange,
 		getSortSettings,
 		getCurrentFilter,
-	} = useProbeFilters({ fetch: loadLazyData });
+	} = useProbeFilters();
 
 	const onFilterChangeDebounced = debounce(onFilterChange, 500);
 
@@ -427,12 +428,22 @@
 		}
 	});
 
-	// Update list data only when navigating list to list (e.g. page 1 to page 2), not list to details or details to list.
+	// Update list data only when navigating list to list (e.g. page 1 to page 2) or changing filters, not list to details or details to list.
 	watch([
-		() => page.value,
 		() => route.params.id,
-	], async ([ newPage, newId ], [ oldPage, oldId ]) => {
-		if (newPage !== oldPage && !oldId && !newId) {
+		() => page.value,
+		() => appliedFilter.value,
+		() => sortState.value.by,
+		() => sortState.value.desc,
+		() => selectedStatus.value.code,
+	], async ([ newId, newPage ], [ oldId, oldPage ]) => {
+		if (!oldId && !newId) {
+			// updating the page number would trigger duplicate refetch
+			if (newPage === oldPage && oldPage !== 0) {
+				page.value = 0;
+				return;
+			}
+
 			await loadLazyData();
 		}
 	});

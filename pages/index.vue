@@ -30,7 +30,7 @@
 								:to="`/probes?filter=${encodeURIComponent(city.toLowerCase())}`"
 								class="ml-3 rounded-full border px-3 py-2 duration-200 hover:bg-bluegray-50 dark:border-dark-600 dark:hover:bg-dark-700"
 							>
-								{{ city }} <span class="text-bluegray-500 dark:text-bluegray-400">{{ count }}</span>
+								{{ city }}<span class="ml-1.5 text-bluegray-500 dark:text-bluegray-400">{{ count }}</span>
 							</NuxtLink>
 							<div v-if="isEmpty(cities)" class="ml-2">No locations to show</div>
 						</div>

@@ -22,8 +22,8 @@
 					data-key="id"
 					:total-records="selectedStatus.count"
 					sort-mode="single"
-					:sort-field="sortState.sortField === 'default' ? undefined : sortState.sortField"
-					:sort-order="sortState.sortOrder"
+					:sort-field="sortState.by === 'default' ? undefined : sortState.by"
+					:sort-order="sortState.desc ? -1 : 1"
 					:loading="loading"
 					:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"
 					:pt="{footer: '!pt-0 border-t-0'}"
@@ -75,7 +75,7 @@
 								<InputGroup class="!w-auto">
 									<IconField>
 										<InputIcon class="pi pi-search"/>
-										<InputText v-model="inputFilter" class="m-0 h-full min-w-[280px]" placeholder="Filter by name, location, or tags" @keydown="onFilterChange"/>
+										<InputText v-model="inputFilter" class="m-0 h-full min-w-[280px]" placeholder="Filter by name, location, or tags" @input="onFilterChangeDebounced"/>
 									</IconField>
 								</InputGroup>
 							</div>
@@ -217,7 +217,7 @@
 				class="mt-6"
 				:first="first"
 				:rows="itemsPerPage"
-				:total-records="selectedStatus.count"
+				:total-records="paginatedRecords"
 				:page-link-size="pageLinkSize"
 				:template="template"
 				@page="page = $event.page"
@@ -269,6 +269,7 @@
 
 <script setup lang="ts">
 	import { aggregate, readItems } from '@directus/sdk';
+	import { debounce } from 'lodash';
 	import CountryFlag from 'vue-country-flag-next';
 	import BigProbeIcon from '~/components/BigProbeIcon.vue';
 	import { useGoogleMaps } from '~/composables/maps';
@@ -297,6 +298,7 @@
 	const selectedProbes = ref<Probe[]>([]);
 	const deleteProbesDialog = ref(false);
 	const displayPagination = ref<boolean>(true);
+	const paginatedRecords = ref(0);
 
 	const { getUserFilter } = useUserFilter();
 
@@ -386,6 +388,7 @@
 		}
 
 		displayPagination.value = probes.value.length !== selectedStatus.value.count;
+		paginatedRecords.value = selectedStatus.value.count;
 		loading.value = false;
 	};
 
@@ -400,6 +403,8 @@
 		getSortSettings,
 		getCurrentFilter,
 	} = useProbeFilters({ fetch: loadLazyData });
+
+	const onFilterChangeDebounced = debounce(onFilterChange, 200);
 
 	// PROBES LIST
 	onMounted(async () => {

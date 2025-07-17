@@ -22,7 +22,7 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 	const { getUserFilter } = useUserFilter();
 
 	const SORTABLE_FIELDS = [ 'default', 'location', 'tags', 'name' ];
-	const sortState = ref({ sortField: 'default', sortOrder: 1 });
+	const sortState = ref({ by: 'default', desc: true });
 
 	const inputFilter = ref('');
 	const appliedFilter = ref('');
@@ -39,14 +39,13 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 	watch(
 		() => route.query,
 		(query) => {
-			if (typeof query.filterBy === 'string') {
-				inputFilter.value = query.filterBy;
-				appliedFilter.value = query.filterBy;
+			if (typeof query.filter === 'string') {
+				inputFilter.value = query.filter;
+				appliedFilter.value = query.filter;
 			}
 
-			if (typeof query.sortField === 'string' && SORTABLE_FIELDS.includes(query.sortField)) {
-				const order = Number(query.sortOrder);
-				sortState.value = { sortField: query.sortField, sortOrder: order === -1 ? -1 : 1 };
+			if (typeof query.by === 'string' && SORTABLE_FIELDS.includes(query.by)) {
+				sortState.value = { by: query.by, desc: query.desc === 'true' };
 			}
 
 			const usedOption = statusOptions.value.find(opt => opt.code === query.status);
@@ -61,33 +60,36 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 	const onSortChange = (event: DataTableSortEvent) => {
 		const { sortField = '', sortOrder = 1 } = event;
 
-
 		if (!sortOrder || typeof sortField !== 'string' || !SORTABLE_FIELDS.includes(sortField)) {
 			return;
 		}
 
-		sortState.value = { sortField, sortOrder };
+		sortState.value = { by: sortField, desc: sortOrder === -1 };
 		resetPage();
 	};
 
-	const onFilterChange = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			appliedFilter.value = inputFilter.value;
-			resetPage();
-		}
+	const onFilterChange = () => {
+		appliedFilter.value = inputFilter.value;
+		resetPage();
+	};
+
+	const constructQuery = () => {
+		const { value, by, desc, status, page, ...queryRemainder } = route.query;
+
+		return {
+			...queryRemainder,
+			...appliedFilter.value && { filter: appliedFilter.value },
+			...sortState.value.by !== 'default' && { by: sortState.value.by },
+			...sortState.value.desc && { desc: 'true' },
+			...selectedStatus.value.code !== 'all' && { status: selectedStatus.value.code },
+		};
 	};
 
 	const resetPage = async () => {
 		const prevPage = route.query.page ?? '1';
 
 		await router.replace({
-			query: {
-				...route.query,
-				filterBy: appliedFilter.value,
-				...sortState.value,
-				status: selectedStatus.value.code,
-				page: 1,
-			},
+			query: constructQuery(),
 		});
 
 		// when navigating from a non-first page the refetch is performed automatically via the page watcher
@@ -97,13 +99,13 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 	};
 
 	const getSortSettings = () => {
-		const { sortField, sortOrder } = sortState.value;
+		const { by, desc } = sortState.value;
 
-		switch (sortField) {
+		switch (by) {
 			case 'name':
-				return [ sortOrder === -1 ? '-name' : 'name', 'status' ];
+				return [ desc ? '-name' : 'name', 'status' ];
 			case 'tags':
-				if (sortOrder === -1) {
+				if (desc) {
 					return [ '-count(tags)', '-count(systemTags)', 'status', 'name' ];
 				}
 
@@ -111,7 +113,7 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 
 			case 'location': {
 				const fields = [ 'country', 'city', 'network' ];
-				return sortOrder === -1 ? fields.map(f => `-${f}`) : fields;
+				return desc ? fields.map(f => `-${f}`) : fields;
 			}
 
 			default: {

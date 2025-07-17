@@ -256,7 +256,7 @@
 			v-model:visible="deleteProbesDialog"
 			:header="`Delete ${pluralize('probe', selectedProbes.length)}`"
 		>
-			<DeleteProbes v-model:probes="selectedProbes" @close="deleteProbesDialog = false" @success="loadLazyData"/>
+			<DeleteProbes :probes="selectedProbes" @cancel="deleteProbesDialog = false" @success="loadLazyData"/>
 		</GPDialog>
 		<GPDialog
 			view-name="update-a-probe"

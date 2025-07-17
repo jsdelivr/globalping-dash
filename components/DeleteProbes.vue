@@ -21,7 +21,7 @@
 	</div>
 
 	<div class="mt-7 text-right">
-		<Button class="mr-2" label="Cancel" severity="secondary" text @click="emit('close')"/>
+		<Button class="mr-2" label="Cancel" severity="secondary" text @click="emit('cancel')"/>
 		<Button :loading="deleteLoading" :aria-disabled="deleteLoading" :label="`Delete ${pluralize('probe', probes.length)}`" severity="danger" @click="deleteProbes"/>
 	</div>
 </template>
@@ -39,8 +39,7 @@
 	});
 
 	const emit = defineEmits<{
-		(e: 'update:probes', value: Array<Probe>): void;
-		(e: 'close' | 'success'): void;
+		(e: 'cancel' | 'success'): void;
 	}>();
 
 	const { $directus } = useNuxtApp();
@@ -54,7 +53,6 @@
 			if (selectedProbesCount) {
 				await $directus.request(updateItems('gp_probes', props.probes.map(p => p.id), { userId: null }));
 				sendToast('success', 'Done', `The ${pluralize('probe has', 'probes have', selectedProbesCount)} been deleted`);
-				emit('update:probes', []);
 				emit('success');
 			}
 		} catch (e) {
@@ -62,6 +60,6 @@
 		}
 
 		deleteLoading.value = false;
-		emit('close');
+		emit('cancel');
 	};
 </script>

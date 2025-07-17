@@ -21,12 +21,13 @@
 	</div>
 	<div class="mt-7 text-right">
 		<Button class="mr-2" label="Cancel" severity="secondary" text @click="emit('close')"/>
-		<Button :loading="deleteLoading" :aria-disabled="deleteLoading" :label="usePlural ? 'Delete probes' : 'Delete probe'" severity="danger" @click="deleteProbes"/>
+		<Button :loading="deleteLoading" :aria-disabled="deleteLoading" :label="`Delete ${pluralize('probe', probes.length)}`" severity="danger" @click="deleteProbes"/>
 	</div>
 </template>
 
 <script setup lang="ts">
 	import { updateItems } from '@directus/sdk';
+	import { pluralize } from '~/utils/pluralize';
 	import { sendToast, sendErrorToast } from '~/utils/send-toast';
 
 	const { probes } = defineProps({

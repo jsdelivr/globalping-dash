@@ -254,7 +254,7 @@
 		</GPDialog>
 		<GPDialog
 			v-model:visible="deleteProbesDialog"
-			header="Delete selected probes"
+			:header="`Delete selected ${pluralize('probe', selectedProbes.length)}`"
 		>
 			<DeleteProbes v-model:probes="selectedProbes" @close="deleteProbesDialog = false" @success="loadLazyData"/>
 		</GPDialog>
@@ -275,6 +275,7 @@
 	import { usePagination } from '~/composables/pagination';
 	import { useProbeFilters } from '~/composables/useProbeFilters';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { pluralize } from '~/utils/pluralize';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const config = useRuntimeConfig();

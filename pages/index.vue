@@ -177,6 +177,7 @@
 	import isEmpty from 'lodash/isEmpty';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { ONLINE_STATUSES, OFFLINE_STATUSES } from '~/constants/probes';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
 	import { pluralize } from '~/utils/pluralize';
@@ -208,8 +209,8 @@
 		}
 	}, { default: () => [] });
 
-	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status === 'ready'));
-	const offlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status !== 'ready'));
+	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => ONLINE_STATUSES.includes(status)));
+	const offlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => OFFLINE_STATUSES.includes(status)));
 	const cities = computed(() => Object.entries(countBy(adoptedProbes.value, 'city'))
 		.map(([ city, count ]) => ({ city, count }))
 		.sort((obj1, obj2) => obj2.count - obj1.count));

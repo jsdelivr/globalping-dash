@@ -8,7 +8,7 @@
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
 		</div>
-		<div v-if="selectedStatus.count || filterApplied || loading">
+		<div v-if="hasAnyProbes || loading">
 			<div class="max-md:hidden">
 				<!--
 				filter-display="menu"
@@ -35,17 +35,6 @@
 							<h3 class="px-2">List of probes</h3>
 
 							<div class="ml-auto flex gap-x-4 self-end">
-								<div v-if="selectedProbes.length">
-									<Button
-										class="h-[2.4rem]"
-										label="Delete selected"
-										severity="danger"
-										icon="pi pi-trash"
-										text
-										@click="deleteProbesDialog = true"
-									/>
-								</div>
-
 								<div class="flex items-stretch gap-4 font-normal">
 									<span class="flex items-center font-bold">Show:</span>
 									<Select
@@ -87,7 +76,7 @@
 						</div>
 					</template>
 
-					<Column v-if="!loading" selection-mode="multiple" class="px-3"/>
+					<Column selection-mode="multiple" class="px-3"/>
 
 					<Column field="name" :sortable="true" class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.name}px` }">
 						<template #header>
@@ -135,21 +124,32 @@
 						</template>
 					</Column>
 					<template #footer>
-						<div class="flex h-14 items-center rounded-b-xl border-t bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] px-3 dark:from-dark-700 dark:to-dark-700">
+						<div class="flex h-14 items-center justify-between rounded-b-xl border-t bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] px-3 dark:from-dark-700 dark:to-dark-700">
 							<div class="flex items-center">
 								<span>Credits gained past month:</span>
 								<Tag v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">
 									<nuxt-icon class="mr-2" name="coin"/>+{{ totalCredits.toLocaleString('en-US') }}
 								</Tag>
 							</div>
-							<Button
-								class="ml-auto"
-								severity="secondary"
-								outlined
-								label="Start a probe"
-								icon="pi pi-question-circle"
-								@click="startProbeDialog = true"
-							/>
+
+							<div class="flex gap-4">
+								<Button
+									v-if="selectedProbes.length"
+									label="Delete selected"
+									severity="danger"
+									icon="pi pi-trash"
+									text
+									@click="deleteProbesDialog = true"
+								/>
+								<Button
+									class="ml-auto"
+									severity="secondary"
+									outlined
+									label="Start a probe"
+									icon="pi pi-question-circle"
+									@click="startProbeDialog = true"
+								/>
+							</div>
 						</div>
 					</template>
 
@@ -260,30 +260,7 @@
 			v-model:visible="deleteProbesDialog"
 			header="Delete selected probes"
 		>
-			<div class="flex items-center gap-4">
-				<div>
-					<i class="pi pi-exclamation-triangle text-4xl text-primary"/>
-				</div>
-				<div class="ml-3">
-					<div v-if="selectedProbes.length === 1" class="flex flex-col gap-4">
-						<p>You are about to delete probe <span class="font-bold">{{ selectedProbes[0].name || selectedProbes[0].city }}</span> ({{ selectedProbes[0].ip }}).</p>
-						<p>Are you sure you want to delete this probe? You will not be able to undo this action.</p>
-					</div>
-					<div v-else class="flex flex-col gap-4">
-						<p>You are about to delete the following probes:</p>
-						<ul class="ml-4 list-disc">
-							<li v-for="probe in selectedProbes" :key="probe.id" class="leading-[2rem]">
-								<span class="font-bold">{{ probe.name || probe.city }}</span> ({{ probe.ip }}).
-							</li>
-						</ul>
-						<p>Are you sure you want to delete these probes? You will not be able to undo this action.</p>
-					</div>
-				</div>
-			</div>
-			<div class="mt-7 text-right">
-				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteProbesDialog = false"/>
-				<Button :loading="deleteProbesLoading" :aria-disabled="deleteProbesLoading" :label="selectedProbes.length === 1 ? 'Delete probe' : 'Delete probes'" severity="danger" @click="deleteSelectedProbes"/>
-			</div>
+			<DeleteProbes v-model:probes="selectedProbes" @close="deleteProbesDialog = false" @success="loadLazyData"/>
 		</GPDialog>
 		<GPDialog
 			view-name="update-a-probe"
@@ -295,16 +272,14 @@
 </template>
 
 <script setup lang="ts">
-	import { aggregate, readItems, updateItems } from '@directus/sdk';
-	import type { DataTableSortEvent } from 'primevue/datatable';
+	import { aggregate, readItems } from '@directus/sdk';
 	import CountryFlag from 'vue-country-flag-next';
 	import BigProbeIcon from '~/components/BigProbeIcon.vue';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
+	import { useProbeFilters } from '~/composables/useProbeFilters';
 	import { useUserFilter } from '~/composables/useUserFilter';
-	import { sendErrorToast, sendToast } from '~/utils/send-toast';
-
-	const SORTABLE_FIELDS = [ 'default', 'location', 'tags', 'name' ];
+	import { sendErrorToast } from '~/utils/send-toast';
 
 	const config = useRuntimeConfig();
 
@@ -315,32 +290,19 @@
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const startProbeDialog = ref(false);
 	const adoptProbeDialog = ref(false);
-	const loading = ref(false);
+	const loading = ref(true);
 	const probesCount = ref(0);
 	const probes = ref<Probe[]>([]);
+	const hasAnyProbes = ref(false);
 	const credits = ref<Record<string, number>>({});
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage, active: () => !route.params.id });
 	const totalCredits = ref(0);
 	const gmapsLoaded = ref(false);
-
-	const sortState = ref({ sortField: 'default', sortOrder: 1 });
-	const inputFilter = ref<string>('');
-	const appliedFilter = ref<string>('');
+	const selectedProbes = ref<Probe[]>([]);
+	const deleteProbesDialog = ref(false);
 
 	const displayPagination = ref<boolean>(true);
 	const probeCount = ref(0);
-
-	type statusCode = 'all' | 'online' | 'ping-test-failed' | 'offline';
-
-	const statusOptions = ref<Array<{ name: string; count: number; code: statusCode; options: StatusOption[] }>>([
-		{ name: 'All', count: 0, code: 'all', options: [] },
-		{ name: 'Online', count: 0, code: 'online', options: [ 'ready', 'initializing' ] },
-		{ name: 'Ping test failed', count: 0, code: 'ping-test-failed', options: [ 'ping-test-failed' ] },
-		{ name: 'Offline', count: 0, code: 'offline', options: [ 'offline' ] },
-	]);
-
-	const selectedStatus = ref(statusOptions.value[0]);
-	const filterApplied = computed(() => { return selectedStatus.value.code !== 'all' || appliedFilter.value; });
 
 	const { getUserFilter } = useUserFilter();
 
@@ -351,94 +313,6 @@
 	});
 
 	useGoogleMaps(() => { gmapsLoaded.value = true; });
-
-	// FILTERING & SORTING HANDLERS
-
-	const onSortChange = (event: DataTableSortEvent) => {
-		const { sortField = '', sortOrder = 1 } = event;
-
-
-		if (!sortOrder || typeof sortField !== 'string' || !SORTABLE_FIELDS.includes(sortField)) {
-			return;
-		}
-
-		sortState.value = { sortField, sortOrder };
-		resetPage();
-	};
-
-	const onFilterChange = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			appliedFilter.value = inputFilter.value;
-			resetPage();
-		}
-	};
-
-	const onStatusChange = () => {
-		if (selectedStatus.value.count <= probes.value.length) {
-			displayPagination.value = false;
-		}
-
-		resetPage();
-	};
-
-	const resetPage = async () => {
-		const prevPage = page.value;
-
-		await router.replace({
-			query: {
-				...route.query,
-				filterBy: appliedFilter.value,
-				...sortState.value,
-				status: selectedStatus.value.code,
-				page: 1,
-			},
-		});
-
-		// when navigating from a non-zero page the refetch is performed automatically via the page watcher
-		if (!prevPage) {
-			await loadLazyData();
-		}
-	};
-
-	// DATA LOADING & HELPERS
-
-	const getSortFields = () => {
-		const { sortField, sortOrder } = sortState.value;
-
-		switch (sortField) {
-		case 'name': {
-			return [ sortOrder === -1 ? '-name' : 'name', 'status' ];
-		}
-
-		case 'tags': {
-			if (sortOrder === -1) {
-				return [ '-count(tags)', '-count(systemTags)', 'status', 'name' ];
-			}
-
-			return [ 'count(tags)', 'count(systemTags)', 'status', 'name' ];
-		}
-
-		case 'location': {
-			let locationFields = [ 'country', 'city', 'network' ];
-
-			if (sortOrder === -1) {
-				locationFields = locationFields.map(el => '-' + el);
-			}
-
-			return [ ...locationFields, 'status', 'name' ];
-		}
-
-		default: {
-			return [ 'status', 'name' ];
-		}
-		}
-	};
-
-	const getCurrentFilter = (includeStatus: boolean = false) => ({
-		...getUserFilter('userId'),
-		...appliedFilter.value && { searchIndex: { _icontains: appliedFilter.value } },
-		...includeStatus && selectedStatus.value.code !== 'all' && { status: { _in: selectedStatus.value.options } },
-	});
 
 	const loadLazyData = async () => {
 		loading.value = true;
@@ -452,7 +326,7 @@
 					offset: first.value,
 					limit: itemsPerPage.value,
 				})),
-				$directus.request<[{ count: 'string'; status: StatusOption }]>(aggregate('gp_probes', {
+				$directus.request<[{ count: 'string'; status: Status }]>(aggregate('gp_probes', {
 					query: {
 						filter: getCurrentFilter(),
 						groupBy: [ 'status' ],
@@ -474,7 +348,8 @@
 
 			// If we somehow ended up too far, go back to the beginning.
 			if (!adoptedProbes.length && page.value) {
-				return router.replace('/probes');
+				await router.replace('/probes');
+				return;
 			}
 
 			const creditsByProbeId: Record<string, number> = {};
@@ -510,62 +385,35 @@
 		loading.value = false;
 	};
 
-	// PROBE BATCH DELETE
-
-	const selectedProbes = ref<Probe[]>([]);
-	const deleteProbesDialog = ref(false);
-	const deleteProbesLoading = ref(false);
-
-	const deleteSelectedProbes = async () => {
-		deleteProbesLoading.value = true;
-		const selectedProbesCount = selectedProbes.value?.length ?? 0;
-
-		try {
-			if (selectedProbesCount) {
-				await $directus.request(updateItems('gp_probes', selectedProbes.value.map(p => p.id), { userId: null }));
-				sendToast('success', 'Done', `The ${selectedProbesCount === 1 ? 'probe has' : 'probes have'} been deleted`);
-				selectedProbes.value = [];
-				loadLazyData();
-			}
-		} catch (e) {
-			sendErrorToast(e);
-		}
-
-		deleteProbesLoading.value = false;
-		deleteProbesDialog.value = false;
-	};
+	const {
+		sortState,
+		inputFilter,
+		statusOptions,
+		selectedStatus,
+		onSortChange,
+		onFilterChange,
+		onStatusChange,
+		getSortFields,
+		getCurrentFilter,
+	} = useProbeFilters({ fetch: loadLazyData });
 
 	// PROBES LIST
-
 	onMounted(async () => {
 		if (!route.query.limit) {
 			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 420) / 65), 5), 15);
 		}
 
-		// apply filters from the url
-		const { filterBy, sortField, status } = route.query;
-		let sortOrder = Number(route.query?.sortOrder);
+		const probeCount = await $directus.request<[{ count: number }]>(aggregate('gp_probes', {
+			query: {
+				filter: getUserFilter('userId'),
+			},
+			aggregate: { count: '*' },
+		}));
 
-		if (![ -1, 1 ].includes(sortOrder)) {
-			sortOrder = 1;
+		if (probeCount[0].count) {
+			hasAnyProbes.value = true;
+			await loadLazyData();
 		}
-
-		if (typeof filterBy === 'string') {
-			inputFilter.value = filterBy;
-			appliedFilter.value = filterBy;
-		}
-
-		if (typeof sortField === 'string' && SORTABLE_FIELDS.includes(sortField)) {
-			sortState.value = { sortField, sortOrder };
-		}
-
-		statusOptions.value.forEach((opt, _) => {
-			if (opt.code === status) {
-				selectedStatus.value = opt;
-			}
-		});
-
-		await loadLazyData();
 	});
 
 	// Update list data only when navigating list to list (e.g. page 1 to page 2), not list to details or details to list.

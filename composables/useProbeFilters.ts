@@ -107,7 +107,9 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 			case 'name':
 				return [ sortOrder === -1 ? '-name' : 'name', 'status' ];
 			case 'tags':
-				if (sortOrder === -1) { return [ '-count(tags)', '-count(systemTags)', 'status', 'name' ]; }
+				if (sortOrder === -1) {
+					return [ '-count(tags)', '-count(systemTags)', 'status', 'name' ];
+				}
 
 				return [ 'count(tags)', 'count(systemTags)', 'status', 'name' ];
 
@@ -139,7 +141,7 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 		onFilterChange,
 		onStatusChange,
 		// builders
-		getSortFields: getSortSettings,
+		getSortSettings,
 		getCurrentFilter,
 	};
 };

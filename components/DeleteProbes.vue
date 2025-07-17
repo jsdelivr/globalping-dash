@@ -45,7 +45,7 @@
 
 	const deleteProbes = async () => {
 		deleteLoading.value = true;
-		const selectedProbesCount = probes.length ?? 0;
+		const selectedProbesCount = probes.length;
 
 		try {
 			if (selectedProbesCount) {

@@ -1,24 +1,25 @@
 <template>
 	<div class="flex items-center gap-4">
 		<div>
-			<i class="pi pi-exclamation-triangle text-4xl text-primary"/>
+			<i class="pi pi-exclamation-triangle text-xl text-primary"/>
 		</div>
 		<div class="ml-3">
 			<div v-if="usePlural" class="flex flex-col gap-4">
 				<p>You are about to delete the following probes:</p>
-				<ul class="ml-4 list-disc">
-					<li v-for="probe in probes" :key="probe.id" class="leading-[2rem]">
-						<span class="font-bold">{{ probe.name || probe.city }}</span> ({{ probe.ip }}).
+				<ul class="mb-4 ml-8 list-disc">
+					<li v-for="probe in probes" :key="probe.id" class="leading-7">
+						<span class="font-bold">{{ probe.name || probe.city }}</span> ({{ probe.ip }})
 					</li>
 				</ul>
 				<p>Are you sure you want to delete these probes? You will not be able to undo this action.</p>
 			</div>
-			<div v-else class="flex flex-col gap-4">
-				<p>You are about to delete probe <span class="font-bold">{{ probes[0].name || probes[0].city }}</span> ({{ probes[0].ip }}).</p>
+			<div v-else class="flex flex-col">
+				<p>You are about to delete the probe <span class="font-bold">{{ probes[0].name || probes[0].city }}</span> ({{ probes[0].ip }}).</p>
 				<p>Are you sure you want to delete this probe? You will not be able to undo this action.</p>
 			</div>
 		</div>
 	</div>
+
 	<div class="mt-7 text-right">
 		<Button class="mr-2" label="Cancel" severity="secondary" text @click="emit('close')"/>
 		<Button :loading="deleteLoading" :aria-disabled="deleteLoading" :label="`Delete ${pluralize('probe', probes.length)}`" severity="danger" @click="deleteProbes"/>

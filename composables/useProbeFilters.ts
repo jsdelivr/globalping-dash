@@ -39,19 +39,28 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 	watch(
 		() => route.query,
 		(query) => {
-			if (typeof query.filter === 'string') {
-				inputFilter.value = query.filter;
-				appliedFilter.value = query.filter;
+			const { filter = '', by = 'default', desc = '', status = 'all' } = query;
+
+			if (typeof filter === 'string') {
+				inputFilter.value = filter;
+				appliedFilter.value = filter;
+			} else {
+				inputFilter.value = '';
+				appliedFilter.value = '';
 			}
 
-			if (typeof query.by === 'string' && SORTABLE_FIELDS.includes(query.by)) {
-				sortState.value = { by: query.by, desc: query.desc === 'true' };
+			if (typeof by === 'string' && SORTABLE_FIELDS.includes(by)) {
+				sortState.value = { by, desc: desc === 'true' };
+			} else {
+				sortState.value = { by: 'default', desc: false };
 			}
 
-			const usedOption = statusOptions.value.find(opt => opt.code === query.status);
+			const usedOption = statusOptions.value.find(opt => opt.code === status);
 
 			if (usedOption) {
 				selectedStatus.value = usedOption;
+			} else {
+				selectedStatus.value = statusOptions.value[0];
 			}
 		},
 		{ immediate: true },
@@ -89,7 +98,7 @@ export const useProbeFilters = ({ fetch }: useProbeFiltersInterface) => {
 	const resetPage = async () => {
 		const prevPage = route.query.page ?? '1';
 
-		await router.replace({
+		await router.push({
 			query: constructQuery(),
 		});
 

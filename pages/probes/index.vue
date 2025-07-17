@@ -22,7 +22,7 @@
 					data-key="id"
 					:total-records="selectedStatus.count"
 					sort-mode="single"
-					:sort-field="sortState.sortField === 'default' ? 'name' : sortState.sortField"
+					:sort-field="sortState.sortField === 'default' ? undefined : sortState.sortField"
 					:sort-order="sortState.sortOrder"
 					:loading="loading"
 					:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"
@@ -76,7 +76,7 @@
 						</div>
 					</template>
 
-					<Column selection-mode="multiple" class="px-3"/>
+					<Column selection-mode="multiple" class="px-3" :class="loading && 'transition-none'"/>
 
 					<Column field="name" :sortable="true" class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.name}px` }">
 						<template #header>
@@ -321,7 +321,7 @@
 			const [ adoptedProbes, statusCounts, creditsAdditions ] = await Promise.all([
 				$directus.request(readItems('gp_probes', {
 					filter: getCurrentFilter(true),
-					sort: getSortFields() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
+					sort: getSortSettings() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
 					offset: first.value,
 					limit: itemsPerPage.value,
 				})),
@@ -347,8 +347,20 @@
 
 			// If we somehow ended up too far, go back to the beginning.
 			if (!adoptedProbes.length && page.value) {
-				await router.replace('/probes');
-				return;
+				try {
+					await router.replace({
+						query: {
+							...route.query,
+							page: 1,
+						},
+					});
+
+					return;
+				} catch (error) {
+					console.error(error);
+					await router.replace('/');
+					return;
+				}
 			}
 
 			const creditsByProbeId: Record<string, number> = {};
@@ -368,6 +380,7 @@
 			statusOptions.value.forEach((opt, index) => {
 				if (opt.code === 'all') {
 					statusOptions.value[index].count = statusCounts.reduce((sum, r) => sum + Number(r.count), 0);
+					hasAnyProbes.value = hasAnyProbes.value || !!statusOptions.value[index].count;
 					return;
 				}
 
@@ -390,7 +403,7 @@
 		onSortChange,
 		onFilterChange,
 		onStatusChange,
-		getSortFields,
+		getSortSettings,
 		getCurrentFilter,
 	} = useProbeFilters({ fetch: loadLazyData });
 

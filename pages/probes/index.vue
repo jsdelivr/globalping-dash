@@ -291,7 +291,6 @@
 	const startProbeDialog = ref(false);
 	const adoptProbeDialog = ref(false);
 	const loading = ref(true);
-	const probesCount = ref(0);
 	const probes = ref<Probe[]>([]);
 	const hasAnyProbes = ref(false);
 	const credits = ref<Record<string, number>>({});
@@ -365,12 +364,10 @@
 
 			credits.value = creditsByProbeId;
 			probes.value = adoptedProbes;
-			probesCount.value = 0;
 
 			statusOptions.value.forEach((opt, index) => {
 				if (opt.code === 'all') {
 					statusOptions.value[index].count = statusCounts.reduce((sum, r) => sum + Number(r.count), 0);
-					probesCount.value = statusOptions.value[index].count;
 					return;
 				}
 
@@ -413,6 +410,8 @@
 		if (probeCount[0].count) {
 			hasAnyProbes.value = true;
 			await loadLazyData();
+		} else {
+			loading.value = false;
 		}
 	});
 

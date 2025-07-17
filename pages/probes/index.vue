@@ -72,7 +72,7 @@
 											<Tag class="-my-1 border ">{{ slotProps.value.count }}</Tag></div>
 									</template>
 								</Select>
-								<InputGroup class="h-full !w-auto">
+								<InputGroup class="!w-auto">
 									<IconField>
 										<InputIcon class="pi pi-search"/>
 										<InputText v-model="inputFilter" class="m-0 h-full min-w-[280px]" placeholder="Filter by name, location, or tags" @keydown="onFilterChange"/>

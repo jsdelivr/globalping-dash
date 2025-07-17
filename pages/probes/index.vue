@@ -43,7 +43,7 @@
 									text
 									@click="deleteProbesDialog = true"
 								/>
-								<span class="flex items-center font-bold">Show:</span>
+								<span class="flex items-center font-bold">Status:</span>
 								<Select
 									v-model="selectedStatus"
 									:options="statusOptions"
@@ -56,19 +56,23 @@
 												:class="{
 													'font-bold text-bluegray-900 dark:text-white': slotProps.option.code === selectedStatus.code,
 													'text-bluegray-400': slotProps.option.code !== selectedStatus.code
-												}">{{ slotProps.option.name }} probes</span>
+												}">
+												{{ slotProps.option.name }}
+											</span>
 											<Tag
 												class="-my-0.5"
 												:class="{
 													'bg-primary text-white dark:bg-white dark:text-bluegray-900 ': slotProps.option.code === selectedStatus.code,
 													'border border-surface-300 bg-surface-0 text-bluegray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-surface-0': slotProps.option.code !== selectedStatus.code
-												}">{{ slotProps.option.count }}</Tag>
+												}">
+												{{ slotProps.option.count }}
+											</Tag>
 										</div>
 									</template>
 
 									<template #value="slotProps">
 										<div class="flex h-full items-center gap-2">
-											<span class="text-bluegray-400">{{ slotProps.value.name }} probes</span>
+											<span class="text-bluegray-400">{{ slotProps.value.name }}</span>
 											<Tag class="-my-1 border ">{{ slotProps.value.count }}</Tag></div>
 									</template>
 								</Select>

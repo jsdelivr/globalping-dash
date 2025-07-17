@@ -269,7 +269,7 @@
 
 <script setup lang="ts">
 	import { aggregate, readItems } from '@directus/sdk';
-	import { debounce } from 'lodash';
+	import debounce from 'lodash/debounce';
 	import CountryFlag from 'vue-country-flag-next';
 	import BigProbeIcon from '~/components/BigProbeIcon.vue';
 	import { useGoogleMaps } from '~/composables/maps';

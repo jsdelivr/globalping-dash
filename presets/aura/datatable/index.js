@@ -128,7 +128,7 @@ export default {
 				'border-surface-300 dark:border-dark-600 ',
 
 				// States
-				{ 'hover:bg-surface-100 dark:hover:bg-surface-800': true }, // (props.sortable === '' || props.sortable) && !context?.sorted },
+				{ 'hover:bg-surface-100 dark:hover:bg-dark-700': props.sortable === '' || props.sortable },
 				'focus-visible:outline-none focus-visible:outline-offset-0 focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400',
 
 				// Transition

@@ -358,7 +358,7 @@
 					return;
 				} catch (error) {
 					console.error(error);
-					await router.replace('/');
+					await router.replace('/probes'); // reset all filters
 					return;
 				}
 			}

@@ -221,7 +221,7 @@
 				class="mt-6"
 				:first="first"
 				:rows="itemsPerPage"
-				:total-records="probeCount"
+				:total-records="selectedStatus.count"
 				:page-link-size="pageLinkSize"
 				:template="template"
 				@page="page = $event.page"
@@ -299,9 +299,7 @@
 	const gmapsLoaded = ref(false);
 	const selectedProbes = ref<Probe[]>([]);
 	const deleteProbesDialog = ref(false);
-
 	const displayPagination = ref<boolean>(true);
-	const probeCount = ref(0);
 
 	const { getUserFilter } = useUserFilter();
 
@@ -391,7 +389,6 @@
 		}
 
 		displayPagination.value = probes.value.length !== selectedStatus.value.count;
-		probeCount.value = selectedStatus.value.count;
 		loading.value = false;
 	};
 

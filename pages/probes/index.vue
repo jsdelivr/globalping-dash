@@ -68,7 +68,7 @@
 									<InputGroup>
 										<IconField>
 											<InputIcon class="pi pi-search"/>
-											<InputText v-model="inputFilter" class="m-0 h-full min-w-[280px]" placeholder="Filter by name, location, or tags" @keyup="onFilterChange"/>
+											<InputText v-model="inputFilter" class="m-0 h-full min-w-[280px]" placeholder="Filter by name, location, or tags" @keydown="onFilterChange"/>
 										</IconField>
 									</InputGroup>
 								</div>

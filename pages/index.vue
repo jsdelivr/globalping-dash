@@ -14,11 +14,11 @@
 						</div>
 						<NuxtLink to="/probes?status=online" class="group ml-auto mr-6 flex items-center gap-2 max-sm:ml-0 max-sm:mt-3">
 							<BigIcon name="point-online" filled/>
-							<p class="group-hover:underline"><span data-testid="online-probes-count" class="text-3xl font-bold">{{ onlineProbes.length }}</span> Online</p>
+							<p class="group-hover:underline"><span data-testid="online-probes-count" class="text-3xl font-bold">{{ onlineProbes.length }}</span>&nbsp;&nbsp;Online</p>
 						</NuxtLink>
 						<NuxtLink to="/probes?status=offline" class="group flex items-center gap-2 max-sm:mt-3">
 							<BigIcon name="point-offline" filled/>
-							<p class="group-hover:underline"><span data-testid="offline-probes-count" class="text-3xl font-bold">{{ offlineProbes.length }}</span> Offline</p>
+							<p class="group-hover:underline"><span data-testid="offline-probes-count" class="text-3xl font-bold">{{ offlineProbes.length }}</span>&nbsp;&nbsp;Offline</p>
 						</NuxtLink>
 					</div>
 					<div class="mt-6 flex items-center text-nowrap max-sm:flex-wrap">

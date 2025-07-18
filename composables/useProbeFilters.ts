@@ -17,7 +17,7 @@ export const useProbeFilters = () => {
 	const { getUserFilter } = useUserFilter();
 
 	const SORTABLE_FIELDS = [ 'default', 'location', 'tags', 'name' ];
-	const sortState = ref({ by: 'default', desc: true });
+	const sortState = ref({ by: 'default', desc: false });
 
 	const inputFilter = ref('');
 	const appliedFilter = ref('');
@@ -47,17 +47,12 @@ export const useProbeFilters = () => {
 		onParamChange();
 	};
 
-	const constructQuery = () => {
-		const { filter, value, by, desc, status, ...queryRemainder } = route.query;
-
-		return {
-			...queryRemainder,
-			...appliedFilter.value && { filter: appliedFilter.value },
-			...sortState.value.by !== 'default' && { by: sortState.value.by },
-			...sortState.value.desc && { desc: 'true' },
-			...selectedStatus.value.code !== 'all' && { status: selectedStatus.value.code },
-		};
-	};
+	const constructQuery = () => ({
+		...appliedFilter.value && { filter: appliedFilter.value },
+		...sortState.value.by !== 'default' && { by: sortState.value.by },
+		...sortState.value.desc && { desc: 'true' },
+		...selectedStatus.value.code !== 'all' && { status: selectedStatus.value.code },
+	});
 
 	const onParamChange = async () => {
 		navigateTo({
@@ -112,7 +107,7 @@ export const useProbeFilters = () => {
 		if (typeof by === 'string' && SORTABLE_FIELDS.includes(by)) {
 			sortState.value = { by, desc: desc === 'true' };
 		} else {
-			sortState.value = { by: 'default', desc: true };
+			sortState.value = { by: 'default', desc: false };
 		}
 
 		const usedOption = statusOptions.value.find(opt => opt.code === status);

@@ -28,7 +28,7 @@
 					lazy
 					:rows="itemsPerPage"
 					data-key="id"
-					:total-records="selectedStatus.count"
+					:total-records="paginatedRecords"
 					sort-mode="single"
 					:sort-field="sortState.by === 'default' ? undefined : sortState.by"
 					:sort-order="sortState.desc ? -1 : 1"
@@ -450,10 +450,8 @@
 		() => selectedStatus.value.code,
 	], async ([ newId, newPage ], [ oldId, oldPage ]) => {
 		if (!oldId && !newId) {
-			// updating the page number would trigger duplicate refetch
 			if (newPage === oldPage && oldPage !== 0) {
-				page.value = 0;
-				return;
+				return; // page reset triggers this watch for a second time
 			}
 
 			await loadLazyData();

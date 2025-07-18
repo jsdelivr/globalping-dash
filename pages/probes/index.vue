@@ -266,7 +266,7 @@
 			v-model:visible="deleteProbesDialog"
 			:header="`Delete ${pluralize('probe', selectedProbes.length)}`"
 		>
-			<DeleteProbes :probes="selectedProbes" @cancel="deleteProbesDialog = false" @success="loadLazyData"/>
+			<DeleteProbes :probes="selectedProbes" @cancel="deleteProbesDialog = false" @success="onDeleteSuccess"/>
 		</GPDialog>
 		<GPDialog
 			view-name="update-a-probe"
@@ -497,6 +497,11 @@
 			tags: columns[4].width,
 		};
 	});
+
+	const onDeleteSuccess = () => {
+		deleteProbesDialog.value = false;
+		loadLazyData();
+	};
 
 	onBeforeUnmount(() => {
 		onFilterChangeDebounced.cancel();

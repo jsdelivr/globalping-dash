@@ -99,7 +99,7 @@
 			header="Delete probe"
 			aria-label="Remove a probe dialog"
 		>
-			<DeleteProbes :probes="[ probe ]" @cancel="deleteDialog = false" @success="() => router.push('/probes')"/>
+			<DeleteProbes :probes="[ probe ]" @cancel="deleteDialog = false" @success="onDeleteSuccess"/>
 		</GPDialog>
 	</div>
 </template>
@@ -135,6 +135,11 @@
 			});
 		});
 	});
+
+	const onDeleteSuccess = async () => {
+		deleteDialog.value = false; // the operation looks cleaner when we close the dialog first
+		await router.push('/probes');
+	};
 
 	onUnmounted(() => {
 		if (removeWatcher) {

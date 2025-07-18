@@ -9,6 +9,7 @@ export interface StatusOption {
 	name: string;
 	code: StatusCode;
 	options: Status[];
+	outdatedOnly?: boolean;
 }
 
 export const useProbeFilters = () => {
@@ -24,7 +25,7 @@ export const useProbeFilters = () => {
 	const statusOptions = ref<StatusOption[]>([
 		{ name: 'All', code: 'all', options: [ ...ONLINE_STATUSES, ...OFFLINE_STATUSES ] },
 		{ name: 'Online', code: 'online', options: ONLINE_STATUSES },
-		{ name: 'Online - outdated', code: 'online-outdated', options: ONLINE_STATUSES },
+		{ name: 'Online - outdated', code: 'online-outdated', options: ONLINE_STATUSES, outdatedOnly: true },
 		{ name: 'Online - ping test failed', code: 'ping-test-failed', options: [ 'ping-test-failed' ] },
 		{ name: 'Offline', code: 'offline', options: OFFLINE_STATUSES },
 	]);

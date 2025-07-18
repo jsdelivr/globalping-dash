@@ -397,17 +397,7 @@
 			});
 
 			statusOptions.value.forEach((opt) => {
-				if (opt.code === 'all') {
-					const count = statusResults.reduce((sum, status) => sum + status.count, 0);
-					statusCounts.value['all'] = count;
-					hasAnyProbes.value = hasAnyProbes.value || !!count;
-					return;
-				} else if (opt.code === 'online-outdated') {
-					statusCounts.value[opt.code] = statusResults.reduce((sum, status) => opt.options.includes(status.status) && status.isOutdated ? sum + status.count : sum, 0);
-					return;
-				}
-
-				statusCounts.value[opt.code] = statusResults.reduce((sum, status) => opt.options.includes(status.status) ? sum + status.count : sum, 0);
+				statusCounts.value[opt.code] = statusResults.reduce((sum, status) => opt.options.includes(status.status) && (status.isOutdated || !opt.outdatedOnly) ? sum + status.count : sum, 0);
 			});
 		} catch (e) {
 			sendErrorToast(e);
@@ -415,6 +405,7 @@
 
 		displayPagination.value = probes.value.length !== statusCounts.value[selectedStatus.value.code];
 		paginatedRecords.value = statusCounts.value[selectedStatus.value.code];
+		hasAnyProbes.value = hasAnyProbes.value || !!statusCounts.value['all'];
 		firstLoading.value = false;
 		loading.value = false;
 	};

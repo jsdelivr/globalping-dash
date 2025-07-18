@@ -67,6 +67,7 @@ export const useProbeFilters = () => {
 		switch (by) {
 			case 'name':
 				return [ desc ? '-name' : 'name', 'status' ];
+
 			case 'tags':
 				if (desc) {
 					return [ '-count(tags)', '-count(systemTags)', 'status', 'name' ];

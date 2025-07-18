@@ -68,7 +68,7 @@ import popover from './popover';
 // import scrolltop from './scrolltop';
 import select from './select';
 import selectbutton from './selectbutton';
-// import skeleton from './skeleton';
+import skeleton from './skeleton';
 // import slider from './slider';
 // import speeddial from './speeddial';
 // import splitbutton from './splitbutton';
@@ -224,7 +224,7 @@ export default {
 	tag,
 	chip,
 	// progressbar,
-	// skeleton,
+	skeleton,
 	// scrolltop,
 	// terminal,
 	// blockui,

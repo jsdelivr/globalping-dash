@@ -10,9 +10,6 @@
 		</div>
 		<div v-if="hasAnyProbes || loading">
 			<div class="max-md:hidden">
-				<!--
-				filter-display="menu"
-				-->
 				<DataTable
 					ref="dataTableRef"
 					v-model:selection="selectedProbes"
@@ -24,7 +21,7 @@
 					sort-mode="single"
 					:sort-field="sortState.by === 'default' ? undefined : sortState.by"
 					:sort-order="sortState.desc ? -1 : 1"
-					:loading="loading"
+					:loading="firstLoading"
 					:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"
 					:pt="{footer: '!pt-0 border-t-0'}"
 					:pt-options="{ mergeProps: true }"
@@ -86,7 +83,7 @@
 						</div>
 					</template>
 
-					<Column :selection-mode="loading ? undefined : 'multiple'" class="px-3"/>
+					<Column :selection-mode="firstLoading ? undefined : 'multiple'" class="px-3"/>
 
 					<Column field="name" :sortable="true" class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.name}px` }">
 						<template #header>
@@ -94,13 +91,15 @@
 						</template>
 
 						<template #body="slotProps">
-							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
-								<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3">
-									<BigProbeIcon class="col-span-1 row-span-2" :probe="slotProps.data" border/>
-									<p class="col-start-2 col-end-3 flex items-center font-bold">{{ slotProps.data.name || slotProps.data.city }}</p>
-									<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-900 dark:text-bluegray-400">{{ slotProps.data.ip }}</p>
-								</div>
-							</NuxtLink>
+							<AsyncCell :loading="loading">
+								<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
+									<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3">
+										<BigProbeIcon class="col-span-1 row-span-2" :probe="slotProps.data" border/>
+										<p class="col-start-2 col-end-3 flex items-center font-bold">{{ slotProps.data.name || slotProps.data.city }}</p>
+										<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-900 dark:text-bluegray-400">{{ slotProps.data.ip }}</p>
+									</div>
+								</NuxtLink>
+							</AsyncCell>
 						</template>
 					</Column>
 
@@ -110,15 +109,17 @@
 						</template>
 
 						<template #body="slotProps">
-							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
-								<div class="px-2 py-3">
-									<div class="mb-1 flex items-center">
-										<CountryFlag :country="slotProps.data.country" size="small"/>
-										<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
+							<AsyncCell :loading="loading">
+								<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
+									<div class="px-2 py-3">
+										<div class="mb-1 flex items-center">
+											<CountryFlag :country="slotProps.data.country" size="small"/>
+											<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
+										</div>
+										<p>{{ slotProps.data.network }}, AS{{ slotProps.data.asn }}</p>
 									</div>
-									<p>{{ slotProps.data.network }}, AS{{ slotProps.data.asn }}</p>
-								</div>
-							</NuxtLink>
+								</NuxtLink>
+							</AsyncCell>
 						</template>
 					</Column>
 
@@ -128,9 +129,11 @@
 						</template>
 
 						<template #body="slotProps">
-							<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
-								<TagsList :tags="getAllTags(slotProps.data)" :wrapper="desktopTagsWrapperRef"/>
-							</NuxtLink>
+							<AsyncCell :loading="loading">
+								<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
+									<TagsList :tags="getAllTags(slotProps.data)" :wrapper="desktopTagsWrapperRef"/>
+								</NuxtLink>
+							</AsyncCell>
 						</template>
 					</Column>
 					<template #footer>
@@ -293,6 +296,7 @@
 	const startProbeDialog = ref(false);
 	const adoptProbeDialog = ref(false);
 	const loading = ref(true);
+	const firstLoading = ref(true);
 	const probes = ref<Probe[]>([]);
 	const hasAnyProbes = ref(false);
 	const credits = ref<Record<string, number>>({});
@@ -393,6 +397,7 @@
 
 		displayPagination.value = probes.value.length !== selectedStatus.value.count;
 		paginatedRecords.value = selectedStatus.value.count;
+		firstLoading.value = false;
 		loading.value = false;
 	};
 

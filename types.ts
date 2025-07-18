@@ -100,6 +100,7 @@ declare global {
 		nodeVersion: string;
 		allowedCountries: string[];
 		searchIndex: string;
+		isOutdated: boolean;
 	};
 
 	type User = {

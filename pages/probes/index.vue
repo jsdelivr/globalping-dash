@@ -311,7 +311,7 @@
 	const displayPagination = ref<boolean>(true);
 	const paginatedRecords = ref(0);
 
-	const statusCounts = ref<Record<StatusCode, number>>({ 'all': 0, 'online': 0, 'ping-test-failed': 0, 'offline': 0 });
+	const statusCounts = ref<Record<StatusCode, number>>({ 'all': 0, 'online': 0, 'ping-test-failed': 0, 'offline': 0, 'online-outdated': 0 });
 
 	const { getUserFilter } = useUserFilter();
 
@@ -335,10 +335,10 @@
 					offset: first.value,
 					limit: itemsPerPage.value,
 				})),
-				$directus.request<[{ count: 'string'; status: Status }]>(aggregate('gp_probes', {
+				$directus.request<[{ count: 'string'; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
 					query: {
 						filter: getCurrentFilter(),
-						groupBy: [ 'status' ],
+						groupBy: [ 'status', 'isOutdated' ],
 					},
 					aggregate: { count: '*' },
 				})),
@@ -399,6 +399,9 @@
 					const count = statusResults.reduce((sum, status) => sum + Number(status.count), 0);
 					statusCounts.value['all'] = count;
 					hasAnyProbes.value = hasAnyProbes.value || !!count;
+					return;
+				} else if (opt.code === 'online-outdated') {
+					statusCounts.value[opt.code] = statusResults.reduce((sum, status) => opt.options.includes(status.status) && status.isOutdated ? sum + Number(status.count) : sum, 0);
 					return;
 				}
 

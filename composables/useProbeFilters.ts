@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router';
 import { useUserFilter } from '~/composables/useUserFilter';
 import { ONLINE_STATUSES, OFFLINE_STATUSES } from '~/constants/probes';
 
-export type StatusCode = 'all' | 'online' | 'ping-test-failed' | 'offline';
+export type StatusCode = 'all' | 'online' | 'ping-test-failed' | 'offline' | 'online-outdated';
 export interface StatusOption {
 	name: string;
 	code: StatusCode;
@@ -24,6 +24,7 @@ export const useProbeFilters = () => {
 	const statusOptions = ref<StatusOption[]>([
 		{ name: 'All', code: 'all', options: [ ...ONLINE_STATUSES, ...OFFLINE_STATUSES ] },
 		{ name: 'Online', code: 'online', options: ONLINE_STATUSES },
+		{ name: 'Online - outdated', code: 'online-outdated', options: ONLINE_STATUSES },
 		{ name: 'Online - ping test failed', code: 'ping-test-failed', options: [ 'ping-test-failed' ] },
 		{ name: 'Offline', code: 'offline', options: OFFLINE_STATUSES },
 	]);
@@ -87,6 +88,7 @@ export const useProbeFilters = () => {
 		...getUserFilter('userId'),
 		...appliedFilter.value && { searchIndex: { _icontains: appliedFilter.value } },
 		...includeStatus && selectedStatus.value.code !== 'all' && { status: { _in: selectedStatus.value.options } },
+		...selectedStatus.value.code === 'online-outdated' && { isOutdated: { _eq: true } },
 	});
 
 	watch([

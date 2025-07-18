@@ -15,8 +15,8 @@ export const useProbeFilters = () => {
 	const route = useRoute();
 	const { getUserFilter } = useUserFilter();
 
-	const SORTABLE_FIELDS = [ 'default', 'location', 'tags', 'name' ];
-	const sortState = ref({ by: 'default', desc: false });
+	const SORTABLE_FIELDS = [ 'location', 'tags', 'name' ];
+	const sortState = ref({ by: 'name', desc: false });
 
 	const inputFilter = ref('');
 	const appliedFilter = ref('');
@@ -34,7 +34,7 @@ export const useProbeFilters = () => {
 		const { sortField = '', sortOrder = 1 } = event;
 
 		if (!sortOrder || typeof sortField !== 'string' || !SORTABLE_FIELDS.includes(sortField)) {
-			sortState.value = { by: 'default', desc: false };
+			sortState.value = { by: 'name', desc: false };
 		} else {
 			sortState.value = { by: sortField, desc: sortOrder === -1 };
 		}
@@ -49,12 +49,12 @@ export const useProbeFilters = () => {
 
 	const constructQuery = () => ({
 		...appliedFilter.value && { filter: appliedFilter.value },
-		...sortState.value.by !== 'default' && { by: sortState.value.by },
+		...sortState.value.by !== 'name' && { by: sortState.value.by },
 		...sortState.value.desc && { desc: 'true' },
 		...selectedStatus.value.code !== 'all' && { status: selectedStatus.value.code },
 	});
 
-	const onParamChange = async () => {
+	const onParamChange = () => {
 		navigateTo({
 			query: constructQuery(),
 		});
@@ -76,10 +76,6 @@ export const useProbeFilters = () => {
 			case 'location': {
 				const fields = [ 'country', 'city', 'network' ];
 				return desc ? fields.map(f => `-${f}`) : fields;
-			}
-
-			default: {
-				return [ 'status', 'name' ];
 			}
 		}
 	};
@@ -108,7 +104,7 @@ export const useProbeFilters = () => {
 		if (typeof by === 'string' && SORTABLE_FIELDS.includes(by)) {
 			sortState.value = { by, desc: desc === 'true' };
 		} else {
-			sortState.value = { by: 'default', desc: false };
+			sortState.value = { by: 'name', desc: desc === 'true' };
 		}
 
 		const usedOption = statusOptions.value.find(opt => opt.code === status);

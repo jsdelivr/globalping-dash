@@ -30,7 +30,7 @@
 					data-key="id"
 					:total-records="paginatedRecords"
 					sort-mode="single"
-					:sort-field="sortState.by === 'default' ? undefined : sortState.by"
+					:sort-field="sortState.by"
 					:sort-order="sortState.desc ? -1 : 1"
 					:loading="firstLoading"
 					:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"

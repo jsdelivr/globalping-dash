@@ -3,7 +3,18 @@
 		<div class="mb-4 flex">
 			<h1 class="page-title">Probes</h1>
 
-			<Button class="ml-auto" @click="adoptProbeDialog = true">
+			<Button
+				v-if="selectedProbes.length"
+				class="ml-auto"
+				label="Delete selected"
+				severity="danger"
+				icon="pi pi-trash"
+				outlined
+				@click="deleteProbesDialog = true"
+			/>
+			<span v-else class="ml-auto"/>
+
+			<Button class="ml-2" @click="adoptProbeDialog = true">
 				<nuxt-icon class="pi" name="capture"/>
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
@@ -32,14 +43,6 @@
 							<h3 class="px-2">List of probes</h3>
 
 							<div class="ml-auto flex h-9 items-stretch gap-x-4 self-end font-normal">
-								<Button
-									v-if="selectedProbes.length"
-									label="Delete selected"
-									severity="danger"
-									icon="pi pi-trash"
-									text
-									@click="deleteProbesDialog = true"
-								/>
 								<span class="flex items-center font-bold">Status:</span>
 								<Select
 									v-model="selectedStatus"

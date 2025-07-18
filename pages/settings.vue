@@ -163,7 +163,7 @@
 		<div class="mt-6 text-right">
 			<Button label="Apply settings" :loading="saveLoading" :disabled="!!auth.impersonation" @click="save"/>
 		</div>
-		<GPDialog
+		<GPConfirmDialog
 			v-model:visible="deleteDialog"
 			header="Delete account"
 		>
@@ -180,7 +180,7 @@
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
 				<Button label="Delete account" severity="danger" @click="deleteAccount"/>
 			</div>
-		</GPDialog>
+		</GPConfirmDialog>
 	</div>
 </template>
 

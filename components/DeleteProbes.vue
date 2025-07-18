@@ -33,7 +33,7 @@
 
 	const props = defineProps({
 		probes: {
-			type: Array<Probe>,
+			type: Array as PropType<Probe[]>,
 			default: () => [],
 		},
 	});

@@ -335,7 +335,7 @@
 					offset: first.value,
 					limit: itemsPerPage.value,
 				})),
-				$directus.request<[{ count: 'string'; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
+				$directus.request<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
 					query: {
 						filter: getCurrentFilter(),
 						groupBy: [ 'status', 'isOutdated' ],
@@ -396,16 +396,16 @@
 
 			statusOptions.value.forEach((opt) => {
 				if (opt.code === 'all') {
-					const count = statusResults.reduce((sum, status) => sum + Number(status.count), 0);
+					const count = statusResults.reduce((sum, status) => sum + status.count, 0);
 					statusCounts.value['all'] = count;
 					hasAnyProbes.value = hasAnyProbes.value || !!count;
 					return;
 				} else if (opt.code === 'online-outdated') {
-					statusCounts.value[opt.code] = statusResults.reduce((sum, status) => opt.options.includes(status.status) && status.isOutdated ? sum + Number(status.count) : sum, 0);
+					statusCounts.value[opt.code] = statusResults.reduce((sum, status) => opt.options.includes(status.status) && status.isOutdated ? sum + status.count : sum, 0);
 					return;
 				}
 
-				statusCounts.value[opt.code] = statusResults.reduce((sum, status) => opt.options.includes(status.status) ? sum + Number(status.count) : sum, 0);
+				statusCounts.value[opt.code] = statusResults.reduce((sum, status) => opt.options.includes(status.status) ? sum + status.count : sum, 0);
 			});
 		} catch (e) {
 			sendErrorToast(e);

@@ -321,12 +321,12 @@
 		>
 			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="loadLazyData"/>
 		</GPDialog>
-		<GPDialog
+		<GPConfirmDialog
 			v-model:visible="deleteProbesDialog"
 			:header="`Delete ${pluralize('probe', selectedProbes.length)}`"
 		>
 			<DeleteProbes :probes="selectedProbes" @cancel="deleteProbesDialog = false" @success="onDeleteSuccess"/>
-		</GPDialog>
+		</GPConfirmDialog>
 		<GPDialog
 			view-name="update-a-probe"
 			header="Update a probe"

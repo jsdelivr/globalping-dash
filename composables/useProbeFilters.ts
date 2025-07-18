@@ -88,7 +88,7 @@ export const useProbeFilters = () => {
 		...getUserFilter('userId'),
 		...appliedFilter.value && { searchIndex: { _icontains: appliedFilter.value } },
 		...includeStatus && selectedStatus.value.code !== 'all' && { status: { _in: selectedStatus.value.options } },
-		...selectedStatus.value.code === 'online-outdated' && { isOutdated: { _eq: true } },
+		...includeStatus && selectedStatus.value.code === 'online-outdated' && { isOutdated: { _eq: true } },
 	});
 
 	watch([

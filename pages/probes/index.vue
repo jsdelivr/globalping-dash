@@ -468,9 +468,11 @@
 	const { width: dataTableWidth } = useElementSize(dataTableRef);
 	const columnWidths = computed(() => {
 		const columns = [
-			{ width: 0, min: 96 * 4, max: 96 * 4 * 1.375, preferred: .25 },
-			{ width: 0, min: 96 * 4, max: 96 * 4 * 1.375, preferred: .25 },
-			{ width: 0, min: 174, preferred: .5 },
+			{ width: 0, min: 32, max: 32, preferred: 0 }, // padding
+			{ width: 0, min: 44, max: 44, preferred: 0 }, // checkbox
+			{ width: 0, min: 96 * 4, max: 96 * 4 * 1.375, preferred: .25 }, // name
+			{ width: 0, min: 96 * 4, max: 96 * 4 * 1.375, preferred: .25 }, // location
+			{ width: 0, min: 174, preferred: .5 }, // tags
 		];
 
 		columns.forEach((column) => {
@@ -484,9 +486,9 @@
 		columns.at(-1)!.width += dataTableWidth.value - usedWidth;
 
 		return {
-			name: columns[0].width,
-			location: columns[1].width,
-			tags: columns[2].width,
+			name: columns[2].width,
+			location: columns[3].width,
+			tags: columns[4].width,
 		};
 	});
 </script>

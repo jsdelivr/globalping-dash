@@ -166,9 +166,66 @@
 			</div>
 			<div class="hidden max-md:block">
 				<div class="rounded-xl border bg-surface-0 dark:bg-dark-800">
-					<div class="flex h-10 items-center border-b px-4 font-bold text-bluegray-700 dark:text-dark-0">
+					<div class="flex h-10 items-center justify-between border-b px-4 font-bold text-bluegray-700 dark:text-dark-0">
 						List of probes
+
+						<Button class="relative" severity="secondary" size="small" text @click="mobileFiltersRef.toggle($event)">
+							<i class="pi pi-sliders-h"/>
+							<!-- TODO: only if active -->
+							<i class="pi pi-circle-fill absolute right-2 top-1 text-[0.4rem] text-primary"/>
+						</Button>
+
+						<!-- TODO: improve design -->
+						<Popover
+							ref="mobileFiltersRef"
+							class="!left-1/2 w-[95%] !-translate-x-1/2 !transform sm:w-[540px]"
+							role="dialog">
+							<div class="flex w-full max-w-full flex-col">
+								<span class="flex items-center font-bold">Status:</span>
+								<Select
+									v-model="selectedStatus"
+									:options="statusOptions"
+									:pt="{ listContainer: { class: '!max-h-64' } }"
+									option-label="code"
+									class="min-w-64"
+									@change="onStatusChange"
+								>
+									<template #option="{option}: {option: StatusOption}">
+										<div class="flex h-full items-center gap-2">
+											<span
+												:class="{
+													'font-bold text-bluegray-900 dark:text-white': option.code === selectedStatus.code,
+													'text-bluegray-400': option.code !== selectedStatus.code
+												}">
+												{{ option.name }}
+											</span>
+											<Tag
+												class="-my-0.5"
+												:class="{
+													'bg-primary text-white dark:bg-white dark:text-bluegray-900 ': option.code === selectedStatus.code,
+													'border border-surface-300 bg-surface-0 text-bluegray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-surface-0': option.code !== selectedStatus.code
+												}">
+												{{ statusCounts[option.code] }}
+											</Tag>
+										</div>
+									</template>
+
+									<template #value="{value}: {value: StatusOption}">
+										<div class="flex h-full items-center gap-2">
+											<span class="text-bluegray-400">{{ value.name }}</span>
+											<Tag class="-my-1 border ">{{ statusCounts[value.code] }}</Tag></div>
+									</template>
+								</Select>
+								<InputGroup class="!w-auto">
+									<IconField>
+										<InputIcon class="pi pi-search"/>
+										<InputText v-model="inputFilter" class="m-0 h-full min-w-[280px]" placeholder="Filter by name, location, or tags" @input="onFilterChangeDebounced"/>
+									</IconField>
+								</InputGroup>
+							</div>
+						</Popover>
 					</div>
+
 					<AsyncBlock :status="loading ? 'pending' : 'success'">
 						<div class="px-4 pb-3 pt-1">
 							<div v-if="probes.length">
@@ -300,6 +357,7 @@
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const startProbeDialog = ref(false);
 	const adoptProbeDialog = ref(false);
+	const mobileFiltersRef = ref();
 	const loading = ref(true);
 	const firstLoading = ref(true);
 	const probes = ref<Probe[]>([]);

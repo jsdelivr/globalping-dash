@@ -4,10 +4,9 @@ import { useRoute } from 'vue-router';
 import { useUserFilter } from '~/composables/useUserFilter';
 import { ONLINE_STATUSES, OFFLINE_STATUSES } from '~/constants/probes';
 
-type StatusCode = 'all' | 'online' | 'ping-test-failed' | 'offline';
-interface StatusOption {
+export type StatusCode = 'all' | 'online' | 'ping-test-failed' | 'offline';
+export interface StatusOption {
 	name: string;
-	count: number;
 	code: StatusCode;
 	options: Status[];
 }
@@ -23,10 +22,10 @@ export const useProbeFilters = () => {
 	const appliedFilter = ref('');
 
 	const statusOptions = ref<StatusOption[]>([
-		{ name: 'All', count: 0, code: 'all', options: [ ...ONLINE_STATUSES, ...OFFLINE_STATUSES ] },
-		{ name: 'Online', count: 0, code: 'online', options: ONLINE_STATUSES },
-		{ name: 'Online - ping test failed', count: 0, code: 'ping-test-failed', options: [ 'ping-test-failed' ] },
-		{ name: 'Offline', count: 0, code: 'offline', options: OFFLINE_STATUSES },
+		{ name: 'All', code: 'all', options: [ ...ONLINE_STATUSES, ...OFFLINE_STATUSES ] },
+		{ name: 'Online', code: 'online', options: ONLINE_STATUSES },
+		{ name: 'Online - ping test failed', code: 'ping-test-failed', options: [ 'ping-test-failed' ] },
+		{ name: 'Offline', code: 'offline', options: OFFLINE_STATUSES },
 	]);
 	const selectedStatus = ref(statusOptions.value[0]);
 

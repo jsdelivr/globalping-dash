@@ -50,30 +50,30 @@
 									class="min-w-64"
 									@change="onStatusChange"
 								>
-									<template #option="slotProps">
+									<template #option="{option}: {option: StatusOption}">
 										<div class="flex h-full items-center gap-2">
 											<span
 												:class="{
-													'font-bold text-bluegray-900 dark:text-white': slotProps.option.code === selectedStatus.code,
-													'text-bluegray-400': slotProps.option.code !== selectedStatus.code
+													'font-bold text-bluegray-900 dark:text-white': option.code === selectedStatus.code,
+													'text-bluegray-400': option.code !== selectedStatus.code
 												}">
-												{{ slotProps.option.name }}
+												{{ option.name }}
 											</span>
 											<Tag
 												class="-my-0.5"
 												:class="{
-													'bg-primary text-white dark:bg-white dark:text-bluegray-900 ': slotProps.option.code === selectedStatus.code,
-													'border border-surface-300 bg-surface-0 text-bluegray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-surface-0': slotProps.option.code !== selectedStatus.code
+													'bg-primary text-white dark:bg-white dark:text-bluegray-900 ': option.code === selectedStatus.code,
+													'border border-surface-300 bg-surface-0 text-bluegray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-surface-0': option.code !== selectedStatus.code
 												}">
-												{{ slotProps.option.count }}
+												{{ statusCounts[option.code] }}
 											</Tag>
 										</div>
 									</template>
 
-									<template #value="slotProps">
+									<template #value="{value}: {value: StatusOption}">
 										<div class="flex h-full items-center gap-2">
-											<span class="text-bluegray-400">{{ slotProps.value.name }}</span>
-											<Tag class="-my-1 border ">{{ slotProps.value.count }}</Tag></div>
+											<span class="text-bluegray-400">{{ value.name }}</span>
+											<Tag class="-my-1 border ">{{ statusCounts[value.code] }}</Tag></div>
 									</template>
 								</Select>
 								<InputGroup class="!w-auto">
@@ -207,7 +207,7 @@
 								</div>
 								<div class="mt-2 flex items-center justify-between">
 									<span class="text-xs font-bold">Number of probes:</span>
-									<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ selectedStatus.count }}</Tag>
+									<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ statusCounts[selectedStatus.code] }}</Tag>
 								</div>
 								<Button
 									class="mt-2 w-full"
@@ -284,7 +284,7 @@
 	import BigProbeIcon from '~/components/BigProbeIcon.vue';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
-	import { useProbeFilters } from '~/composables/useProbeFilters';
+	import { type StatusCode, type StatusOption, useProbeFilters } from '~/composables/useProbeFilters';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { pluralize } from '~/utils/pluralize';
 	import { sendErrorToast } from '~/utils/send-toast';
@@ -311,6 +311,8 @@
 	const displayPagination = ref<boolean>(true);
 	const paginatedRecords = ref(0);
 
+	const statusCounts = ref<Record<StatusCode, number>>({ 'all': 0, 'online': 0, 'ping-test-failed': 0, 'offline': 0 });
+
 	const { getUserFilter } = useUserFilter();
 
 	useHead(() => {
@@ -326,7 +328,7 @@
 		selectedProbes.value = [];
 
 		try {
-			const [ adoptedProbes, statusCounts, creditsAdditions ] = await Promise.all([
+			const [ adoptedProbes, statusResults, creditsAdditions ] = await Promise.all([
 				$directus.request(readItems('gp_probes', {
 					filter: getCurrentFilter(true),
 					sort: getSortSettings() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
@@ -385,21 +387,29 @@
 			credits.value = creditsByProbeId;
 			probes.value = adoptedProbes;
 
-			statusOptions.value.forEach((opt, index) => {
+			// reset status counts
+			const statusCodes = Object.keys(statusCounts.value) as StatusCode[];
+
+			statusCodes.forEach((key) => {
+				statusCounts.value[key] = 0;
+			});
+
+			statusOptions.value.forEach((opt) => {
 				if (opt.code === 'all') {
-					statusOptions.value[index].count = statusCounts.reduce((sum, status) => sum + Number(status.count), 0);
-					hasAnyProbes.value = hasAnyProbes.value || !!statusOptions.value[index].count;
+					const count = statusResults.reduce((sum, status) => sum + Number(status.count), 0);
+					statusCounts.value['all'] = count;
+					hasAnyProbes.value = hasAnyProbes.value || !!count;
 					return;
 				}
 
-				statusOptions.value[index].count = statusCounts.reduce((sum, status) => opt.options.includes(status.status) ? sum + Number(status.count) : sum, 0);
+				statusCounts.value[opt.code] = statusResults.reduce((sum, status) => opt.options.includes(status.status) ? sum + Number(status.count) : sum, 0);
 			});
 		} catch (e) {
 			sendErrorToast(e);
 		}
 
-		displayPagination.value = probes.value.length !== selectedStatus.value.count;
-		paginatedRecords.value = selectedStatus.value.count;
+		displayPagination.value = probes.value.length !== statusCounts.value[selectedStatus.value.code];
+		paginatedRecords.value = statusCounts.value[selectedStatus.value.code];
 		firstLoading.value = false;
 		loading.value = false;
 	};

@@ -143,7 +143,7 @@
 				</div>
 			</div>
 		</div>
-		<GPDialog
+		<GPConfirmDialog
 			v-model:visible="tokenDetailsDialog"
 			:header="tokenDetails ? 'Edit token' : 'Generate new token'"
 			content-class="!p-0"
@@ -155,8 +155,8 @@
 				@save="handleSave"
 				@regenerate="handleRegenerate"
 			/>
-		</GPDialog>
-		<GPDialog
+		</GPConfirmDialog>
+		<GPConfirmDialog
 			v-model:visible="deleteDialog"
 			header="Delete token"
 		>
@@ -173,8 +173,8 @@
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
 				<Button label="Delete token" severity="danger" @click="deleteToken"/>
 			</div>
-		</GPDialog>
-		<GPDialog
+		</GPConfirmDialog>
+		<GPConfirmDialog
 			v-model:visible="regenerateDialog"
 			header="Regenerate token"
 		>
@@ -191,8 +191,8 @@
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="regenerateDialog = false"/>
 				<Button label="Regenerate" @click="regenerateToken"/>
 			</div>
-		</GPDialog>
-		<GPDialog
+		</GPConfirmDialog>
+		<GPConfirmDialog
 			v-model:visible="revokeDialog"
 			header="Revoke access"
 		>
@@ -209,7 +209,7 @@
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="revokeDialog = false"/>
 				<Button label="Revoke access" severity="danger" @click="revokeApp"/>
 			</div>
-		</GPDialog>
+		</GPConfirmDialog>
 	</div>
 </template>
 

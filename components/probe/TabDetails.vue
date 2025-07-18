@@ -92,7 +92,7 @@
 			/>
 		</div>
 
-		<GPDialog
+		<GPConfirmDialog
 			v-if="probe"
 			id="removeProbeDialog"
 			v-model:visible="deleteDialog"
@@ -112,7 +112,7 @@
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
 				<Button :loading="deleteProbeLoading" :aria-disabled="deleteProbeLoading" label="Delete probe" severity="danger" @click="deleteProbe"/>
 			</div>
-		</GPDialog>
+		</GPConfirmDialog>
 	</div>
 </template>
 

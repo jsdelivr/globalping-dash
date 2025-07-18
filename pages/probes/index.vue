@@ -497,6 +497,10 @@
 			tags: columns[4].width,
 		};
 	});
+
+	onBeforeUnmount(() => {
+		onFilterChangeDebounced.cancel();
+	});
 </script>
 
 <style scoped>

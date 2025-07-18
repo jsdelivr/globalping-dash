@@ -47,6 +47,7 @@
 								<Select
 									v-model="selectedStatus"
 									:options="statusOptions"
+									:pt="{ listContainer: { class: '!max-h-64' } }"
 									option-label="code"
 									class="min-w-64"
 									@change="onStatusChange"

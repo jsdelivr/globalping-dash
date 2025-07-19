@@ -53,7 +53,7 @@
 									@change="onStatusChange"
 								>
 									<template #option="{option}: {option: StatusOption}">
-										<div class="flex h-full items-center gap-2">
+										<span class="flex h-full items-center gap-2">
 											<span
 												:class="{
 													'font-bold text-bluegray-900 dark:text-white': option.code === selectedStatus.code,
@@ -69,13 +69,13 @@
 												}">
 												{{ statusCounts[option.code] }}
 											</Tag>
-										</div>
+										</span>
 									</template>
 
 									<template #value="{value}: {value: StatusOption}">
-										<div class="flex h-full items-center gap-2">
+										<span class="flex h-full items-center gap-2">
 											<span class="text-bluegray-400">{{ value.name }}</span>
-											<Tag class="-my-1 border ">{{ statusCounts[value.code] }}</Tag></div>
+											<Tag class="-my-1 border ">{{ statusCounts[value.code] }}</Tag></span>
 									</template>
 								</Select>
 								<InputGroup class="!w-auto">
@@ -171,58 +171,23 @@
 
 						<Button class="relative" severity="secondary" size="small" text @click="mobileFiltersRef.toggle($event)">
 							<i class="pi pi-sliders-h"/>
-							<!-- TODO: only if active -->
-							<i class="pi pi-circle-fill absolute right-2 top-1 text-[0.4rem] text-primary"/>
+							<i v-if="anyFilterApplied" class="pi pi-circle-fill absolute right-2 top-1 text-[0.4rem] text-primary"/>
 						</Button>
 
-						<!-- TODO: improve design -->
 						<Popover
 							ref="mobileFiltersRef"
-							class="!left-1/2 w-[95%] !-translate-x-1/2 !transform sm:w-[540px]"
+							class="!left-1/2 w-[95%] !-translate-x-1/2 !transform p-6 sm:w-[540px] [&>*]:border-none"
 							role="dialog">
-							<div class="flex w-full max-w-full flex-col">
-								<span class="flex items-center font-bold">Status:</span>
-								<Select
-									v-model="selectedStatus"
-									:options="statusOptions"
-									:pt="{ listContainer: { class: '!max-h-64' } }"
-									option-label="code"
-									class="min-w-64"
-									@change="onStatusChange"
-								>
-									<template #option="{option}: {option: StatusOption}">
-										<div class="flex h-full items-center gap-2">
-											<span
-												:class="{
-													'font-bold text-bluegray-900 dark:text-white': option.code === selectedStatus.code,
-													'text-bluegray-400': option.code !== selectedStatus.code
-												}">
-												{{ option.name }}
-											</span>
-											<Tag
-												class="-my-0.5"
-												:class="{
-													'bg-primary text-white dark:bg-white dark:text-bluegray-900 ': option.code === selectedStatus.code,
-													'border border-surface-300 bg-surface-0 text-bluegray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-surface-0': option.code !== selectedStatus.code
-												}">
-												{{ statusCounts[option.code] }}
-											</Tag>
-										</div>
-									</template>
-
-									<template #value="{value}: {value: StatusOption}">
-										<div class="flex h-full items-center gap-2">
-											<span class="text-bluegray-400">{{ value.name }}</span>
-											<Tag class="-my-1 border ">{{ statusCounts[value.code] }}</Tag></div>
-									</template>
-								</Select>
-								<InputGroup class="!w-auto">
-									<IconField>
-										<InputIcon class="pi pi-search"/>
-										<InputText v-model="inputFilter" class="m-0 h-full min-w-[280px]" placeholder="Filter by name, location, or tags" @input="onFilterChangeDebounced"/>
-									</IconField>
-								</InputGroup>
-							</div>
+							<FilterSettings
+								:status-options="statusOptions"
+								:status-counts="statusCounts as Record<StatusCode, number>"
+								:default-values="{
+									filter: appliedFilter,
+									...sortState,
+									status: selectedStatus
+								}"
+								@apply="({filter, desc, by, status}) => {mobileFiltersRef.toggle(); onBatchChange(filter, by, desc, status)}"
+							/>
 						</Popover>
 					</div>
 
@@ -256,6 +221,9 @@
 										</div>
 									</NuxtLink>
 								</div>
+							</div>
+							<div v-else class="py-12 text-center">
+								No probes match the filter.
 							</div>
 							<div class="rounded-xl bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] p-3 dark:from-dark-700 dark:to-dark-700">
 								<div class="flex items-center justify-between">
@@ -341,9 +309,10 @@
 	import debounce from 'lodash/debounce';
 	import CountryFlag from 'vue-country-flag-next';
 	import BigProbeIcon from '~/components/BigProbeIcon.vue';
+	import FilterSettings from '~/components/FilterSettings.vue';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
-	import { type StatusOption, useProbeFilters } from '~/composables/useProbeFilters';
+	import { type StatusOption, type StatusCode, useProbeFilters } from '~/composables/useProbeFilters';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { pluralize } from '~/utils/pluralize';
 	import { sendErrorToast } from '~/utils/send-toast';
@@ -465,15 +434,17 @@
 		selectedStatus,
 		inputFilter,
 		statusOptions,
+		anyFilterApplied,
 		onSortChange,
 		onFilterChange,
 		onStatusChange,
+		onBatchChange,
 		getSortSettings,
 		getCurrentFilter,
 	} = useProbeFilters();
 
 	const onFilterChangeDebounced = debounce(onFilterChange, 500);
-	const statusCounts = ref(Object.fromEntries(statusOptions.value.map(o => [ o.code, 0 ])));
+	const statusCounts = ref(Object.fromEntries(statusOptions.value.map(o => [ o.code, 0 ]) as [StatusCode, number][]));
 
 	// PROBES LIST
 	onMounted(async () => {

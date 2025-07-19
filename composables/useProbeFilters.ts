@@ -12,12 +12,15 @@ export interface StatusOption {
 	outdatedOnly?: boolean;
 }
 
+export type SortOption = 'location' | 'tags' | 'name';
+
+export const SORTABLE_FIELDS: string[] = [ 'name', 'location', 'tags' ] as const;
+
 export const useProbeFilters = () => {
 	const route = useRoute();
 	const { getUserFilter } = useUserFilter();
 
-	const SORTABLE_FIELDS = [ 'location', 'tags', 'name' ];
-	const sortState = ref({ by: 'name', desc: false });
+	const sortState = ref<{ by: SortOption; desc: boolean }>({ by: 'name', desc: false });
 
 	const inputFilter = ref('');
 	const appliedFilter = ref('');
@@ -31,13 +34,15 @@ export const useProbeFilters = () => {
 	]);
 	const selectedStatus = ref(statusOptions.value[0]);
 
+	const anyFilterApplied = ref(false);
+
 	const onSortChange = (event: DataTableSortEvent) => {
 		const { sortField = '', sortOrder = 1 } = event;
 
 		if (!sortOrder || typeof sortField !== 'string' || !SORTABLE_FIELDS.includes(sortField)) {
 			sortState.value = { by: 'name', desc: false };
 		} else {
-			sortState.value = { by: sortField, desc: sortOrder === -1 };
+			sortState.value = { by: sortField as SortOption, desc: sortOrder === -1 };
 		}
 
 		onParamChange();
@@ -45,6 +50,19 @@ export const useProbeFilters = () => {
 
 	const onFilterChange = () => {
 		appliedFilter.value = inputFilter.value;
+		onParamChange();
+	};
+
+	const onBatchChange = (filter: string, by: SortOption, desc: boolean, status: StatusCode) => {
+		appliedFilter.value = filter;
+		inputFilter.value = filter;
+		sortState.value = { by, desc };
+		const changedStatus = statusOptions.value.find(el => el.code === status);
+
+		if (changedStatus) {
+			selectedStatus.value = changedStatus;
+		}
+
 		onParamChange();
 	};
 
@@ -56,6 +74,8 @@ export const useProbeFilters = () => {
 	});
 
 	const onParamChange = () => {
+		anyFilterApplied.value = sortState.value.by !== 'name' || sortState.value.desc || !!appliedFilter.value || selectedStatus.value.code !== 'all';
+
 		navigateTo({
 			query: constructQuery(),
 		});
@@ -104,7 +124,7 @@ export const useProbeFilters = () => {
 		}
 
 		if (typeof by === 'string' && SORTABLE_FIELDS.includes(by)) {
-			sortState.value = { by, desc: desc === 'true' };
+			sortState.value = { by: by as SortOption, desc: desc === 'true' };
 		} else {
 			sortState.value = { by: 'name', desc: desc === 'true' };
 		}
@@ -116,6 +136,8 @@ export const useProbeFilters = () => {
 		} else {
 			selectedStatus.value = statusOptions.value[0];
 		}
+
+		anyFilterApplied.value = sortState.value.by !== 'name' || sortState.value.desc || !!appliedFilter.value || selectedStatus.value.code !== 'all';
 	}, { immediate: true });
 
 	return {
@@ -125,10 +147,12 @@ export const useProbeFilters = () => {
 		appliedFilter,
 		statusOptions,
 		selectedStatus,
+		anyFilterApplied,
 		// handlers
 		onSortChange,
 		onFilterChange,
 		onStatusChange: () => onParamChange(),
+		onBatchChange,
 		// builders
 		getSortSettings,
 		getCurrentFilter,

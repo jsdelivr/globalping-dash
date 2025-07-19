@@ -66,13 +66,14 @@ export const useProbeFilters = () => {
 
 		switch (by) {
 			case 'name':
-				return [ desc ? '-name' : 'name', 'status' ];
+				return [ desc ? '-name' : 'name' ];
+
 			case 'tags':
 				if (desc) {
-					return [ '-count(tags)', '-count(systemTags)', 'status', 'name' ];
+					return [ '-count(tags)', '-count(systemTags)', 'name' ];
 				}
 
-				return [ 'count(tags)', 'count(systemTags)', 'status', 'name' ];
+				return [ 'count(tags)', 'count(systemTags)', 'name' ];
 
 			case 'location': {
 				const fields = [ 'country', 'city', 'network' ];
@@ -108,10 +109,10 @@ export const useProbeFilters = () => {
 			sortState.value = { by: 'name', desc: desc === 'true' };
 		}
 
-		const usedOption = statusOptions.value.find(opt => opt.code === status);
+		const statusFilter = statusOptions.value.find(opt => opt.code === status);
 
-		if (usedOption) {
-			selectedStatus.value = usedOption;
+		if (statusFilter) {
+			selectedStatus.value = statusFilter;
 		} else {
 			selectedStatus.value = statusOptions.value[0];
 		}

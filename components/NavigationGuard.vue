@@ -1,5 +1,5 @@
 <template>
-	<GPDialog
+	<GPConfirmDialog
 		v-model:visible="showNavigationConfirm"
 		header="Unsaved changes"
 	>
@@ -15,7 +15,7 @@
 			<Button class="mr-2" label="Cancel" severity="secondary" text @click="handleNavigationReject"/>
 			<Button label="Leave" @click="handleNavigationAccept"/>
 		</div>
-	</GPDialog>
+	</GPConfirmDialog>
 </template>
 
 <script setup lang="ts">

@@ -27,7 +27,7 @@
 							<NuxtLink
 								v-for="({ city, count }) in cities"
 								:key="city"
-								:to="`/probes?filter=${encodeURIComponent(city.toLowerCase())}`"
+								:to="`/probes?filter=${encodeURIComponent(city)}`"
 								class="ml-3 rounded-full border px-3 py-2 duration-200 hover:bg-bluegray-50 dark:border-dark-600 dark:hover:bg-dark-700"
 							>
 								{{ city }}<span class="ml-1.5 text-bluegray-500 dark:text-bluegray-400">{{ count }}</span>

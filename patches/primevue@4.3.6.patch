@@ -1,16 +1,7 @@
 diff --git a/tooltip/index.mjs b/tooltip/index.mjs
-index 24447138fea2bdd7b58b1e9bac6786e016740605..8ad3c48169f3bc84c81e3f2158db55e603be8cdc 100644
+index 24447138fea2bdd7b58b1e9bac6786e016740605..9fe9e71059dd2674f507fd8ca8931ff01f00807d 100644
 --- a/tooltip/index.mjs
 +++ b/tooltip/index.mjs
-@@ -114,7 +114,7 @@ var Tooltip = BaseTooltip.extend('tooltip', {
-           return _this.onMouseEnter(event, options);
-         };
-         el.$_ptooltipMouseLeaveEvent = this.onMouseLeave.bind(this);
--        el.$_ptooltipClickEvent = this.onClick.bind(this);
-+        el.$_ptooltipClickEvent = (e) => this.onClick(e);
-         el.addEventListener('mouseenter', el.$_ptooltipMouseEnterEvent);
-         el.addEventListener('mouseleave', el.$_ptooltipMouseLeaveEvent);
-         el.addEventListener('click', el.$_ptooltipClickEvent);
 @@ -182,12 +182,12 @@ var Tooltip = BaseTooltip.extend('tooltip', {
      onBlur: function onBlur(event) {
        var el = event.currentTarget;

@@ -286,7 +286,7 @@
 	import BigProbeIcon from '~/components/BigProbeIcon.vue';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
-	import { type StatusCode, type StatusOption, useProbeFilters } from '~/composables/useProbeFilters';
+	import { type StatusOption, useProbeFilters } from '~/composables/useProbeFilters';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { pluralize } from '~/utils/pluralize';
 	import { sendErrorToast } from '~/utils/send-toast';
@@ -312,8 +312,6 @@
 	const deleteProbesDialog = ref(false);
 	const displayPagination = ref<boolean>(true);
 	const paginatedRecords = ref(0);
-
-	const statusCounts = ref<Record<StatusCode, number>>({ 'all': 0, 'online': 0, 'ping-test-failed': 0, 'offline': 0, 'online-outdated': 0 });
 
 	const { getUserFilter } = useUserFilter();
 
@@ -389,13 +387,6 @@
 			credits.value = creditsByProbeId;
 			probes.value = adoptedProbes;
 
-			// reset status counts
-			const statusCodes = Object.keys(statusCounts.value) as StatusCode[];
-
-			statusCodes.forEach((key) => {
-				statusCounts.value[key] = 0;
-			});
-
 			statusOptions.value.forEach((opt) => {
 				statusCounts.value[opt.code] = statusResults.reduce((sum, status) => opt.options.includes(status.status) && (status.isOutdated || !opt.outdatedOnly) ? sum + status.count : sum, 0);
 			});
@@ -424,6 +415,7 @@
 	} = useProbeFilters();
 
 	const onFilterChangeDebounced = debounce(onFilterChange, 500);
+	const statusCounts = ref(Object.fromEntries(statusOptions.value.map(o => [ o.code, 0 ])));
 
 	// PROBES LIST
 	onMounted(async () => {

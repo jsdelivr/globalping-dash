@@ -1,5 +1,5 @@
 <template>
-	<div class="flex w-full max-w-full flex-col gap-4 border-0">
+	<div class="flex w-full flex-col gap-4">
 		<div class="flex flex-col gap-1">
 			<span class="flex items-center font-bold">Status:</span>
 			<Select

@@ -67,6 +67,8 @@ declare global {
 		};
 	};
 
+	type Status = 'initializing' | 'ready' | 'unbuffer-missing' | 'ping-test-failed' | 'sigterm' | 'offline';
+
 	type Probe = {
 		id: string;
 		asn: number;
@@ -83,20 +85,22 @@ declare global {
 		network: string;
 		onlineTimesToday: number;
 		state: string | null;
-		status: 'initializing' | 'ready' | 'unbuffer-missing' | 'ping-test-failed' | 'sigterm' | 'offline';
+		status: Status;
 		tags: {
 			value: string;
 			prefix: string;
 			format?: string;
 		}[];
 		systemTags: string[];
-		userId: string;
+		userId: string | null;
 		uuid: string;
 		version: string;
 		hardwareDevice: string | null;
 		hardwareDeviceFirmware: string | null;
 		nodeVersion: string;
 		allowedCountries: string[];
+		searchIndex: string;
+		isOutdated: boolean;
 	};
 
 	type User = {

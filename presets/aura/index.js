@@ -33,7 +33,7 @@ import drawer from './drawer';
 // import floatlabel from './floatlabel';
 // import galleria from './galleria';
 import global from './global';
-// import iconfield from './iconfield';
+import iconfield from './iconfield';
 // import image from './image';
 // import inplace from './inplace';
 import inputgroup from './inputgroup';
@@ -68,7 +68,7 @@ import popover from './popover';
 // import scrolltop from './scrolltop';
 import select from './select';
 import selectbutton from './selectbutton';
-// import skeleton from './skeleton';
+import skeleton from './skeleton';
 // import slider from './slider';
 // import speeddial from './speeddial';
 // import splitbutton from './splitbutton';
@@ -136,7 +136,7 @@ export default {
 	// treeselect,
 	// textarea,
 	// password,
-	// iconfield,
+	iconfield,
 	// floatlabel,
 	inputotp,
 
@@ -224,7 +224,7 @@ export default {
 	tag,
 	chip,
 	// progressbar,
-	// skeleton,
+	skeleton,
 	// scrolltop,
 	// terminal,
 	// blockui,

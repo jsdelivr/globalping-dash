@@ -32,6 +32,7 @@ export default {
 			'border',
 
 			// Colors
+			'text-white',
 			{
 				'border-surface-300 dark:border-dark-400': !context.checked && !props.invalid,
 				'bg-surface-0 dark:bg-dark-950': !context.checked && !props.invalid && !props.disabled,

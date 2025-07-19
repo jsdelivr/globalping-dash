@@ -12,25 +12,26 @@
 							<BigIcon name="gp" border/>
 							<div><span data-testid="probes-count" class="mx-2 text-3xl font-bold">{{ adoptedProbes.length }}</span>{{ pluralize('Probe', adoptedProbes.length) }}</div>
 						</div>
-						<div class="ml-auto mr-6 flex items-center max-sm:ml-0 max-sm:mt-3">
+						<NuxtLink to="/probes?status=online" class="group ml-auto mr-6 flex items-center gap-2 max-sm:ml-0 max-sm:mt-3">
 							<BigIcon name="point-online" filled/>
-							<div><span data-testid="online-probes-count" class="mx-2 text-3xl font-bold">{{ onlineProbes.length }}</span>Online</div>
-						</div>
-						<div class="flex items-center max-sm:mt-3">
+							<p class="group-hover:underline"><span data-testid="online-probes-count" class="text-3xl font-bold">{{ onlineProbes.length }}</span>&nbsp;&nbsp;Online</p>
+						</NuxtLink>
+						<NuxtLink to="/probes?status=offline" class="group flex items-center gap-2 max-sm:mt-3">
 							<BigIcon name="point-offline" filled/>
-							<div><span data-testid="offline-probes-count" class="mx-2 text-3xl font-bold">{{ offlineProbes.length }}</span>Offline</div>
-						</div>
+							<p class="group-hover:underline"><span data-testid="offline-probes-count" class="text-3xl font-bold">{{ offlineProbes.length }}</span>&nbsp;&nbsp;Offline</p>
+						</NuxtLink>
 					</div>
 					<div class="mt-6 flex items-center text-nowrap max-sm:flex-wrap">
 						<div class="fade-out flex grow items-center overflow-hidden max-sm:basis-full">
 							<div>Locations: </div>
-							<div
+							<NuxtLink
 								v-for="({ city, count }) in cities"
 								:key="city"
-								class="ml-3 rounded-full border px-3 py-2 dark:border-dark-600"
+								:to="`/probes?filter=${encodeURIComponent(city)}`"
+								class="ml-3 rounded-full border px-3 py-2 duration-200 hover:bg-bluegray-50 dark:border-dark-600 dark:hover:bg-dark-700"
 							>
 								{{ city }}<span class="ml-1.5 text-bluegray-500 dark:text-bluegray-400">{{ count }}</span>
-							</div>
+							</NuxtLink>
 							<div v-if="isEmpty(cities)" class="ml-2">No locations to show</div>
 						</div>
 						<Button
@@ -176,6 +177,7 @@
 	import isEmpty from 'lodash/isEmpty';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { ONLINE_STATUSES, OFFLINE_STATUSES } from '~/constants/probes';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
 	import { pluralize } from '~/utils/pluralize';
@@ -207,8 +209,8 @@
 		}
 	}, { default: () => [] });
 
-	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status === 'ready'));
-	const offlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => status !== 'ready'));
+	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => ONLINE_STATUSES.includes(status)));
+	const offlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => OFFLINE_STATUSES.includes(status)));
 	const cities = computed(() => Object.entries(countBy(adoptedProbes.value, 'city'))
 		.map(([ city, count ]) => ({ city, count }))
 		.sort((obj1, obj2) => obj2.count - obj1.count));

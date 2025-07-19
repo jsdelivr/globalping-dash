@@ -124,11 +124,11 @@ export default {
 				context?.size === 'small' ? 'py-[0.375rem] px-2' : context?.size === 'large' ? 'py-[0.9375rem] px-5' : 'pt-4 pb-3 px-2',
 
 				// Color
-				(props.sortable === '' || props.sortable) && context.sorted ? 'bg-highlight' : 'bg-surface-0 dark:text-surface-0 dark:bg-dark-800',
+				// (props.sortable === '' || props.sortable) && context.sorted ? 'bg-highlight' : 'bg-surface-0 dark:text-surface-0 dark:bg-dark-800',
 				'border-surface-300 dark:border-dark-600 ',
 
 				// States
-				{ 'hover:bg-surface-100 dark:hover:bg-surface-800': (props.sortable === '' || props.sortable) && !context?.sorted },
+				{ 'hover:bg-surface-100 dark:hover:bg-dark-700': props.sortable === '' || props.sortable },
 				'focus-visible:outline-none focus-visible:outline-offset-0 focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400',
 
 				// Transition
@@ -145,7 +145,7 @@ export default {
 			class: 'flex items-center gap-2',
 		},
 		sort: ({ context }) => ({
-			class: [ context.sorted ? 'text-primary-500' : 'text-surface-700', context.sorted ? 'dark:text-primary-400' : 'dark:text-surface-0' ],
+			class: [ context.sorted ? 'text-900' : 'text-surface-700', context.sorted ? 'dark:text-900' : 'dark:text-surface-0' ],
 		}),
 		bodyCell: ({ props, context, state, parent }) => ({
 			class: [
@@ -200,7 +200,7 @@ export default {
 			],
 		}),
 		sortIcon: ({ context }) => ({
-			class: [ 'ml-2', context.sorted ? 'text-inherit' : 'text-surface-700 dark:text-surface-0/70' ], // TODO
+			class: [ 'ml-0', context.sorted ? 'text-inherit' : 'text-surface-700 dark:text-surface-0/70' ],
 		}),
 		columnFilter: {
 			class: 'inline-flex items-center ml-auto font-normal',

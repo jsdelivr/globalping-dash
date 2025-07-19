@@ -34,7 +34,7 @@ export const useProbeFilters = () => {
 	]);
 	const selectedStatus = ref(statusOptions.value[0]);
 
-	const anyFilterApplied = ref(false);
+	const anyFilterApplied = computed(() => sortState.value.by !== 'name' || sortState.value.desc || !!appliedFilter.value || selectedStatus.value.code !== 'all');
 
 	const onSortChange = (event: DataTableSortEvent) => {
 		const { sortField = '', sortOrder = 1 } = event;
@@ -74,8 +74,6 @@ export const useProbeFilters = () => {
 	});
 
 	const onParamChange = () => {
-		anyFilterApplied.value = sortState.value.by !== 'name' || sortState.value.desc || !!appliedFilter.value || selectedStatus.value.code !== 'all';
-
 		navigateTo({
 			query: constructQuery(),
 		});
@@ -136,8 +134,6 @@ export const useProbeFilters = () => {
 		} else {
 			selectedStatus.value = statusOptions.value[0];
 		}
-
-		anyFilterApplied.value = sortState.value.by !== 'name' || sortState.value.desc || !!appliedFilter.value || selectedStatus.value.code !== 'all';
 	}, { immediate: true });
 
 	return {

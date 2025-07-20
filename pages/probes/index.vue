@@ -328,7 +328,8 @@
 	const probes = ref<Probe[]>([]);
 	const hasAnyProbes = ref(false);
 	const credits = ref<Record<string, number>>({});
-	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage, active: () => !route.params.id });
+	const active = ref(true);
+	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage, active });
 	const totalCredits = ref(0);
 	const gmapsLoaded = ref(false);
 	const selectedProbes = ref<Probe[]>([]);
@@ -462,24 +463,23 @@
 	});
 
 	// Update list data only when navigating list to list (e.g. page 1 to page 2) or changing filters, not list to details or details to list.
-	watch([
-		() => route.params.id,
-		() => page.value,
-		() => filter.value.search,
-		() => filter.value.status,
-		() => filter.value.by,
-		() => filter.value.desc,
-	], async ([ newId, newPage ], [ oldId, oldPage ]) => {
-		searchInput.value = filter.value.search;
+	watch(
+		[ page, filter ],
+		async ([ newPage ], [ oldPage ]) => {
+			if (!active.value) {
+				return;
+			}
 
-		if (!oldId && !newId) {
+			searchInput.value = filter.value.search;
+
 			if (newPage === oldPage && oldPage !== 0) {
-				return; // page reset triggers this watch for a second time
+				return; // filter change triggers a page reset that triggers this watch for a second time
 			}
 
 			await loadLazyData();
-		}
-	});
+		},
+		{ deep: true },
+	);
 
 	const getAllTags = (probe: Probe) => {
 		const systemTags = probe.systemTags;
@@ -529,6 +529,8 @@
 	onBeforeUnmount(() => {
 		onFilterChangeDebounced.cancel();
 	});
+
+	onBeforeRouteLeave(() => { active.value = false; });
 </script>
 
 <style scoped>

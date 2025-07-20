@@ -1,5 +1,5 @@
 export interface PaginationOptions {
-	active?: () => boolean;
+	active: MaybeRefOrGetter<boolean>;
 	itemsPerPage: Ref<number>;
 	limitKey?: string;
 	pageKey?: string;
@@ -11,7 +11,7 @@ export const usePagination = ({ active = () => true, itemsPerPage, limitKey = 'l
 	const windowSize = useWindowSize();
 
 	watch(() => route.query[pageKey], () => {
-		if (active()) {
+		if (toValue(active)) {
 			page.value = route.query[pageKey] ? Number(route.query[pageKey]) - 1 : 0;
 
 			if (route.query[limitKey]) {

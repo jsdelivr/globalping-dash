@@ -1,5 +1,5 @@
 export interface PaginationOptions {
-	active: MaybeRefOrGetter<boolean>;
+	active?: MaybeRefOrGetter<boolean>;
 	itemsPerPage: Ref<number>;
 	limitKey?: string;
 	pageKey?: string;

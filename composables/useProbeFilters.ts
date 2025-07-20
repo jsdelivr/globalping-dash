@@ -11,6 +11,7 @@ type StatusOption = {
 	options: Status[];
 	outdatedOnly?: boolean;
 };
+
 export interface Filter {
 	search: string;
 	status: StatusCode;

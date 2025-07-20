@@ -412,7 +412,11 @@
 			probes.value = adoptedProbes;
 
 			STATUS_CODES.forEach((code) => {
-				statusCounts.value[code] = statusResults.reduce((sum, status) => STATUS_MAP[code].options.includes(status.status) && (status.isOutdated || !STATUS_MAP[code].outdatedOnly) ? sum + status.count : sum, 0);
+				statusCounts.value[code] = statusResults.reduce((sum, status) => {
+					return STATUS_MAP[code].options.includes(status.status) && (status.isOutdated || !STATUS_MAP[code].outdatedOnly)
+						? sum + status.count
+						: sum;
+				}, 0);
 			});
 		} catch (e) {
 			sendErrorToast(e);

@@ -24,7 +24,7 @@
 								'bg-primary text-white dark:bg-white dark:text-bluegray-900 ': option.code === status.code,
 								'border border-surface-300 bg-surface-0 text-bluegray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-surface-0': option.code !== status.code
 							}">
-							{{ processedStatusCounts[option.code] }}
+							{{ statusCounts[option.code] }}
 						</Tag>
 					</span>
 				</template>
@@ -32,7 +32,7 @@
 				<template #value="{value}: {value: StatusOption}">
 					<span class="flex h-full items-center gap-2">
 						<span class="text-bluegray-400">{{ value.name }}</span>
-						<Tag class="-my-1 border ">{{ processedStatusCounts[value.code] }}</Tag>
+						<Tag class="-my-1 border ">{{ statusCounts[value.code] }}</Tag>
 					</span>
 				</template>
 			</Select>
@@ -56,7 +56,7 @@
 					class="flex h-9 w-full items-center rounded-none rounded-l-md border-r border-none"
 					unstyled
 				>
-					<template #option="{option}: {option: SortOption}">
+					<template #option="{option}">
 						<span class="flex h-full items-center gap-2 py-[3px]">
 							<span
 								:class="{
@@ -68,7 +68,7 @@
 						</span>
 					</template>
 
-					<template #value="{value}: {value: SortOption}">
+					<template #value="{value}">
 						<span class="flex h-full items-center gap-2">
 							<span class="text-bluegray-400">{{ sortNameMap[value] }}</span>
 						</span>
@@ -95,42 +95,34 @@
 </template>
 
 <script setup lang="ts">
-	import { type SortOption, type StatusCode, type StatusOption, SORTABLE_FIELDS } from '~/composables/useProbeFilters';
-	import { OFFLINE_STATUSES, ONLINE_STATUSES } from '~/constants/probes';
+	import { type StatusCode, type StatusOption, SORTABLE_FIELDS } from '~/composables/useProbeFilters';
 
 	const { defaultValues, statusOptions, statusCounts } = defineProps({
 		defaultValues: {
+			required: true,
 			type: Object as PropType<{
 				filter: string;
-				by: SortOption;
+				by: string;
 				desc: boolean;
 				status: StatusOption;
 			}>,
-			default: () => ({
-				filter: '',
-				by: 'name',
-				desc: false,
-				status: undefined,
-			}),
 		},
 		statusOptions: {
+			required: true,
 			type: Array as PropType<StatusOption[]>,
-			default: () => [{ name: 'All', code: 'all', options: [ ...ONLINE_STATUSES, ...OFFLINE_STATUSES ] }],
 		},
 		statusCounts: {
+			required: true,
 			type: Object as PropType<Record<StatusCode, number>>,
-			default: () => undefined,
 		},
 	});
 
 	const filter = ref(defaultValues.filter);
 	const by = ref(defaultValues.by);
 	const desc = ref(defaultValues.desc);
-	const status = ref(defaultValues.status ?? statusOptions[0]);
+	const status = ref(defaultValues.status);
 
-	const processedStatusCounts = statusCounts ?? Object.fromEntries(statusOptions.map(o => [ o.code, 0 ]) as [StatusCode, number][]);
-
-	const sortNameMap: Record<SortOption, string> = {
+	const sortNameMap: Record<string, string> = {
 		name: 'Name',
 		location: 'Location',
 		tags: 'Tag count',
@@ -138,7 +130,7 @@
 
 	type Payload = {
 		filter: string;
-		by: SortOption;
+		by: string;
 		desc: boolean;
 		status: StatusCode;
 	};

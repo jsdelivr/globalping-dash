@@ -31,7 +31,6 @@ export const STATUS_MAP: Record<string, StatusOption> = {
 	'offline': { name: 'Offline', options: OFFLINE_STATUSES },
 } as const;
 
-
 export const useProbeFilters = () => {
 	const route = useRoute();
 	const { getUserFilter } = useUserFilter();
@@ -128,7 +127,7 @@ export const useProbeFilters = () => {
 			filter.value.desc = DEFAULT_FILTER.desc;
 		}
 
-		if (typeof status === 'string' && Object.keys(STATUS_MAP).includes(status)) {
+		if (typeof status === 'string' && Object.hasOwn(STATUS_MAP, status)) {
 			filter.value.status = status as StatusCode;
 		} else {
 			filter.value.status = DEFAULT_FILTER.status;

@@ -183,6 +183,7 @@
 								:status-counts="statusCounts as Record<StatusCode, number>"
 								:filter="filter"
 								@apply="(newFilter) => {mobileFiltersRef.toggle(); onBatchChange(newFilter)}"
+								@cancel="mobileFiltersRef.hide()"
 							/>
 						</Popover>
 					</div>

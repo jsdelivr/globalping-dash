@@ -85,11 +85,10 @@
 			</div>
 		</div>
 
-		<Button
-			class="ml-auto mt-4 w-32"
-			label="Apply"
-			@click="onApply"
-		/>
+		<div class="mt-4 flex justify-end gap-2">
+			<Button label="Cancel" severity="secondary" text @click="emit('cancel')"/>
+			<Button label="Apply" @click="emit('apply', draftFilter)"/>
+		</div>
 	</div>
 </template>
 
@@ -123,11 +122,7 @@
 	};
 
 	const emit = defineEmits<{
+		(e: 'cancel'): void;
 		(e: 'apply', payload: Filter): void;
 	}>();
-
-	const onApply = () => {
-		emit('apply', draftFilter.value);
-	};
-
 </script>

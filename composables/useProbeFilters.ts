@@ -117,10 +117,14 @@ export const useProbeFilters = () => {
 
 		if (typeof by === 'string' && SORTABLE_FIELDS.includes(by)) {
 			filter.value.by = by;
-			filter.value.desc = desc === 'true';
 		} else {
 			filter.value.by = DEFAULT_FILTER.by;
+		}
+
+		if (typeof desc === 'string' && [ 'true', 'false' ].includes(desc)) {
 			filter.value.desc = desc === 'true';
+		} else {
+			filter.value.desc = DEFAULT_FILTER.desc;
 		}
 
 		if (typeof status === 'string' && Object.keys(STATUS_MAP).includes(status)) {

@@ -349,8 +349,6 @@
 		loading.value = true;
 		selectedProbes.value = [];
 
-		console.log('fetching');
-
 		try {
 			const [ adoptedProbes, statusResults, creditsAdditions ] = await Promise.all([
 				$directus.request(readItems('gp_probes', {

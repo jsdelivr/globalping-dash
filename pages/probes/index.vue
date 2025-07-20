@@ -30,8 +30,8 @@
 					data-key="id"
 					:total-records="paginatedRecords"
 					sort-mode="single"
-					:sort-field="sortState.by"
-					:sort-order="sortState.desc ? -1 : 1"
+					:sort-field="filter.by"
+					:sort-order="filter.desc ? -1 : 1"
 					:loading="firstLoading"
 					:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"
 					:pt="{footer: '!pt-0 border-t-0'}"
@@ -45,43 +45,43 @@
 							<div class="ml-auto flex h-9 items-stretch gap-x-4 self-end font-normal">
 								<span class="flex items-center font-bold">Status:</span>
 								<Select
-									v-model="selectedStatus"
-									:options="statusOptions"
+									v-model="filter.status"
+									:options="STATUS_CODES"
 									:pt="{ listContainer: { class: '!max-h-64' } }"
 									option-label="code"
 									class="min-w-64"
 									@change="onStatusChange"
 								>
-									<template #option="{option}: {option: StatusOption}">
+									<template #option="{option}">
 										<span class="flex h-full items-center gap-2">
 											<span
 												:class="{
-													'font-bold text-bluegray-900 dark:text-white': option.code === selectedStatus.code,
-													'text-bluegray-400': option.code !== selectedStatus.code
+													'font-bold text-bluegray-900 dark:text-white': option === filter.status,
+													'text-bluegray-400': option.code !== filter.status
 												}">
-												{{ option.name }}
+												{{ STATUS_MAP[option].name }}
 											</span>
 											<Tag
 												class="-my-0.5"
 												:class="{
-													'bg-primary text-white dark:bg-white dark:text-bluegray-900 ': option.code === selectedStatus.code,
-													'border border-surface-300 bg-surface-0 text-bluegray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-surface-0': option.code !== selectedStatus.code
+													'bg-primary text-white dark:bg-white dark:text-bluegray-900 ': option === filter.status,
+													'border border-surface-300 bg-surface-0 text-bluegray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-surface-0': option !== filter.status
 												}">
-												{{ statusCounts[option.code] }}
+												{{ statusCounts[option] }}
 											</Tag>
 										</span>
 									</template>
 
-									<template #value="{value}: {value: StatusOption}">
+									<template #value="{value}">
 										<span class="flex h-full items-center gap-2">
-											<span class="text-bluegray-400">{{ value.name }}</span>
-											<Tag class="-my-1 border ">{{ statusCounts[value.code] }}</Tag></span>
+											<span class="text-bluegray-400">{{ STATUS_MAP[value].name }}</span>
+											<Tag class="-my-1 border ">{{ statusCounts[value] }}</Tag></span>
 									</template>
 								</Select>
 								<InputGroup class="!w-auto">
 									<IconField>
 										<InputIcon class="pi pi-search"/>
-										<InputText v-model="inputFilter" class="m-0 h-full min-w-[280px]" placeholder="Filter by name, location, or tags" @input="onFilterChangeDebounced"/>
+										<InputText v-model="searchInput" class="m-0 h-full min-w-[280px]" placeholder="Filter by name, location, or tags" @input="onFilterChangeDebounced"/>
 									</IconField>
 								</InputGroup>
 							</div>
@@ -179,14 +179,9 @@
 							class="!left-1/2 w-[95%] !-translate-x-1/2 !transform p-6 sm:w-[540px] [&>*]:border-none"
 							role="dialog">
 							<FilterSettings
-								:status-options="statusOptions"
 								:status-counts="statusCounts as Record<StatusCode, number>"
-								:default-values="{
-									filter: appliedFilter,
-									...sortState,
-									status: selectedStatus
-								}"
-								@apply="({filter, desc, by, status}) => {mobileFiltersRef.toggle(); onBatchChange(filter, by, desc, status)}"
+								:filter="filter"
+								@apply="(newFilter) => {mobileFiltersRef.toggle(); onBatchChange(newFilter)}"
 							/>
 						</Popover>
 					</div>
@@ -234,7 +229,7 @@
 								</div>
 								<div class="mt-2 flex items-center justify-between">
 									<span class="text-xs font-bold">Number of probes:</span>
-									<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ statusCounts[selectedStatus.code] }}</Tag>
+									<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ statusCounts[filter.status] }}</Tag>
 								</div>
 								<Button
 									class="mt-2 w-full"
@@ -312,7 +307,7 @@
 	import FilterSettings from '~/components/FilterSettings.vue';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
-	import { type StatusOption, type StatusCode, useProbeFilters } from '~/composables/useProbeFilters';
+	import { type StatusCode, useProbeFilters, STATUS_MAP } from '~/composables/useProbeFilters';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { pluralize } from '~/utils/pluralize';
 	import { sendErrorToast } from '~/utils/send-toast';
@@ -353,6 +348,8 @@
 	const loadLazyData = async () => {
 		loading.value = true;
 		selectedProbes.value = [];
+
+		console.log('fetching');
 
 		try {
 			const [ adoptedProbes, statusResults, creditsAdditions ] = await Promise.all([
@@ -414,26 +411,22 @@
 			credits.value = creditsByProbeId;
 			probes.value = adoptedProbes;
 
-			statusOptions.value.forEach((opt) => {
-				statusCounts.value[opt.code] = statusResults.reduce((sum, status) => opt.options.includes(status.status) && (status.isOutdated || !opt.outdatedOnly) ? sum + status.count : sum, 0);
+			STATUS_CODES.forEach((code) => {
+				statusCounts.value[code] = statusResults.reduce((sum, status) => STATUS_MAP[code].options.includes(status.status) && (status.isOutdated || !STATUS_MAP[code].outdatedOnly) ? sum + status.count : sum, 0);
 			});
 		} catch (e) {
 			sendErrorToast(e);
 		}
 
-		displayPagination.value = probes.value.length !== statusCounts.value[selectedStatus.value.code];
-		paginatedRecords.value = statusCounts.value[selectedStatus.value.code];
+		displayPagination.value = probes.value.length !== statusCounts.value[filter.value.status];
+		paginatedRecords.value = statusCounts.value[filter.value.status];
 		hasAnyProbes.value = hasAnyProbes.value || !!statusCounts.value['all'];
 		firstLoading.value = false;
 		loading.value = false;
 	};
 
 	const {
-		sortState,
-		appliedFilter,
-		selectedStatus,
-		inputFilter,
-		statusOptions,
+		filter,
 		anyFilterApplied,
 		onSortChange,
 		onFilterChange,
@@ -443,8 +436,10 @@
 		getCurrentFilter,
 	} = useProbeFilters();
 
-	const onFilterChangeDebounced = debounce(onFilterChange, 500);
-	const statusCounts = ref(Object.fromEntries(statusOptions.value.map(o => [ o.code, 0 ]) as [StatusCode, number][]));
+	const onFilterChangeDebounced = debounce(() => onFilterChange(searchInput.value), 500);
+	const STATUS_CODES = Object.keys(STATUS_MAP) as StatusCode[];
+	const statusCounts = ref(Object.fromEntries(STATUS_CODES.map(status => [ status, 0 ])));
+	const searchInput = ref(filter.value.search);
 
 	// PROBES LIST
 	onMounted(async () => {
@@ -471,11 +466,13 @@
 	watch([
 		() => route.params.id,
 		() => page.value,
-		() => appliedFilter.value,
-		() => sortState.value.by,
-		() => sortState.value.desc,
-		() => selectedStatus.value.code,
+		() => filter.value.search,
+		() => filter.value.status,
+		() => filter.value.by,
+		() => filter.value.desc,
 	], async ([ newId, newPage ], [ oldId, oldPage ]) => {
+		searchInput.value = filter.value.search;
+
 		if (!oldId && !newId) {
 			if (newPage === oldPage && oldPage !== 0) {
 				return; // page reset triggers this watch for a second time

@@ -3,36 +3,36 @@
 		<div class="flex flex-col gap-1">
 			<span class="flex items-center font-bold">Status:</span>
 			<Select
-				v-model="status"
-				:options="statusOptions"
+				v-model="draftFilter.status"
+				:options="STATUS_CODES"
 				:pt="{ listContainer: { class: '!max-h-64' } }"
 				option-label="code"
 				class="h-9 w-full"
 			>
-				<template #option="{option}: {option: StatusOption}">
+				<template #option="{option}: {option: StatusCode}">
 					<span class="flex h-full items-center gap-2">
 						<span
 							:class="{
-								'font-bold text-bluegray-900 dark:text-white': option.code === status.code,
-								'text-bluegray-400': option.code !== status.code
+								'font-bold text-bluegray-900 dark:text-white': option === draftFilter.status,
+								'text-bluegray-400': option !== draftFilter.status
 							}">
-							{{ option.name }}
+							{{ STATUS_MAP[option].name }}
 						</span>
 						<Tag
 							class="-my-0.5"
 							:class="{
-								'bg-primary text-white dark:bg-white dark:text-bluegray-900 ': option.code === status.code,
-								'border border-surface-300 bg-surface-0 text-bluegray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-surface-0': option.code !== status.code
+								'bg-primary text-white dark:bg-white dark:text-bluegray-900 ': option === draftFilter.status,
+								'border border-surface-300 bg-surface-0 text-bluegray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-surface-0': option !== draftFilter.status
 							}">
-							{{ statusCounts[option.code] }}
+							{{ statusCounts[option] }}
 						</Tag>
 					</span>
 				</template>
 
-				<template #value="{value}: {value: StatusOption}">
+				<template #value="{value}: {value: StatusCode}">
 					<span class="flex h-full items-center gap-2">
-						<span class="text-bluegray-400">{{ value.name }}</span>
-						<Tag class="-my-1 border ">{{ statusCounts[value.code] }}</Tag>
+						<span class="text-bluegray-400">{{ STATUS_MAP[value].name }}</span>
+						<Tag class="-my-1 border ">{{ statusCounts[value] }}</Tag>
 					</span>
 				</template>
 			</Select>
@@ -41,7 +41,7 @@
 			<span class="flex items-center font-bold">Filter:</span>
 			<IconField class="h-9 !w-full">
 				<InputIcon class="pi pi-search"/>
-				<InputText v-model="filter" class="m-0 size-full" placeholder="Filter by name, location, or tags"/>
+				<InputText v-model="draftFilter.search" class="m-0 size-full" placeholder="Filter by name, location, or tags"/>
 			</IconField>
 		</InputGroup>
 
@@ -49,8 +49,8 @@
 			<span class="flex items-center font-bold">Sort by:</span>
 			<div class="flex rounded-md border">
 				<Select
-					v-model="by"
-					:options="[...SORTABLE_FIELDS]"
+					v-model="draftFilter.by"
+					:options="SORTABLE_FIELDS"
 					:pt="{ listContainer: { class: '!max-h-64' } }"
 					option-label="sort-by"
 					class="flex h-9 w-full items-center rounded-none rounded-l-md border-r border-none"
@@ -60,8 +60,8 @@
 						<span class="flex h-full items-center gap-2 py-[3px]">
 							<span
 								:class="{
-									'font-bold text-bluegray-900 dark:text-white': option === by,
-									'text-bluegray-400': option!== by
+									'font-bold text-bluegray-900 dark:text-white': option === draftFilter.by,
+									'text-bluegray-400': option!== draftFilter.by
 								}">
 								{{ sortNameMap[option] }}
 							</span>
@@ -75,13 +75,12 @@
 					</template>
 				</Select>
 				<ToggleButton
-					v-model="desc"
+					v-model="draftFilter.desc"
 					on-icon="pi pi-sort-amount-down"
 					off-icon="pi pi-sort-amount-up-alt"
 					on-label=""
 					off-label=""
 					class="icon-only-toggle gap-none h-9 rounded-none rounded-r-md before:content-none"
-					unstyled
 				/>
 			</div>
 		</div>
@@ -95,21 +94,17 @@
 </template>
 
 <script setup lang="ts">
-	import { type StatusCode, type StatusOption, SORTABLE_FIELDS } from '~/composables/useProbeFilters';
+	import {
+		type StatusCode,
+		type Filter,
+		SORTABLE_FIELDS,
+		STATUS_MAP,
+	} from '~/composables/useProbeFilters';
 
-	const { defaultValues, statusOptions, statusCounts } = defineProps({
-		defaultValues: {
+	const { filter, statusCounts } = defineProps({
+		filter: {
 			required: true,
-			type: Object as PropType<{
-				filter: string;
-				by: string;
-				desc: boolean;
-				status: StatusOption;
-			}>,
-		},
-		statusOptions: {
-			required: true,
-			type: Array as PropType<StatusOption[]>,
+			type: Object as PropType<Filter>,
 		},
 		statusCounts: {
 			required: true,
@@ -117,10 +112,9 @@
 		},
 	});
 
-	const filter = ref(defaultValues.filter);
-	const by = ref(defaultValues.by);
-	const desc = ref(defaultValues.desc);
-	const status = ref(defaultValues.status);
+	const draftFilter = ref({ ...filter });
+
+	const STATUS_CODES = Object.keys(STATUS_MAP) as StatusCode[];
 
 	const sortNameMap: Record<string, string> = {
 		name: 'Name',
@@ -128,24 +122,12 @@
 		tags: 'Tag count',
 	};
 
-	type Payload = {
-		filter: string;
-		by: string;
-		desc: boolean;
-		status: StatusCode;
-	};
-
 	const emit = defineEmits<{
-		(e: 'apply', payload: Payload): void;
+		(e: 'apply', payload: Filter): void;
 	}>();
 
 	const onApply = () => {
-		emit('apply', {
-			filter: filter.value,
-			by: by.value,
-			desc: desc.value,
-			status: status.value.code,
-		});
+		emit('apply', draftFilter.value);
 	};
 
 </script>

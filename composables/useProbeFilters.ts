@@ -5,70 +5,68 @@ import { useUserFilter } from '~/composables/useUserFilter';
 import { ONLINE_STATUSES, OFFLINE_STATUSES } from '~/constants/probes';
 
 export type StatusCode = 'all' | 'online' | 'ping-test-failed' | 'offline' | 'online-outdated';
-export interface StatusOption {
+
+type StatusOption = {
 	name: string;
-	code: StatusCode;
 	options: Status[];
 	outdatedOnly?: boolean;
+};
+export interface Filter {
+	search: string;
+	status: StatusCode;
+	by: string;
+	desc: boolean;
 }
 
+const DEFAULT_FILTER: Filter = { search: '', status: 'all', by: 'name', desc: false } as const;
+
 export const SORTABLE_FIELDS: string[] = [ 'name', 'location', 'tags' ] as const;
+
+export const STATUS_MAP: Record<string, StatusOption> = {
+	'all': { name: 'All', options: [ ...ONLINE_STATUSES, ...OFFLINE_STATUSES ] },
+	'online': { name: 'Online', options: ONLINE_STATUSES },
+	'online-outdated': { name: 'Online - outdated', options: ONLINE_STATUSES, outdatedOnly: true },
+	'ping-test-failed': { name: 'Online - ping test failed', options: [ 'ping-test-failed' ] },
+	'offline': { name: 'Offline', options: OFFLINE_STATUSES },
+} as const;
+
 
 export const useProbeFilters = () => {
 	const route = useRoute();
 	const { getUserFilter } = useUserFilter();
 
-	const sortState = ref<{ by: string; desc: boolean }>({ by: 'name', desc: false });
-
-	const inputFilter = ref('');
-	const appliedFilter = ref('');
-
-	const statusOptions = ref<StatusOption[]>([
-		{ name: 'All', code: 'all', options: [ ...ONLINE_STATUSES, ...OFFLINE_STATUSES ] },
-		{ name: 'Online', code: 'online', options: ONLINE_STATUSES },
-		{ name: 'Online - outdated', code: 'online-outdated', options: ONLINE_STATUSES, outdatedOnly: true },
-		{ name: 'Online - ping test failed', code: 'ping-test-failed', options: [ 'ping-test-failed' ] },
-		{ name: 'Offline', code: 'offline', options: OFFLINE_STATUSES },
-	]);
-	const selectedStatus = ref(statusOptions.value[0]);
-
-	const anyFilterApplied = computed(() => sortState.value.by !== 'name' || sortState.value.desc || !!appliedFilter.value || selectedStatus.value.code !== 'all');
+	const filter = ref<Filter>({ ...DEFAULT_FILTER });
+	const anyFilterApplied = computed(() => (Object.keys(DEFAULT_FILTER) as Array<keyof Filter>).some(key => filter.value[key] !== DEFAULT_FILTER[key]));
 
 	const onSortChange = (event: DataTableSortEvent) => {
 		const { sortField = '', sortOrder = 1 } = event;
 
 		if (!sortOrder || typeof sortField !== 'string' || !SORTABLE_FIELDS.includes(sortField)) {
-			sortState.value = { by: 'name', desc: false };
+			filter.value.by = 'name';
+			filter.value.desc = false;
 		} else {
-			sortState.value = { by: sortField, desc: sortOrder === -1 };
+			filter.value.by = sortField;
+			filter.value.desc = sortOrder === -1;
 		}
 
 		onParamChange();
 	};
 
-	const onFilterChange = () => {
-		appliedFilter.value = inputFilter.value;
+	const onFilterChange = (val: string) => {
+		filter.value.search = val;
 		onParamChange();
 	};
 
-	const onBatchChange = (filter: string, by: string, desc: boolean, status: StatusCode) => {
-		appliedFilter.value = filter;
-		inputFilter.value = filter;
-		sortState.value = { by, desc };
-		const changedStatus = statusOptions.value.find(el => el.code === status);
-
-		if (changedStatus) {
-			selectedStatus.value = changedStatus;
-		}
-
+	const onBatchChange = (newValues: Filter) => {
+		filter.value = newValues;
 		onParamChange();
 	};
 
 	const constructQuery = () => ({
-		...appliedFilter.value && { filter: appliedFilter.value },
-		...sortState.value.by !== 'name' && { by: sortState.value.by },
-		...sortState.value.desc && { desc: 'true' },
-		...selectedStatus.value.code !== 'all' && { status: selectedStatus.value.code },
+		...filter.value.search && { filter: filter.value.search },
+		...filter.value.by !== 'name' && { by: filter.value.by },
+		...filter.value.desc && { desc: 'true' },
+		...filter.value.status !== 'all' && { status: filter.value.status },
 	});
 
 	const onParamChange = () => {
@@ -78,7 +76,7 @@ export const useProbeFilters = () => {
 	};
 
 	const getSortSettings = () => {
-		const { by, desc } = sortState.value;
+		const { by, desc } = filter.value;
 
 		switch (by) {
 			case 'name':
@@ -100,9 +98,9 @@ export const useProbeFilters = () => {
 
 	const getCurrentFilter = (includeStatus: boolean = false) => ({
 		...getUserFilter('userId'),
-		...appliedFilter.value && { searchIndex: { _icontains: appliedFilter.value } },
-		...includeStatus && selectedStatus.value.code !== 'all' && { status: { _in: selectedStatus.value.options } },
-		...includeStatus && selectedStatus.value.code === 'online-outdated' && { isOutdated: { _eq: true } },
+		...filter.value.search && { searchIndex: { _icontains: filter.value.search } },
+		...includeStatus && filter.value.status !== 'all' && { status: { _in: STATUS_MAP[filter.value.status].options } },
+		...includeStatus && filter.value.status === 'online-outdated' && { isOutdated: { _eq: true } },
 	});
 
 	watch([
@@ -110,37 +108,31 @@ export const useProbeFilters = () => {
 		() => route.query.by,
 		() => route.query.desc,
 		() => route.query.status,
-	], async ([ filter, by, desc, status ]) => {
-		if (typeof filter === 'string') {
-			inputFilter.value = filter;
-			appliedFilter.value = filter;
+	], async ([ search, by, desc, status ]) => {
+		if (typeof search === 'string') {
+			filter.value.search = search;
 		} else {
-			inputFilter.value = '';
-			appliedFilter.value = '';
+			filter.value.search = DEFAULT_FILTER.search;
 		}
 
 		if (typeof by === 'string' && SORTABLE_FIELDS.includes(by)) {
-			sortState.value = { by, desc: desc === 'true' };
+			filter.value.by = by;
+			filter.value.desc = desc === 'true';
 		} else {
-			sortState.value = { by: 'name', desc: desc === 'true' };
+			filter.value.by = DEFAULT_FILTER.by;
+			filter.value.desc = desc === 'true';
 		}
 
-		const statusFilter = statusOptions.value.find(opt => opt.code === status);
-
-		if (statusFilter) {
-			selectedStatus.value = statusFilter;
+		if (typeof status === 'string' && Object.keys(STATUS_MAP).includes(status)) {
+			filter.value.status = status as StatusCode;
 		} else {
-			selectedStatus.value = statusOptions.value[0];
+			filter.value.status = DEFAULT_FILTER.status;
 		}
 	}, { immediate: true });
 
 	return {
 		// state
-		sortState,
-		inputFilter,
-		appliedFilter,
-		statusOptions,
-		selectedStatus,
+		filter,
 		anyFilterApplied,
 		// handlers
 		onSortChange,

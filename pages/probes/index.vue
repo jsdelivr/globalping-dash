@@ -466,16 +466,11 @@
 	watch(
 		[ page, filter ],
 		async ([ newPage ], [ oldPage ]) => {
-			if (!active.value) {
-				return;
-			}
-
-			searchInput.value = filter.value.search;
-
-			if (newPage === oldPage && oldPage !== 0) {
+			if (!active.value || (newPage === oldPage && oldPage !== 0)) {
 				return; // filter change triggers a page reset that triggers this watch for a second time
 			}
 
+			searchInput.value = filter.value.search;
 			await loadLazyData();
 		},
 		{ deep: true },

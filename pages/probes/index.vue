@@ -75,7 +75,8 @@
 									<template #value="{value}">
 										<span class="flex h-full items-center gap-2">
 											<span class="text-bluegray-400">{{ STATUS_MAP[value].name }}</span>
-											<Tag class="-my-1 border ">{{ statusCounts[value] }}</Tag></span>
+											<Tag class="-my-1 border ">{{ statusCounts[value] }}</Tag>
+										</span>
 									</template>
 								</Select>
 								<InputGroup class="!w-auto">

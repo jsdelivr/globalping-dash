@@ -61,7 +61,7 @@
 							<span
 								:class="{
 									'font-bold text-bluegray-900 dark:text-white': option === draftFilter.by,
-									'text-bluegray-400': option!== draftFilter.by
+									'text-bluegray-400': option !== draftFilter.by
 								}">
 								{{ sortNameMap[option] }}
 							</span>

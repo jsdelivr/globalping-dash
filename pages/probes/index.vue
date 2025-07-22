@@ -177,7 +177,7 @@
 
 						<Popover
 							ref="mobileFiltersRef"
-							class="!left-1/2 w-[95%] !-translate-x-1/2 !transform p-6 sm:w-[540px] [&>*]:border-none"
+							class="!left-1/2 w-[95%] !-translate-x-1/2 !transform p-6 [&>*]:border-none"
 							role="dialog">
 							<FilterSettings
 								:status-counts="statusCounts as Record<StatusCode, number>"

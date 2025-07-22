@@ -99,33 +99,16 @@
 			header="Delete probe"
 			aria-label="Remove a probe dialog"
 		>
-			<div class="flex items-center">
-				<div>
-					<i class="pi pi-exclamation-triangle text-xl text-primary"/>
-				</div>
-				<div class="ml-3">
-					<p>You are about to delete probe <span class="font-bold">{{ probe.name || probe.city }}</span> ({{ probe.ip }}).</p>
-					<p>Are you sure you want to delete this probe? You will not be able to undo this action.</p>
-				</div>
-			</div>
-			<div class="mt-7 text-right">
-				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
-				<Button :loading="deleteProbeLoading" :aria-disabled="deleteProbeLoading" label="Delete probe" severity="danger" @click="deleteProbe"/>
-			</div>
+			<DeleteProbes :probes="[ probe ]" @cancel="deleteDialog = false" @success="onDeleteSuccess"/>
 		</GPConfirmDialog>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import { updateItem } from '@directus/sdk';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { initGoogleMap } from '~/utils/init-google-map';
-	import { sendErrorToast, sendToast } from '~/utils/send-toast';
-
 	const MAP_CENTER_Y_OFFSET_PX = 36;
 	const deleteDialog = ref(false);
-	const deleteProbeLoading = ref(false);
-	const { $directus } = useNuxtApp();
 
 	const probe = defineModel('probe', {
 		type: Object as PropType<Probe>,
@@ -138,22 +121,6 @@
 	});
 
 	const router = useRouter();
-
-	const deleteProbe = async () => {
-		deleteProbeLoading.value = true;
-
-		try {
-			if (probe.value) {
-				await $directus.request(updateItem('gp_probes', probe.value.id, { userId: null }));
-				sendToast('success', 'Done', 'The probe has been deleted');
-				router.push('/probes');
-			}
-		} catch (e) {
-			sendErrorToast(e);
-		}
-
-		deleteProbeLoading.value = false;
-	};
 
 	// HANDLE GOOGLE MAP UPDATING
 	let removeWatcher: (() => void) | undefined;
@@ -168,6 +135,11 @@
 			});
 		});
 	});
+
+	const onDeleteSuccess = async () => {
+		deleteDialog.value = false; // the operation looks cleaner when we close the dialog first
+		await router.push('/probes');
+	};
 
 	onUnmounted(() => {
 		if (removeWatcher) {

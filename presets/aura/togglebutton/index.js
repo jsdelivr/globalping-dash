@@ -56,11 +56,12 @@ export default {
 		],
 	}),
 	content: 'relative items-center inline-flex justify-center gap-2',
-	label: ({ }) => ({
+	label: ({ props }) => ({
 		class: [
 			'leading-[normal] text-center w-full z-10 relative',
 			'font-bold',
+			{ hidden: (!props.modelValue && !props.offLabel) || (props.modelValue && !props.onLabel) },
 		],
 	}),
-	icon: 'relative z-10 mr-2',
+	icon: 'relative z-10',
 };

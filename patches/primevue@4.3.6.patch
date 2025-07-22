@@ -1,0 +1,28 @@
+diff --git a/tooltip/index.mjs b/tooltip/index.mjs
+index 24447138fea2bdd7b58b1e9bac6786e016740605..9fe9e71059dd2674f507fd8ca8931ff01f00807d 100644
+--- a/tooltip/index.mjs
++++ b/tooltip/index.mjs
+@@ -182,12 +182,12 @@ var Tooltip = BaseTooltip.extend('tooltip', {
+     onBlur: function onBlur(event) {
+       var el = event.currentTarget;
+       var hideDelay = el.$_ptooltipHideDelay;
+-      this.hide(el, hideDelay);
++      this.getTooltipElement(el) && this.hide(el, hideDelay);
+     },
+     onClick: function onClick(event) {
+       var el = event.currentTarget;
+       var hideDelay = el.$_ptooltipHideDelay;
+-      this.hide(el, hideDelay);
++      this.getTooltipElement(el) && this.hide(el, hideDelay);
+     },
+     onKeydown: function onKeydown(event) {
+       var el = event.currentTarget;
+@@ -376,7 +376,7 @@ var Tooltip = BaseTooltip.extend('tooltip', {
+       var tooltipElement = this.getTooltipElement(el);
+       var arrowElement = this.getArrowElement(el);
+       var hostOffset = this.getHostOffset(el);
+-      var left = hostOffset.left - getOuterWidth(tooltipElement);
++      var left = Math.max(hostOffset.left + (getOuterWidth(el) - getOuterWidth(tooltipElement)) / 2, 0);
+       var top = hostOffset.top + (getOuterHeight(el) - getOuterHeight(tooltipElement)) / 2;
+       tooltipElement.style.left = left + 'px';
+       tooltipElement.style.top = top + 'px';

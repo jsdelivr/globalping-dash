@@ -118,6 +118,7 @@
 		<GPDialog
 			v-model:visible="updateProbeDialog"
 			header="Update a probe"
+			size="large"
 		>
 			<UpdateProbe/>
 		</GPDialog>

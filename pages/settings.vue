@@ -163,24 +163,24 @@
 		<div class="mt-6 text-right">
 			<Button label="Apply settings" :loading="saveLoading" :disabled="!!auth.impersonation" @click="save"/>
 		</div>
-		<GPConfirmDialog
+		<GPDialog
 			v-model:visible="deleteDialog"
 			header="Delete account"
 		>
-			<div class="flex items-center">
+			<div class="flex items-center gap-4">
 				<div>
-					<i class="pi pi-exclamation-triangle text-xl text-primary"/>
+					<i class="pi pi-exclamation-triangle text-xl text-red-500 dark:text-red-400"/>
 				</div>
-				<div class="ml-3">
+				<div>
 					<p>You are about to delete your Globalping account.</p>
 					<p>Are you sure? All your data will be lost.</p>
 				</div>
 			</div>
-			<div class="mt-7 text-right">
+			<div class="mt-6 text-right">
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
 				<Button label="Delete account" severity="danger" @click="deleteAccount"/>
 			</div>
-		</GPConfirmDialog>
+		</GPDialog>
 	</div>
 </template>
 

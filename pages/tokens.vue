@@ -143,7 +143,7 @@
 				</div>
 			</div>
 		</div>
-		<GPConfirmDialog
+		<GPDialog
 			v-model:visible="tokenDetailsDialog"
 			:header="tokenDetails ? 'Edit token' : 'Generate new token'"
 			content-class="!p-0"
@@ -155,61 +155,61 @@
 				@save="handleSave"
 				@regenerate="handleRegenerate"
 			/>
-		</GPConfirmDialog>
-		<GPConfirmDialog
+		</GPDialog>
+		<GPDialog
 			v-model:visible="deleteDialog"
 			header="Delete token"
 		>
-			<div class="flex items-center">
+			<div class="flex items-center gap-4">
 				<div>
-					<i class="pi pi-exclamation-triangle text-xl text-primary"/>
+					<i class="pi pi-exclamation-triangle text-xl text-red-500 dark:text-red-400"/>
 				</div>
-				<div class="ml-3">
+				<div>
 					<p>You are about to delete token <span class="font-bold">{{ tokenToDelete!.name }}</span>.</p>
 					<p>Are you sure you want to delete this token? You will not be able to undo this action.</p>
 				</div>
 			</div>
-			<div class="mt-7 text-right">
+			<div class="mt-6 text-right">
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="deleteDialog = false"/>
 				<Button label="Delete token" severity="danger" @click="deleteToken"/>
 			</div>
-		</GPConfirmDialog>
-		<GPConfirmDialog
+		</GPDialog>
+		<GPDialog
 			v-model:visible="regenerateDialog"
 			header="Regenerate token"
 		>
-			<div class="flex items-center">
+			<div class="flex items-center gap-4">
 				<div>
 					<i class="pi pi-exclamation-triangle text-xl text-primary"/>
 				</div>
-				<div class="ml-3">
+				<div>
 					<p>You are about to regenerate token <span class="font-bold">{{ tokenToRegenerate!.name }}</span>.</p>
 					<p>Are you sure you want to regenerate this token? The previous value will stop working immediately.</p>
 				</div>
 			</div>
-			<div class="mt-7 text-right">
+			<div class="mt-6 text-right">
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="regenerateDialog = false"/>
 				<Button label="Regenerate" @click="regenerateToken"/>
 			</div>
-		</GPConfirmDialog>
-		<GPConfirmDialog
+		</GPDialog>
+		<GPDialog
 			v-model:visible="revokeDialog"
 			header="Revoke access"
 		>
-			<div class="flex items-center">
+			<div class="flex items-center gap-4">
 				<div>
-					<i class="pi pi-exclamation-triangle text-xl text-primary"/>
+					<i class="pi pi-exclamation-triangle text-xl text-red-500 dark:text-red-400"/>
 				</div>
-				<div class="ml-3">
+				<div>
 					<p>You are about to revoke access for the app <span class="font-bold">{{ appToRevoke!.name }}</span>.</p>
 					<p>Are you sure you want to proceed? You will not be able to undo this action.</p>
 				</div>
 			</div>
-			<div class="mt-7 text-right">
+			<div class="mt-6 text-right">
 				<Button class="mr-2" label="Cancel" severity="secondary" text @click="revokeDialog = false"/>
 				<Button label="Revoke access" severity="danger" @click="revokeApp"/>
 			</div>
-		</GPConfirmDialog>
+		</GPDialog>
 	</div>
 </template>
 

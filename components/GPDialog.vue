@@ -2,7 +2,11 @@
 	<Dialog
 		v-model:visible="visible"
 		position="top"
-		class="min-w-[700px] max-md:min-w-[95%]"
+		:class="{
+			'w-auto max-w-[min(800px,95vw)]': props.size === 'auto',
+			'min-w-[700px] max-md:min-w-[95%]': props.size === 'large',
+			[ props.size ]: ![ 'auto', 'large' ].includes(props.size),
+		}"
 		modal
 		dismissable-mask
 		:draggable="false"
@@ -26,6 +30,11 @@
 	});
 
 	const props = defineProps({
+		size: {
+			type: String as PropType<'auto' | 'large' | string>,
+			default: 'auto',
+		},
+
 		/** If set, automatically show the dialog when the URL contains ?view=${viewName} parameter */
 		viewName: {
 			type: String as PropType<string | undefined>,

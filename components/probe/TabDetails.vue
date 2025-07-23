@@ -92,7 +92,7 @@
 			/>
 		</div>
 
-		<GPConfirmDialog
+		<GPDialog
 			v-if="probe"
 			id="removeProbeDialog"
 			v-model:visible="deleteDialog"
@@ -100,7 +100,7 @@
 			aria-label="Remove a probe dialog"
 		>
 			<DeleteProbes :probes="[ probe ]" @cancel="deleteDialog = false" @success="onDeleteSuccess"/>
-		</GPConfirmDialog>
+		</GPDialog>
 	</div>
 </template>
 

@@ -276,6 +276,7 @@
 			v-model:visible="startProbeDialog"
 			view-name="start-a-probe"
 			header="Start a probe"
+			size="large"
 		>
 			<StartProbe/>
 		</GPDialog>
@@ -283,18 +284,20 @@
 			v-model:visible="adoptProbeDialog"
 			header="Adopt a probe"
 			content-class="!p-0"
+			size="large"
 		>
 			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="loadLazyData"/>
 		</GPDialog>
-		<GPConfirmDialog
+		<GPDialog
 			v-model:visible="deleteProbesDialog"
 			:header="`Delete ${pluralize('probe', selectedProbes.length)}`"
 		>
 			<DeleteProbes :probes="selectedProbes" @cancel="deleteProbesDialog = false" @success="onDeleteSuccess"/>
-		</GPConfirmDialog>
+		</GPDialog>
 		<GPDialog
 			view-name="update-a-probe"
 			header="Update a probe"
+			size="large"
 		>
 			<UpdateProbe/>
 		</GPDialog>

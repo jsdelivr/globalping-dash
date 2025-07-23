@@ -148,6 +148,7 @@
 			v-model:visible="adoptProbeDialog"
 			header="Adopt a probe"
 			content-class="!p-0"
+			size="large"
 		>
 			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="refreshNuxtData"/>
 		</GPDialog>
@@ -157,7 +158,7 @@
 			view-name="add-credits"
 			header="Add credits"
 			content-class="!p-0"
-			class="w-[700px]"
+			size="w-[700px]"
 		>
 			<AddCredits
 				@cancel="creditsDialog = false"

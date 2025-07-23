@@ -1,21 +1,21 @@
 <template>
-	<GPConfirmDialog
+	<GPDialog
 		v-model:visible="showNavigationConfirm"
 		header="Unsaved changes"
 	>
-		<div class="flex items-center">
+		<div class="flex items-center gap-4">
 			<div>
 				<i class="pi pi-exclamation-triangle text-xl text-primary"/>
 			</div>
-			<div class="ml-3">
+			<div>
 				<p>You have unsaved changes. Are you sure you want to leave?</p>
 			</div>
 		</div>
-		<div class="mt-7 text-right">
+		<div class="mt-6 text-right">
 			<Button class="mr-2" label="Cancel" severity="secondary" text @click="handleNavigationReject"/>
 			<Button label="Leave" @click="handleNavigationAccept"/>
 		</div>
-	</GPConfirmDialog>
+	</GPDialog>
 </template>
 
 <script setup lang="ts">

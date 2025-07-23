@@ -1,9 +1,9 @@
 <template>
 	<div class="flex items-center gap-4">
 		<div>
-			<i class="pi pi-exclamation-triangle text-xl text-primary"/>
+			<i class="pi pi-exclamation-triangle text-xl text-red-500 dark:text-red-400"/>
 		</div>
-		<div class="ml-3">
+		<div>
 			<div v-if="probes.length > 1" class="flex flex-col">
 				<p>You are about to delete the following probes:</p>
 				<ul class="mb-4 ml-8 list-disc">
@@ -20,7 +20,7 @@
 		</div>
 	</div>
 
-	<div class="mt-7 text-right">
+	<div class="mt-6 text-right">
 		<Button class="mr-2" label="Cancel" severity="secondary" text @click="emit('cancel')"/>
 		<Button :loading="deleteLoading" :aria-disabled="deleteLoading" :label="`Delete ${pluralize('probe', probes.length)}`" severity="danger" @click="deleteProbes"/>
 	</div>

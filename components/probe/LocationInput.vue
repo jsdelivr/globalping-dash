@@ -85,10 +85,19 @@
 		v-model:visible="invalidCountryDialog"
 		header="Incorrect probe country"
 	>
-		<p class="pb-3">
-			The listed countries are based on data reported by our GeoIP providers.
-			If the correct country is not in the list, please report it <NuxtLink to="https://geodebug.globalping.dev/" class="underline" target="_blank">here</NuxtLink>.
-		</p>
+		<div class="flex items-center gap-4">
+			<div>
+				<i class="pi pi-info-circle text-xl text-primary"/>
+			</div>
+			<div>
+				<p>
+					The listed countries are based on data reported by our GeoIP providers.
+				</p>
+				<p>
+					If the correct country is not in the list, please <NuxtLink :to="`https://geodebug.globalping.dev/${probe.ip}`" class="underline" target="_blank">report it here</NuxtLink>.
+				</p>
+			</div>
+		</div>
 	</GPDialog>
 </template>
 

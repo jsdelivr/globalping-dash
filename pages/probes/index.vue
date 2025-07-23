@@ -5,14 +5,14 @@
 
 			<Button
 				v-if="selectedProbes.length"
-				class="ml-auto"
+				class="ml-auto max-md:hidden"
 				label="Delete selected"
 				severity="danger"
 				icon="pi pi-trash"
 				outlined
 				@click="deleteProbesDialog = true"
 			/>
-			<span v-else class="ml-auto"/>
+			<span class="ml-auto max-md:inline-block" :class="{ 'hidden': selectedProbes.length }"/>
 
 			<Button class="ml-2" @click="adoptProbeDialog = true">
 				<nuxt-icon class="pi" name="capture"/>

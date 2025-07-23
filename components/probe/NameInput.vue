@@ -161,13 +161,20 @@
 		}
 
 		try {
-			await $directus.request(updateItem('gp_probes', probe.value.id, { name: trimmed }));
+			const updProbeDetails = await $directus.request(updateItem('gp_probes', probe.value.id, { name: trimmed }));
 
 			sendToast('success', 'Done', 'The probe has been successfully updated');
 
-			originalName.value = trimmed;
-			isEditingName.value = false;
+			// First, update the probe with the set values. This is necessary because the server may adjust the value,
+			// and it may end up being equal to our original state, in which case our watchers wouldn't fire.
 			probe.value = { ...probe.value, name: trimmed };
+
+			// Then set the updated version from the server.
+			setTimeout(() => {
+				probe.value = updProbeDetails;
+			});
+
+			isEditingName.value = false;
 		} catch (e) {
 			sendErrorToast(e);
 

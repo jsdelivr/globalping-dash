@@ -51,7 +51,11 @@
 
 	// ADMIN
 	watch([ adminMode ], () => {
-		impersonation.value = null;
+		if (adminMode.value) {
+			impersonateUsername.value = '';
+			impersonation.value = null;
+		}
+
 		auth.storeAdminConfig();
 		window.location.reload();
 	});

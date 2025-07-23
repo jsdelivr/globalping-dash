@@ -1,77 +1,52 @@
 <template>
 	<div
 		v-if="probe"
-		class="absolute inset-x-4 bottom-9 flex"
-		:class="{
-			'flex-col gap-1 sm:flex-row sm:gap-0': probe.allowedCountries.length > 1,
-		}"
+		ref="containerRef"
+		class="absolute inset-x-4 bottom-9 flex flex-col gap-1 sm:flex-row sm:gap-0"
+		@focusout="cancelEditing"
 	>
-		<span
-			class="flex h-[34px] shrink-0 items-center justify-center border border-[#D1D5DB] bg-[#E5E7EB] dark:border-dark-600 dark:bg-dark-800"
+		<div
+			class="flex h-[34px] w-full shrink-0 items-center justify-center rounded-md border border-[#D1D5DB] bg-[#E5E7EB] sm:h-auto sm:w-24 sm:rounded-r-none sm:border-r-0 dark:border-dark-600 dark:bg-dark-800"
 			aria-hidden="true"
-			:class="{
-				'w-[38px] rounded-l-md border-r-0': probe.allowedCountries.length <= 1,
-				'w-full rounded-md sm:h-auto sm:w-24 sm:rounded-r-none sm:border-r-0': probe.allowedCountries.length > 1,
-			}"
 		>
-			<InputGroupAddon
-				v-if="probe.allowedCountries.length <= 1"
-				class="border-none !bg-transparent"
-			>
-				<CountryFlag :country="probe.country" size="small"/>
-			</InputGroupAddon>
-
 			<Select
-				v-if="probe.allowedCountries.length > 1"
 				id="country"
-				v-model="editedCountry"
-				:options="probe.allowedCountries"
-				class="size-full border-0 border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-primary dark:border-dark-600 dark:!bg-dark-800"
-				:class="{
-					'rounded-md sm:!rounded-r-none sm:!border-r': probe.allowedCountries.length > 1,
-				}"
-				:pt="{ dropdown: 'w-8' }"
+				v-model="selectedCountry"
+				:options="[ ...probe.allowedCountries, OTHER_COUNTRY_OPTION ]"
+				class="size-full rounded-md border-0 border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-primary sm:!rounded-r-none sm:!border-r dark:border-dark-600 dark:!bg-dark-800"
+				:pt="{ dropdown: 'w-8', root: { tabindex: '-1' } }"
 				:pt-options="{ mergeProps: true }"
 				@change="onCountryChanged"
 				@keydown="handleSelectEnterKey"
 			>
 				<template #value="slotProps">
-					<div class="flex items-center">
+					<span class="flex items-center">
 						<CountryFlag :country="slotProps.value" size="small"/>
-						<div class="ml-2">{{ slotProps.value }}</div>
-					</div>
+						<span class="ml-2">{{ slotProps.value }}</span>
+					</span>
 				</template>
 
 				<template #option="slotProps">
-					<div class="flex items-center">
-						<CountryFlag :country="slotProps.option" size="small"/>
-						<div class="ml-2">{{ slotProps.option }}</div>
-					</div>
+					<span class="flex items-center">
+						<CountryFlag v-if="slotProps.option !== OTHER_COUNTRY_OPTION" :country="slotProps.option" size="small"/>
+						<i v-else class="pi pi-map-marker mx-0.5"/>
+						<span class="ml-2">{{ slotProps.option }}</span>
+					</span>
 				</template>
 			</Select>
-		</span>
+		</div>
 
 		<div
-			ref="probeCityInput"
-			class="relative flex h-[34px] grow border border-[#D1D5DB] bg-white focus:z-10 focus:ring-1 focus:ring-primary dark:border-dark-600 dark:bg-dark-800"
-			:class="{
-				'rounded-r-md border-l-0': probe.allowedCountries.length <= 1,
-				'rounded-md sm:h-auto sm:rounded-l-none sm:border-l-0': probe.allowedCountries.length > 1,
-			}"
+			class="relative flex h-[34px] grow rounded-md border border-[#D1D5DB] bg-white focus:z-10 focus:ring-1 focus:ring-primary sm:h-auto sm:rounded-l-none sm:border-l-0 dark:border-dark-600 dark:bg-dark-800"
 		>
 			<input
 				ref="inputCityRef"
 				v-model="editedCity"
-				class="flex w-full pl-3 pr-[72px] text-bluegray-900 outline-none focus:ring-1 focus:ring-primary dark:bg-dark-800 dark:text-bluegray-0"
-				:class="{
-					'rounded-r-md': probe.allowedCountries.length <= 1,
-					'h-full rounded-md sm:h-auto sm:rounded-l-none': probe.allowedCountries.length > 1,
-					'cursor-pointer': !isEditingCity,
-				}"
+				class="flex size-full rounded-md pl-3 pr-[72px] text-bluegray-900 outline-none focus:ring-1 focus:ring-primary sm:h-auto sm:rounded-l-none dark:bg-dark-800 dark:text-bluegray-0"
+				:class="{ 'cursor-pointer': !isEditingCity }"
 				aria-label="City name"
 				autocomplete="off"
 				@focus="enableCityEditing(false)"
-				@blur="cancelCityEditingOnBlur"
 				@keyup.enter="updateProbeLocation"
 				@keyup.esc="cancelCityEditing()"
 			>
@@ -87,7 +62,6 @@
 				:disabled="probeDetailsUpdating"
 				aria-label="Save"
 				@click.stop="updateProbeLocation"
-				@blur="cancelCityEditingOnBlur"
 			/>
 
 			<i v-if="!isEditingCity" class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" aria-hidden="true" @click="enableCityEditing(false)"/>
@@ -103,14 +77,24 @@
 				aria-label="Cancel"
 				@keyup.enter="cancelCityEditing()"
 				@click.stop="cancelCityEditing()"
-				@blur="cancelCityEditingOnBlur"
 			/>
 		</div>
 	</div>
+
+	<GPDialog
+		v-model:visible="invalidCountryDialog"
+		header="Incorrect probe country"
+	>
+		<p class="pb-3">
+			The listed countries are based on data reported by our GeoIP providers.
+			If the correct country is not in the list, please report it <NuxtLink to="https://geodebug.globalping.dev/" class="underline" target="_blank">here</NuxtLink>.
+		</p>
+	</GPDialog>
 </template>
 
 <script setup lang="ts">
 	import { updateItem } from '@directus/sdk';
+	import type { SelectChangeEvent } from 'primevue/select';
 	import CountryFlag from 'vue-country-flag-next';
 	import { updateMapMarker } from '~/utils/init-google-map';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
@@ -132,15 +116,18 @@
 		required: true,
 	});
 
-	const probeCityInput = ref<HTMLElement | null>(null);
+	const containerRef = ref<HTMLElement | null>(null);
 	const isEditingCity = ref(false);
 	const editedCity = ref('');
 	const initialCity = ref('');
-	const editedCountry = ref('');
+	const selectedCountry = ref('');
+	const editedCountry = ref(''); // editedCountry is set to selectedCountry unless the user picks the "Other" country option
 	const originalCountry = ref('');
+	const invalidCountryDialog = ref(false);
 	const inputCityRef = ref<HTMLInputElement | null>(null);
 	const ignoreSelectEnter = ref(false);
 	const selectEnterPressed = ref(false);
+	const OTHER_COUNTRY_OPTION = 'Other';
 
 	watch(() => probe.value.city, (newCity) => {
 		initialCity.value = newCity;
@@ -152,9 +139,19 @@
 		editedCountry.value = newCountry;
 	}, { immediate: true });
 
-	const onCountryChanged = async () => {
+	watch(editedCountry, newCountry => selectedCountry.value = newCountry, { immediate: true });
+
+	const onCountryChanged = async (event: SelectChangeEvent) => {
 		// wait for Vue to update
 		await nextTick();
+
+		if (event.value === OTHER_COUNTRY_OPTION) {
+			invalidCountryDialog.value = true;
+			selectedCountry.value = editedCountry.value;
+		} else {
+			isEditingCity.value = false;
+			editedCountry.value = selectedCountry.value;
+		}
 
 		// then delay again to let Select finish its focus handling
 		setTimeout(() => {
@@ -194,12 +191,11 @@
 		inputCityRef.value?.blur();
 	};
 
-	const cancelCityEditingOnBlur = (event: FocusEvent) => {
+	const cancelEditing = (event: FocusEvent) => {
 		const target = event.relatedTarget as HTMLElement | null;
-		const parentEl = probeCityInput.value;
 
-		// do not blur city Input block if it comes from its children
-		if (probeDetailsUpdating.value || (parentEl && target instanceof Node && parentEl.contains(target))) {
+		// do not cancel editing if the invalid country dialog is open, updating, or focus doesn't move out of the LocationInput component
+		if (invalidCountryDialog.value || probeDetailsUpdating.value || containerRef.value?.contains(target)) {
 			return;
 		}
 

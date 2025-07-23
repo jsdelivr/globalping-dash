@@ -102,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-	import { updateItem } from '@directus/sdk';
+	import { readItem, updateItem } from '@directus/sdk';
 	import type { SelectChangeEvent } from 'primevue/select';
 	import CountryFlag from 'vue-country-flag-next';
 	import { updateMapMarker } from '~/utils/init-google-map';
@@ -268,7 +268,8 @@
 		}
 
 		try {
-			const updProbeDetails = await $directus.request(updateItem('gp_probes', probe.value.id, updProbePart));
+			$directus.request(updateItem('gp_probes', probe.value.id, updProbePart));
+			const updProbeDetails = await $directus.request(readItem('gp_probes', probe.value.id));
 
 			sendToast('success', 'Done', 'The probe has been successfully updated');
 			cancelCityEditing(false);

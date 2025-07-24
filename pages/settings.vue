@@ -133,7 +133,7 @@
 			<div class="grow sm:w-3/5">
 				<p class="font-bold">Theme</p>
 				<SelectButton
-					v-model="appearance"
+					v-model="selectedTheme"
 					class="mt-2"
 					:options="themeOptions"
 					:allow-empty="false"
@@ -141,7 +141,7 @@
 					option-label="name"
 					option-value="value"
 					:disabled="!!auth.impersonation"
-					@update:model-value="auth.setAppearance"
+					@update:model-value="() => auth.setAppearance(appearance)"
 				>
 					<template #option="slotProps">
 						<i :class="slotProps.option.icon"/>
@@ -199,7 +199,8 @@
 	const { user } = storeToRefs(auth);
 	const firstName = ref(user.value.first_name);
 	const lastName = ref(user.value.last_name);
-	const appearance = ref(user.value.appearance);
+	const selectedTheme = ref<'auto' | 'dark' | 'light'>(user.value.appearance ?? 'auto');
+	const appearance = computed(() => selectedTheme.value === 'auto' ? null : selectedTheme.value);
 	const email = ref(user.value.email);
 	const publicProbes = ref(user.value.public_probes);
 	const defaultPrefix = ref(user.value.default_prefix);
@@ -224,7 +225,7 @@
 	});
 
 	const themeOptions = [
-		{ name: 'Auto', value: null, icon: 'pi pi-cog' },
+		{ name: 'Auto', value: 'auto', icon: 'pi pi-cog' },
 		{ name: 'Light', value: 'light', icon: 'pi pi-sun' },
 		{ name: 'Dark', value: 'dark', icon: 'pi pi-moon' },
 	];

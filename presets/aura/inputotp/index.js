@@ -4,7 +4,7 @@ export default {
 			// Alignment
 			'flex items-center',
 			'gap-2',
-			'[&_[data-pc-name=pcinput]]:w-10 [&_[data-pc-name=pcinput]]:text-center [&_[data-pc-name=pcinput]]:text-lg [&_[data-pc-name=pcinput]]:leading-none [&_[data-pc-name=pcinput]]:font-bold',
+			'[&_[data-pc-name=pcinputtext]]:w-10 [&_[data-pc-name=pcinputtext]]:text-center [&_[data-pc-name=pcinputtext]]:text-lg [&_[data-pc-name=pcinputtext]]:leading-none [&_[data-pc-name=pcinputtext]]:font-bold',
 		],
 	},
 };

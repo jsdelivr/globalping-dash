@@ -8,15 +8,15 @@ const DEFAULT_MARKER_COLOR = '#17d4a7';
 const mapIdsByTheme = {
 	light: {
 		background: '#ffffff',
-		initial: '2fe04b665e0bc584c107471d',
-		moderate: '2fe04b665e0bc584fe1d7b01',
-		detailed: '2fe04b665e0bc584b187aa10',
+		initial: 'ce04bbf9d49b6f34',
+		moderate: 'ce04bbf9d49b6f34',
+		detailed: 'ce04bbf9d49b6f34',
 	},
 	dark: {
 		background: '#131728',
-		initial: '2fe04b665e0bc584fe36f7df',
-		moderate: '2fe04b665e0bc58474e8c6a4',
-		detailed: '2fe04b665e0bc58463788c9d',
+		initial: 'ce04bbf9d49b6f34',
+		moderate: 'ce04bbf9d49b6f34',
+		detailed: 'ce04bbf9d49b6f34',
 	},
 };
 

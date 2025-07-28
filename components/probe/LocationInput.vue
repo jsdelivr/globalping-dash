@@ -39,18 +39,13 @@
 		<div
 			class="relative flex h-[34px] grow rounded-md border border-[#D1D5DB] bg-white focus:z-10 focus:ring-1 focus:ring-primary sm:h-auto sm:rounded-l-none sm:border-l-0 dark:border-dark-600 dark:bg-dark-800"
 		>
-			<input
-				ref="inputCityRef"
+			<CityAutoComplete
 				v-model="editedCity"
-				class="flex size-full rounded-md pl-3 pr-[72px] text-bluegray-900 outline-none focus:ring-1 focus:ring-primary sm:h-auto sm:rounded-l-none dark:bg-dark-800 dark:text-bluegray-0"
-				:class="{ 'cursor-pointer': !isEditingCity }"
-				aria-label="City name"
-				autocomplete="off"
-				@focus="enableCityEditing(false)"
-				@keyup.enter="updateProbeLocation"
-				@keyup.esc="cancelCityEditing()"
-			>
-
+				:input-ref="inputCityRef"
+				:is-editing-city="isEditingCity"
+				@cancel="cancelCityEditing()"
+				@confirm="updateProbeLocation"
+			/>
 			<Button
 				v-if="isEditingCity && ((editedCity !== initialCity) || (originalCountry !== editedCountry))"
 				v-tooltip.top="'Save'"
@@ -268,7 +263,7 @@
 		}
 
 		try {
-			$directus.request(updateItem('gp_probes', probe.value.id, updProbePart));
+			await $directus.request(updateItem('gp_probes', probe.value.id, updProbePart));
 			const updProbeDetails = await $directus.request(readItem('gp_probes', probe.value.id));
 
 			sendToast('success', 'Done', 'The probe has been successfully updated');

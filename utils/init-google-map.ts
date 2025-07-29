@@ -5,7 +5,37 @@ const MAP_MAX_ZOOM = 22;
 const MAP_ZOOM_REG = 3.74;
 const DEFAULT_MARKER_COLOR = '#17d4a7';
 
-let map: google.maps.Map, marker: google.maps.marker.AdvancedMarkerElement;
+let map: google.maps.Map, marker: google.maps.marker.AdvancedMarkerElement, infoWindow: google.maps.InfoWindow | null;
+
+const createMap = async (element: HTMLElement, center: google.maps.LatLngLiteral, zoom: number) => {
+	const { Map } = await google.maps.importLibrary('maps') as google.maps.MapsLibrary;
+
+	const appearance = useAppearance();
+
+	return new Map(element, {
+		zoom,
+		center,
+		mapTypeId: 'roadmap',
+		draggableCursor: 'default',
+		mapTypeControl: false,
+		streetViewControl: false,
+		fullscreenControl: false,
+		disableDefaultUI: true,
+		minZoom: MAP_MIN_ZOOM,
+		maxZoom: MAP_MAX_ZOOM,
+		gestureHandling: 'cooperative',
+		colorScheme: appearance.theme === 'light' ? google.maps.ColorScheme.LIGHT : google.maps.ColorScheme.DARK,
+		mapId: 'ce04bbf9d49b6f34',
+	});
+};
+
+const addMapListeners = (map: google.maps.Map, markerHasIW: boolean) => {
+	map.addListener('zoom_changed', () => {
+		if (markerHasIW && infoWindow) {
+			infoWindow.close();
+		}
+	});
+};
 
 export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, markerHasIW: boolean = true, mapCenterYOffsetPx: number | null = null) => {
 	if (!probe) {
@@ -24,43 +54,35 @@ export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, ma
 	const mapCenterLat = mapCenterYOffsetPx ? probe.latitude - mapCenterYOffsetPx / Math.pow(2, MAP_ZOOM_REG) : probe.latitude;
 	const mapCenterLng = probe.longitude;
 
-	const { Map } = await google.maps.importLibrary('maps') as google.maps.MapsLibrary;
+	map = await createMap(element, { lat: mapCenterLat, lng: mapCenterLng }, MAP_ZOOM_REG);
 
-	map = new Map(element, {
-		zoom: MAP_ZOOM_REG,
-		center: { lat: mapCenterLat, lng: mapCenterLng },
-		mapTypeId: 'roadmap',
-		draggableCursor: 'default',
-		mapTypeControl: false,
-		streetViewControl: false,
-		fullscreenControl: false,
-		disableDefaultUI: true,
-		minZoom: MAP_MIN_ZOOM,
-		maxZoom: MAP_MAX_ZOOM,
-		gestureHandling: 'cooperative',
-		colorScheme: mapColorScheme(appearance.theme),
-		mapId: 'ce04bbf9d49b6f34',
-	});
+	const { infoWindow: markerInfoWindow } = await createMapMarkerWithIW(probe, showPulse, markerHasIW);
+	infoWindow = markerInfoWindow;
 
-	const { infoWindow } = await createMapMarkerWithIW(probe, showPulse, markerHasIW);
+	addMapListeners(map, markerHasIW);
 
-	map.addListener('zoom_changed', () => {
-		if (markerHasIW && infoWindow) {
-			infoWindow.close();
-		}
-	});
-
-	const removeWatcher = appearance.$subscribe(() => {
-		map.setOptions({
-			colorScheme: mapColorScheme(appearance.theme),
-		});
-	});
+	const removeWatcher = appearance.$subscribe(() => updateMap(map, markerHasIW));
 
 	return removeWatcher;
 };
 
-const mapColorScheme = (theme: 'light' | 'dark') => {
-	return theme === 'light' ? google.maps.ColorScheme.LIGHT : google.maps.ColorScheme.DARK;
+const updateMap = async (mapInstance: google.maps.Map, markerHasIW: boolean) => {
+	const element = document.getElementById('gp-map');
+
+	if (!element) {
+		return;
+	}
+
+	const center = mapInstance.getCenter()?.toJSON();
+	const zoom = mapInstance.getZoom();
+
+	map = await createMap(element, center!, zoom!);
+
+	if (marker) {
+		marker.map = map;
+	}
+
+	addMapListeners(map, markerHasIW);
 };
 
 async function createMapMarkerWithIW (probe: Probe, showPulse: boolean = false, markerHasIW: boolean = true) {

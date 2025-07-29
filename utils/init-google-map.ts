@@ -54,29 +54,31 @@ export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, ma
 	const mapCenterLat = mapCenterYOffsetPx ? probe.latitude - mapCenterYOffsetPx / Math.pow(2, MAP_ZOOM_REG) : probe.latitude;
 	const mapCenterLng = probe.longitude;
 
-	map = await createMap(element, { lat: mapCenterLat, lng: mapCenterLng }, MAP_ZOOM_REG);
+	const defaultCenter = { lat: mapCenterLat, lng: mapCenterLng };
+
+	map = await createMap(element, defaultCenter, MAP_ZOOM_REG);
 
 	const { infoWindow: markerInfoWindow } = await createMapMarkerWithIW(probe, showPulse, markerHasIW);
 	infoWindow = markerInfoWindow;
 
 	addMapListeners(map, markerHasIW);
 
-	const removeWatcher = appearance.$subscribe(() => updateMap(map, markerHasIW));
+	const removeWatcher = appearance.$subscribe(() => updateMap(map, markerHasIW, defaultCenter));
 
 	return removeWatcher;
 };
 
-const updateMap = async (mapInstance: google.maps.Map, markerHasIW: boolean) => {
+const updateMap = async (mapInstance: google.maps.Map, markerHasIW: boolean, defaultCenter: google.maps.LatLngLiteral) => {
 	const element = document.getElementById('gp-map');
 
 	if (!element) {
 		return;
 	}
 
-	const center = mapInstance.getCenter()?.toJSON();
-	const zoom = mapInstance.getZoom();
+	const center = mapInstance.getCenter()?.toJSON() || defaultCenter;
+	const zoom = mapInstance.getZoom() || MAP_ZOOM_REG;
 
-	map = await createMap(element, center!, zoom!);
+	map = await createMap(element, center, zoom);
 
 	if (marker) {
 		marker.map = map;

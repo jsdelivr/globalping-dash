@@ -8,11 +8,11 @@ const DEFAULT_MARKER_COLOR = '#17d4a7';
 let map: google.maps.Map, marker: google.maps.marker.AdvancedMarkerElement, infoWindow: google.maps.InfoWindow | null;
 
 const createMap = async (element: HTMLElement, center: google.maps.LatLngLiteral, zoom: number) => {
-	const { Map } = await google.maps.importLibrary('maps') as google.maps.MapsLibrary;
+	const { Map: GoogleMap } = await google.maps.importLibrary('maps') as google.maps.MapsLibrary;
 
 	const appearance = useAppearance();
 
-	return new Map(element, {
+	return new GoogleMap(element, {
 		zoom,
 		center,
 		mapTypeId: 'roadmap',

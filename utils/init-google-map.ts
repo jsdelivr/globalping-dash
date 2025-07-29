@@ -5,54 +5,7 @@ const MAP_MAX_ZOOM = 22;
 const MAP_ZOOM_REG = 3.74;
 const DEFAULT_MARKER_COLOR = '#17d4a7';
 
-const mapIdsByTheme = {
-	light: {
-		background: '#ffffff',
-		initial: 'ce04bbf9d49b6f34',
-		moderate: 'ce04bbf9d49b6f34',
-		detailed: 'ce04bbf9d49b6f34',
-	},
-	dark: {
-		background: '#131728',
-		initial: 'ce04bbf9d49b6f34',
-		moderate: 'ce04bbf9d49b6f34',
-		detailed: 'ce04bbf9d49b6f34',
-	},
-};
-
-let map: google.maps.Map, marker: google.maps.marker.AdvancedMarkerElement, currentMapId: string, infoWindow: google.maps.InfoWindow | null;
-
-const createMap = async (element: HTMLElement, mapId: string, center: google.maps.LatLngLiteral, zoom: number, background: string) => {
-	const { Map } = await google.maps.importLibrary('maps') as google.maps.MapsLibrary;
-
-	return new Map(element, {
-		backgroundColor: background,
-		zoom,
-		center,
-		mapTypeId: 'roadmap',
-		draggableCursor: 'default',
-		mapTypeControl: false,
-		streetViewControl: false,
-		fullscreenControl: false,
-		disableDefaultUI: true,
-		minZoom: MAP_MIN_ZOOM,
-		maxZoom: MAP_MAX_ZOOM,
-		gestureHandling: 'cooperative',
-		mapId,
-	});
-};
-
-const addMapListeners = (map: google.maps.Map, markerHasIW: boolean) => {
-	const appearance = useAppearance();
-
-	map.addListener('zoom_changed', () => {
-		if (markerHasIW && infoWindow) {
-			infoWindow.close();
-		}
-
-		updateMapId(map, markerHasIW, appearance.theme);
-	});
-};
+let map: google.maps.Map, marker: google.maps.marker.AdvancedMarkerElement;
 
 export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, markerHasIW: boolean = true, mapCenterYOffsetPx: number | null = null) => {
 	if (!probe) {
@@ -66,58 +19,48 @@ export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, ma
 	}
 
 	const appearance = useAppearance();
-	const mapConfig = mapIdsByTheme[appearance.theme];
 
 	// adjust the map center to visually shift marker verically by offset value
 	const mapCenterLat = mapCenterYOffsetPx ? probe.latitude - mapCenterYOffsetPx / Math.pow(2, MAP_ZOOM_REG) : probe.latitude;
 	const mapCenterLng = probe.longitude;
 
-	currentMapId = mapConfig.initial;
-	map = await createMap(element, currentMapId, { lat: mapCenterLat, lng: mapCenterLng }, MAP_ZOOM_REG, mapConfig.background);
+	const { Map } = await google.maps.importLibrary('maps') as google.maps.MapsLibrary;
 
-	const { infoWindow: markerInfoWindow } = await createMapMarkerWithIW(probe, showPulse, markerHasIW);
-	infoWindow = markerInfoWindow;
+	map = new Map(element, {
+		zoom: MAP_ZOOM_REG,
+		center: { lat: mapCenterLat, lng: mapCenterLng },
+		mapTypeId: 'roadmap',
+		draggableCursor: 'default',
+		mapTypeControl: false,
+		streetViewControl: false,
+		fullscreenControl: false,
+		disableDefaultUI: true,
+		minZoom: MAP_MIN_ZOOM,
+		maxZoom: MAP_MAX_ZOOM,
+		gestureHandling: 'cooperative',
+		colorScheme: mapColorScheme(appearance.theme),
+		mapId: 'ce04bbf9d49b6f34',
+	});
 
-	addMapListeners(map, markerHasIW);
+	const { infoWindow } = await createMapMarkerWithIW(probe, showPulse, markerHasIW);
 
-	const removeWatcher = appearance.$subscribe(() => updateMapId(map, markerHasIW, appearance.theme));
+	map.addListener('zoom_changed', () => {
+		if (markerHasIW && infoWindow) {
+			infoWindow.close();
+		}
+	});
+
+	const removeWatcher = appearance.$subscribe(() => {
+		map.setOptions({
+			colorScheme: mapColorScheme(appearance.theme),
+		});
+	});
 
 	return removeWatcher;
 };
 
-const updateMapId = async (mapInstance: google.maps.Map, markerHasIW: boolean, theme: 'light' | 'dark') => {
-	const mapConfig = mapIdsByTheme[theme];
-	const currZoom = mapInstance.getZoom();
-
-	let requiredMapId: string;
-
-	if (currZoom && currZoom >= 14) {
-		requiredMapId = mapConfig.detailed;
-	} else if (currZoom && currZoom >= 5) {
-		requiredMapId = mapConfig.moderate;
-	} else {
-		requiredMapId = mapConfig.initial;
-	}
-
-	// only recreate map if mapId needs to change
-	if (requiredMapId !== currentMapId) {
-		const element = document.getElementById('gp-map');
-
-		if (element) {
-			// preserve current state
-			const center = mapInstance.getCenter()?.toJSON();
-			const zoom = mapInstance.getZoom();
-
-			currentMapId = requiredMapId;
-			map = await createMap(element, currentMapId, center!, zoom!, mapConfig.background);
-
-			if (marker) {
-				marker.map = map;
-			}
-
-			addMapListeners(map, markerHasIW);
-		}
-	}
+const mapColorScheme = (theme: 'light' | 'dark') => {
+	return theme === 'light' ? google.maps.ColorScheme.LIGHT : google.maps.ColorScheme.DARK;
 };
 
 async function createMapMarkerWithIW (probe: Probe, showPulse: boolean = false, markerHasIW: boolean = true) {

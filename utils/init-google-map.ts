@@ -56,10 +56,16 @@ export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, ma
 
 	const defaultCenter = { lat: mapCenterLat, lng: mapCenterLng };
 
-	map = await createMap(element, defaultCenter, MAP_ZOOM_REG);
+	try {
+		map = await createMap(element, defaultCenter, MAP_ZOOM_REG);
 
-	const { infoWindow: markerInfoWindow } = await createMapMarkerWithIW(probe, showPulse, markerHasIW);
-	infoWindow = markerInfoWindow;
+		const { infoWindow: markerInfoWindow } = await createMapMarkerWithIW(probe, showPulse, markerHasIW);
+		infoWindow = markerInfoWindow;
+	} catch (error) {
+		console.error('Error creating map marker with info window:', error);
+
+		return () => {};
+	}
 
 	addMapListeners(map, markerHasIW);
 
@@ -82,6 +88,10 @@ const updateMap = async (mapInstance: google.maps.Map, markerHasIW: boolean, def
 
 	if (marker) {
 		marker.map = map;
+	}
+
+	if (infoWindow) {
+		infoWindow.close();
 	}
 
 	addMapListeners(map, markerHasIW);

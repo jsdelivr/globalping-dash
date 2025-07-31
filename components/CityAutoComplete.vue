@@ -62,23 +62,14 @@
 		{ debounce: 200 },
 	);
 
-	watch([ citySuggestions, model ], ([ suggestions, model ]) => {
-		console.log(suggestions, model);
-	});
-
 	watch([ data, status, model ], ([ newData, newStatus, newModel ]) => {
-		console.log(newData, newStatus, newModel);
-
 		if (newStatus === 'pending' || !newModel.length) {
-			console.log('return');
 			return;
 		}
 
 		if (Array.isArray(newData)) {
-			console.log('set');
 			citySuggestions.value = newData.map(el => el.name);
 		} else {
-			console.log('empty');
 			citySuggestions.value = [];
 		}
 	});

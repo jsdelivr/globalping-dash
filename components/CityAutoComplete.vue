@@ -6,9 +6,11 @@
 		:suggestions="citySuggestions"
 		loader="null"
 		class="relative w-full rounded-none [&>input]:w-full [&>input]:rounded-none [&>input]:rounded-r-md [&>input]:border-none"
-		:class="{ 'cursor-pointer': !isEditingCity }"
+		:class="{ '[&>input]:cursor-pointer': !isEditingCity }"
 		aria-label="City name"
 		:delay="0"
+		@focusin="() => isEditingCity = true"
+		@focusout="() => isEditingCity = false"
 		@keyup.enter="(event: KeyboardEvent) => emit('confirm', event)"
 		@keyup.esc="emit('cancel')"
 	/>
@@ -16,10 +18,13 @@
 
 <script setup lang="ts">
 
-	defineProps({
-		isEditingCity: {
-			type: Boolean as PropType<boolean>,
-			required: true,
+	import { customEndpoint } from '@directus/sdk';
+	const { $directus } = useNuxtApp();
+
+	const { countryCode } = defineProps({
+		countryCode: {
+			type: String as PropType<string>,
+			default: '',
 		},
 	});
 
@@ -29,14 +34,19 @@
 	}>();
 
 	const model = defineModel<string>({ required: true });
-	const inputRef = defineModel<HTMLInputElement | null>('inputRef', { required: true }); // TODO probably remove the required prop
-	const debouncedCity = ref<string>(''); // for useFetch
+	const inputRef = defineModel<HTMLInputElement | null>('inputRef');
+	const isEditingCity = defineModel<boolean>('isEditingCity', { default: false });
+
+	const fetchedCity = ref<string>(model.value); // for useFetch
 	const citySuggestions = ref<string[]>([]);
 
-	// TODO: add new city EP when ready
-	const { data, status } = await useFetch('TODO', {
-		query: { name: debouncedCity, country: model },
-	});
+	const { data, status } = await useAsyncData(
+		'city-autocomplete',
+		() => $directus.request<City[]>(customEndpoint({ path: '/city-autocomplete', params: { query: fetchedCity.value, countries: countryCode } })),
+		{
+			watch: [ fetchedCity ],
+		},
+	);
 
 	onMounted(() => {
 		inputRef.value = document.getElementById('autocompleteInput') as HTMLInputElement | null;
@@ -44,18 +54,31 @@
 
 	watchDebounced(
 		model,
-		() => { debouncedCity.value = model.value; },
-		{ debounce: 300 },
+		(newValue) => {
+			if (newValue.length) {
+				fetchedCity.value = newValue;
+			}
+		},
+		{ debounce: 200 },
 	);
 
-	watch([ data, status ], ([ newData, newStatus ]) => {
-		if (newStatus === 'pending') {
+	watch([ citySuggestions, model ], ([ suggestions, model ]) => {
+		console.log(suggestions, model);
+	});
+
+	watch([ data, status, model ], ([ newData, newStatus, newModel ]) => {
+		console.log(newData, newStatus, newModel);
+
+		if (newStatus === 'pending' || !newModel.length) {
+			console.log('return');
 			return;
 		}
 
 		if (Array.isArray(newData)) {
+			console.log('set');
 			citySuggestions.value = newData.map(el => el.name);
 		} else {
+			console.log('empty');
 			citySuggestions.value = [];
 		}
 	});

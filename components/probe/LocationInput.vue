@@ -41,8 +41,9 @@
 		>
 			<CityAutoComplete
 				v-model="editedCity"
-				:input-ref="inputCityRef"
-				:is-editing-city="isEditingCity"
+				v-model:input-ref="inputCityRef"
+				v-model:is-editing-city="isEditingCity"
+				:country-code="editedCountry"
 				@cancel="cancelCityEditing()"
 				@confirm="updateProbeLocation"
 			/>

@@ -4,15 +4,21 @@ declare global {
 	}
 
 	type DirectusSchema = {
-		gp_probes: Probe[];
-		gp_credits: Credits[];
-		gp_credits_additions: CreditsAddition[];
-		gp_credits_deductions: CreditsDeduction[];
-		gp_tokens: Token[];
-		gp_apps: Application[];
-		gp_apps_approvals: AppAppoval[];
+		'gp_probes': Probe[];
+		'gp_credits': Credits[];
+		'gp_credits_additions': CreditsAddition[];
+		'gp_credits_deductions': CreditsDeduction[];
+		'gp_tokens': Token[];
+		'gp_apps': Application[];
+		'gp_apps_approvals': AppAppoval[];
 
-		directus_users: User;
+		'directus_users': User;
+		'city-autocomplete': City[];
+	};
+
+	type City = {
+		name: string;
+		country: string;
 	};
 
 	type Credits = {

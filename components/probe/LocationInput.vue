@@ -3,6 +3,7 @@
 		v-if="probe"
 		ref="containerRef"
 		class="absolute inset-x-4 bottom-9 flex flex-col gap-1 sm:flex-row sm:gap-0"
+		@focusin="isActive = true"
 		@focusout="cancelEditing"
 	>
 		<div
@@ -42,37 +43,12 @@
 			<CityAutoComplete
 				v-model="editedCity"
 				v-model:input-ref="inputCityRef"
-				v-model:is-editing-city="isEditingCity"
 				:country-code="editedCountry"
-				@cancel="cancelCityEditing()"
-				@confirm="updateProbeLocation"
-			/>
-			<Button
-				v-if="isEditingCity && ((editedCity !== initialCity) || (originalCountry !== editedCountry))"
-				v-tooltip.top="'Save'"
-				variant="text"
-				severity="secondary"
-				icon="pi pi-check"
-				class="!absolute !right-2 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-primary focus:!ring-primary"
+				:dirty="isDirty"
+				:active="isActive"
 				:loading="probeDetailsUpdating"
-				:disabled="probeDetailsUpdating"
-				aria-label="Save"
-				@click.stop="updateProbeLocation"
-			/>
-
-			<i v-if="!isEditingCity" class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" aria-hidden="true" @click="enableCityEditing(false)"/>
-
-			<Button
-				v-if="isEditingCity && (((editedCity !== initialCity) || (originalCountry !== editedCountry)))"
-				v-tooltip.top="'Cancel'"
-				variant="text"
-				severity="secondary"
-				icon="pi pi-times"
-				class="!absolute !right-2 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:!ring-[#ef4444]"
-				:disabled="probeDetailsUpdating"
-				aria-label="Cancel"
-				@keyup.enter="cancelCityEditing()"
-				@click.stop="cancelCityEditing()"
+				@cancel="cancelCityEditing"
+				@confirm="updateProbeLocation"
 			/>
 		</div>
 	</div>
@@ -122,7 +98,7 @@
 	});
 
 	const containerRef = ref<HTMLElement | null>(null);
-	const isEditingCity = ref(false);
+	const isActive = ref(false);
 	const editedCity = ref('');
 	const initialCity = ref('');
 	const selectedCountry = ref('');
@@ -133,6 +109,10 @@
 	const ignoreSelectEnter = ref(false);
 	const selectEnterPressed = ref(false);
 	const OTHER_COUNTRY_OPTION = 'Other';
+
+	const isDirty = computed(() => {
+		return editedCity.value !== initialCity.value || editedCountry.value !== originalCountry.value;
+	});
 
 	watch(() => probe.value.city, (newCity) => {
 		initialCity.value = newCity;
@@ -154,7 +134,7 @@
 			invalidCountryDialog.value = true;
 			selectedCountry.value = editedCountry.value;
 		} else {
-			isEditingCity.value = false;
+			isActive.value = true;
 			editedCountry.value = selectedCountry.value;
 		}
 
@@ -177,22 +157,17 @@
 	};
 
 	const enableCityEditing = async (select: boolean) => {
-		if (isEditingCity.value) {
-			return;
-		}
-
-		isEditingCity.value = true;
 		inputCityRef.value?.focus();
 		select && inputCityRef.value?.select();
 	};
 
 	const cancelCityEditing = (revert: boolean = true) => {
-		if (!isEditingCity.value) {
+		if (!isActive.value) {
 			return;
 		}
 
 		revert && restoreOriginalLocation();
-		isEditingCity.value = false;
+		isActive.value = false;
 		inputCityRef.value?.blur();
 	};
 
@@ -200,7 +175,7 @@
 		const target = event.relatedTarget as HTMLElement | null;
 
 		// do not cancel editing if the invalid country dialog is open, updating, or focus doesn't move out of the LocationInput component
-		if (invalidCountryDialog.value || probeDetailsUpdating.value || containerRef.value?.contains(target)) {
+		if (!target || invalidCountryDialog.value || probeDetailsUpdating.value || containerRef.value?.contains(target)) {
 			return;
 		}
 
@@ -211,6 +186,10 @@
 		editedCity.value = initialCity.value;
 		editedCountry.value = originalCountry.value;
 	};
+
+	watch(editedCity, (newCity) => {
+		console.log(newCity);
+	});
 
 	const updateProbeLocation = async (event: MouseEvent | KeyboardEvent) => {
 		// prevent the Enter key from triggering input's handler right after Select change via keyboard
@@ -232,22 +211,17 @@
 		// check if the city is empty
 		if (prepEditedCity === '') {
 			sendToast('warn', 'Invalid input', 'City name cannot be empty');
-
 			return;
 		}
 
 		// check if trimmed values are the same, stop editing-updating, restore to initial city's value
 		if (prepEditedCity === prepInitialCity && editedCity.value !== initialCity.value) {
-			isEditingCity.value = false;
 			editedCity.value = initialCity.value;
-
 			return;
 		}
 
 		// check if nothing was changed
 		if (prepEditedCity === prepInitialCity && editedCountry.value === originalCountry.value) {
-			isEditingCity.value = false;
-
 			return;
 		}
 

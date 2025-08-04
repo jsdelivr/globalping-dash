@@ -187,10 +187,6 @@
 		editedCountry.value = originalCountry.value;
 	};
 
-	watch(editedCity, (newCity) => {
-		console.log(newCity);
-	});
-
 	const updateProbeLocation = async (event: MouseEvent | KeyboardEvent) => {
 		// prevent the Enter key from triggering input's handler right after Select change via keyboard
 		// required because PrimeVue Select doesn't fully isolate Enter behavior

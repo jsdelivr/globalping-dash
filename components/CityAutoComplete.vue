@@ -32,7 +32,7 @@
 			variant="text"
 			severity="secondary"
 			icon="pi pi-check"
-			class="!absolute !right-2 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-primary focus:!ring-primary"
+			class="!absolute right-1 top-0.5 mr-8 !size-7 rounded-md !px-2 !py-1 focus:!border-primary focus:!ring-primary"
 			:loading="loading"
 			:disabled="loading"
 			aria-label="Save"
@@ -45,7 +45,7 @@
 			variant="text"
 			severity="secondary"
 			icon="pi pi-times"
-			class="!absolute !right-2 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:!ring-[#ef4444]"
+			class="!absolute right-1 top-0.5 !size-7 rounded-md focus:!border-[#ef4444] focus:!ring-[#ef4444]"
 			:disabled="loading"
 			aria-label="Cancel"
 			@keyup.enter="emit('cancel')"
@@ -55,13 +55,12 @@
 </template>
 
 <script setup lang="ts">
-
 	import { customEndpoint } from '@directus/sdk';
 	const { $directus } = useNuxtApp();
 
 	const { countryCode } = defineProps({
 		countryCode: {
-			type: String as PropType<string>,
+			type: String,
 			default: '',
 		},
 		active: {
@@ -99,8 +98,8 @@
 	);
 
 	const handleFocusOut = (event: FocusEvent) => {
-		const target = event.target as HTMLElement | null;
-		const relatedTarget = event.relatedTarget as HTMLElement | null;
+		const target = event.target;
+		const relatedTarget = event.relatedTarget;
 
 		if (target && !relatedTarget && target === inputRef.value) {
 			event.stopPropagation();
@@ -111,15 +110,11 @@
 		inputRef.value = document.getElementById('autocompleteInput') as HTMLInputElement | null;
 	});
 
-	watchDebounced(
-		model,
-		(newValue) => {
-			if (newValue.length) {
-				fetchedCity.value = newValue;
-			}
-		},
-		{ debounce: 200 },
-	);
+	watchDebounced(model, (newCity) => {
+		if (newCity.length) {
+			fetchedCity.value = newCity;
+		}
+	}, { debounce: 200 });
 
 	watch([ data, status, model ], ([ newData, newStatus, newModel ]) => {
 		if (newStatus === 'pending' || !newModel.length) {

@@ -58,6 +58,9 @@
 	import { customEndpoint } from '@directus/sdk';
 	const { $directus } = useNuxtApp();
 
+	const model = defineModel<string>({ required: true });
+	const inputRef = defineModel<HTMLInputElement | null>('inputRef');
+
 	const { countryCode } = defineProps({
 		countryCode: {
 			type: String,
@@ -82,9 +85,6 @@
 		(e: 'confirm', ev: KeyboardEvent | MouseEvent): void;
 	}>();
 
-	const model = defineModel<string>({ required: true });
-	const inputRef = defineModel<HTMLInputElement | null>('inputRef');
-
 	const fetchedCity = ref<string>(model.value);
 	const suggestions = ref<City[]>([]);
 	const citySuggestions = computed(() => suggestions.value.map(el => el.name));
@@ -97,25 +97,6 @@
 		},
 	);
 
-	const handleFocusOut = (event: FocusEvent) => {
-		const target = event.target;
-		const relatedTarget = event.relatedTarget;
-
-		if (target && !relatedTarget && target === inputRef.value) {
-			event.stopPropagation();
-		}
-	};
-
-	onMounted(() => {
-		inputRef.value = document.getElementById('autocompleteInput') as HTMLInputElement | null;
-	});
-
-	watchDebounced(model, (newCity) => {
-		if (newCity.length) {
-			fetchedCity.value = newCity;
-		}
-	}, { debounce: 200 });
-
 	watch([ data, status, model ], ([ newData, newStatus, newModel ]) => {
 		if (newStatus === 'pending' || !newModel.length) {
 			return;
@@ -127,5 +108,24 @@
 			suggestions.value = [];
 		}
 	});
+
+	watchDebounced(model, (newCity) => {
+		if (newCity.length) {
+			fetchedCity.value = newCity;
+		}
+	}, { debounce: 200 });
+
+	onMounted(() => {
+		inputRef.value = document.getElementById('autocompleteInput') as HTMLInputElement | null;
+	});
+
+	const handleFocusOut = (event: FocusEvent) => {
+		const target = event.target;
+		const relatedTarget = event.relatedTarget;
+
+		if (target && !relatedTarget && target === inputRef.value) {
+			event.stopPropagation();
+		}
+	};
 
 </script>

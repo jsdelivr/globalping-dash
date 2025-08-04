@@ -103,7 +103,7 @@ export default {
 	overlay: {
 		class: [
 			// Colors
-			'bg-surface-0 dark:bg-dark-700',
+			'bg-surface-0 dark:bg-dark-800',
 			'text-surface-700 dark:text-surface-0',
 
 			// Shape

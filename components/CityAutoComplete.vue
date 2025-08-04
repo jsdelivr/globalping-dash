@@ -6,7 +6,7 @@
 			:suggestions="citySuggestions"
 			loader="null"
 			class="relative w-full rounded-none"
-			input-class="w-full md:rounded-none md:rounded-r-md rounded-md border-none focus:cursor-text cursor-pointer"
+			input-class="w-full md:rounded-none md:rounded-r-md rounded-md border-none focus:cursor-text cursor-pointer dark:!bg-dark-800"
 			aria-label="City name"
 			:delay="0"
 			@keyup.enter.stop="(event: KeyboardEvent) => emit('confirm', event)"

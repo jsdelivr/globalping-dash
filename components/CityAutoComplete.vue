@@ -4,7 +4,7 @@
 			ref="autocompleteRef"
 			v-model="model"
 			:suggestions="citySuggestions"
-			loader="null"
+			:loader="undefined"
 			class="relative w-full rounded-none"
 			input-class="w-full md:rounded-none md:rounded-r-md rounded-md border-none focus:cursor-text cursor-pointer dark:!bg-dark-800"
 			aria-label="City name"

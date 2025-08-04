@@ -1,8 +1,8 @@
 <template>
 	<div class="w-full" @focusout="handleFocusOut">
 		<AutoComplete
+			ref="autocompleteRef"
 			v-model="model"
-			input-id="autocompleteInput"
 			:suggestions="citySuggestions"
 			loader="null"
 			class="relative w-full rounded-none"
@@ -56,6 +56,7 @@
 
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
+	import type { VNodeRef } from 'vue';
 	const { $directus } = useNuxtApp();
 
 	const model = defineModel<string>({ required: true });
@@ -85,6 +86,7 @@
 		(e: 'confirm', ev: KeyboardEvent | MouseEvent): void;
 	}>();
 
+	const autocompleteRef = ref<VNodeRef | null>(null);
 	const fetchedCity = ref<string>(model.value);
 	const suggestions = ref<City[]>([]);
 	const citySuggestions = computed(() => suggestions.value.map(el => el.name));
@@ -116,7 +118,9 @@
 	}, { debounce: 200 });
 
 	onMounted(() => {
-		inputRef.value = document.getElementById('autocompleteInput') as HTMLInputElement | null;
+		if (autocompleteRef.value) {
+			inputRef.value = autocompleteRef.value.$el.querySelector('input');
+		}
 	});
 
 	const handleFocusOut = (event: FocusEvent) => {

@@ -130,17 +130,20 @@
 		// wait for Vue to update
 		await nextTick();
 
+		let focusCity = false;
+
 		if (event.value === OTHER_COUNTRY_OPTION) {
 			invalidCountryDialog.value = true;
 			selectedCountry.value = editedCountry.value;
 		} else {
+			focusCity = true;
 			isActive.value = true;
 			editedCountry.value = selectedCountry.value;
 		}
 
 		// then delay again to let Select finish its focus handling
 		setTimeout(() => {
-			enableCityEditing(true);
+			focusCity && enableCityEditing(true);
 
 			if (selectEnterPressed.value) {
 				// flag to suppress unintended Enter on sibling input after keyboard selection in PrimeVue Select

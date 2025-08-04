@@ -18,8 +18,7 @@
 						{{slotProps.option}}
 					</span>
 					<span v-if="countryCode === 'US'" class="text-bluegray-400">
-						<!-- TODO: display US state -->
-						({{suggestions[slotProps.index].country}})
+						({{suggestions[slotProps.index].state}})
 					</span>
 				</span>
 			</template>

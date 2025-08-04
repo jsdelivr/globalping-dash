@@ -16,10 +16,10 @@ declare global {
 		'city-autocomplete': City[];
 	};
 
-	type City = {
+	type City<TCountry extends string = string> = {
 		name: string;
-		country: string;
-	};
+		country: TCountry;
+	} & (TCountry extends 'US' ? { state: string } : { state: null });
 
 	type Credits = {
 		amount: number;

@@ -1,5 +1,3 @@
-import darkMapStyles from './dark-map-styles.json';
-import mapStyles from './map-styles.json';
 import { useAppearance } from '~/store/appearance.js';
 
 const MAP_MIN_ZOOM = 1;
@@ -7,75 +5,16 @@ const MAP_MAX_ZOOM = 22;
 const MAP_ZOOM_REG = 3.74;
 const DEFAULT_MARKER_COLOR = '#17d4a7';
 
-const INITIAL_MAP_STYLES = mapStyles;
-const MODERATE_MAP_STYLES = [
-	{
-		elementType: 'labels.text.stroke',
-		stylers: [{ visibility: 'on' }],
-	},
-	{
-		elementType: 'labels.text.fill',
-		stylers: [
-			{ visibility: 'on' },
-			{ color: '#989b9e' },
-		],
-	},
-];
-const DETAILED_MAP_STYLES = [
-	{
-		featureType: 'road',
-		stylers: [{ visibility: 'on' }],
-	},
-];
-const INITIAL_MAP_STYLES_DARK = darkMapStyles;
-const MODERATE_MAP_STYLES_DARK = [{
-	elementType: 'labels.text.stroke',
-	stylers: [
-		{ visibility: 'on' },
-		{ color: '#131728' },
-	],
-}];
+let map: google.maps.Map, marker: google.maps.marker.AdvancedMarkerElement, infoWindow: google.maps.InfoWindow | null;
 
-const stylesByTheme = {
-	light: {
-		background: '#ffffff',
-		initial: INITIAL_MAP_STYLES,
-		moderate: [ ...INITIAL_MAP_STYLES, ...MODERATE_MAP_STYLES ],
-		detailed: [ ...INITIAL_MAP_STYLES, ...MODERATE_MAP_STYLES, ...DETAILED_MAP_STYLES ],
-	},
-	dark: {
-		background: '#131728',
-		initial: [ ...INITIAL_MAP_STYLES, ...INITIAL_MAP_STYLES_DARK ],
-		moderate: [ ...INITIAL_MAP_STYLES, ...MODERATE_MAP_STYLES, ...INITIAL_MAP_STYLES_DARK, ...MODERATE_MAP_STYLES_DARK ],
-		detailed: [ ...INITIAL_MAP_STYLES, ...MODERATE_MAP_STYLES, ...DETAILED_MAP_STYLES, ...INITIAL_MAP_STYLES_DARK, ...MODERATE_MAP_STYLES_DARK ],
-	},
-};
-
-let map: google.maps.Map, marker: google.maps.Marker;
-
-export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, markerHasIW: boolean = true, mapCenterYOffsetPx: number | null = null) => {
-	if (!probe) {
-		return;
-	}
-
-	const { Map } = await google.maps.importLibrary('maps') as google.maps.MapsLibrary;
-	const element = document.getElementById('gp-map');
-
-	if (!element) {
-		return;
-	}
+const createMap = async (element: HTMLElement, center: google.maps.LatLngLiteral, zoom: number) => {
+	const { Map: GoogleMap } = await google.maps.importLibrary('maps') as google.maps.MapsLibrary;
 
 	const appearance = useAppearance();
-	const style = stylesByTheme[appearance.theme];
-	// adjust the map center to visually shift marker verically by offset value
-	const mapCenterLat = mapCenterYOffsetPx ? probe.latitude - mapCenterYOffsetPx / Math.pow(2, MAP_ZOOM_REG) : probe.latitude;
-	const mapCenterLng = probe.longitude;
 
-	map = new Map(element, {
-		backgroundColor: style.background,
-		styles: style.initial,
-		zoom: MAP_ZOOM_REG,
-		center: { lat: mapCenterLat, lng: mapCenterLng },
+	return new GoogleMap(element, {
+		zoom,
+		center,
 		mapTypeId: 'roadmap',
 		draggableCursor: 'default',
 		mapTypeControl: false,
@@ -85,40 +24,84 @@ export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, ma
 		minZoom: MAP_MIN_ZOOM,
 		maxZoom: MAP_MAX_ZOOM,
 		gestureHandling: 'cooperative',
+		colorScheme: appearance.theme === 'light' ? google.maps.ColorScheme.LIGHT : google.maps.ColorScheme.DARK,
+		mapId: 'ce04bbf9d49b6f34',
 	});
+};
 
-	const { infoWindow } = createMapMarkerWithIW(probe, showPulse, markerHasIW);
-
+const addMapListeners = (map: google.maps.Map, markerHasIW: boolean) => {
 	map.addListener('zoom_changed', () => {
 		if (markerHasIW && infoWindow) {
 			infoWindow.close();
 		}
-
-		updateStyles(map, appearance.theme);
 	});
+};
 
-	const removeWatcher = appearance.$subscribe(() => updateStyles(map, appearance.theme));
+export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, markerHasIW: boolean = true, mapCenterYOffsetPx: number | null = null) => {
+	if (!probe) {
+		return;
+	}
+
+	const element = document.getElementById('gp-map');
+
+	if (!element) {
+		return;
+	}
+
+	const appearance = useAppearance();
+
+	// adjust the map center to visually shift marker verically by offset value
+	const mapCenterLat = mapCenterYOffsetPx ? probe.latitude - mapCenterYOffsetPx / Math.pow(2, MAP_ZOOM_REG) : probe.latitude;
+	const mapCenterLng = probe.longitude;
+
+	const defaultCenter = { lat: mapCenterLat, lng: mapCenterLng };
+
+	try {
+		map = await createMap(element, defaultCenter, MAP_ZOOM_REG);
+
+		const { infoWindow: markerInfoWindow } = await createMapMarkerWithIW(probe, showPulse, markerHasIW);
+		infoWindow = markerInfoWindow;
+	} catch (error) {
+		console.error('Error creating map marker with info window:', error);
+
+		return () => {};
+	}
+
+	addMapListeners(map, markerHasIW);
+
+	const removeWatcher = appearance.$subscribe(() => updateMap(map, markerHasIW, defaultCenter));
 
 	return removeWatcher;
 };
 
-const updateStyles = (map: google.maps.Map, theme: 'light' | 'dark') => {
-	const style = stylesByTheme[theme];
-	const currZoom = map.getZoom();
+const updateMap = async (mapInstance: google.maps.Map, markerHasIW: boolean, defaultCenter: google.maps.LatLngLiteral) => {
+	const element = document.getElementById('gp-map');
 
-	// handle map detalization on zoom
-	if (currZoom && currZoom >= 14) {
-		map.setOptions({ styles: style.detailed });
-	} else if (currZoom && currZoom >= 5) {
-		map.setOptions({ styles: style.moderate });
-	} else {
-		map.setOptions({ styles: style.initial });
+	if (!element) {
+		return;
 	}
+
+	const center = mapInstance.getCenter()?.toJSON() || defaultCenter;
+	const zoom = mapInstance.getZoom() || MAP_ZOOM_REG;
+
+	map = await createMap(element, center, zoom);
+
+	if (marker) {
+		marker.map = map;
+	}
+
+	if (infoWindow) {
+		infoWindow.close();
+	}
+
+	addMapListeners(map, markerHasIW);
 };
 
-function createMapMarkerWithIW (probe: Probe, showPulse: boolean = false, markerHasIW: boolean = true) {
+async function createMapMarkerWithIW (probe: Probe, showPulse: boolean = false, markerHasIW: boolean = true) {
+	const { AdvancedMarkerElement } = await google.maps.importLibrary('marker') as google.maps.MarkerLibrary;
+
 	const svgFillColor = DEFAULT_MARKER_COLOR;
-	let markerIconSettings: google.maps.Icon;
+	let markerContent: HTMLElement;
 	let infoWindow: google.maps.InfoWindow | null = null;
 
 	if (showPulse) {
@@ -161,18 +144,18 @@ function createMapMarkerWithIW (probe: Probe, showPulse: boolean = false, marker
 			</defs>
 		`;
 
-		const finalSvg = window.btoa(`<svg width="${svgWidth}" height="${svgHeight}" viewBox="0 0 132 132" fill="none" xmlns="http://www.w3.org/2000/svg">
+		const svgString = `<svg width="${svgWidth}" height="${svgHeight}" viewBox="0 0 132 132" fill="none" xmlns="http://www.w3.org/2000/svg">
 			${defs}
 			${pulseSvg}
 			${markerSvg}
-			</svg>`);
+			</svg>`;
 
-		markerIconSettings = {
-			url: `data:image/svg+xml;base64,${finalSvg}`,
-			anchor: new google.maps.Point(svgWidth / 2, svgHeight / 2),
-		};
+		markerContent = document.createElement('div');
+		markerContent.innerHTML = svgString;
+		markerContent.style.width = `${svgWidth}px`;
+		markerContent.style.height = `${svgHeight}px`;
 	} else {
-		const finalSvg = window.btoa(`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		const svgString = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<g filter="url(#filter0_d_6106_3045)">
 			<circle cx="12" cy="10" r="6" fill="${svgFillColor}"/>
 			<circle cx="12" cy="10" r="7" stroke="white" stroke-width="2"/>
@@ -189,12 +172,18 @@ function createMapMarkerWithIW (probe: Probe, showPulse: boolean = false, marker
 			<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_6106_3045" result="shape"/>
 			</filter>
 			</defs>
-			</svg>`);
+			</svg>`;
 
-		markerIconSettings = {
-			url: `data:image/svg+xml;base64,${finalSvg}`,
-		};
+		markerContent = document.createElement('div');
+		markerContent.innerHTML = svgString;
+		markerContent.style.width = '24px';
+		markerContent.style.height = '24px';
 	}
+
+	// Prevent drift during zoom
+	markerContent.style.position = 'absolute';
+	markerContent.style.transform = showPulse ? 'translate(-50%, -50%)' : 'translate(-50%, -100%)';
+	markerContent.style.transformOrigin = 'center bottom';
 
 	if (markerHasIW) {
 		infoWindow = new google.maps.InfoWindow({
@@ -205,24 +194,22 @@ function createMapMarkerWithIW (probe: Probe, showPulse: boolean = false, marker
 		});
 	}
 
-	// create the Marker
-	marker = new google.maps.Marker({
+	marker = new AdvancedMarkerElement({
 		map,
-		icon: markerIconSettings,
+		content: markerContent,
 		position: { lat: probe.latitude, lng: probe.longitude },
-		optimized: false,
 	});
 
 	if (markerHasIW === false) {
-		marker.setOptions({ cursor: 'default' });
+		markerContent.style.cursor = 'default';
 	}
 
 	if (markerHasIW && infoWindow) {
-		google.maps.event.addListener(marker, 'click', () => {
+		marker.addListener('click', () => {
 			infoWindow.open(map, marker);
 		});
 
-		google.maps.event.addListener(map, 'click', () => {
+		map.addListener('click', () => {
 			infoWindow.close();
 		});
 	}
@@ -234,7 +221,7 @@ export const updateMapMarker = (latitude: number, longitude: number, mapCenterYO
 	if (marker) {
 		const mapCenterLat = mapCenterYOffsetPx ? latitude - mapCenterYOffsetPx / Math.pow(2, MAP_ZOOM_REG) : latitude;
 
-		marker.setPosition(new google.maps.LatLng(latitude, longitude));
+		marker.position = { lat: latitude, lng: longitude };
 		map.setCenter({ lat: mapCenterLat, lng: longitude });
 		map.setZoom(MAP_ZOOM_REG);
 	}

@@ -75,11 +75,11 @@ declare global {
 
 	type Status = 'initializing' | 'ready' | 'unbuffer-missing' | 'ping-test-failed' | 'sigterm' | 'offline';
 
-	type Probe = {
+	type Probe<TCountry extends string = string> = {
 		id: string;
 		asn: number;
 		city: string;
-		country: string;
+		country: TCountry;
 		date_created: string;
 		date_updated: string;
 		ip: string;
@@ -90,7 +90,6 @@ declare global {
 		name: string | null;
 		network: string;
 		onlineTimesToday: number;
-		state: string | null;
 		status: Status;
 		tags: {
 			value: string;
@@ -107,7 +106,7 @@ declare global {
 		allowedCountries: string[];
 		searchIndex: string;
 		isOutdated: boolean;
-	};
+	} & (TCountry extends 'US' ? { state: string } : { state: null });
 
 	type User = {
 		id: string;

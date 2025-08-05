@@ -13,7 +13,7 @@ export default {
 			{ 'w-full': props.multiple },
 
 			// Color
-			'text-surface-900 dark:text-surface-0',
+			'text-bluegray-900 dark:text-surface-0',
 
 			// States
 			{
@@ -104,7 +104,7 @@ export default {
 		class: [
 			// Colors
 			'bg-surface-0 dark:bg-dark-800',
-			'text-surface-700 dark:text-surface-0',
+			'text-bluegray-900 dark:text-surface-0',
 
 			// Shape
 			'border border-surface-300 dark:border-dark-400',
@@ -134,14 +134,14 @@ export default {
 
 			// Colors
 			{
-				'text-surface-700 dark:text-surface-0': (!context.focused && !context.selected) || (context.focused && !context.selected),
+				'text-bluegray-900 dark:text-surface-0': (!context.focused && !context.selected) || (context.focused && !context.selected),
 				'bg-surface-200 dark:bg-dark-600': context.focused && !context.selected,
-				// 'text-surface-700 dark:text-white/80': context.focused && !context.selected,
+				// 'text-bluegray-900 dark:text-white/80': context.focused && !context.selected,
 			},
 
 			// States
 			{ 'hover:bg-surface-100 dark:hover:bg-dark-600': !context.focused && !context.selected },
-			{ 'hover:text-surface-700 hover:bg-surface-100 dark:hover:text-white dark:hover:bg-dark-600': context.focused && !context.selected },
+			{ 'hover:text-bluegray-900 hover:bg-surface-100 dark:hover:text-white dark:hover:bg-dark-600': context.focused && !context.selected },
 
 			// Transition
 			'transition-shadow duration-200',

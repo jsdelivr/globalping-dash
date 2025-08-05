@@ -220,7 +220,7 @@
 		const { name: editedCity, state: editedState, country: editedCountry } = editedLocation.value;
 
 		const prepEditedCity = editedCity.trim();
-		const prepInitialCity = initCity.trim();
+		const prepInitCity = initCity.trim();
 
 		// check if the city is empty
 		if (prepEditedCity === '') {
@@ -229,8 +229,8 @@
 		}
 
 		// check if trimmed values are the same, stop editing-updating, restore to initial city's value
-		if (prepEditedCity === prepInitialCity && editedCountry !== initCountry) {
-			editedLocation.value.name = initCountry;
+		if (prepEditedCity === prepInitCity && editedCity !== initCity) {
+			editedLocation.value.name = initCity;
 			return;
 		}
 
@@ -249,7 +249,7 @@
 			updProbePart.country = editedCountry;
 		}
 
-		if (prepEditedCity !== prepInitialCity) {
+		if (prepEditedCity !== prepInitCity) {
 			updProbePart.city = prepEditedCity;
 		}
 

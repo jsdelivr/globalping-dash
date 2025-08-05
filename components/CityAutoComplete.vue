@@ -21,7 +21,7 @@
 			append-to="self"
 			@item-select="(e) => model = e.value"
 			@complete="updateQuery"
-			@keydown.enter.stop="(event: KeyboardEvent) => {(!autocompleteRef?.overlayVisible || autocompleteRef?.focusedOptionIndex === -1) && emit('confirm', event)}"
+			@keydown.enter.stop="(event: KeyboardEvent) => {!autocompleteRef?.overlayVisible && emit('confirm', event)}"
 			@keyup.esc="emit('cancel')"
 		>
 			<template #option="slotProps">
@@ -48,7 +48,6 @@
 			:loading="loading"
 			:disabled="loading"
 			aria-label="Save"
-			tabindex="-1"
 			@click="(event: MouseEvent) => emit('confirm', event)"
 		/>
 

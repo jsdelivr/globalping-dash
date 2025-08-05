@@ -13,7 +13,7 @@
 			option-label="name"
 			loader=" "
 			class="relative w-full rounded-none"
-			input-class="w-full md:rounded-none md:rounded-r-md rounded-md border-none focus:cursor-text cursor-pointer dark:!bg-dark-800"
+			input-class="w-full md:rounded-none md:rounded-r-md rounded-md border-none focus:cursor-text cursor-pointer dark:!bg-dark-800 pr-[72px]"
 			overlay-class="w-full"
 			aria-label="City name"
 			:delay="200"

@@ -68,7 +68,6 @@
 
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
-	import isEqual from 'lodash/isEqual';
 	import type { VNodeRef } from 'vue';
 	const { $directus } = useNuxtApp();
 
@@ -117,13 +116,7 @@
 			}
 
 			if (Array.isArray(newData)) {
-				const differentSuggestions = newData.filter(el => !isEqual(el, model.value));
-
-				if (differentSuggestions.length !== newData.length) {
-					suggestions.value = [ model.value, ...differentSuggestions ];
-				} else {
-					suggestions.value = newData;
-				}
+				suggestions.value = newData;
 			} else {
 				suggestions.value = [];
 			}

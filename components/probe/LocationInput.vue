@@ -2,20 +2,23 @@
 	<div
 		v-if="probe"
 		ref="containerRef"
-		class="absolute inset-x-4 bottom-9 flex flex-col gap-1 sm:flex-row sm:gap-0"
+		class="absolute inset-x-4 bottom-14 flex h-9 flex-col gap-1 sm:bottom-9 sm:flex-row sm:items-center sm:gap-0"
+		@focusin="isActive = true"
 		@focusout="cancelEditing"
 	>
 		<div
-			class="flex h-[34px] w-full shrink-0 items-center justify-center rounded-md border border-[#D1D5DB] bg-[#E5E7EB] sm:h-auto sm:w-24 sm:rounded-r-none sm:border-r-0 dark:border-dark-600 dark:bg-dark-800"
+			class="relative flex size-full shrink-0 items-center justify-center rounded-md border border-[#D1D5DB] bg-[#E5E7EB] sm:w-24 sm:rounded-r-none sm:border-r-0 dark:border-dark-600 dark:bg-dark-800"
 			aria-hidden="true"
 		>
 			<Select
 				id="country"
 				v-model="selectedCountry"
 				:options="[ ...probe.allowedCountries, OTHER_COUNTRY_OPTION ]"
-				class="size-full rounded-md border-0 border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-primary sm:!rounded-r-none sm:!border-r dark:border-dark-600 dark:!bg-dark-800"
+				class="size-full rounded-md border-0 !border-[#D1D5DB] hover:!border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-primary sm:!rounded-r-none sm:!border-r dark:!border-dark-600 dark:!bg-dark-800 hover:dark:!border-dark-600"
 				:pt="{ dropdown: 'w-8', root: { tabindex: '-1' } }"
+				overlay-class="w-full"
 				:pt-options="{ mergeProps: true }"
+				append-to="self"
 				@change="onCountryChanged"
 				@keydown="handleSelectEnterKey"
 			>
@@ -37,46 +40,16 @@
 		</div>
 
 		<div
-			class="relative flex h-[34px] grow rounded-md border border-[#D1D5DB] bg-white focus:z-10 focus:ring-1 focus:ring-primary sm:h-auto sm:rounded-l-none sm:border-l-0 dark:border-dark-600 dark:bg-dark-800"
+			class="relative flex h-full grow items-center rounded-md border border-[#D1D5DB] bg-white focus:z-10 focus:ring-1 focus:ring-primary sm:rounded-l-none sm:border-l-0 dark:border-dark-600 dark:bg-dark-800"
 		>
-			<input
-				ref="inputCityRef"
-				v-model="editedCity"
-				class="flex size-full rounded-md pl-3 pr-[72px] text-bluegray-900 outline-none focus:ring-1 focus:ring-primary sm:h-auto sm:rounded-l-none dark:bg-dark-800 dark:text-bluegray-0"
-				:class="{ 'cursor-pointer': !isEditingCity }"
-				aria-label="City name"
-				autocomplete="off"
-				@focus="enableCityEditing(false)"
-				@keyup.enter="updateProbeLocation"
-				@keyup.esc="cancelCityEditing()"
-			>
-
-			<Button
-				v-if="isEditingCity && ((editedCity !== initialCity) || (originalCountry !== editedCountry))"
-				v-tooltip.top="'Save'"
-				variant="text"
-				severity="secondary"
-				icon="pi pi-check"
-				class="!absolute !right-2 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-primary focus:!ring-primary"
+			<CityAutoComplete
+				v-model="editedLocation"
+				v-model:input-ref="inputCityRef"
+				:dirty="isDirty"
+				:active="isActive"
 				:loading="probeDetailsUpdating"
-				:disabled="probeDetailsUpdating"
-				aria-label="Save"
-				@click.stop="updateProbeLocation"
-			/>
-
-			<i v-if="!isEditingCity" class="pi pi-pencil text-md absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" aria-hidden="true" @click="enableCityEditing(false)"/>
-
-			<Button
-				v-if="isEditingCity && (((editedCity !== initialCity) || (originalCountry !== editedCountry)))"
-				v-tooltip.top="'Cancel'"
-				variant="text"
-				severity="secondary"
-				icon="pi pi-times"
-				class="!absolute !right-2 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:!ring-[#ef4444]"
-				:disabled="probeDetailsUpdating"
-				aria-label="Cancel"
-				@keyup.enter="cancelCityEditing()"
-				@click.stop="cancelCityEditing()"
+				@cancel="cancelCityEditing"
+				@confirm="updateProbeLocation"
 			/>
 		</div>
 	</div>
@@ -103,6 +76,7 @@
 
 <script setup lang="ts">
 	import { readItem, updateItem } from '@directus/sdk';
+	import isEqual from 'lodash/isEqual';
 	import type { SelectChangeEvent } from 'primevue/select';
 	import CountryFlag from 'vue-country-flag-next';
 	import { updateMapMarker } from '~/utils/init-google-map';
@@ -125,46 +99,66 @@
 		required: true,
 	});
 
+	const initialLocation = ref<City>({
+		name: '',
+		country: '',
+		state: null,
+		stateName: null,
+	});
+
+	const editedLocation = ref<City>({
+		name: '',
+		country: '',
+		state: null,
+		stateName: null,
+	});
+
 	const containerRef = ref<HTMLElement | null>(null);
-	const isEditingCity = ref(false);
-	const editedCity = ref('');
-	const initialCity = ref('');
-	const selectedCountry = ref('');
-	const editedCountry = ref(''); // editedCountry is set to selectedCountry unless the user picks the "Other" country option
-	const originalCountry = ref('');
+	const isActive = ref(false);
+	const selectedCountry = ref(''); // is a valid country or the 'Other' country option
 	const invalidCountryDialog = ref(false);
 	const inputCityRef = ref<HTMLInputElement | null>(null);
 	const ignoreSelectEnter = ref(false);
 	const selectEnterPressed = ref(false);
 	const OTHER_COUNTRY_OPTION = 'Other';
 
-	watch(() => probe.value.city, (newCity) => {
-		initialCity.value = newCity;
-		editedCity.value = newCity;
+	const isDirty = computed(() => {
+		return !isEqual(initialLocation.value, editedLocation.value);
+	});
+
+	watch(probe, (newProbeDetails) => {
+		const newLocation: City = {
+			name: newProbeDetails.city,
+			country: newProbeDetails.country,
+			state: newProbeDetails.state,
+			stateName: newProbeDetails.stateName,
+		};
+
+		initialLocation.value = { ...newLocation };
+		editedLocation.value = { ...newLocation };
+		selectedCountry.value = newProbeDetails.country;
 	}, { immediate: true });
 
-	watch(() => probe.value.country, (newCountry) => {
-		originalCountry.value = newCountry;
-		editedCountry.value = newCountry;
-	}, { immediate: true });
-
-	watch(editedCountry, newCountry => selectedCountry.value = newCountry, { immediate: true });
+	watch(() => editedLocation.value.country, newCountry => selectedCountry.value = newCountry, { immediate: true });
 
 	const onCountryChanged = async (event: SelectChangeEvent) => {
 		// wait for Vue to update
 		await nextTick();
 
+		let focusCity = false;
+
 		if (event.value === OTHER_COUNTRY_OPTION) {
 			invalidCountryDialog.value = true;
-			selectedCountry.value = editedCountry.value;
+			selectedCountry.value = editedLocation.value.country;
 		} else {
-			isEditingCity.value = false;
-			editedCountry.value = selectedCountry.value;
+			focusCity = true;
+			isActive.value = true;
+			editedLocation.value.country = selectedCountry.value;
 		}
 
 		// then delay again to let Select finish its focus handling
 		setTimeout(() => {
-			enableCityEditing(true);
+			focusCity && enableCityEditing(true);
 
 			if (selectEnterPressed.value) {
 				// flag to suppress unintended Enter on sibling input after keyboard selection in PrimeVue Select
@@ -181,22 +175,17 @@
 	};
 
 	const enableCityEditing = async (select: boolean) => {
-		if (isEditingCity.value) {
-			return;
-		}
-
-		isEditingCity.value = true;
 		inputCityRef.value?.focus();
 		select && inputCityRef.value?.select();
 	};
 
 	const cancelCityEditing = (revert: boolean = true) => {
-		if (!isEditingCity.value) {
+		if (!isActive.value) {
 			return;
 		}
 
 		revert && restoreOriginalLocation();
-		isEditingCity.value = false;
+		isActive.value = false;
 		inputCityRef.value?.blur();
 	};
 
@@ -212,8 +201,7 @@
 	};
 
 	const restoreOriginalLocation = () => {
-		editedCity.value = initialCity.value;
-		editedCountry.value = originalCountry.value;
+		editedLocation.value = { ...initialLocation.value };
 	};
 
 	const updateProbeLocation = async (event: MouseEvent | KeyboardEvent) => {
@@ -230,59 +218,56 @@
 
 		if (!probe.value) { return; }
 
-		const prepEditedCity = editedCity.value.trim();
-		const prepInitialCity = initialCity.value.trim();
+		const { name: initCity, state: initState, country: initCountry } = initialLocation.value;
+		const { name: editedCity, state: editedState, country: editedCountry } = editedLocation.value;
+
+		const prepEditedCity = editedCity.trim();
+		const prepInitCity = initCity.trim();
 
 		// check if the city is empty
 		if (prepEditedCity === '') {
 			sendToast('warn', 'Invalid input', 'City name cannot be empty');
-
 			return;
 		}
 
 		// check if trimmed values are the same, stop editing-updating, restore to initial city's value
-		if (prepEditedCity === prepInitialCity && editedCity.value !== initialCity.value) {
-			isEditingCity.value = false;
-			editedCity.value = initialCity.value;
-
+		if (prepEditedCity === prepInitCity && editedCity !== initCity) {
+			editedLocation.value.name = initCity;
 			return;
 		}
 
 		// check if nothing was changed
-		if (prepEditedCity === prepInitialCity && editedCountry.value === originalCountry.value) {
-			isEditingCity.value = false;
+		const locationFields = Object.keys(editedLocation.value) as (keyof Omit<City, 'stateName'>)[];
 
+		if (locationFields.every(key => editedLocation.value[key]?.trim() === initialLocation.value[key]?.trim())) {
 			return;
 		}
 
 		probeDetailsUpdating.value = true;
 		// create an object to store the probe's properties that need to be updated if they have changed
-		const updProbePart: { city?: string; country?: string } = {};
+		const updProbePart: { city?: string; country?: string; state?: string | null } = {};
 
-		if (editedCountry.value !== originalCountry.value) {
-			updProbePart.country = editedCountry.value;
+		if (editedCountry !== initCountry) {
+			updProbePart.country = editedCountry;
 		}
 
-		if (prepEditedCity !== prepInitialCity) {
+		if (prepEditedCity !== prepInitCity) {
 			updProbePart.city = prepEditedCity;
 		}
 
+		if (editedState !== initState) {
+			updProbePart.state = editedState;
+		}
+
 		try {
-			$directus.request(updateItem('gp_probes', probe.value.id, updProbePart));
-			const updProbeDetails = await $directus.request(readItem('gp_probes', probe.value.id));
+			await $directus.request(updateItem('gp_probes', probe.value.id, updProbePart));
+			const updProbeDetails = await $directus.request<Probe>(readItem('gp_probes', probe.value.id));
 
 			sendToast('success', 'Done', 'The probe has been successfully updated');
 			cancelCityEditing(false);
 
-			// First, update the probe with the set values. This is necessary because the server may adjust the value,
-			// and it may end up being equal to our original state, in which case our watchers wouldn't fire.
-			probe.value = { ...probe.value, ...updProbePart };
-
-			// Then set the updated version from the server.
-			setTimeout(() => {
-				probe.value = updProbeDetails;
-				updateMapMarker(updProbeDetails.latitude, updProbeDetails.longitude, mapCenterYOffsetPx.value);
-			});
+			probe.value = updProbeDetails;
+			updateMapMarker(updProbeDetails.latitude, updProbeDetails.longitude, mapCenterYOffsetPx.value);
 		} catch (e) {
 			sendErrorToast(e);
 

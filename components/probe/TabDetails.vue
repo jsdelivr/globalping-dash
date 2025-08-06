@@ -12,8 +12,8 @@
 						<span v-if="probe.allowedCountries.length > 1">The country can only be changed to one of the values reported by our GeoIP providers.</span>
 					</p>
 
-					<div class="relative h-80 min-h-80 w-full grow overflow-hidden rounded-md bg-surface-200 sm:h-auto dark:bg-dark-950">
-						<div id="gp-map" class="size-full rounded-md"/>
+					<div class="relative h-80 min-h-80 w-full grow rounded-md bg-surface-200 sm:h-auto dark:bg-dark-950">
+						<div id="gp-map" class="size-full overflow-hidden rounded-md"/>
 
 						<span
 							v-if="probe"

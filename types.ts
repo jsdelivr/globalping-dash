@@ -4,15 +4,23 @@ declare global {
 	}
 
 	type DirectusSchema = {
-		gp_probes: Probe[];
-		gp_credits: Credits[];
-		gp_credits_additions: CreditsAddition[];
-		gp_credits_deductions: CreditsDeduction[];
-		gp_tokens: Token[];
-		gp_apps: Application[];
-		gp_apps_approvals: AppAppoval[];
+		'gp_probes': Probe[];
+		'gp_credits': Credits[];
+		'gp_credits_additions': CreditsAddition[];
+		'gp_credits_deductions': CreditsDeduction[];
+		'gp_tokens': Token[];
+		'gp_apps': Application[];
+		'gp_apps_approvals': AppAppoval[];
 
-		directus_users: User;
+		'directus_users': User;
+		'city-autocomplete': City[];
+	};
+
+	type City<TCountry extends string = string> = {
+		name: string;
+		country: TCountry;
+		state: TCountry extends 'US' ? string | null : null;
+		stateName: TCountry extends 'US' ? string | null : null;
 	};
 
 	type Credits = {
@@ -69,11 +77,13 @@ declare global {
 
 	type Status = 'initializing' | 'ready' | 'unbuffer-missing' | 'ping-test-failed' | 'sigterm' | 'offline';
 
-	type Probe = {
+	type Probe<TCountry extends string = string> = {
 		id: string;
 		asn: number;
 		city: string;
-		country: string;
+		country: TCountry;
+		state: TCountry extends 'US' ? string | null : null;
+		stateName: TCountry extends 'US' ? string | null : null;
 		date_created: string;
 		date_updated: string;
 		ip: string;
@@ -84,7 +94,6 @@ declare global {
 		name: string | null;
 		network: string;
 		onlineTimesToday: number;
-		state: string | null;
 		status: Status;
 		tags: {
 			value: string;

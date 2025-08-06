@@ -13,7 +13,7 @@ export default {
 			{ 'w-full': props.multiple },
 
 			// Color
-			'text-surface-900 dark:text-surface-0',
+			'text-bluegray-900 dark:text-surface-0',
 
 			// States
 			{
@@ -43,7 +43,7 @@ export default {
 			// Color
 			'text-bluegray-900 dark:text-surface-0',
 			'placeholder:text-surface-400 dark:placeholder:text-surface-500',
-			{ 'bg-surface-0 dark:bg-dark-900': !props.disabled },
+			{ 'bg-surface-0 dark:bg-surface-700': !props.disabled },
 			'border',
 			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
 
@@ -103,11 +103,11 @@ export default {
 	overlay: {
 		class: [
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
-			'text-surface-700 dark:text-white/80',
+			'bg-surface-0 dark:bg-dark-800',
+			'text-bluegray-900 dark:text-surface-0',
 
 			// Shape
-			'border border-surface-300 dark:border-surface-700',
+			'border border-surface-300 dark:border-dark-400',
 			'rounded-md',
 			'shadow-md',
 
@@ -134,16 +134,14 @@ export default {
 
 			// Colors
 			{
-				'text-surface-700 dark:text-white/80': (!context.focused && !context.selected) || (context.focused && !context.selected),
-				'bg-surface-200 dark:bg-surface-600/60': context.focused && !context.selected,
-				// 'text-surface-700 dark:text-white/80': context.focused && !context.selected,
-				'bg-highlight': context.selected,
+				'text-bluegray-900 dark:text-surface-0': (!context.focused && !context.selected) || (context.focused && !context.selected),
+				'bg-surface-200 dark:bg-dark-600': context.focused && !context.selected,
+				// 'text-bluegray-900 dark:text-white/80': context.focused && !context.selected,
 			},
 
 			// States
-			{ 'hover:bg-surface-100 dark:hover:bg-[rgba(255,255,255,0.03)]': !context.focused && !context.selected },
-			{ 'hover:bg-highlight-emphasis': context.selected },
-			{ 'hover:text-surface-700 hover:bg-surface-100 dark:hover:text-white dark:hover:bg-[rgba(255,255,255,0.03)]': context.focused && !context.selected },
+			{ 'hover:bg-surface-100 dark:hover:bg-dark-600': !context.focused && !context.selected },
+			{ 'hover:text-bluegray-900 hover:bg-surface-100 dark:hover:text-white dark:hover:bg-dark-600': context.focused && !context.selected },
 
 			// Transition
 			'transition-shadow duration-200',
@@ -175,7 +173,7 @@ export default {
 			'py-2 px-3',
 
 			// Color
-			'text-surface-800 dark:text-white/80',
+			'text-surface-800 dark:text-surface-0',
 			'bg-transparent',
 		],
 	},

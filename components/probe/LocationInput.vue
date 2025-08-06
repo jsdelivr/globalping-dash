@@ -105,12 +105,14 @@
 		name: '',
 		country: '',
 		state: null,
+		stateName: null,
 	});
 
-	const editedLocation = ref({
+	const editedLocation = ref<City>({
 		name: '',
 		country: '',
 		state: null,
+		stateName: null,
 	});
 
 	const selectedCountry = ref('');
@@ -130,6 +132,7 @@
 			name: newProbeDetails.city,
 			country: newProbeDetails.country,
 			state: newProbeDetails.country === 'US' ? newProbeDetails.state : null,
+			stateName: newProbeDetails.country === 'US' ? newProbeDetails.stateName : null,
 		};
 
 		initialLocation.value = { ...newLocation };
@@ -235,7 +238,7 @@
 		}
 
 		// check if nothing was changed
-		const locationFields = Object.keys(editedLocation.value) as (keyof City)[];
+		const locationFields = Object.keys(editedLocation.value) as (keyof Omit<City, 'stateName'>)[];
 
 		if (locationFields.every(key => editedLocation.value[key]?.trim() === initialLocation.value[key]?.trim())) {
 			return;

@@ -19,7 +19,9 @@ declare global {
 	type City<TCountry extends string = string> = {
 		name: string;
 		country: TCountry;
-	} & (TCountry extends 'US' ? { state: string } : { state: null });
+		state: TCountry extends 'US' ? string | null : null;
+		stateName: TCountry extends 'US' ? string | null : null;
+	};
 
 	type Credits = {
 		amount: number;
@@ -80,6 +82,8 @@ declare global {
 		asn: number;
 		city: string;
 		country: TCountry;
+		state: TCountry extends 'US' ? string | null : null;
+		stateName: TCountry extends 'US' ? string | null : null;
 		date_created: string;
 		date_updated: string;
 		ip: string;
@@ -106,7 +110,7 @@ declare global {
 		allowedCountries: string[];
 		searchIndex: string;
 		isOutdated: boolean;
-	} & (TCountry extends 'US' ? { state: string } : { state: null });
+	};
 
 	type User = {
 		id: string;

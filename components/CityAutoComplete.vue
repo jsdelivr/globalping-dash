@@ -30,7 +30,7 @@
 						{{slotProps.option.name}}
 					</span>
 					<span v-if="slotProps.option.country === 'US'">
-						, <span class="text-xs text-bluegray-300">{{slotProps.option.state}}</span>
+						, <span class="text-xs text-bluegray-600 dark:text-bluegray-300">{{slotProps.option.stateName}}</span>
 					</span>
 				</span>
 			</template>

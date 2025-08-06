@@ -315,11 +315,11 @@
 	import { type StatusCode, useProbeFilters, STATUS_MAP } from '~/composables/useProbeFilters';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { pluralize } from '~/utils/pluralize';
+	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const config = useRuntimeConfig();
 
-	const { $directus } = useNuxtApp();
 	const router = useRouter();
 	const route = useRoute();
 
@@ -357,20 +357,20 @@
 
 		try {
 			const [ adoptedProbes, statusResults, creditsAdditions ] = await Promise.all([
-				$directus.request(readItems('gp_probes', {
+				requestDirectus(readItems('gp_probes', {
 					filter: getCurrentFilter(true),
 					sort: getSortSettings() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
 					offset: first.value,
 					limit: itemsPerPage.value,
 				})),
-				$directus.request<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
+				requestDirectus<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
 					query: {
 						filter: getCurrentFilter(),
 						groupBy: [ 'status', 'isOutdated' ],
 					},
 					aggregate: { count: '*' },
 				})),
-				$directus.request<[{ sum: { amount: number }; adopted_probe: string }]>(aggregate('gp_credits_additions', {
+				requestDirectus<[{ sum: { amount: number }; adopted_probe: string }]>(aggregate('gp_credits_additions', {
 					query: {
 						filter: {
 							...getUserFilter('github_id'),
@@ -455,7 +455,7 @@
 			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 420) / 65), 5), 15);
 		}
 
-		const [{ count }] = await $directus.request<[{ count: number }]>(aggregate('gp_probes', {
+		const [{ count }] = await requestDirectus<[{ count: number }]>(aggregate('gp_probes', {
 			query: {
 				filter: getUserFilter('userId'),
 			},

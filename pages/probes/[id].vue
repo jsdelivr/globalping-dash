@@ -130,9 +130,9 @@
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata.js';
 	import { getProbeStatusColor, getProbeStatusText, isOutdated } from '~/utils/probe-status';
+	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast } from '~/utils/send-toast';
 
-	const { $directus } = useNuxtApp();
 	const route = useRoute();
 	const router = useRouter();
 	const auth = useAuth();
@@ -159,7 +159,7 @@
 
 	const loadProbeData = async (id: string) => {
 		try {
-			probeDetails.value = await $directus.request(readItem('gp_probes', id));
+			probeDetails.value = await requestDirectus(readItem('gp_probes', id));
 		} catch (e) {
 			const response = (e as { response?: Response } | undefined)?.response;
 
@@ -187,7 +187,7 @@
 
 	const loadCreditsData = async () => {
 		try {
-			const creditsResponse = await $directus.request<[{ sum: { amount: number }; adopted_probe: string }]>(aggregate('gp_credits_additions', {
+			const creditsResponse = await requestDirectus<[{ sum: { amount: number }; adopted_probe: string }]>(aggregate('gp_credits_additions', {
 				query: {
 					filter: {
 						github_id: { _eq: user.value.external_identifier || 'admin' },

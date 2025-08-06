@@ -105,6 +105,7 @@
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useMetadata } from '~/store/metadata';
 	import { formatDateForTable } from '~/utils/date-formatters';
+	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	useHead({
@@ -112,7 +113,6 @@
 	});
 
 	const config = useRuntimeConfig();
-	const { $directus } = useNuxtApp();
 	const metadata = useMetadata();
 	const route = useRoute();
 	const { getUserFilter } = useUserFilter();
@@ -127,10 +127,10 @@
 	const { data: credits } = await useLazyAsyncData('credits-stats', async () => {
 		try {
 			const [ total, additions, deductions, todayOnlineProbes ] = await Promise.all([
-				$directus.request<{ amount: number }[]>(readItems('gp_credits', {
+				requestDirectus<{ amount: number }[]>(readItems('gp_credits', {
 					filter: getUserFilter('user_id'),
 				})),
-				$directus.request<[{ sum: { amount: number }; date_created: 'datetime' }]>(aggregate('gp_credits_additions', {
+				requestDirectus<[{ sum: { amount: number }; date_created: 'datetime' }]>(aggregate('gp_credits_additions', {
 					query: {
 						filter: {
 							...getUserFilter('github_id'),
@@ -145,7 +145,7 @@
 						return { ...rest, amount: sum.amount };
 					});
 				}),
-				$directus.request<[{ sum: { amount: number }; date: 'datetime' }]>(aggregate('gp_credits_deductions', {
+				requestDirectus<[{ sum: { amount: number }; date: 'datetime' }]>(aggregate('gp_credits_deductions', {
 					query: {
 						filter: {
 							...getUserFilter('user_id'),
@@ -160,7 +160,7 @@
 						return { ...rest, amount: sum.amount };
 					});
 				}),
-				$directus.request<[{ count: number }]>(aggregate('gp_probes', {
+				requestDirectus<[{ count: number }]>(aggregate('gp_probes', {
 					query: {
 						filter: {
 							...getUserFilter('userId'),
@@ -193,7 +193,7 @@
 		loading.value = true;
 
 		try {
-			const { changes, count } = await $directus.request<{ changes: CreditsChange[]; count: number }>(customEndpoint({
+			const { changes, count } = await requestDirectus<{ changes: CreditsChange[]; count: number }>(customEndpoint({
 				method: 'GET',
 				path: '/credits-timeline',
 				params: {

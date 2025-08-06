@@ -103,6 +103,7 @@
 <script setup lang="ts">
 	import { createItem, customEndpoint, updateItem } from '@directus/sdk';
 	import { formatDate } from '~/utils/date-formatters';
+	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const props = defineProps({
@@ -113,8 +114,6 @@
 	});
 
 	const emit = defineEmits([ 'generate', 'cancel', 'save', 'regenerate' ]);
-
-	const { $directus } = useNuxtApp();
 
 	// NAME
 
@@ -221,9 +220,9 @@
 		generateTokenLoading.value = true;
 
 		try {
-			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/bytes' }));
+			const token = await requestDirectus(customEndpoint<string>({ method: 'POST', path: '/bytes' }));
 
-			const response = await $directus.request(createItem('gp_tokens', {
+			const response = await requestDirectus(createItem('gp_tokens', {
 				name: name.value,
 				origins: origins.value,
 				expire: expire.value && expire.value.toISOString().split('T')[0],
@@ -248,7 +247,7 @@
 		updateTokenLoading.value = true;
 
 		try {
-			await $directus.request(updateItem('gp_tokens', props.token!.id, {
+			await requestDirectus(updateItem('gp_tokens', props.token!.id, {
 				name: name.value,
 				origins: origins.value,
 				expire: expire.value && expire.value.toISOString().split('T')[0],
@@ -274,9 +273,9 @@
 		regenerateTokenLoading.value = true;
 
 		try {
-			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/bytes' }));
+			const token = await requestDirectus(customEndpoint<string>({ method: 'POST', path: '/bytes' }));
 
-			const response = await $directus.request(updateItem('gp_tokens', props.token!.id, {
+			const response = await requestDirectus(updateItem('gp_tokens', props.token!.id, {
 				name: name.value,
 				origins: origins.value,
 				expire: expire.value && expire.value.toISOString().split('T')[0],

@@ -78,12 +78,12 @@
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
+	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const auth = useAuth();
 	const route = useRoute();
 	const config = useRuntimeConfig();
-	const { $directus } = useNuxtApp();
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 	const displayedNotifications = ref<DirectusNotification[]>([]);
@@ -106,7 +106,7 @@
 
 	// get initial notifications
 	const { data: notifications } = await useAsyncData('directus_notifications_page', async () => {
-		return $directus.request<DirectusNotification[]>(readNotifications({
+		return requestDirectus<DirectusNotification[]>(readNotifications({
 			format: 'html',
 			limit: itemsPerPage.value,
 			offset: page.value * itemsPerPage.value,
@@ -125,7 +125,7 @@
 
 	// get the count of notifications
 	const { data: cntResponse } = await useAsyncData('directus_notifications_cnt', async () => {
-		return $directus.request(readNotifications({
+		return requestDirectus(readNotifications({
 			filter: getUserFilter('recipient'),
 			aggregate: {
 				count: [ 'id' ],
@@ -138,14 +138,14 @@
 	const loadNotifications = async (pageNumber: number) => {
 		try {
 			const [ notificationsResp, notificationsCntResp ] = await Promise.all([
-				$directus.request<DirectusNotification[]>(readNotifications({
+				requestDirectus<DirectusNotification[]>(readNotifications({
 					format: 'html',
 					limit: itemsPerPage.value,
 					offset: pageNumber * itemsPerPage.value,
 					filter: getUserFilter('recipient'),
 					sort: [ '-timestamp' ],
 				})),
-				$directus.request<NotificationCntResponse>(readNotifications({
+				requestDirectus<NotificationCntResponse>(readNotifications({
 					filter: getUserFilter('recipient'),
 					aggregate: {
 						count: [ 'id' ],

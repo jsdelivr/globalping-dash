@@ -182,13 +182,13 @@
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
 	import { pluralize } from '~/utils/pluralize';
+	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	useHead({
 		title: 'Overview -',
 	});
 
-	const { $directus } = useNuxtApp();
 	const creditsPerAdoptedProbe = useMetadata().creditsPerAdoptedProbe;
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
@@ -198,7 +198,7 @@
 
 	const { status: statusProbes, data: adoptedProbes } = await useLazyAsyncData('gp_probes', async () => {
 		try {
-			const result = await $directus.request(readItems('gp_probes', {
+			const result = await requestDirectus(readItems('gp_probes', {
 				filter: getUserFilter('userId'),
 				sort: [ 'status', 'name' ],
 			}));
@@ -222,12 +222,12 @@
 		try {
 			let fromSponsorshipPromise = Promise.resolve(0);
 
-			const totalPromise = $directus.request(readItems('gp_credits', {
+			const totalPromise = requestDirectus(readItems('gp_credits', {
 				filter: getUserFilter('user_id'),
 			}));
 
 			if (user.value.user_type !== 'member') {
-				fromSponsorshipPromise = $directus.request(readItems('gp_credits_additions', {
+				fromSponsorshipPromise = requestDirectus(readItems('gp_credits_additions', {
 					filter: {
 						...getUserFilter('github_id'),
 						reason: { _eq: 'recurring_sponsorship' },

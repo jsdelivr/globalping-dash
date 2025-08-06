@@ -29,6 +29,7 @@
 <script setup lang="ts">
 	import { updateItems } from '@directus/sdk';
 	import { pluralize } from '~/utils/pluralize';
+	import { requestDirectus } from '~/utils/request-directus';
 	import { sendToast, sendErrorToast } from '~/utils/send-toast';
 
 	const props = defineProps({
@@ -42,7 +43,6 @@
 		(e: 'cancel' | 'success'): void;
 	}>();
 
-	const { $directus } = useNuxtApp();
 	const deleteLoading = ref(false);
 
 	const deleteProbes = async () => {
@@ -51,7 +51,7 @@
 
 		try {
 			if (selectedProbesCount) {
-				await $directus.request(updateItems('gp_probes', props.probes.map(p => p.id), { userId: null }));
+				await requestDirectus(updateItems('gp_probes', props.probes.map(p => p.id), { userId: null }));
 				sendToast('success', 'Done', `The ${pluralize('probe has', 'probes have', selectedProbesCount)} been deleted`);
 				deleteLoading.value = false;
 				emit('success');

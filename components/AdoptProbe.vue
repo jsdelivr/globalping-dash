@@ -227,11 +227,11 @@
 	import { customEndpoint, readItems } from '@directus/sdk';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
+	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 	import { smoothResize } from '~/utils/smooth-resize';
 	import { validateIp } from '~/utils/validate-ip';
 
-	const { $directus } = useNuxtApp();
 	const { getUserFilter } = useUserFilter();
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 	const auth = useAuth();
@@ -274,7 +274,7 @@
 	// STEP 2
 
 	const { data: initialProbes } = await useLazyAsyncData('initial_user_probes', async () => {
-		const result = await $directus.request(readItems('gp_probes', {
+		const result = await requestDirectus(readItems('gp_probes', {
 			filter: getUserFilter('userId'),
 		}));
 
@@ -288,7 +288,7 @@
 		try {
 			await new Promise<void>((resolve) => {
 				const checkProbes = async () => {
-					const currentProbes = await $directus.request(readItems('gp_probes', {
+					const currentProbes = await requestDirectus(readItems('gp_probes', {
 						filter: getUserFilter('userId'),
 					}));
 
@@ -360,7 +360,7 @@
 		sendAdoptionCodeLoading.value = true;
 
 		try {
-			await $directus.request(customEndpoint({
+			await requestDirectus(customEndpoint({
 				method: 'POST',
 				path: '/adoption-code/send-code',
 				body: JSON.stringify({
@@ -396,7 +396,7 @@
 		resetIsCodeValid();
 
 		try {
-			await $directus.request(customEndpoint({
+			await requestDirectus(customEndpoint({
 				method: 'POST',
 				path: '/adoption-code/send-code',
 				body: JSON.stringify({
@@ -419,7 +419,7 @@
 		verifyCodeLoading.value = true;
 
 		try {
-			const response = await $directus.request(customEndpoint({
+			const response = await requestDirectus(customEndpoint({
 				method: 'POST',
 				path: '/adoption-code/verify-code',
 				body: JSON.stringify({

@@ -68,7 +68,7 @@
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
 	import type { VNodeRef } from 'vue';
-	const { $directus } = useNuxtApp();
+	import { useDirectusFetch } from '~/composables/directus/useDirectusFetch';
 
 	const model = defineModel<City>({ required: true });
 	const inputRef = defineModel<HTMLInputElement | null>('inputRef');
@@ -99,9 +99,8 @@
 	const suggestions = ref<City[]>([]);
 	const isFocused = ref(false);
 
-	const { data, status, refresh } = await useAsyncData(
-		'city-autocomplete',
-		() => $directus.request<City[]>(customEndpoint({ path: '/city-autocomplete', params: { query: cityQuery.value, countries: model.value.country } })),
+	const { data, status, refresh } = useDirectusFetch<City[]>(
+		() => customEndpoint({ path: '/city-autocomplete', params: { query: cityQuery.value, countries: model.value.country } }),
 		{
 			watch: [ () => model.value.country, cityQuery ],
 		},
@@ -129,9 +128,15 @@
 	});
 
 	const updateQuery = async () => {
+		let shouldRefresh = false;
+
+		if (model.value.name.trim() === cityQuery.value.trim()) {
+			shouldRefresh = true;
+		}
+
 		if (model.value.name.trim().length) {
 			cityQuery.value = model.value.name.trim();
-			await refresh();
+			shouldRefresh && await refresh();
 		}
 	};
 

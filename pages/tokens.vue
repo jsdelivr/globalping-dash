@@ -219,6 +219,7 @@
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { formatDate, getRelativeTimeString } from '~/utils/date-formatters';
+	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	useHead({
@@ -226,7 +227,6 @@
 	});
 
 	const config = useRuntimeConfig();
-	const { $directus } = useNuxtApp();
 	const { getUserFilter } = useUserFilter();
 	const auth = useAuth();
 
@@ -244,7 +244,7 @@
 
 		try {
 			const [ gpTokens, [{ count }] ] = await Promise.all([
-				$directus.request(readItems('gp_tokens', {
+				requestDirectus(readItems('gp_tokens', {
 					filter: {
 						...getUserFilter('user_created'),
 						app_id: { _null: true },
@@ -253,7 +253,7 @@
 					limit: itemsPerPage.value,
 					sort: '-date_created',
 				})),
-				$directus.request<[{ count: number }]>(aggregate('gp_tokens', {
+				requestDirectus<[{ count: number }]>(aggregate('gp_tokens', {
 					query: {
 						filter: {
 							...getUserFilter('user_created'),
@@ -346,10 +346,10 @@
 
 	const regenerateToken = async () => {
 		try {
-			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/bytes' }));
+			const token = await requestDirectus(customEndpoint<string>({ method: 'POST', path: '/bytes' }));
 			const id = tokenToRegenerate.value!.id;
 
-			await $directus.request(updateItem('gp_tokens', id, {
+			await requestDirectus(updateItem('gp_tokens', id, {
 				value: token,
 			}));
 
@@ -377,7 +377,7 @@
 
 	const deleteToken = async () => {
 		try {
-			await $directus.request(deleteItem('gp_tokens', tokenToDelete.value!.id));
+			await requestDirectus(deleteItem('gp_tokens', tokenToDelete.value!.id));
 
 			// Go to prev page if that is last item.
 			if (tokens.value.length === 1 && tokensPage.value) {
@@ -405,7 +405,7 @@
 		loadingApplications.value = true;
 
 		try {
-			const { applications, total } = await $directus.request<{ applications: Application[]; total: number }>(customEndpoint({
+			const { applications, total } = await requestDirectus<{ applications: Application[]; total: number }>(customEndpoint({
 				method: 'GET',
 				path: '/applications',
 				params: {
@@ -447,7 +447,7 @@
 	const revokeApp = async () => {
 		try {
 			if (appToRevoke.value && appToRevoke.value.id) {
-				await $directus.request<{ applications: Application[] }>(customEndpoint({
+				await requestDirectus<{ applications: Application[] }>(customEndpoint({
 					method: 'POST',
 					path: '/applications/revoke',
 					body: JSON.stringify({

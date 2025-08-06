@@ -8,7 +8,7 @@
 			ref="autocompleteRef"
 			v-model="model.name"
 			:suggestions="suggestions"
-			:pt="{root: { tabindex: '-1' }, overlay: { hidden: !active }}"
+			:pt="{root: { tabindex: '-1' }, overlay: { hidden: !active || suggestions.length === 0 }}"
 			option-label="name"
 			loader=" "
 			class="relative size-full rounded-none"
@@ -17,6 +17,7 @@
 			aria-label="City name"
 			:delay="200"
 			complete-on-focus
+			:show-empty-message="false"
 			append-to="self"
 			@item-select="(e) => model = e.value"
 			@complete="updateQuery"
@@ -67,6 +68,7 @@
 
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
+	import isEqual from 'lodash/isEqual';
 	import type { VNodeRef } from 'vue';
 	const { $directus } = useNuxtApp();
 
@@ -115,7 +117,13 @@
 			}
 
 			if (Array.isArray(newData)) {
-				suggestions.value = newData;
+				const differentSuggestions = newData.filter(el => !isEqual(el, model.value));
+
+				if (differentSuggestions.length !== newData.length) {
+					suggestions.value = [ model.value, ...differentSuggestions ];
+				} else {
+					suggestions.value = newData;
+				}
 			} else {
 				suggestions.value = [];
 			}

@@ -1,19 +1,18 @@
 <template>
-	<!--	TODO: Refactor the component-->
 	<div
 		ref="containerRef"
-		class="w-full"
+		class="relative size-full"
 		@focusin="isFocused = true"
 		@focusout="handleFocusOut">
 		<AutoComplete
 			ref="autocompleteRef"
 			v-model="model.name"
 			:suggestions="suggestions"
-			:pt="{root: { tabindex: '-1' }}"
+			:pt="{root: { tabindex: '-1' }, overlay: { hidden: !active }}"
 			option-label="name"
 			loader=" "
-			class="relative w-full rounded-none"
-			input-class="w-full md:rounded-none md:rounded-r-md rounded-md border-none focus:cursor-text cursor-pointer dark:!bg-dark-800 pr-[72px]"
+			class="relative size-full rounded-none"
+			input-class="size-full md:rounded-none md:rounded-r-md rounded-md border-none focus:cursor-text cursor-pointer dark:!bg-dark-800 pr-[68px]"
 			overlay-class="w-full"
 			aria-label="City name"
 			:delay="200"
@@ -21,7 +20,7 @@
 			append-to="self"
 			@item-select="(e) => model = e.value"
 			@complete="updateQuery"
-			@keydown.enter.stop="(event: KeyboardEvent) => {!autocompleteRef?.overlayVisible && emit('confirm', event)}"
+			@keydown.enter.stop="handleEnterEvent"
 			@keyup.esc="emit('cancel')"
 		>
 			<template #option="slotProps">
@@ -44,7 +43,7 @@
 			variant="text"
 			severity="secondary"
 			icon="pi pi-check"
-			class="!absolute !right-2 !top-1/2 mr-8 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-primary focus:!ring-primary"
+			class="!absolute right-1 top-1/2 mr-8 !size-7 -translate-y-1/2 rounded-md !px-2 !py-1 focus:!border-primary focus:!ring-primary"
 			:loading="loading"
 			:disabled="loading"
 			aria-label="Save"
@@ -57,7 +56,7 @@
 			variant="text"
 			severity="secondary"
 			icon="pi pi-times"
-			class="!absolute !right-2 !top-1/2 !h-7 w-7 !-translate-y-1/2 !rounded-md !px-2 !py-1 !text-sm !font-bold focus:!border-[#ef4444] focus:!ring-[#ef4444]"
+			class="!absolute right-1 top-1/2 !size-7 -translate-y-1/2 rounded-md focus:!border-[#ef4444] focus:!ring-[#ef4444]"
 			:disabled="loading"
 			aria-label="Cancel"
 			@keyup.enter="emit('cancel')"
@@ -133,6 +132,12 @@
 		if (model.value.name.trim().length) {
 			cityQuery.value = model.value.name.trim();
 			await refresh();
+		}
+	};
+
+	const handleEnterEvent = (event: KeyboardEvent) => {
+		if (!autocompleteRef.value?.overlayVisible) {
+			emit('confirm', event);
 		}
 	};
 

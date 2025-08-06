@@ -2,20 +2,21 @@
 	<div
 		v-if="probe"
 		ref="containerRef"
-		class="absolute inset-x-4 bottom-9 flex flex-col gap-1 sm:flex-row sm:gap-0"
+		class="absolute inset-x-4 bottom-14 flex h-9 flex-col gap-1 sm:bottom-9 sm:flex-row sm:items-center sm:gap-0"
 		@focusin="isActive = true"
 		@focusout="cancelEditing"
 	>
 		<div
-			class="flex h-[34px] w-full shrink-0 items-center justify-center rounded-md border border-[#D1D5DB] bg-[#E5E7EB] sm:h-auto sm:w-24 sm:rounded-r-none sm:border-r-0 dark:border-dark-600 dark:bg-dark-800"
+			class="relative flex size-full shrink-0 items-center justify-center rounded-md border border-[#D1D5DB] bg-[#E5E7EB] sm:w-24 sm:rounded-r-none sm:border-r-0 dark:border-dark-600 dark:bg-dark-800"
 			aria-hidden="true"
 		>
 			<Select
 				id="country"
 				v-model="selectedCountry"
 				:options="[ ...probe.allowedCountries, OTHER_COUNTRY_OPTION ]"
-				class="size-full rounded-md border-0 border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-primary sm:!rounded-r-none sm:!border-r dark:border-dark-600 dark:!bg-dark-800"
+				class="size-full rounded-md border-0 !border-[#D1D5DB] hover:!border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-primary sm:!rounded-r-none sm:!border-r dark:!border-dark-600 dark:!bg-dark-800 hover:dark:!border-dark-600"
 				:pt="{ dropdown: 'w-8', root: { tabindex: '-1' } }"
+				overlay-class="w-full"
 				:pt-options="{ mergeProps: true }"
 				append-to="self"
 				@change="onCountryChanged"
@@ -39,7 +40,7 @@
 		</div>
 
 		<div
-			class="relative flex h-[34px] grow rounded-md border border-[#D1D5DB] bg-white focus:z-10 focus:ring-1 focus:ring-primary sm:h-auto sm:rounded-l-none sm:border-l-0 dark:border-dark-600 dark:bg-dark-800"
+			class="relative flex h-full grow items-center rounded-md border border-[#D1D5DB] bg-white focus:z-10 focus:ring-1 focus:ring-primary sm:rounded-l-none sm:border-l-0 dark:border-dark-600 dark:bg-dark-800"
 		>
 			<CityAutoComplete
 				v-model="editedLocation"
@@ -98,9 +99,6 @@
 		required: true,
 	});
 
-	const containerRef = ref<HTMLElement | null>(null);
-	const isActive = ref(false);
-
 	const initialLocation = ref<City>({
 		name: '',
 		country: '',
@@ -115,8 +113,9 @@
 		stateName: null,
 	});
 
-	const selectedCountry = ref('');
-
+	const containerRef = ref<HTMLElement | null>(null);
+	const isActive = ref(false);
+	const selectedCountry = ref(''); // is a valid country or the 'Other' country option
 	const invalidCountryDialog = ref(false);
 	const inputCityRef = ref<HTMLInputElement | null>(null);
 	const ignoreSelectEnter = ref(false);
@@ -131,8 +130,8 @@
 		const newLocation: City = {
 			name: newProbeDetails.city,
 			country: newProbeDetails.country,
-			state: newProbeDetails.country === 'US' ? newProbeDetails.state : null,
-			stateName: newProbeDetails.country === 'US' ? newProbeDetails.stateName : null,
+			state: newProbeDetails.state,
+			stateName: newProbeDetails.stateName,
 		};
 
 		initialLocation.value = { ...newLocation };

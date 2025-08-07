@@ -1,20 +1,22 @@
 import type { AsyncData, AsyncDataOptions } from '#app';
 import type { RestCommand } from '@directus/sdk';
 
-export type UseDirectusCommand<RetT> = RestCommand<RetT, DirectusSchema> | (() => RestCommand<RetT, DirectusSchema>);
+export type UseDirectusCommand<RetT> = MaybeRefOrGetter<RestCommand<RetT, DirectusSchema>>;
+
 export type UseDirectusResponse<RetT, DefT = RetT | null> = DefT extends null ? AsyncData<RetT, unknown> : Omit<AsyncData<RetT, unknown>, 'data'> & { data: Ref<RetT> };
+
 export type UseDirectusOptions<RetT, DefT = RetT | null> = Omit<AsyncDataOptions<RetT>, 'default'> & { default?: MaybeRefOrGetter<DefT>; key?: MaybeRefOrGetter<string> };
 
 
-function isGetter<RetT, Schema> (command: UseDirectusCommand<RetT>): command is () => RestCommand<RetT, Schema> {
-	return typeof command() === 'function';
+function isRestCommand<RetT> (command: UseDirectusCommand<RetT>): command is RestCommand<RetT, unknown> {
+	return typeof toValue(command) === 'object';
 }
 
-function getCommandValue<RetT, Schema> (command: UseDirectusCommand<RetT>): RestCommand<RetT, Schema> {
-	return isGetter(command) ? command() : command;
+export function getRestCommandValue<RetT> (command: UseDirectusCommand<RetT>): RestCommand<RetT, unknown> {
+	return isRestCommand(command) ? command : toValue(command);
 }
 
-function generateFetchKey<RetT> (command: RestCommand<RetT, DirectusSchema>): string {
+function generateFetchKey<RetT> (command: RestCommand<RetT, unknown>): string {
 	const { path, params = {} } = command();
 	const paramString = Object.keys(params).sort().map((key) => {
 		return `${key}=${params[key]}`;
@@ -26,8 +28,8 @@ function generateFetchKey<RetT> (command: RestCommand<RetT, DirectusSchema>): st
 export const useDirectusFetch = <RetT, DefT = RetT | null>(command: UseDirectusCommand<RetT>, options?: UseDirectusOptions<RetT, DefT>): UseDirectusResponse<RetT, DefT> => {
 	const { $directus } = useNuxtApp();
 
-	const fetcher = computed(() => () => $directus.request<RetT>(getCommandValue(command)));
-	const fetchKey = computed(() => options?.key ?? generateFetchKey(getCommandValue(command)));
+	const fetcher = computed(() => () => $directus.request<RetT>(getRestCommandValue(command)));
+	const fetchKey = computed(() => options?.key ?? generateFetchKey(getRestCommandValue(command)));
 
 	const { default: defaultData, ...opts } = options ?? {};
 

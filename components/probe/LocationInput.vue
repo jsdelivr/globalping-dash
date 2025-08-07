@@ -80,8 +80,9 @@
 	import type { SelectChangeEvent } from 'primevue/select';
 	import CountryFlag from 'vue-country-flag-next';
 	import { updateMapMarker } from '~/utils/init-google-map';
-	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
+
+	const { $directus } = useNuxtApp();
 
 	const probe = defineModel('probe', {
 		type: Object as PropType<Probe>,
@@ -259,8 +260,8 @@
 		}
 
 		try {
-			await requestDirectus(updateItem('gp_probes', probe.value.id, updProbePart));
-			const updProbeDetails = await requestDirectus<Probe>(readItem('gp_probes', probe.value.id));
+			await $directus.request(updateItem('gp_probes', probe.value.id, updProbePart));
+			const updProbeDetails = await $directus.request<Probe>(readItem('gp_probes', probe.value.id));
 
 			sendToast('success', 'Done', 'The probe has been successfully updated');
 			cancelCityEditing(false);

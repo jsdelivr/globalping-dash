@@ -1,18 +1,19 @@
 import type { AsyncData, AsyncDataOptions } from '#app';
 import type { RestCommand } from '@directus/sdk';
+import { sendErrorToast } from '~/utils/send-toast';
 
-export type UseDirectusCommand<RetT> = MaybeRefOrGetter<RestCommand<RetT, DirectusSchema>>;
+export type DirectusCommand<RetT> = MaybeRefOrGetter<RestCommand<RetT, DirectusSchema>>;
 
-export type UseDirectusResponse<RetT, DefT = RetT | null> = DefT extends null ? AsyncData<RetT, unknown> : Omit<AsyncData<RetT, unknown>, 'data'> & { data: Ref<RetT> };
+type BaseOpts<RetT> = Omit<AsyncDataOptions<RetT>, 'default'> & { key?: MaybeRefOrGetter<string>; displayErrors?: boolean };
+type OptsWithDefault<RetT> = BaseOpts<RetT> & { default: MaybeRefOrGetter<RetT> };
+type OptsWithoutDefault<RetT> = BaseOpts<RetT> & { default?: undefined };
 
-export type UseDirectusOptions<RetT, DefT = RetT | null> = Omit<AsyncDataOptions<RetT>, 'default'> & { default?: MaybeRefOrGetter<DefT>; key?: MaybeRefOrGetter<string> };
 
-
-function isRestCommand<RetT> (command: UseDirectusCommand<RetT>): command is RestCommand<RetT, unknown> {
+function isRestCommand<RetT> (command: DirectusCommand<RetT>): command is RestCommand<RetT, unknown> {
 	return typeof toValue(command) === 'object';
 }
 
-export function getRestCommandValue<RetT> (command: UseDirectusCommand<RetT>): RestCommand<RetT, unknown> {
+export function getRestCommandValue<RetT> (command: DirectusCommand<RetT>): RestCommand<RetT, unknown> {
 	return isRestCommand(command) ? command : toValue(command);
 }
 
@@ -25,18 +26,36 @@ function generateFetchKey<RetT> (command: RestCommand<RetT, unknown>): string {
 	return [ path, ...paramString ].join('&');
 }
 
-export const useDirectusFetch = <RetT, DefT = RetT | null>(command: UseDirectusCommand<RetT>, options?: UseDirectusOptions<RetT, DefT>): UseDirectusResponse<RetT, DefT> => {
+export function useDirectusFetch<RetT> (
+	command: DirectusCommand<RetT>,
+	options: OptsWithDefault<RetT>
+): Omit<AsyncData<RetT, unknown>, 'data'> & { data: Ref<RetT> };
+
+export function useDirectusFetch<RetT> (
+	command: DirectusCommand<RetT>,
+	options?: OptsWithoutDefault<RetT>
+): AsyncData<RetT | null, unknown>;
+
+export function useDirectusFetch<RetT> (command: DirectusCommand<RetT>, options?: OptsWithDefault<RetT> | OptsWithoutDefault<RetT>) {
 	const { $directus } = useNuxtApp();
 
 	const fetcher = computed(() => () => $directus.request<RetT>(getRestCommandValue(command)));
 	const fetchKey = computed(() => options?.key ?? generateFetchKey(getRestCommandValue(command)));
 
-	const { default: defaultData, ...opts } = options ?? {};
+	const { default: defaultData, displayErrors = true, ...opts } = options ?? {};
 
-	if (defaultData) {
-		const { data, ...remainder } = useAsyncData<RetT>(fetchKey.value, fetcher.value, opts);
-		return { data: data ?? toRef(defaultData), ...remainder } as UseDirectusResponse<RetT, DefT>;
+	const { data, error, ...remainder } = useAsyncData<RetT>(fetchKey.value, fetcher.value, opts);
+	const passedData = computed(() => defaultData && !data.value ? toValue(defaultData) : data.value);
+
+	watch(error, (newError) => {
+		if (displayErrors && newError) {
+			sendErrorToast(newError);
+		}
+	});
+
+	if (('default' in (options ?? {})) && defaultData) {
+		return { data: passedData as Ref<RetT>, error, ...remainder };
 	}
 
-	return useAsyncData<RetT>(fetchKey.value, fetcher.value, opts) as UseDirectusResponse<RetT, DefT>;
-};
+	return { data: passedData as Ref<RetT | null>, error, ...remainder };
+}

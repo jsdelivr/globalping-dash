@@ -73,24 +73,40 @@
 
 <script setup lang="ts">
 	import { readNotifications } from '@directus/sdk';
+	import { useDirectusFetch } from '~/composables/directus/useDirectusFetch';
 	import { usePagination } from '~/composables/pagination';
 	import { useNotifications } from '~/composables/useNotifications';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
-	import { requestDirectus } from '~/utils/request-directus';
-	import { sendErrorToast } from '~/utils/send-toast';
 
 	const auth = useAuth();
 	const route = useRoute();
 	const config = useRuntimeConfig();
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
-	const displayedNotifications = ref<DirectusNotification[]>([]);
-	const notificationsCount = ref<number>(0);
 	const { inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead } = useNotifications();
 	const notificationBus = useEventBus<string[]>('notification-updated');
 	const { getUserFilter } = useUserFilter();
+
+	const { data: notifications } = await useDirectusFetch<DirectusNotification[]>(() => readNotifications({
+		format: 'html',
+		limit: itemsPerPage.value,
+		offset: page.value * itemsPerPage.value,
+		filter: getUserFilter('recipient'),
+		sort: [ '-timestamp' ],
+	}), { default: () => [], watch: [ page, itemsPerPage ] });
+
+	// get the count of notifications
+	const { data: cntResponse } = await useDirectusFetch<{ count: { id: number } }[]>(() => readNotifications({
+		filter: getUserFilter('recipient'),
+		aggregate: {
+			count: [ 'id' ],
+		},
+	}), { default: () => [], watch: [ page ] });
+
+	const displayedNotifications = computed(() => notifications.value ?? []);
+	const notificationsCount = computed(() => cntResponse.value?.[0]?.count?.id ?? 0);
 
 	notificationBus.on((idsToArchive) => {
 		displayedNotifications.value.forEach((notification) => {
@@ -100,68 +116,10 @@
 		});
 	});
 
-	if (!route.query.limit) {
-		itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 210) / 140), 5), 15);
-	}
-
-	// get initial notifications
-	const { data: notifications } = await useAsyncData('directus_notifications_page', async () => {
-		return requestDirectus<DirectusNotification[]>(readNotifications({
-			format: 'html',
-			limit: itemsPerPage.value,
-			offset: page.value * itemsPerPage.value,
-			filter: getUserFilter('recipient'),
-			sort: [ '-timestamp' ],
-		}));
-	}, { default: () => [] });
-
-	displayedNotifications.value = notifications.value;
-
-	type NotificationCntResponse = {
-		count: {
-			id: number;
-		};
-	}[];
-
-	// get the count of notifications
-	const { data: cntResponse } = await useAsyncData('directus_notifications_cnt', async () => {
-		return requestDirectus(readNotifications({
-			filter: getUserFilter('recipient'),
-			aggregate: {
-				count: [ 'id' ],
-			},
-		}));
-	}, { default: () => [] });
-
-	notificationsCount.value = (cntResponse.value as NotificationCntResponse)?.[0]?.count?.id ?? 0;
-
-	const loadNotifications = async (pageNumber: number) => {
-		try {
-			const [ notificationsResp, notificationsCntResp ] = await Promise.all([
-				requestDirectus<DirectusNotification[]>(readNotifications({
-					format: 'html',
-					limit: itemsPerPage.value,
-					offset: pageNumber * itemsPerPage.value,
-					filter: getUserFilter('recipient'),
-					sort: [ '-timestamp' ],
-				})),
-				requestDirectus<NotificationCntResponse>(readNotifications({
-					filter: getUserFilter('recipient'),
-					aggregate: {
-						count: [ 'id' ],
-					},
-				})),
-			]);
-
-			displayedNotifications.value = notificationsResp;
-			notificationsCount.value = notificationsCntResp?.[0]?.count?.id ?? 0;
-		} catch (e) {
-			sendErrorToast(e);
+	onMounted(() => {
+		if (!route.query.limit) {
+			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 210) / 140), 5), 15);
 		}
-	};
-
-	// get notifications depending on the selected page in Paginator
-	watch([ page ], async () => {
-		await loadNotifications(page.value);
 	});
+
 </script>

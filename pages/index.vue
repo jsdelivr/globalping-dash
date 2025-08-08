@@ -177,6 +177,7 @@
 	import countBy from 'lodash/countBy';
 	import isEmpty from 'lodash/isEmpty';
 	import CountryFlag from 'vue-country-flag-next';
+	import { useDirectusFetch } from '~/composables/directus/useDirectusFetch';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { ONLINE_STATUSES, OFFLINE_STATUSES } from '~/constants/probes';
 	import { useAuth } from '~/store/auth';
@@ -196,19 +197,10 @@
 
 	// SUMMARY
 
-	const { status: statusProbes, data: adoptedProbes } = await useLazyAsyncData('gp_probes', async () => {
-		try {
-			const result = await requestDirectus(readItems('gp_probes', {
-				filter: getUserFilter('userId'),
-				sort: [ 'status', 'name' ],
-			}));
-
-			return result;
-		} catch (e) {
-			sendErrorToast(e);
-			throw e;
-		}
-	}, { default: () => [] });
+	const { status: statusProbes, data: adoptedProbes } = await useDirectusFetch(() => readItems('gp_probes', {
+		filter: getUserFilter('userId'),
+		sort: [ 'status', 'name' ],
+	}), { default: () => [], lazy: true });
 
 	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => ONLINE_STATUSES.includes(status)));
 	const offlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => OFFLINE_STATUSES.includes(status)));
@@ -218,6 +210,7 @@
 
 	// CREDITS
 
+	// TODO: maybe try to utilize useDirectusFetch
 	const { status: statusCredits, data: credits } = await useLazyAsyncData('gp_credits', async () => {
 		try {
 			let fromSponsorshipPromise = Promise.resolve(0);

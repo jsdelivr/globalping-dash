@@ -215,6 +215,7 @@
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
+	import { useDirectusFetch } from '~/composables/directus/useDirectusFetch';
 	import { usePagination } from '~/composables/pagination';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
@@ -233,53 +234,37 @@
 	const itemsPerPage = ref(Math.round(config.public.itemsPerTablePage / 2));
 
 	// TOKENS
-
-	const loadingTokens = ref(false);
-	const tokens = ref<Token[]>([]);
-	const tokensCount = ref(0);
 	const { page: tokensPage, first: firstToken, pageLinkSize, template } = usePagination({ itemsPerPage, pageKey: 'tokensPage' });
 
+	const { data: tokens, pending: tokensPending, refresh: refreshTokenData } = await useDirectusFetch(() => readItems('gp_tokens', {
+		filter: {
+			...getUserFilter('user_created'),
+			app_id: { _null: true },
+		},
+		offset: firstToken.value,
+		limit: itemsPerPage.value,
+		sort: '-date_created',
+	}), { default: () => [], watch: [ tokensPage ], lazy: true });
+
+	const { data: tokenCountArray, pending: tokenCountPending, refresh: refreshTokenCount } = useDirectusFetch<[{ count: number }]>(() => aggregate('gp_tokens', {
+		query: {
+			filter: {
+				...getUserFilter('user_created'),
+				app_id: { _null: true },
+			},
+		},
+		aggregate: { count: '*' },
+	}), { default: () => [{ count: 0 }], watch: [ tokensPage ] });
+
+	const loadingTokens = computed(() => tokensPending.value || tokenCountPending.value);
+	const tokensCount = computed(() => tokenCountArray.value[0].count ?? 0);
+
 	const loadTokens = async () => {
-		loadingTokens.value = true;
-
-		try {
-			const [ gpTokens, [{ count }] ] = await Promise.all([
-				requestDirectus(readItems('gp_tokens', {
-					filter: {
-						...getUserFilter('user_created'),
-						app_id: { _null: true },
-					},
-					offset: firstToken.value,
-					limit: itemsPerPage.value,
-					sort: '-date_created',
-				})),
-				requestDirectus<[{ count: number }]>(aggregate('gp_tokens', {
-					query: {
-						filter: {
-							...getUserFilter('user_created'),
-							app_id: { _null: true },
-						},
-					},
-					aggregate: { count: '*' },
-				})),
-			]);
-
-			tokens.value = gpTokens;
-			tokensCount.value = count;
-		} catch (e) {
-			sendErrorToast(e);
-		}
-
-		loadingTokens.value = false;
+		return Promise.all([ refreshTokenData(), refreshTokenCount() ]);
 	};
-
-	onMounted(async () => {
-		await loadTokens();
-	});
 
 	watch([ tokensPage ], async () => {
 		resetState();
-		await loadTokens();
 	});
 
 	// TOKEN DETAILS
@@ -396,42 +381,20 @@
 
 	// APPLICATIONS
 
-	const loadingApplications = ref(false);
-	const apps = ref<Application[]>([]);
-	const appsCount = ref(0);
 	const { page: appsPage, first: firstApp } = usePagination({ itemsPerPage, pageKey: 'appsPage' });
 
-	const loadApplications = async () => {
-		loadingApplications.value = true;
+	const { data: applicationData, pending: loadingApplications, refresh: loadApplications } = useDirectusFetch<{ applications: Application[]; total: number }>(() => customEndpoint({
+		method: 'GET',
+		path: '/applications',
+		params: {
+			userId: getUserFilter('user_id').user_id?._eq || 'all',
+			offset: firstApp.value,
+			limit: itemsPerPage.value,
+		},
+	}), { default: () => { return { applications: [], total: 0 }; }, watch: [ appsPage ] });
 
-		try {
-			const { applications, total } = await requestDirectus<{ applications: Application[]; total: number }>(customEndpoint({
-				method: 'GET',
-				path: '/applications',
-				params: {
-					userId: getUserFilter('user_id').user_id?._eq || 'all',
-					offset: firstApp.value,
-					limit: itemsPerPage.value,
-				},
-			}));
-
-			apps.value = applications;
-			appsCount.value = total;
-		} catch (e) {
-			sendErrorToast(e);
-		}
-
-		loadingApplications.value = false;
-	};
-
-	onMounted(async () => {
-		await loadApplications();
-	});
-
-	watch(appsPage, async () => {
-		resetState();
-		await loadApplications();
-	});
+	const apps = computed(() => applicationData.value?.applications ?? []);
+	const appsCount = computed(() => applicationData.value?.total ?? 0);
 
 	// REVOKE APP ACCESS
 

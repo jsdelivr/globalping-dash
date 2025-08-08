@@ -101,6 +101,7 @@
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, readItems } from '@directus/sdk';
+	import { useDirectusFetch } from '~/composables/directus/useDirectusFetch';
 	import { usePagination } from '~/composables/pagination';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useMetadata } from '~/store/metadata';
@@ -119,11 +120,10 @@
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
-	const loading = ref(false);
-	const creditsChangesCount = ref(0);
-	const creditsChanges = ref<CreditsChange[]>([]);
+
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 
+	// TODO maybe try to utilize useDirectusFetch
 	const { data: credits } = await useLazyAsyncData('credits-stats', async () => {
 		try {
 			const [ total, additions, deductions, todayOnlineProbes ] = await Promise.all([
@@ -189,45 +189,34 @@
 	const totalDeductions = computed(() => credits.value.deductions.reduce((sum, deduction) => sum + deduction.amount, 0));
 	const dailyAdditions = computed(() => credits.value.todayOnlineProbes * creditsPerAdoptedProbe);
 
-	const loadLazyData = async () => {
-		loading.value = true;
+	const { data: creditsData, pending: loading } = useDirectusFetch<{ changes: CreditsChange[]; count: number }>(() => customEndpoint({
+		path: '/credits-timeline',
+		params: {
+			userId: getUserFilter('user_id').user_id?._eq || 'all',
+			offset: first.value,
+			limit: itemsPerPage.value,
+		},
+	}), { watch: [ page, itemsPerPage ] });
 
-		try {
-			const { changes, count } = await requestDirectus<{ changes: CreditsChange[]; count: number }>(customEndpoint({
-				method: 'GET',
-				path: '/credits-timeline',
-				params: {
-					userId: getUserFilter('user_id').user_id?._eq || 'all',
-					offset: first.value,
-					limit: itemsPerPage.value,
-				},
-			}));
+	const creditsChangesCount = computed(() => creditsData.value?.count || 0);
 
-			creditsChanges.value = [
-				...changes.map(change => ({
-					...change,
-					date_created: formatDateForTable(change.date_created),
-				})),
-			];
-
-			creditsChangesCount.value = count;
-		} catch (e) {
-			sendErrorToast(e);
+	const creditsChanges = computed<CreditsChange[]>(() => {
+		if (!creditsData.value) {
+			return [];
 		}
 
-		loading.value = false;
-	};
+		return [
+			...creditsData.value.changes.map(change => ({
+				...change,
+				date_created: formatDateForTable(change.date_created),
+			})),
+		];
+	});
 
 	onMounted(async () => {
 		if (!route.query.limit) {
 			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 540) / 54), 5), 15);
 		}
-
-		await loadLazyData();
-	});
-
-	watch([ page ], async () => {
-		await loadLazyData();
 	});
 
 	// CREDITS DIALOG

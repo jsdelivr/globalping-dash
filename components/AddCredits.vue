@@ -158,22 +158,23 @@
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
-	import { requestDirectus } from '~/utils/request-directus';
 
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 	const metadata = useMetadata();
 	const { getUserFilter } = useUserFilter();
+	const { $directus } = useNuxtApp();
 
 	defineEmits([ 'cancel', 'adopt-a-probe' ]);
 
-	const { data: adoptionsExists } = await useLazyAsyncData('gp_adopted_probes_exist', async () => {
-		const adoptions = await requestDirectus(readItems('gp_probes', {
+	const { data: adoptionsExists } = await useLazyAsyncData(
+		'gp_adopted_probes_exist',
+		() => $directus.request(readItems('gp_probes', {
 			filter: getUserFilter('userId'),
 			limit: 1,
-		}));
-		return !!adoptions.length;
-	}, { default: () => false });
+		})),
+		{ default: () => false, transform: data => !!data.length },
+	);
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 	const creditsPerDollar = metadata.creditsPerDollar;

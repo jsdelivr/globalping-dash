@@ -1,6 +1,5 @@
 import { readMe, readRolesMe, deleteUser } from '@directus/sdk';
 import { defineStore } from 'pinia';
-import { requestDirectus } from '~/utils/request-directus';
 
 interface AuthState {
 	isLoggedIn: boolean;
@@ -147,8 +146,8 @@ export const useAuth = defineStore('auth', {
 			try {
 				const { expires_at } = await $directus.refresh();
 				const [ user, roles ] = await Promise.all([
-					requestDirectus(readMe()),
-					requestDirectus(readRolesMe()),
+					$directus.request(readMe()),
+					$directus.request(readRolesMe()),
 				]);
 				this.isLoggedIn = true;
 				this.expiresAt = Number(expires_at);
@@ -166,7 +165,9 @@ export const useAuth = defineStore('auth', {
 			this.user.appearance = appearance;
 		},
 		async deleteAccount () {
-			await requestDirectus(deleteUser(this.user.id));
+			const { $directus } = useNuxtApp();
+
+			await $directus.request(deleteUser(this.user.id));
 			this.$reset();
 			navigateTo('/login');
 		},

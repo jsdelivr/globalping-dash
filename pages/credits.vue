@@ -101,12 +101,10 @@
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, readItems } from '@directus/sdk';
-	import { useDirectusFetch } from '~/composables/directus/useDirectusFetch';
 	import { usePagination } from '~/composables/pagination';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useMetadata } from '~/store/metadata';
 	import { formatDateForTable } from '~/utils/date-formatters';
-	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	useHead({
@@ -117,20 +115,20 @@
 	const metadata = useMetadata();
 	const route = useRoute();
 	const { getUserFilter } = useUserFilter();
+	const { $directus } = useNuxtApp();
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 
-	// TODO maybe try to utilize useDirectusFetch
 	const { data: credits } = await useLazyAsyncData('credits-stats', async () => {
 		try {
 			const [ total, additions, deductions, todayOnlineProbes ] = await Promise.all([
-				requestDirectus<{ amount: number }[]>(readItems('gp_credits', {
+				$directus.request<{ amount: number }[]>(readItems('gp_credits', {
 					filter: getUserFilter('user_id'),
 				})),
-				requestDirectus<[{ sum: { amount: number }; date_created: 'datetime' }]>(aggregate('gp_credits_additions', {
+				$directus.request<[{ sum: { amount: number }; date_created: 'datetime' }]>(aggregate('gp_credits_additions', {
 					query: {
 						filter: {
 							...getUserFilter('github_id'),
@@ -145,7 +143,7 @@
 						return { ...rest, amount: sum.amount };
 					});
 				}),
-				requestDirectus<[{ sum: { amount: number }; date: 'datetime' }]>(aggregate('gp_credits_deductions', {
+				$directus.request<[{ sum: { amount: number }; date: 'datetime' }]>(aggregate('gp_credits_deductions', {
 					query: {
 						filter: {
 							...getUserFilter('user_id'),
@@ -160,7 +158,7 @@
 						return { ...rest, amount: sum.amount };
 					});
 				}),
-				requestDirectus<[{ count: number }]>(aggregate('gp_probes', {
+				$directus.request<[{ count: number }]>(aggregate('gp_probes', {
 					query: {
 						filter: {
 							...getUserFilter('userId'),
@@ -189,14 +187,15 @@
 	const totalDeductions = computed(() => credits.value.deductions.reduce((sum, deduction) => sum + deduction.amount, 0));
 	const dailyAdditions = computed(() => credits.value.todayOnlineProbes * creditsPerAdoptedProbe);
 
-	const { data: creditsData, pending: loading } = useDirectusFetch<{ changes: CreditsChange[]; count: number }>(() => customEndpoint({
+	const { data: creditsData, pending: loading } = await useLazyAsyncData(() => $directus.request<{ changes: CreditsChange[]; count: number }>(customEndpoint({
+		method: 'GET',
 		path: '/credits-timeline',
 		params: {
 			userId: getUserFilter('user_id').user_id?._eq || 'all',
 			offset: first.value,
 			limit: itemsPerPage.value,
 		},
-	}), { watch: [ page, itemsPerPage ] });
+	})), { watch: [ page, itemsPerPage ] });
 
 	const creditsChangesCount = computed(() => creditsData.value?.count || 0);
 

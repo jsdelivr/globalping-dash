@@ -39,10 +39,10 @@
 	import { useNotifications } from '~/composables/useNotifications';
 	import { useAuth } from '~/store/auth';
 	import { pluralize } from '~/utils/pluralize';
-	import { requestDirectus } from '~/utils/request-directus';
 
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
+	const { $directus } = useNuxtApp();
 	const { updateHeaderNotifications } = useNotifications();
 
 	defineProps({
@@ -56,7 +56,7 @@
 
 	const publicProbes = ref(user.value.public_probes);
 	const updatePublicProbes = async () => {
-		await requestDirectus(updateMe({
+		await $directus.request(updateMe({
 			public_probes: publicProbes.value,
 		}));
 

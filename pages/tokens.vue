@@ -215,12 +215,10 @@
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
-	import { useDirectusFetch } from '~/composables/directus/useDirectusFetch';
 	import { usePagination } from '~/composables/pagination';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { formatDate, getRelativeTimeString } from '~/utils/date-formatters';
-	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	useHead({
@@ -229,6 +227,7 @@
 
 	const config = useRuntimeConfig();
 	const { getUserFilter } = useUserFilter();
+	const { $directus } = useNuxtApp();
 	const auth = useAuth();
 
 	const itemsPerPage = ref(Math.round(config.public.itemsPerTablePage / 2));
@@ -236,7 +235,7 @@
 	// TOKENS
 	const { page: tokensPage, first: firstToken, pageLinkSize, template } = usePagination({ itemsPerPage, pageKey: 'tokensPage' });
 
-	const { data: tokens, pending: tokensPending, refresh: refreshTokenData } = await useDirectusFetch(() => readItems('gp_tokens', {
+	const { data: tokens, pending: tokensPending, refresh: refreshTokenData } = await useLazyAsyncData(() => $directus.request(readItems('gp_tokens', {
 		filter: {
 			...getUserFilter('user_created'),
 			app_id: { _null: true },
@@ -244,9 +243,9 @@
 		offset: firstToken.value,
 		limit: itemsPerPage.value,
 		sort: '-date_created',
-	}), { default: () => [], watch: [ tokensPage ], lazy: true });
+	})), { default: () => [], watch: [ tokensPage ] });
 
-	const { data: tokenCountArray, pending: tokenCountPending, refresh: refreshTokenCount } = useDirectusFetch<[{ count: number }]>(() => aggregate('gp_tokens', {
+	const { data: tokensCount, pending: tokenCountPending, refresh: refreshTokenCount } = await useAsyncData(() => $directus.request<[{ count: number }]>(aggregate('gp_tokens', {
 		query: {
 			filter: {
 				...getUserFilter('user_created'),
@@ -254,10 +253,9 @@
 			},
 		},
 		aggregate: { count: '*' },
-	}), { default: () => [{ count: 0 }], watch: [ tokensPage ] });
+	})), { default: () => 0, watch: [ tokensPage ], transform: data => data[0].count ?? 0 });
 
 	const loadingTokens = computed(() => tokensPending.value || tokenCountPending.value);
-	const tokensCount = computed(() => tokenCountArray.value[0].count ?? 0);
 
 	const loadTokens = async () => {
 		return Promise.all([ refreshTokenData(), refreshTokenCount() ]);
@@ -331,10 +329,10 @@
 
 	const regenerateToken = async () => {
 		try {
-			const token = await requestDirectus(customEndpoint<string>({ method: 'POST', path: '/bytes' }));
+			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/bytes' }));
 			const id = tokenToRegenerate.value!.id;
 
-			await requestDirectus(updateItem('gp_tokens', id, {
+			await $directus.request(updateItem('gp_tokens', id, {
 				value: token,
 			}));
 
@@ -362,7 +360,7 @@
 
 	const deleteToken = async () => {
 		try {
-			await requestDirectus(deleteItem('gp_tokens', tokenToDelete.value!.id));
+			await $directus.request(deleteItem('gp_tokens', tokenToDelete.value!.id));
 
 			// Go to prev page if that is last item.
 			if (tokens.value.length === 1 && tokensPage.value) {
@@ -383,7 +381,7 @@
 
 	const { page: appsPage, first: firstApp } = usePagination({ itemsPerPage, pageKey: 'appsPage' });
 
-	const { data: applicationData, pending: loadingApplications, refresh: loadApplications } = useDirectusFetch<{ applications: Application[]; total: number }>(() => customEndpoint({
+	const { data: applicationData, pending: loadingApplications, refresh: loadApplications } = await useAsyncData(() => $directus.request<{ applications: Application[]; total: number }>(customEndpoint({
 		method: 'GET',
 		path: '/applications',
 		params: {
@@ -391,7 +389,7 @@
 			offset: firstApp.value,
 			limit: itemsPerPage.value,
 		},
-	}), { default: () => { return { applications: [], total: 0 }; }, watch: [ appsPage ] });
+	})), { default: () => { return { applications: [], total: 0 }; }, watch: [ appsPage ] });
 
 	const apps = computed(() => applicationData.value?.applications ?? []);
 	const appsCount = computed(() => applicationData.value?.total ?? 0);
@@ -410,7 +408,7 @@
 	const revokeApp = async () => {
 		try {
 			if (appToRevoke.value && appToRevoke.value.id) {
-				await requestDirectus<{ applications: Application[] }>(customEndpoint({
+				await $directus.request<{ applications: Application[] }>(customEndpoint({
 					method: 'POST',
 					path: '/applications/revoke',
 					body: JSON.stringify({

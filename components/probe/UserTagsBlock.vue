@@ -158,7 +158,6 @@
 	import isEqual from 'lodash/isEqual';
 	import memoize from 'lodash/memoize';
 	import { useAuth } from '~/store/auth';
-	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const probe = defineModel('probe', {
@@ -174,6 +173,7 @@
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 	const windowSize = useWindowSize();
+	const { $directus } = useNuxtApp();
 
 	const uPrefixes = [ user.value.github_username, ...user.value.github_organizations ]
 		// Make the default prefix the first option
@@ -256,7 +256,7 @@
 		}
 
 		try {
-			await requestDirectus(updateItem('gp_probes', probe.value.id, { tags: updatedTags }));
+			await $directus.request(updateItem('gp_probes', probe.value.id, { tags: updatedTags }));
 			probe.value.tags = updatedTags;
 
 			closeEditTagsPopover();

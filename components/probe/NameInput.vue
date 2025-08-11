@@ -67,8 +67,9 @@
 
 <script setup lang="ts">
 	import { updateItem } from '@directus/sdk';
-	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
+
+	const { $directus } = useNuxtApp();
 
 	const probe = defineModel('probe', {
 		type: Object as PropType<Probe>,
@@ -160,7 +161,7 @@
 		}
 
 		try {
-			const updProbeDetails = await requestDirectus(updateItem('gp_probes', probe.value.id, { name: trimmed }));
+			const updProbeDetails = await $directus.request(updateItem('gp_probes', probe.value.id, { name: trimmed }));
 
 			sendToast('success', 'Done', 'The probe has been successfully updated');
 

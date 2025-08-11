@@ -227,7 +227,6 @@
 	import { customEndpoint, readItems } from '@directus/sdk';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
-	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 	import { smoothResize } from '~/utils/smooth-resize';
 	import { validateIp } from '~/utils/validate-ip';
@@ -236,6 +235,7 @@
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
+	const { $directus } = useNuxtApp();
 
 	const activeStep = ref('0');
 	const probeType = ref<'software' | 'hardware'>('software');
@@ -273,13 +273,13 @@
 
 	// STEP 2
 
-	const { data: initialProbes } = await useLazyAsyncData('initial_user_probes', async () => {
-		const result = await requestDirectus(readItems('gp_probes', {
+	const { data: initialProbes } = await useLazyAsyncData(
+		'initial_user_probes',
+		() => $directus.request(readItems('gp_probes', {
 			filter: getUserFilter('userId'),
-		}));
-
-		return result;
-	}, { default: () => [] });
+		})),
+		{ default: () => [] },
+	);
 
 	const searchNewProbes = async (activateCallback: (step: string | number) => void) => {
 		activateCallback('2');
@@ -288,7 +288,7 @@
 		try {
 			await new Promise<void>((resolve) => {
 				const checkProbes = async () => {
-					const currentProbes = await requestDirectus(readItems('gp_probes', {
+					const currentProbes = await $directus.request(readItems('gp_probes', {
 						filter: getUserFilter('userId'),
 					}));
 
@@ -360,7 +360,7 @@
 		sendAdoptionCodeLoading.value = true;
 
 		try {
-			await requestDirectus(customEndpoint({
+			await $directus.request(customEndpoint({
 				method: 'POST',
 				path: '/adoption-code/send-code',
 				body: JSON.stringify({
@@ -396,7 +396,7 @@
 		resetIsCodeValid();
 
 		try {
-			await requestDirectus(customEndpoint({
+			await $directus.request(customEndpoint({
 				method: 'POST',
 				path: '/adoption-code/send-code',
 				body: JSON.stringify({
@@ -419,7 +419,7 @@
 		verifyCodeLoading.value = true;
 
 		try {
-			const response = await requestDirectus(customEndpoint({
+			const response = await $directus.request(customEndpoint({
 				method: 'POST',
 				path: '/adoption-code/verify-code',
 				body: JSON.stringify({

@@ -37,7 +37,7 @@
 						<Button
 							class="ml-auto min-w-36 max-sm:ml-0 max-sm:mt-3"
 							:severity="adoptedProbes.length ? 'secondary' : undefined"
-							:outlined="adoptedProbes.length ? true : false"
+							:outlined="!!adoptedProbes.length"
 							@click="adoptProbeDialog = true"
 						>
 							<nuxt-icon class="pi" name="capture"/>
@@ -177,13 +177,11 @@
 	import countBy from 'lodash/countBy';
 	import isEmpty from 'lodash/isEmpty';
 	import CountryFlag from 'vue-country-flag-next';
-	import { useDirectusFetch } from '~/composables/directus/useDirectusFetch';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { ONLINE_STATUSES, OFFLINE_STATUSES } from '~/constants/probes';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
 	import { pluralize } from '~/utils/pluralize';
-	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	useHead({
@@ -194,13 +192,14 @@
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 	const { getUserFilter } = useUserFilter();
+	const { $directus } = useNuxtApp();
 
 	// SUMMARY
 
-	const { status: statusProbes, data: adoptedProbes } = await useDirectusFetch(() => readItems('gp_probes', {
+	const { status: statusProbes, data: adoptedProbes } = await useLazyAsyncData('gp_probes', () => $directus.request(readItems('gp_probes', {
 		filter: getUserFilter('userId'),
 		sort: [ 'status', 'name' ],
-	}), { default: () => [], lazy: true });
+	})), { default: () => [] });
 
 	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => ONLINE_STATUSES.includes(status)));
 	const offlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => OFFLINE_STATUSES.includes(status)));
@@ -209,18 +208,16 @@
 		.sort((obj1, obj2) => obj2.count - obj1.count));
 
 	// CREDITS
-
-	// TODO: maybe try to utilize useDirectusFetch
 	const { status: statusCredits, data: credits } = await useLazyAsyncData('gp_credits', async () => {
 		try {
 			let fromSponsorshipPromise = Promise.resolve(0);
 
-			const totalPromise = requestDirectus(readItems('gp_credits', {
+			const totalPromise = $directus.request(readItems('gp_credits', {
 				filter: getUserFilter('user_id'),
 			}));
 
 			if (user.value.user_type !== 'member') {
-				fromSponsorshipPromise = requestDirectus(readItems('gp_credits_additions', {
+				fromSponsorshipPromise = $directus.request(readItems('gp_credits_additions', {
 					filter: {
 						...getUserFilter('github_id'),
 						reason: { _eq: 'recurring_sponsorship' },

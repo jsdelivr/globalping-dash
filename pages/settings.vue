@@ -188,7 +188,6 @@
 	import { customEndpoint, updateMe } from '@directus/sdk';
 	import { useFormDirty } from '~/composables/useFormDirty';
 	import { useAuth } from '~/store/auth';
-	import { requestDirectus } from '~/utils/request-directus';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	useHead({
@@ -196,6 +195,7 @@
 	});
 
 	const auth = useAuth();
+	const { $directus } = useNuxtApp();
 	const { user } = storeToRefs(auth);
 	const firstName = ref(user.value.first_name);
 	const lastName = ref(user.value.last_name);
@@ -237,7 +237,7 @@
 		saveLoading.value = true;
 
 		try {
-			await requestDirectus(updateMe({
+			await $directus.request(updateMe({
 				first_name: firstName.value,
 				last_name: lastName.value,
 				appearance: appearance.value,
@@ -273,7 +273,7 @@
 		try {
 			loadingIconId.value = iconId;
 
-			await requestDirectus(updateMe({
+			await $directus.request(updateMe({
 				first_name: firstName.value,
 				last_name: lastName.value,
 				appearance: appearance.value,
@@ -281,7 +281,7 @@
 				public_probes: publicProbes.value,
 			}));
 
-			const response = await requestDirectus(customEndpoint<{
+			const response = await $directus.request(customEndpoint<{
 				github_username: string;
 				github_organizations: string[];
 			}>({ method: 'POST', path: '/sync-github-data', body: JSON.stringify({ userId: user.value.id }) }));
@@ -305,7 +305,7 @@
 		try {
 			loadingIconId.value = iconId;
 
-			const token = await requestDirectus(customEndpoint<string>({ method: 'POST', path: '/bytes' }));
+			const token = await $directus.request(customEndpoint<string>({ method: 'POST', path: '/bytes' }));
 			adoptionToken.value = token;
 		} catch (e) {
 			sendErrorToast(e);

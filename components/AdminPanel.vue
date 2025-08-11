@@ -39,9 +39,9 @@
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
 	import { useAuth } from '~/store/auth';
-	import { requestDirectus } from '~/utils/request-directus';
 
 	const auth = useAuth();
+	const { $directus } = useNuxtApp();
 	const { adminMode, impersonation } = storeToRefs(auth);
 
 	const impersonateUsername = ref(auth.impersonation?.github_username || '');
@@ -74,7 +74,7 @@
 			}
 
 			impersonationLoading.value = true;
-			const users = await requestDirectus<User[]>(customEndpoint({
+			const users = await $directus.request<User[]>(customEndpoint({
 				method: 'GET',
 				path: '/users',
 				params: {

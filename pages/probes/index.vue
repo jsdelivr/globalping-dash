@@ -286,7 +286,7 @@
 			content-class="!p-0"
 			size="large"
 		>
-			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="loadLazyData"/>
+			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="refresh"/>
 		</GPDialog>
 		<GPDialog
 			v-model:visible="deleteProbesDialog"
@@ -315,31 +315,27 @@
 	import { type StatusCode, useProbeFilters, STATUS_MAP } from '~/composables/useProbeFilters';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { pluralize } from '~/utils/pluralize';
-	import { requestDirectus } from '~/utils/request-directus';
-	import { sendErrorToast } from '~/utils/send-toast';
 
 	const config = useRuntimeConfig();
 
 	const router = useRouter();
 	const route = useRoute();
+	const { $directus } = useNuxtApp();
 
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const startProbeDialog = ref(false);
 	const adoptProbeDialog = ref(false);
 	const mobileFiltersRef = ref();
-	const loading = ref(true);
 	const firstLoading = ref(true);
-	const probes = ref<Probe[]>([]);
 	const hasAnyProbes = ref(false);
-	const credits = ref<Record<string, number>>({});
 	const active = ref(true);
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage, active });
-	const totalCredits = ref(0);
 	const gmapsLoaded = ref(false);
 	const selectedProbes = ref<Probe[]>([]);
 	const deleteProbesDialog = ref(false);
-	const displayPagination = ref<boolean>(true);
 	const paginatedRecords = ref(0);
+
+	const STATUS_CODES = Object.keys(STATUS_MAP) as StatusCode[];
 
 	const { getUserFilter } = useUserFilter();
 
@@ -350,88 +346,6 @@
 	});
 
 	useGoogleMaps(() => { gmapsLoaded.value = true; });
-
-	const loadLazyData = async () => {
-		loading.value = true;
-		selectedProbes.value = [];
-
-		try {
-			const [ adoptedProbes, statusResults, creditsAdditions ] = await Promise.all([
-				requestDirectus(readItems('gp_probes', {
-					filter: getCurrentFilter(true),
-					sort: getSortSettings() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
-					offset: first.value,
-					limit: itemsPerPage.value,
-				})),
-				requestDirectus<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
-					query: {
-						filter: getCurrentFilter(),
-						groupBy: [ 'status', 'isOutdated' ],
-					},
-					aggregate: { count: '*' },
-				})),
-				requestDirectus<[{ sum: { amount: number }; adopted_probe: string }]>(aggregate('gp_credits_additions', {
-					query: {
-						filter: {
-							...getUserFilter('github_id'),
-							reason: { _eq: 'adopted_probe' },
-							date_created: { _gte: '$NOW(-30 day)' },
-						},
-					},
-					groupBy: [ 'adopted_probe' ],
-					aggregate: { sum: 'amount' },
-				})),
-			]);
-
-			// If we somehow ended up too far, go back to the beginning.
-			if (!adoptedProbes.length && page.value) {
-				try {
-					await router.replace({
-						query: {
-							...route.query,
-							page: 1,
-						},
-					});
-
-					return;
-				} catch (error) {
-					console.error(error);
-					await router.replace('/probes'); // reset all filters
-					return;
-				}
-			}
-
-			const creditsByProbeId: Record<string, number> = {};
-
-			totalCredits.value = 0;
-
-			for (const addition of creditsAdditions) {
-				const { adopted_probe, sum: { amount } } = addition;
-
-				totalCredits.value += amount;
-				creditsByProbeId[adopted_probe] = creditsByProbeId[adopted_probe] ? creditsByProbeId[adopted_probe] + amount : amount;
-			}
-
-			credits.value = creditsByProbeId;
-			probes.value = adoptedProbes;
-
-			STATUS_CODES.forEach((code) => {
-				statusCounts.value[code] = statusResults.reduce((sum, status) => {
-					return STATUS_MAP[code].options.includes(status.status) && (status.isOutdated || !STATUS_MAP[code].outdatedOnly)
-						? sum + status.count
-						: sum;
-				}, 0);
-			});
-		} catch (e) {
-			sendErrorToast(e);
-		}
-
-		displayPagination.value = probes.value.length !== statusCounts.value[filter.value.status];
-		paginatedRecords.value = statusCounts.value[filter.value.status];
-		hasAnyProbes.value = hasAnyProbes.value || !!statusCounts.value['all'];
-		firstLoading.value = false;
-		loading.value = false;
-	};
 
 	const {
 		filter,
@@ -444,9 +358,85 @@
 		getCurrentFilter,
 	} = useProbeFilters();
 
+	const filterDeps = computed(() => { return { ...filter.value }; });
+
+	const { data: totalCredits } = await useAsyncData(() => $directus.request<[{ sum: { amount: number } }]>(aggregate('gp_credits_additions', {
+		query: {
+			filter: {
+				...getUserFilter('github_id'),
+				reason: { _eq: 'adopted_probe' },
+				date_created: { _gte: '$NOW(-30 day)' },
+			},
+		},
+		aggregate: { sum: 'amount' },
+	})), { default: () => 0, transform: data => data[0].sum.amount });
+
+	const { data: probes, pending: loading, refresh: refreshProbes } = await useLazyAsyncData(() => $directus.request<Probe[]>(readItems('gp_probes', {
+		filter: getCurrentFilter(true),
+		sort: getSortSettings() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
+		offset: first.value,
+		limit: itemsPerPage.value,
+	})), { watch: [ page, filterDeps, first, itemsPerPage ], immediate: true, default: () => [] });
+
+	const { data: statusCounts, refresh: refreshStatusCounts } = await useLazyAsyncData(() => $directus.request<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
+		query: {
+			filter: getCurrentFilter(),
+			groupBy: [ 'status', 'isOutdated' ],
+		},
+		aggregate: { count: '*' },
+	})), {
+		watch: [ filterDeps ],
+		default: () => Object.fromEntries(STATUS_CODES.map(status => [ status, 0 ])),
+		transform: (data) => {
+			const counts = Object.fromEntries(STATUS_CODES.map(status => [ status, 0 ]));
+
+			STATUS_CODES.forEach((code) => {
+				counts[code] = data.reduce((sum, status) => {
+					return STATUS_MAP[code].options.includes(status.status) && (status.isOutdated || !STATUS_MAP[code].outdatedOnly)
+						? sum + status.count
+						: sum;
+				}, 0);
+			});
+
+			return counts;
+		},
+	});
+
+	const refresh = () => Promise.all([ refreshProbes(), refreshStatusCounts() ]);
+
+	watch([ probes, loading ], async ([ adoptedProbes, isLoading ]) => {
+		if (isLoading) {
+			return;
+		}
+
+		if (!adoptedProbes.length && page.value) {
+			try {
+				await router.replace({
+					query: {
+						...route.query,
+						page: 1,
+					},
+				});
+			} catch (error) {
+				console.error(error);
+				await router.replace('/probes'); // reset all filters
+			}
+		}
+	}, { deep: true, immediate: true });
+
+	watch(loading, (isLoading) => {
+		if (isLoading) {
+			selectedProbes.value = [];
+		}
+	}, { immediate: true });
+
+	watch(statusCounts, (newStatusCounts) => {
+		paginatedRecords.value = newStatusCounts[filter.value.status];
+		hasAnyProbes.value = hasAnyProbes.value || !!newStatusCounts['all'];
+	}, { deep: true, immediate: true });
+
+	const displayPagination = computed(() => probes.value.length !== statusCounts.value[filter.value.status]);
 	const onFilterChangeDebounced = debounce(() => onFilterChange(searchInput.value), 500);
-	const STATUS_CODES = Object.keys(STATUS_MAP) as StatusCode[];
-	const statusCounts = ref(Object.fromEntries(STATUS_CODES.map(status => [ status, 0 ])));
 	const searchInput = ref(filter.value.search);
 
 	// PROBES LIST
@@ -455,34 +445,33 @@
 			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 420) / 65), 5), 15);
 		}
 
-		const [{ count }] = await requestDirectus<[{ count: number }]>(aggregate('gp_probes', {
+		const [{ count }] = await $directus.request<[{ count: number }]>(aggregate('gp_probes', {
 			query: {
 				filter: getUserFilter('userId'),
 			},
 			aggregate: { count: '*' },
 		}));
 
+		firstLoading.value = false;
+
 		if (count) {
 			hasAnyProbes.value = true;
-			await loadLazyData();
-		} else {
-			loading.value = false;
 		}
 	});
 
 	// Update list data only when navigating list to list (e.g. page 1 to page 2) or changing filters, not list to details or details to list.
-	watch(
-		[ page, filter ],
-		async ([ newPage ], [ oldPage ]) => {
-			if (!active.value || (newPage === oldPage && oldPage !== 0)) {
-				return; // filter change triggers a page reset that triggers this watch for a second time
-			}
-
-			searchInput.value = filter.value.search;
-			await loadLazyData();
-		},
-		{ deep: true },
-	);
+	// watch(
+	// 	[ page, filter ],
+	// 	async ([ newPage ], [ oldPage ]) => {
+	// 		if (!active.value || (newPage === oldPage && oldPage !== 0)) {
+	// 			return; // filter change triggers a page reset that triggers this watch for a second time
+	// 		}
+	//
+	// 		searchInput.value = filter.value.search;
+	// 		await loadLazyData();
+	// 	},
+	// 	{ deep: true },
+	// );
 
 	const getAllTags = (probe: Probe) => {
 		const systemTags = probe.systemTags;
@@ -526,7 +515,7 @@
 
 	const onDeleteSuccess = () => {
 		deleteProbesDialog.value = false;
-		loadLazyData();
+		refresh();
 	};
 
 	onBeforeUnmount(() => {

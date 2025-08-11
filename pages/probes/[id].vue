@@ -127,7 +127,6 @@
 
 <script setup lang="ts">
 	import { readItem, aggregate } from '@directus/sdk';
-	import { useDirectusFetch } from '~/composables/directus/useDirectusFetch';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata.js';
 	import { getProbeStatusColor, getProbeStatusText, isOutdated } from '~/utils/probe-status';
@@ -142,9 +141,10 @@
 	const updateProbeDialog = ref(false);
 	const showMoreIps = ref(false);
 	const windowSize = useWindowSize();
+	const { $directus } = useNuxtApp();
 	const tabListRef = useTemplateRef('tabListRef');
 
-	const { data: probeDetails, error } = await useDirectusFetch<Probe>(readItem('gp_probes', probeId));
+	const { data: probeDetails, error } = await useAsyncData<Probe>(() => $directus.request(readItem('gp_probes', probeId)));
 
 	watch(error, (newError) => {
 		const response = (newError as { response?: Response } | undefined)?.response;
@@ -175,7 +175,7 @@
 	};
 
 	// HANDLE CREDITS
-	const { data: creditsData } = await useDirectusFetch<[{ sum: { amount: number }; adopted_probe: string }]>(() => aggregate('gp_credits_additions', {
+	const { data: probeCreditsPerMonth } = await useAsyncData(() => $directus.request<[{ sum: { amount: number }; adopted_probe: string }]>(aggregate('gp_credits_additions', {
 		query: {
 			filter: {
 				github_id: { _eq: user.value.external_identifier || 'admin' },
@@ -185,9 +185,7 @@
 		},
 		groupBy: [ 'adopted_probe' ],
 		aggregate: { sum: 'amount' },
-	}), { watch: [ probeDetails ] });
-
-	const probeCreditsPerMonth = computed(() => creditsData.value ? creditsData.value[0].sum.amount : 0);
+	})), { watch: [ probeDetails ], transform: data => data ? data[0].sum.amount : 0 });
 
 	// HANDLE GO BACK TO PROBES
 	const getBackToProbesHref = () => {

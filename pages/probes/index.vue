@@ -312,6 +312,7 @@
 	import FilterSettings from '~/components/FilterSettings.vue';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
+	import { useErrorToast } from '~/composables/useErrorToast';
 	import { type StatusCode, useProbeFilters, STATUS_MAP } from '~/composables/useProbeFilters';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { pluralize } from '~/utils/pluralize';
@@ -360,7 +361,7 @@
 
 	const filterDeps = computed(() => { return { ...filter.value }; });
 
-	const { data: totalCredits } = await useAsyncData(() => $directus.request<[{ sum: { amount: number } }]>(aggregate('gp_credits_additions', {
+	const { data: totalCredits, error: creditError } = await useLazyAsyncData(() => $directus.request<[{ sum: { amount: number } }]>(aggregate('gp_credits_additions', {
 		query: {
 			filter: {
 				...getUserFilter('github_id'),
@@ -369,16 +370,16 @@
 			},
 		},
 		aggregate: { sum: 'amount' },
-	})), { default: () => 0, transform: data => data[0].sum.amount });
+	})), { default: () => 0, transform: data => data[0]?.sum?.amount ?? 0 });
 
-	const { data: probes, pending: loading, refresh: refreshProbes } = await useLazyAsyncData(() => $directus.request<Probe[]>(readItems('gp_probes', {
+	const { data: probes, pending: loading, error: probeError, refresh: refreshProbes } = await useLazyAsyncData(() => $directus.request<Probe[]>(readItems('gp_probes', {
 		filter: getCurrentFilter(true),
 		sort: getSortSettings() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
 		offset: first.value,
 		limit: itemsPerPage.value,
 	})), { watch: [ page, filterDeps, first, itemsPerPage ], immediate: true, default: () => [] });
 
-	const { data: statusCounts, refresh: refreshStatusCounts } = await useLazyAsyncData(() => $directus.request<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
+	const { data: statusCounts, error: statusCntError, refresh: refreshStatusCounts } = await useLazyAsyncData(() => $directus.request<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
 		query: {
 			filter: getCurrentFilter(),
 			groupBy: [ 'status', 'isOutdated' ],
@@ -401,6 +402,8 @@
 			return counts;
 		},
 	});
+
+	useErrorToast(creditError, probeError, statusCntError);
 
 	const refresh = () => Promise.all([ refreshProbes(), refreshStatusCounts() ]);
 
@@ -427,6 +430,8 @@
 	watch(loading, (isLoading) => {
 		if (isLoading) {
 			selectedProbes.value = [];
+		} else {
+			firstLoading.value = false;
 		}
 	}, { immediate: true });
 
@@ -452,26 +457,10 @@
 			aggregate: { count: '*' },
 		}));
 
-		firstLoading.value = false;
-
 		if (count) {
 			hasAnyProbes.value = true;
 		}
 	});
-
-	// Update list data only when navigating list to list (e.g. page 1 to page 2) or changing filters, not list to details or details to list.
-	// watch(
-	// 	[ page, filter ],
-	// 	async ([ newPage ], [ oldPage ]) => {
-	// 		if (!active.value || (newPage === oldPage && oldPage !== 0)) {
-	// 			return; // filter change triggers a page reset that triggers this watch for a second time
-	// 		}
-	//
-	// 		searchInput.value = filter.value.search;
-	// 		await loadLazyData();
-	// 	},
-	// 	{ deep: true },
-	// );
 
 	const getAllTags = (probe: Probe) => {
 		const systemTags = probe.systemTags;

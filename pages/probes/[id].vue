@@ -130,6 +130,7 @@
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata.js';
 	import { getProbeStatusColor, getProbeStatusText, isOutdated } from '~/utils/probe-status';
+	import { sendErrorToast } from '~/utils/send-toast';
 
 	const route = useRoute();
 	const router = useRouter();
@@ -152,6 +153,8 @@
 		if (response?.status === 403) {
 			return navigateTo('/probes');
 		}
+
+		sendErrorToast(newError);
 	});
 
 	useHead(() => {

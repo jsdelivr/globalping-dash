@@ -74,6 +74,7 @@
 <script setup lang="ts">
 	import { readNotifications } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
+	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useNotifications } from '~/composables/useNotifications';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
@@ -89,7 +90,7 @@
 	const { getUserFilter } = useUserFilter();
 	const { $directus } = useNuxtApp();
 
-	const { data: notifications } = await useAsyncData(
+	const { data: notifications, error: notificationError } = await useLazyAsyncData(
 		'directus_notifications_page',
 		() => $directus.request<DirectusNotification[]>(readNotifications({
 			format: 'html',
@@ -101,8 +102,7 @@
 		{ default: () => [], watch: [ page, itemsPerPage ] },
 	);
 
-	// get the count of notifications
-	const { data: notificationsCount } = await useAsyncData(
+	const { data: notificationsCount, error: notificationCntError } = await useLazyAsyncData(
 		'directus_notifications_cnt',
 		() => $directus.request<{ count: { id: number } }[]>(readNotifications({
 			filter: getUserFilter('recipient'),
@@ -112,6 +112,8 @@
 		})),
 		{ default: () => 0, transform: data => data[0].count.id },
 	);
+
+	useErrorToast(notificationError, notificationCntError);
 
 	notificationBus.on((idsToArchive) => {
 		notifications.value.forEach((notification) => {

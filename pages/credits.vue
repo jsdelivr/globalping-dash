@@ -102,10 +102,10 @@
 <script setup lang="ts">
 	import { aggregate, customEndpoint, readItems } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
+	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useMetadata } from '~/store/metadata';
 	import { formatDateForTable } from '~/utils/date-formatters';
-	import { sendErrorToast } from '~/utils/send-toast';
 
 	useHead({
 		title: 'Credits -',
@@ -122,63 +122,58 @@
 
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 
-	const { data: credits } = await useLazyAsyncData('credits-stats', async () => {
-		try {
-			const [ total, additions, deductions, todayOnlineProbes ] = await Promise.all([
-				$directus.request<{ amount: number }[]>(readItems('gp_credits', {
-					filter: getUserFilter('user_id'),
-				})),
-				$directus.request<[{ sum: { amount: number }; date_created: 'datetime' }]>(aggregate('gp_credits_additions', {
-					query: {
-						filter: {
-							...getUserFilter('github_id'),
-							date_created: { _gte: '$NOW(-30 day)' },
-						},
+	const { data: credits, error: creditsError } = await useLazyAsyncData('credits-stats', async () => {
+		const [ total, additions, deductions, todayOnlineProbes ] = await Promise.all([
+			$directus.request<{ amount: number }[]>(readItems('gp_credits', {
+				filter: getUserFilter('user_id'),
+			})),
+			$directus.request<[{ sum: { amount: number }; date_created: 'datetime' }]>(aggregate('gp_credits_additions', {
+				query: {
+					filter: {
+						...getUserFilter('github_id'),
+						date_created: { _gte: '$NOW(-30 day)' },
 					},
-					groupBy: [ 'date_created' ],
-					aggregate: { sum: 'amount' },
-				})).then((additions) => {
-					return additions.map((addition) => {
-						const { sum, ...rest } = addition;
-						return { ...rest, amount: sum.amount };
-					});
-				}),
-				$directus.request<[{ sum: { amount: number }; date: 'datetime' }]>(aggregate('gp_credits_deductions', {
-					query: {
-						filter: {
-							...getUserFilter('user_id'),
-							date: { _gte: '$NOW(-30 day)' },
-						},
+				},
+				groupBy: [ 'date_created' ],
+				aggregate: { sum: 'amount' },
+			})).then((additions) => {
+				return additions.map((addition) => {
+					const { sum, ...rest } = addition;
+					return { ...rest, amount: sum.amount };
+				});
+			}),
+			$directus.request<[{ sum: { amount: number }; date: 'datetime' }]>(aggregate('gp_credits_deductions', {
+				query: {
+					filter: {
+						...getUserFilter('user_id'),
+						date: { _gte: '$NOW(-30 day)' },
 					},
-					groupBy: [ 'date' ],
-					aggregate: { sum: 'amount' },
-				})).then((deduction) => {
-					return deduction.map((addition) => {
-						const { sum, ...rest } = addition;
-						return { ...rest, amount: sum.amount };
-					});
-				}),
-				$directus.request<[{ count: number }]>(aggregate('gp_probes', {
-					query: {
-						filter: {
-							...getUserFilter('userId'),
-							onlineTimesToday: { _gt: 0 },
-						},
+				},
+				groupBy: [ 'date' ],
+				aggregate: { sum: 'amount' },
+			})).then((deduction) => {
+				return deduction.map((addition) => {
+					const { sum, ...rest } = addition;
+					return { ...rest, amount: sum.amount };
+				});
+			}),
+			$directus.request<[{ count: number }]>(aggregate('gp_probes', {
+				query: {
+					filter: {
+						...getUserFilter('userId'),
+						onlineTimesToday: { _gt: 0 },
 					},
-					aggregate: { count: '*' },
-				})),
-			]);
+				},
+				aggregate: { count: '*' },
+			})),
+		]);
 
-			return {
-				total: total.reduce((sum, { amount }) => sum + amount, 0) || 0,
-				additions,
-				deductions,
-				todayOnlineProbes: todayOnlineProbes[0].count || 0,
-			};
-		} catch (e) {
-			sendErrorToast(e);
-			throw e;
-		}
+		return {
+			total: total.reduce((sum, { amount }) => sum + amount, 0) || 0,
+			additions,
+			deductions,
+			todayOnlineProbes: todayOnlineProbes[0].count || 0,
+		};
 	}, {
 		default: () => ({ total: 0, additions: [], deductions: [], todayOnlineProbes: 0 }),
 	});
@@ -187,7 +182,7 @@
 	const totalDeductions = computed(() => credits.value.deductions.reduce((sum, deduction) => sum + deduction.amount, 0));
 	const dailyAdditions = computed(() => credits.value.todayOnlineProbes * creditsPerAdoptedProbe);
 
-	const { data: creditsData, pending: loading } = await useLazyAsyncData(() => $directus.request<{ changes: CreditsChange[]; count: number }>(customEndpoint({
+	const { data: creditsData, pending: loading, error: creditsDataError } = await useLazyAsyncData(() => $directus.request<{ changes: CreditsChange[]; count: number }>(customEndpoint({
 		method: 'GET',
 		path: '/credits-timeline',
 		params: {
@@ -211,6 +206,8 @@
 			})),
 		];
 	});
+
+	useErrorToast(creditsError, creditsDataError);
 
 	onMounted(async () => {
 		if (!route.query.limit) {

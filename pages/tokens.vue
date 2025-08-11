@@ -216,6 +216,7 @@
 <script setup lang="ts">
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
+	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { formatDate, getRelativeTimeString } from '~/utils/date-formatters';
@@ -235,7 +236,7 @@
 	// TOKENS
 	const { page: tokensPage, first: firstToken, pageLinkSize, template } = usePagination({ itemsPerPage, pageKey: 'tokensPage' });
 
-	const { data: tokens, pending: tokensPending, refresh: refreshTokenData } = await useLazyAsyncData(() => $directus.request(readItems('gp_tokens', {
+	const { data: tokens, pending: tokensPending, error: tokenError, refresh: refreshTokenData } = await useLazyAsyncData(() => $directus.request(readItems('gp_tokens', {
 		filter: {
 			...getUserFilter('user_created'),
 			app_id: { _null: true },
@@ -245,7 +246,7 @@
 		sort: '-date_created',
 	})), { default: () => [], watch: [ tokensPage ] });
 
-	const { data: tokensCount, pending: tokenCountPending, refresh: refreshTokenCount } = await useAsyncData(() => $directus.request<[{ count: number }]>(aggregate('gp_tokens', {
+	const { data: tokensCount, pending: tokenCountPending, error: tokenCntError, refresh: refreshTokenCount } = await useAsyncData(() => $directus.request<[{ count: number }]>(aggregate('gp_tokens', {
 		query: {
 			filter: {
 				...getUserFilter('user_created'),
@@ -381,7 +382,7 @@
 
 	const { page: appsPage, first: firstApp } = usePagination({ itemsPerPage, pageKey: 'appsPage' });
 
-	const { data: applicationData, pending: loadingApplications, refresh: loadApplications } = await useAsyncData(() => $directus.request<{ applications: Application[]; total: number }>(customEndpoint({
+	const { data: applicationData, pending: loadingApplications, error: applicationError, refresh: loadApplications } = await useAsyncData(() => $directus.request<{ applications: Application[]; total: number }>(customEndpoint({
 		method: 'GET',
 		path: '/applications',
 		params: {
@@ -431,4 +432,7 @@
 			sendErrorToast(e);
 		}
 	};
+
+	// ERROR HANDLING
+	useErrorToast(tokenError, tokenCntError, applicationError);
 </script>

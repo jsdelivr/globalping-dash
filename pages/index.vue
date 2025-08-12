@@ -188,11 +188,11 @@
 		title: 'Overview -',
 	});
 
+	const { $directus } = useNuxtApp();
 	const creditsPerAdoptedProbe = useMetadata().creditsPerAdoptedProbe;
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 	const { getUserFilter } = useUserFilter();
-	const { $directus } = useNuxtApp();
 
 	// SUMMARY
 

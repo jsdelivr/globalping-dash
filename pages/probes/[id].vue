@@ -132,6 +132,7 @@
 	import { getProbeStatusColor, getProbeStatusText, isOutdated } from '~/utils/probe-status';
 	import { sendErrorToast } from '~/utils/send-toast';
 
+	const { $directus } = useNuxtApp();
 	const route = useRoute();
 	const router = useRouter();
 	const auth = useAuth();
@@ -142,7 +143,6 @@
 	const updateProbeDialog = ref(false);
 	const showMoreIps = ref(false);
 	const windowSize = useWindowSize();
-	const { $directus } = useNuxtApp();
 	const tabListRef = useTemplateRef('tabListRef');
 
 	const { data: probeDetails, error } = await useAsyncData<Probe>(() => $directus.request(readItem('gp_probes', probeId)));

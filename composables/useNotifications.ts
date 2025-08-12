@@ -15,8 +15,8 @@ notificationBus.on((idsToArchive) => {
 });
 
 export const useNotifications = () => {
-	const { getUserFilter } = useUserFilter();
 	const { $directus } = useNuxtApp();
+	const { getUserFilter } = useUserFilter();
 	const notificationBus = useEventBus<string[]>('notification-updated');
 
 	const updateInboxNotificationIds = async () => {

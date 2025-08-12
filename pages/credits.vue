@@ -112,10 +112,10 @@
 	});
 
 	const config = useRuntimeConfig();
+	const { $directus } = useNuxtApp();
 	const metadata = useMetadata();
 	const route = useRoute();
 	const { getUserFilter } = useUserFilter();
-	const { $directus } = useNuxtApp();
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 	const itemsPerPage = ref(config.public.itemsPerTablePage);

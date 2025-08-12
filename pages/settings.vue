@@ -194,8 +194,8 @@
 		title: 'Settings -',
 	});
 
-	const auth = useAuth();
 	const { $directus } = useNuxtApp();
+	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 	const firstName = ref(user.value.first_name);
 	const lastName = ref(user.value.last_name);

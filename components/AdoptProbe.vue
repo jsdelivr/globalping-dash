@@ -231,11 +231,11 @@
 	import { smoothResize } from '~/utils/smooth-resize';
 	import { validateIp } from '~/utils/validate-ip';
 
+	const { $directus } = useNuxtApp();
 	const { getUserFilter } = useUserFilter();
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
-	const { $directus } = useNuxtApp();
 
 	const activeStep = ref('0');
 	const probeType = ref<'software' | 'hardware'>('software');

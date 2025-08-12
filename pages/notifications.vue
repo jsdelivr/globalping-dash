@@ -83,12 +83,12 @@
 	const auth = useAuth();
 	const route = useRoute();
 	const config = useRuntimeConfig();
+	const { $directus } = useNuxtApp();
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 	const { inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead } = useNotifications();
 	const notificationBus = useEventBus<string[]>('notification-updated');
 	const { getUserFilter } = useUserFilter();
-	const { $directus } = useNuxtApp();
 
 	const { data: notifications, error: notificationError } = await useLazyAsyncData(
 		'directus_notifications_page',

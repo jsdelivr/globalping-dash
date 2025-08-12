@@ -41,8 +41,8 @@
 	import { useAuth } from '~/store/auth';
 
 	const auth = useAuth();
-	const { $directus } = useNuxtApp();
 	const { adminMode, impersonation } = storeToRefs(auth);
+	const { $directus } = useNuxtApp();
 
 	const impersonateUsername = ref(auth.impersonation?.github_username || '');
 	const impersonationError = ref('');

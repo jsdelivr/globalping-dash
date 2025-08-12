@@ -158,12 +158,12 @@
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
+	const { $directus } = useNuxtApp();
 
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 	const metadata = useMetadata();
 	const { getUserFilter } = useUserFilter();
-	const { $directus } = useNuxtApp();
 
 	defineEmits([ 'cancel', 'adopt-a-probe' ]);
 

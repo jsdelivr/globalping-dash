@@ -227,8 +227,8 @@
 	});
 
 	const config = useRuntimeConfig();
-	const { getUserFilter } = useUserFilter();
 	const { $directus } = useNuxtApp();
+	const { getUserFilter } = useUserFilter();
 	const auth = useAuth();
 
 	const itemsPerPage = ref(Math.round(config.public.itemsPerTablePage / 2));

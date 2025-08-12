@@ -40,9 +40,9 @@
 	import { useAuth } from '~/store/auth';
 	import { pluralize } from '~/utils/pluralize';
 
+	const { $directus } = useNuxtApp();
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
-	const { $directus } = useNuxtApp();
 	const { updateHeaderNotifications } = useNotifications();
 
 	defineProps({

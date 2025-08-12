@@ -319,9 +319,9 @@
 
 	const config = useRuntimeConfig();
 
+	const { $directus } = useNuxtApp();
 	const router = useRouter();
 	const route = useRoute();
-	const { $directus } = useNuxtApp();
 
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const startProbeDialog = ref(false);

@@ -105,8 +105,6 @@
 	import { formatDate } from '~/utils/date-formatters';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
-	const { $directus } = useNuxtApp();
-
 	const props = defineProps({
 		token: {
 			type: Object as PropType<Token | null>,
@@ -115,6 +113,8 @@
 	});
 
 	const emit = defineEmits([ 'generate', 'cancel', 'save', 'regenerate' ]);
+
+	const { $directus } = useNuxtApp();
 
 	// NAME
 

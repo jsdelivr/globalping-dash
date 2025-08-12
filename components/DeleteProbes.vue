@@ -43,7 +43,6 @@
 	}>();
 
 	const { $directus } = useNuxtApp();
-
 	const deleteLoading = ref(false);
 
 	const deleteProbes = async () => {

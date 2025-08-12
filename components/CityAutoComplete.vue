@@ -71,7 +71,6 @@
 	import type { VNodeRef } from 'vue';
 
 	const { $directus } = useNuxtApp();
-
 	const model = defineModel<City>({ required: true });
 	const inputRef = defineModel<HTMLInputElement | null>('inputRef');
 
@@ -101,9 +100,9 @@
 	const suggestions = ref<City[]>([]);
 	const isFocused = ref(false);
 
-	const { data, status, refresh } = useAsyncData<City[]>(
+	const { data, status, refresh } = await useAsyncData(
 		'city-autocomplete',
-		() => $directus.request(customEndpoint({ path: '/city-autocomplete', params: { query: cityQuery.value, countries: model.value.country } })),
+		() => $directus.request<City[]>(customEndpoint({ path: '/city-autocomplete', params: { query: cityQuery.value, countries: model.value.country } })),
 		{
 			watch: [ () => model.value.country, cityQuery ],
 		},

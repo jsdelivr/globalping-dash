@@ -148,14 +148,18 @@
 	const { data: probeDetails, error } = await useAsyncData<Probe>(() => $directus.request(readItem('gp_probes', probeId)));
 
 	watch(error, (newError) => {
-		const response = (newError as { response?: Response } | undefined)?.response;
+		if (!newError) {
+			return;
+		}
 
-		if (response?.status === 403) {
+		const fetchError = newError.cause as DashboardError;
+
+		if (fetchError?.response?.status === 403) {
 			return navigateTo('/probes');
 		}
 
-		sendErrorToast(newError);
-	});
+		sendErrorToast(fetchError);
+	}, { deep: true, immediate: true });
 
 	useHead(() => {
 		return {

@@ -182,15 +182,18 @@
 	const totalDeductions = computed(() => credits.value.deductions.reduce((sum, deduction) => sum + deduction.amount, 0));
 	const dailyAdditions = computed(() => credits.value.todayOnlineProbes * creditsPerAdoptedProbe);
 
-	const { data: creditsData, pending: loading, error: creditsDataError } = await useLazyAsyncData(() => $directus.request<{ changes: CreditsChange[]; count: number }>(customEndpoint({
-		method: 'GET',
-		path: '/credits-timeline',
-		params: {
-			userId: getUserFilter('user_id').user_id?._eq || 'all',
-			offset: first.value,
-			limit: itemsPerPage.value,
-		},
-	})), { watch: [ page, itemsPerPage ] });
+	const { data: creditsData, pending: loading, error: creditsDataError } = await useLazyAsyncData(
+		() => $directus.request<{ changes: CreditsChange[]; count: number }>(customEndpoint({
+			method: 'GET',
+			path: '/credits-timeline',
+			params: {
+				userId: getUserFilter('user_id').user_id?._eq || 'all',
+				offset: first.value,
+				limit: itemsPerPage.value,
+			},
+		})),
+		{ watch: [ page, itemsPerPage ] },
+	);
 
 	const creditsChangesCount = computed(() => creditsData.value?.count || 0);
 

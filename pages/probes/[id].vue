@@ -127,6 +127,7 @@
 
 <script setup lang="ts">
 	import { readItem, aggregate } from '@directus/sdk';
+	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata.js';
 	import { getProbeStatusColor, getProbeStatusText, isOutdated } from '~/utils/probe-status';
@@ -182,17 +183,22 @@
 	};
 
 	// HANDLE CREDITS
-	const { data: probeCreditsPerMonth } = await useAsyncData(() => $directus.request<[{ sum: { amount: number }; adopted_probe: string }]>(aggregate('gp_credits_additions', {
-		query: {
-			filter: {
-				github_id: { _eq: user.value.external_identifier || 'admin' },
-				adopted_probe: { _eq: probeDetails?.value?.id },
-				date_created: { _gte: '$NOW(-30 day)' },
+	const { data: probeCreditsPerMonth, error: creditsError } = await useAsyncData(
+		() => $directus.request<[{ sum: { amount: number }; adopted_probe: string }]>(aggregate('gp_credits_additions', {
+			query: {
+				filter: {
+					github_id: { _eq: user.value.external_identifier || 'admin' },
+					adopted_probe: { _eq: probeDetails?.value?.id },
+					date_created: { _gte: '$NOW(-30 day)' },
+				},
 			},
-		},
-		groupBy: [ 'adopted_probe' ],
-		aggregate: { sum: 'amount' },
-	})), { watch: [ probeDetails ], transform: data => data ? data[0].sum.amount : 0 });
+			groupBy: [ 'adopted_probe' ],
+			aggregate: { sum: 'amount' },
+		})),
+		{ watch: [ probeDetails ], transform: data => data ? data[0].sum.amount : 0 },
+	);
+
+	useErrorToast(creditsError);
 
 	// HANDLE GO BACK TO PROBES
 	const getBackToProbesHref = () => {

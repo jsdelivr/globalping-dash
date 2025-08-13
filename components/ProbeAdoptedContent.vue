@@ -6,9 +6,13 @@
 				Congratulations!
 			</p>
 			<p class="mt-4">You are now the owner of the following {{ pluralize('probe', probes.length) }}:</p>
-			<div v-for="probe in probes" :key="probe.id" class="mt-4 rounded-xl border bg-surface-0 p-3 dark:border-dark-400 dark:bg-dark-800">
-				<p class="flex items-center justify-center font-bold"><CountryFlag :country="probe.country" size="small"/><span class="ml-2">{{ probe.city }}</span></p>
-				<p>{{ probe.network }}</p>
+			<div v-for="probe in probes" :key="probe.id" class="mt-4">
+				<NuxtLink :to="`/probes/${probe.id}`">
+					<div class="rounded-xl border bg-surface-0 p-3 dark:border-dark-400 dark:bg-dark-800">
+						<p class="flex items-center justify-center font-bold"><CountryFlag :country="probe.country" size="small"/><span class="ml-2">{{ probe.city }}</span></p>
+						<p>{{ probe.network }}</p>
+					</div>
+				</NuxtLink>
 			</div>
 		</div>
 

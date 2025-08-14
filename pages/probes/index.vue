@@ -363,7 +363,7 @@
 
 	type tf = <T>(c: Promise<T>) => Promise<T>;
 
-	const f: tf = async (c) => {
+	const f: tf = async (c, d = 250) => {
 		const start = Date.now();
 
 		try {
@@ -372,8 +372,8 @@
 			const end = Date.now();
 			const diff = end - start;
 
-			if (diff < 250) {
-				await new Promise(resolve => setTimeout(resolve, 250 - diff));
+			if (diff < d) {
+				await new Promise(resolve => setTimeout(resolve, d - diff));
 			}
 		}
 	};

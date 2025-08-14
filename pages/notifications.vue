@@ -95,11 +95,11 @@
 		() => $directus.request<DirectusNotification[]>(readNotifications({
 			format: 'html',
 			limit: itemsPerPage.value,
-			offset: page.value * itemsPerPage.value,
+			offset: first.value,
 			filter: getUserFilter('recipient'),
 			sort: [ '-timestamp' ],
 		})),
-		{ default: () => [], watch: [ page, itemsPerPage ] },
+		{ default: () => [], watch: [ first, itemsPerPage ] },
 	);
 
 	const { data: notificationsCount, error: notificationCntError } = await useLazyAsyncData(

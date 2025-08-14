@@ -192,7 +192,7 @@
 				limit: itemsPerPage.value,
 			},
 		})),
-		{ watch: [ page, itemsPerPage ] },
+		{ watch: [ first, itemsPerPage ] },
 	);
 
 	const creditsChangesCount = computed(() => creditsData.value?.count || 0);

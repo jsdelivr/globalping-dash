@@ -75,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-	import { readItem, updateItem } from '@directus/sdk';
+	import { updateItem } from '@directus/sdk';
 	import isEqual from 'lodash/isEqual';
 	import type { SelectChangeEvent } from 'primevue/select';
 	import CountryFlag from 'vue-country-flag-next';
@@ -260,8 +260,7 @@
 		}
 
 		try {
-			await $directus.request(updateItem('gp_probes', probe.value.id, updProbePart));
-			const updProbeDetails = await $directus.request<Probe>(readItem('gp_probes', probe.value.id));
+			const updProbeDetails = await $directus.request(updateItem('gp_probes', probe.value.id, updProbePart));
 
 			sendToast('success', 'Done', 'The probe has been successfully updated');
 			cancelCityEditing(false);

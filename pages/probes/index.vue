@@ -378,15 +378,20 @@
 		},
 	);
 
-	const { data: probeCount, pending: countLoading } = useAsyncData(() => $directus.request<[{ count: number }]>(aggregate('gp_probes', {
-		query: {
-			filter: getUserFilter('userId'),
+	const { data: probeCount, pending: countLoading } = useAsyncData(
+		() => $directus.request<[{ count: number }]>(aggregate('gp_probes', {
+			query: {
+				filter: getUserFilter('userId'),
+			},
+			aggregate: { count: '*' },
+		})),
+		{
+			transform: data => data?.[0]?.count ?? 0,
 		},
-		aggregate: { count: '*' },
-	})));
+	);
 
-	watch(countLoading, () => {
-		hasAnyProbes.value = !!probeCount.value?.[0]?.count;
+	watch(probeCount, (newProbeCount) => {
+		hasAnyProbes.value = !!newProbeCount;
 	});
 
 	const { data: probes, pending: loading, error: probeError, refresh: refreshProbes } = await useLazyAsyncData(

@@ -378,7 +378,7 @@
 		},
 	);
 
-	const { data: probeCount, pending: countLoading } = useAsyncData(
+	const { data: probeCount, pending: countLoading } = await useLazyAsyncData(
 		() => $directus.request<[{ count: number }]>(aggregate('gp_probes', {
 			query: {
 				filter: getUserFilter('userId'),

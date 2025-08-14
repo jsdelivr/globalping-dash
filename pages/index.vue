@@ -196,7 +196,7 @@
 
 	// SUMMARY
 
-	const { data: adoptedProbes, status: statusProbes, error: probeError } = await useLazyAsyncData('gp_probes', () => $directus.request(readItems('gp_probes', {
+	const { data: adoptedProbes, status: statusProbes, error: probesError } = await useLazyAsyncData('gp_probes', () => $directus.request(readItems('gp_probes', {
 		filter: getUserFilter('userId'),
 		sort: [ 'status', 'name' ],
 	})), { default: () => [] });
@@ -245,7 +245,7 @@
 
 	const perDay = computed(() => adoptedProbes.value.reduce((sum, { onlineTimesToday }) => sum += onlineTimesToday ? creditsPerAdoptedProbe : 0, 0));
 
-	useErrorToast(probeError, creditsError);
+	useErrorToast(probesError, creditsError);
 
 	// ADOPT PROBE DIALOG
 

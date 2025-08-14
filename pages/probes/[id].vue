@@ -146,9 +146,9 @@
 	const windowSize = useWindowSize();
 	const tabListRef = useTemplateRef('tabListRef');
 
-	const { data: probeDetails, error } = await useAsyncData<Probe>(() => $directus.request(readItem('gp_probes', probeId)));
+	const { data: probeDetails, error: probeDetailsError } = await useAsyncData<Probe>(() => $directus.request(readItem('gp_probes', probeId)));
 
-	watch(error, (newError) => {
+	watch(probeDetailsError, (newError) => {
 		if (!newError) {
 			return;
 		}
@@ -195,7 +195,7 @@
 			groupBy: [ 'adopted_probe' ],
 			aggregate: { sum: 'amount' },
 		})),
-		{ watch: [ probeDetails ], transform: data => data ? data[0].sum.amount : 0 },
+		{ watch: [ probeDetails ], transform: data => data?.[0].sum.amount ?? 0 },
 	);
 
 	useErrorToast(creditsError);

@@ -19,7 +19,7 @@
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
 		</div>
-		<div v-if="hasAnyProbes || loading">
+		<div v-if="hasAnyProbes || loading || countLoading">
 			<div class="max-md:hidden">
 				<DataTable
 					ref="dataTableRef"
@@ -378,6 +378,17 @@
 		},
 	);
 
+	const { data: probeCount, pending: countLoading } = useAsyncData(() => $directus.request<[{ count: number }]>(aggregate('gp_probes', {
+		query: {
+			filter: getUserFilter('userId'),
+		},
+		aggregate: { count: '*' },
+	})));
+
+	watch(countLoading, () => {
+		hasAnyProbes.value = !!probeCount.value?.[0]?.count;
+	});
+
 	const { data: probes, pending: loading, error: probeError, refresh: refreshProbes } = await useLazyAsyncData(
 		() => $directus.request<Probe[]>(readItems('gp_probes', {
 			filter: getCurrentFilter(true),
@@ -386,9 +397,9 @@
 			limit: itemsPerPage.value,
 		})),
 		{
-			watch: [ page, filterDeps, first, itemsPerPage ],
+			watch: [ filterDeps, first, itemsPerPage ],
 			default: () => [],
-			immediate: true,
+			immediate: false,
 		},
 	);
 
@@ -464,17 +475,8 @@
 	onMounted(async () => {
 		if (!route.query.limit) {
 			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 420) / 65), 5), 15);
-		}
-
-		const [{ count }] = await $directus.request<[{ count: number }]>(aggregate('gp_probes', {
-			query: {
-				filter: getUserFilter('userId'),
-			},
-			aggregate: { count: '*' },
-		}));
-
-		if (count) {
-			hasAnyProbes.value = true;
+		} else {
+			await refreshProbes();
 		}
 	});
 

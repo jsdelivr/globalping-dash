@@ -361,47 +361,63 @@
 
 	const filterDeps = computed(() => { return { ...filter.value }; });
 
-	const { data: totalCredits, error: creditError } = await useLazyAsyncData(() => $directus.request<[{ sum: { amount: number } }]>(aggregate('gp_credits_additions', {
-		query: {
-			filter: {
-				...getUserFilter('github_id'),
-				reason: { _eq: 'adopted_probe' },
-				date_created: { _gte: '$NOW(-30 day)' },
+	const { data: totalCredits, error: creditError } = await useLazyAsyncData(
+		() => $directus.request<[{ sum: { amount: number } }]>(aggregate('gp_credits_additions', {
+			query: {
+				filter: {
+					...getUserFilter('github_id'),
+					reason: { _eq: 'adopted_probe' },
+					date_created: { _gte: '$NOW(-30 day)' },
+				},
+			},
+			aggregate: { sum: 'amount' },
+		})),
+		{
+			default: () => 0,
+			transform: data => data[0]?.sum?.amount ?? 0,
+		},
+	);
+
+	const { data: probes, pending: loading, error: probeError, refresh: refreshProbes } = await useLazyAsyncData(
+		() => $directus.request<Probe[]>(readItems('gp_probes', {
+			filter: getCurrentFilter(true),
+			sort: getSortSettings() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
+			offset: first.value,
+			limit: itemsPerPage.value,
+		})),
+		{
+			watch: [ page, filterDeps, first, itemsPerPage ],
+			default: () => [],
+			immediate: true,
+		},
+	);
+
+	const { data: statusCounts, error: statusCntError, refresh: refreshStatusCounts } = await useLazyAsyncData(
+		() => $directus.request<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
+			query: {
+				filter: getCurrentFilter(),
+				groupBy: [ 'status', 'isOutdated' ],
+			},
+			aggregate: { count: '*' },
+		})),
+		{
+			watch: [ filterDeps ],
+			default: () => Object.fromEntries(STATUS_CODES.map(status => [ status, 0 ])),
+			transform: (data) => {
+				const counts = Object.fromEntries(STATUS_CODES.map(status => [ status, 0 ]));
+
+				STATUS_CODES.forEach((code) => {
+					counts[code] = data.reduce((sum, status) => {
+						return STATUS_MAP[code].options.includes(status.status) && (status.isOutdated || !STATUS_MAP[code].outdatedOnly)
+							? sum + status.count
+							: sum;
+					}, 0);
+				});
+
+				return counts;
 			},
 		},
-		aggregate: { sum: 'amount' },
-	})), { default: () => 0, transform: data => data[0]?.sum?.amount ?? 0 });
-
-	const { data: probes, pending: loading, error: probeError, refresh: refreshProbes } = await useLazyAsyncData(() => $directus.request<Probe[]>(readItems('gp_probes', {
-		filter: getCurrentFilter(true),
-		sort: getSortSettings() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
-		offset: first.value,
-		limit: itemsPerPage.value,
-	})), { watch: [ page, filterDeps, first, itemsPerPage ], immediate: true, default: () => [] });
-
-	const { data: statusCounts, error: statusCntError, refresh: refreshStatusCounts } = await useLazyAsyncData(() => $directus.request<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
-		query: {
-			filter: getCurrentFilter(),
-			groupBy: [ 'status', 'isOutdated' ],
-		},
-		aggregate: { count: '*' },
-	})), {
-		watch: [ filterDeps ],
-		default: () => Object.fromEntries(STATUS_CODES.map(status => [ status, 0 ])),
-		transform: (data) => {
-			const counts = Object.fromEntries(STATUS_CODES.map(status => [ status, 0 ]));
-
-			STATUS_CODES.forEach((code) => {
-				counts[code] = data.reduce((sum, status) => {
-					return STATUS_MAP[code].options.includes(status.status) && (status.isOutdated || !STATUS_MAP[code].outdatedOnly)
-						? sum + status.count
-						: sum;
-				}, 0);
-			});
-
-			return counts;
-		},
-	});
+	);
 
 	useErrorToast(creditError, probeError, statusCntError);
 

@@ -110,7 +110,7 @@
 				count: [ 'id' ],
 			},
 		})),
-		{ default: () => 0, transform: data => data[0].count.id },
+		{ default: () => 0, transform: data => data?.[0]?.count?.id ?? 0 },
 	);
 
 	useErrorToast(notificationError, notificationCntError);

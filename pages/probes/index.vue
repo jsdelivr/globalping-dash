@@ -99,7 +99,7 @@
 						<template #body="slotProps">
 							<AsyncCell :loading="loading">
 								<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
-									<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2 py-3">
+									<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2">
 										<BigProbeIcon class="col-span-1 row-span-2" :probe="slotProps.data" border/>
 										<p class="col-start-2 col-end-3 flex items-center font-bold">{{ slotProps.data.name || slotProps.data.city }}</p>
 										<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-900 dark:text-bluegray-400">{{ slotProps.data.ip }}</p>

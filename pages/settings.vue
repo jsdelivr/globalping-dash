@@ -33,7 +33,7 @@
 				</div>
 
 				<label for="organizations" class="mt-6 flex items-center font-bold">
-					Organizations <i v-tooltip.top="'You must be a public member for the organization to appear here.'" class="pi pi-info-circle ml-2"/>
+					Organizations <i v-tooltip.top="'You must either be a public member or your organization must allow access for the Globalping app to appear here.'" class="pi pi-info-circle ml-2"/>
 				</label>
 				<div class="relative mt-2">
 					<ReadOnlyAutoComplete
@@ -51,10 +51,15 @@
 						:icon="loadingIconId === 2 ? 'pi pi-sync pi-spin' : 'pi pi-sync'"
 						class="!absolute right-8 top-2 h-6 bg-transparent !px-1 hover:bg-transparent"
 						:disabled="!!auth.impersonation"
-						@click="syncFromGithub(2)"
+						@click="syncFromGithub(2).then(() => showOrgsInfoMessage = true)"
 					/>
 					<i class="pi pi-lock absolute right-3 top-3 text-bluegray-500"/>
 				</div>
+
+				<Message v-if="showOrgsInfoMessage" severity="info" class="mt-2" icon="pi pi-info-circle">
+					If your organization is still missing, make sure you're either a public member, or the organization allows access for the
+					<NuxtLink to="https://github.com/settings/connections/applications/Ov23liiVFaDD1BIemPkx" class="hover:underline" target="_blank" rel="noopener">Globalping app</NuxtLink>.
+				</Message>
 
 				<label for="defaultPrefix" class="mt-6 flex items-center font-bold">
 					Default tag prefix <i v-tooltip.top="'Your probe tags will have this prefix by default, but you can adjust it for each tag in the probe settings.'" class="pi pi-info-circle ml-2"/>
@@ -205,6 +210,7 @@
 	const publicProbes = ref(user.value.public_probes);
 	const defaultPrefix = ref(user.value.default_prefix);
 	const adoptionToken = ref(user.value.adoption_token);
+	const showOrgsInfoMessage = ref(false);
 
 	const resetFormDirty = useFormDirty({
 		firstName: user.value.first_name,

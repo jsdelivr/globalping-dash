@@ -122,7 +122,7 @@
 											<CountryFlag :country="slotProps.data.country" size="small"/>
 											<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
 										</div>
-										<p class="overflow-hidden text-ellipsis text-nowrap">{{ slotProps.data.network }}, AS{{ slotProps.data.asn }}</p>
+										<p class="truncate">{{ slotProps.data.network }}, AS{{ slotProps.data.asn }}</p>
 									</div>
 								</NuxtLink>
 							</AsyncCell>

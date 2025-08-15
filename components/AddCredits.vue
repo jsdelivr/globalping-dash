@@ -167,13 +167,14 @@
 
 	defineEmits([ 'cancel', 'adopt-a-probe' ]);
 
-	const { data: adoptionsExists } = await useLazyAsyncData('gp_adopted_probes_exist', async () => {
-		const adoptions = await $directus.request(readItems('gp_probes', {
+	const { data: adoptionsExists } = await useLazyAsyncData(
+		'gp_adopted_probes_exist',
+		() => $directus.request(readItems('gp_probes', {
 			filter: getUserFilter('userId'),
 			limit: 1,
-		}));
-		return !!adoptions.length;
-	}, { default: () => false });
+		})),
+		{ default: () => false, transform: data => !!data.length },
+	);
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 	const creditsPerDollar = metadata.creditsPerDollar;

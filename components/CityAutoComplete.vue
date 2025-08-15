@@ -69,8 +69,8 @@
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
 	import type { VNodeRef } from 'vue';
-	const { $directus } = useNuxtApp();
 
+	const { $directus } = useNuxtApp();
 	const model = defineModel<City>({ required: true });
 	const inputRef = defineModel<HTMLInputElement | null>('inputRef');
 
@@ -130,9 +130,15 @@
 	});
 
 	const updateQuery = async () => {
+		let shouldRefresh = false;
+
+		if (model.value.name.trim() === cityQuery.value.trim()) {
+			shouldRefresh = true;
+		}
+
 		if (model.value.name.trim().length) {
 			cityQuery.value = model.value.name.trim();
-			await refresh();
+			shouldRefresh && await refresh();
 		}
 	};
 

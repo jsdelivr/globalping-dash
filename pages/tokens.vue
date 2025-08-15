@@ -216,9 +216,11 @@
 <script setup lang="ts">
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
+	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { formatDate, getRelativeTimeString } from '~/utils/date-formatters';
+	import { minDelay } from '~/utils/min-delay';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	useHead({
@@ -233,53 +235,50 @@
 	const itemsPerPage = ref(Math.round(config.public.itemsPerTablePage / 2));
 
 	// TOKENS
-
-	const loadingTokens = ref(false);
-	const tokens = ref<Token[]>([]);
-	const tokensCount = ref(0);
 	const { page: tokensPage, first: firstToken, pageLinkSize, template } = usePagination({ itemsPerPage, pageKey: 'tokensPage' });
 
-	const loadTokens = async () => {
-		loadingTokens.value = true;
+	const { data: tokens, pending: tokensPending, error: tokenError, refresh: refreshTokenData } = await useLazyAsyncData(
+		() => minDelay($directus.request(readItems('gp_tokens', {
+			filter: {
+				...getUserFilter('user_created'),
+				app_id: { _null: true },
+			},
+			offset: firstToken.value,
+			limit: itemsPerPage.value,
+			sort: '-date_created',
+		}))),
+		{
+			default: () => [],
+			watch: [ firstToken, itemsPerPage ],
+		},
+	);
 
-		try {
-			const [ gpTokens, [{ count }] ] = await Promise.all([
-				$directus.request(readItems('gp_tokens', {
+	const { data: tokensCount, pending: tokenCountPending, error: tokenCntError, refresh: refreshTokenCount } = await useAsyncData(
+		() => $directus.request<[{ count: number }]>(aggregate(
+			'gp_tokens',
+			{
+				query: {
 					filter: {
 						...getUserFilter('user_created'),
 						app_id: { _null: true },
 					},
-					offset: firstToken.value,
-					limit: itemsPerPage.value,
-					sort: '-date_created',
-				})),
-				$directus.request<[{ count: number }]>(aggregate('gp_tokens', {
-					query: {
-						filter: {
-							...getUserFilter('user_created'),
-							app_id: { _null: true },
-						},
-					},
-					aggregate: { count: '*' },
-				})),
-			]);
+				},
+				aggregate: { count: '*' },
+			},
+		)),
+		{
+			default: () => 0, transform: data => data[0].count ?? 0,
+		},
+	);
 
-			tokens.value = gpTokens;
-			tokensCount.value = count;
-		} catch (e) {
-			sendErrorToast(e);
-		}
+	const loadingTokens = computed(() => tokensPending.value || tokenCountPending.value);
 
-		loadingTokens.value = false;
+	const loadTokens = async () => {
+		return Promise.all([ refreshTokenData(), refreshTokenCount() ]);
 	};
-
-	onMounted(async () => {
-		await loadTokens();
-	});
 
 	watch([ tokensPage ], async () => {
 		resetState();
-		await loadTokens();
 	});
 
 	// TOKEN DETAILS
@@ -396,42 +395,25 @@
 
 	// APPLICATIONS
 
-	const loadingApplications = ref(false);
-	const apps = ref<Application[]>([]);
-	const appsCount = ref(0);
 	const { page: appsPage, first: firstApp } = usePagination({ itemsPerPage, pageKey: 'appsPage' });
 
-	const loadApplications = async () => {
-		loadingApplications.value = true;
+	const { data: applicationData, pending: loadingApplications, error: applicationError, refresh: loadApplications } = await useLazyAsyncData(
+		() => minDelay($directus.request<{ applications: Application[]; total: number }>(customEndpoint({
+			method: 'GET',
+			path: '/applications',
+			params: {
+				userId: getUserFilter('user_id').user_id?._eq || 'all',
+				offset: firstApp.value,
+				limit: itemsPerPage.value,
+			},
+		}))),
+		{
+			default: () => { return { applications: [], total: 0 }; }, watch: [ firstApp, itemsPerPage ],
+		},
+	);
 
-		try {
-			const { applications, total } = await $directus.request<{ applications: Application[]; total: number }>(customEndpoint({
-				method: 'GET',
-				path: '/applications',
-				params: {
-					userId: getUserFilter('user_id').user_id?._eq || 'all',
-					offset: firstApp.value,
-					limit: itemsPerPage.value,
-				},
-			}));
-
-			apps.value = applications;
-			appsCount.value = total;
-		} catch (e) {
-			sendErrorToast(e);
-		}
-
-		loadingApplications.value = false;
-	};
-
-	onMounted(async () => {
-		await loadApplications();
-	});
-
-	watch(appsPage, async () => {
-		resetState();
-		await loadApplications();
-	});
+	const apps = computed(() => applicationData.value?.applications ?? []);
+	const appsCount = computed(() => applicationData.value?.total ?? 0);
 
 	// REVOKE APP ACCESS
 
@@ -470,4 +452,7 @@
 			sendErrorToast(e);
 		}
 	};
+
+	// ERROR HANDLING
+	useErrorToast(tokenError, tokenCntError, applicationError);
 </script>

@@ -127,6 +127,7 @@
 
 <script setup lang="ts">
 	import { readItem, aggregate } from '@directus/sdk';
+	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata.js';
 	import { getProbeStatusColor, getProbeStatusText, isOutdated } from '~/utils/probe-status';
@@ -139,12 +140,27 @@
 	const { user } = storeToRefs(auth);
 	const metadata = useMetadata();
 	const probeId = route.params.id as string;
-	const probeDetails = ref<Probe | null>(null);
 	const probeDetailsUpdating = ref(false);
 	const updateProbeDialog = ref(false);
 	const showMoreIps = ref(false);
 	const windowSize = useWindowSize();
 	const tabListRef = useTemplateRef('tabListRef');
+
+	const { data: probeDetails, error: probeDetailsError } = await useAsyncData<Probe>(() => $directus.request(readItem('gp_probes', probeId)));
+
+	watch(probeDetailsError, (newError) => {
+		if (!newError) {
+			return;
+		}
+
+		const fetchError = newError.cause as DashboardError;
+
+		if (fetchError?.response?.status === 403) {
+			return navigateTo('/probes');
+		}
+
+		sendErrorToast(fetchError);
+	}, { deep: true, immediate: true });
 
 	useHead(() => {
 		return {
@@ -157,22 +173,6 @@
 		tabListRef.value?.updateInkBar();
 	}, { flush: 'post' });
 
-	const loadProbeData = async (id: string) => {
-		try {
-			probeDetails.value = await $directus.request(readItem('gp_probes', id));
-		} catch (e) {
-			const response = (e as { response?: Response } | undefined)?.response;
-
-			if (response?.status === 403) {
-				return navigateTo('/probes');
-			}
-
-			sendErrorToast(e);
-		}
-	};
-
-	await loadProbeData(probeId);
-
 	// HANDLE PRIMARY, ALT IPS
 	const limitIpsToShow = () => {
 		if (showMoreIps.value) {
@@ -183,31 +183,22 @@
 	};
 
 	// HANDLE CREDITS
-	const probeCreditsPerMonth = ref<number | null>(null);
-
-	const loadCreditsData = async () => {
-		try {
-			const creditsResponse = await $directus.request<[{ sum: { amount: number }; adopted_probe: string }]>(aggregate('gp_credits_additions', {
-				query: {
-					filter: {
-						github_id: { _eq: user.value.external_identifier || 'admin' },
-						adopted_probe: { _eq: probeDetails?.value?.id },
-						date_created: { _gte: '$NOW(-30 day)' },
-					},
+	const { data: probeCreditsPerMonth, error: creditsError } = await useAsyncData(
+		() => $directus.request<[{ sum: { amount: number }; adopted_probe: string }]>(aggregate('gp_credits_additions', {
+			query: {
+				filter: {
+					github_id: { _eq: user.value.external_identifier || 'admin' },
+					adopted_probe: { _eq: probeDetails?.value?.id },
+					date_created: { _gte: '$NOW(-30 day)' },
 				},
-				groupBy: [ 'adopted_probe' ],
-				aggregate: { sum: 'amount' },
-			}));
+			},
+			groupBy: [ 'adopted_probe' ],
+			aggregate: { sum: 'amount' },
+		})),
+		{ watch: [ probeDetails ], transform: data => data?.[0].sum.amount ?? 0 },
+	);
 
-			probeCreditsPerMonth.value = creditsResponse[0]?.sum.amount;
-		} catch (e) {
-			sendErrorToast(e);
-		}
-	};
-
-	watch(probeDetails, async () => {
-		await loadCreditsData();
-	}, { immediate: true });
+	useErrorToast(creditsError);
 
 	// HANDLE GO BACK TO PROBES
 	const getBackToProbesHref = () => {

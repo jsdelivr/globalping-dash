@@ -102,10 +102,11 @@
 <script setup lang="ts">
 	import { aggregate, customEndpoint, readItems } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
+	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useMetadata } from '~/store/metadata';
 	import { formatDateForTable } from '~/utils/date-formatters';
-	import { sendErrorToast } from '~/utils/send-toast';
+	import { minDelay } from '~/utils/min-delay';
 
 	useHead({
 		title: 'Credits -',
@@ -119,68 +120,61 @@
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
-	const loading = ref(false);
-	const creditsChangesCount = ref(0);
-	const creditsChanges = ref<CreditsChange[]>([]);
+
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 
-	const { data: credits } = await useLazyAsyncData('credits-stats', async () => {
-		try {
-			const [ total, additions, deductions, todayOnlineProbes ] = await Promise.all([
-				$directus.request<{ amount: number }[]>(readItems('gp_credits', {
-					filter: getUserFilter('user_id'),
-				})),
-				$directus.request<[{ sum: { amount: number }; date_created: 'datetime' }]>(aggregate('gp_credits_additions', {
-					query: {
-						filter: {
-							...getUserFilter('github_id'),
-							date_created: { _gte: '$NOW(-30 day)' },
-						},
+	const { data: credits, error: creditsError } = await useLazyAsyncData('credits-stats', async () => {
+		const [ total, additions, deductions, todayOnlineProbes ] = await Promise.all([
+			$directus.request<{ amount: number }[]>(readItems('gp_credits', {
+				filter: getUserFilter('user_id'),
+			})),
+			$directus.request<[{ sum: { amount: number }; date_created: 'datetime' }]>(aggregate('gp_credits_additions', {
+				query: {
+					filter: {
+						...getUserFilter('github_id'),
+						date_created: { _gte: '$NOW(-30 day)' },
 					},
-					groupBy: [ 'date_created' ],
-					aggregate: { sum: 'amount' },
-				})).then((additions) => {
-					return additions.map((addition) => {
-						const { sum, ...rest } = addition;
-						return { ...rest, amount: sum.amount };
-					});
-				}),
-				$directus.request<[{ sum: { amount: number }; date: 'datetime' }]>(aggregate('gp_credits_deductions', {
-					query: {
-						filter: {
-							...getUserFilter('user_id'),
-							date: { _gte: '$NOW(-30 day)' },
-						},
+				},
+				groupBy: [ 'date_created' ],
+				aggregate: { sum: 'amount' },
+			})).then((additions) => {
+				return additions.map((addition) => {
+					const { sum, ...rest } = addition;
+					return { ...rest, amount: sum.amount };
+				});
+			}),
+			$directus.request<[{ sum: { amount: number }; date: 'datetime' }]>(aggregate('gp_credits_deductions', {
+				query: {
+					filter: {
+						...getUserFilter('user_id'),
+						date: { _gte: '$NOW(-30 day)' },
 					},
-					groupBy: [ 'date' ],
-					aggregate: { sum: 'amount' },
-				})).then((deduction) => {
-					return deduction.map((addition) => {
-						const { sum, ...rest } = addition;
-						return { ...rest, amount: sum.amount };
-					});
-				}),
-				$directus.request<[{ count: number }]>(aggregate('gp_probes', {
-					query: {
-						filter: {
-							...getUserFilter('userId'),
-							onlineTimesToday: { _gt: 0 },
-						},
+				},
+				groupBy: [ 'date' ],
+				aggregate: { sum: 'amount' },
+			})).then((deduction) => {
+				return deduction.map((addition) => {
+					const { sum, ...rest } = addition;
+					return { ...rest, amount: sum.amount };
+				});
+			}),
+			$directus.request<[{ count: number }]>(aggregate('gp_probes', {
+				query: {
+					filter: {
+						...getUserFilter('userId'),
+						onlineTimesToday: { _gt: 0 },
 					},
-					aggregate: { count: '*' },
-				})),
-			]);
+				},
+				aggregate: { count: '*' },
+			})),
+		]);
 
-			return {
-				total: total.reduce((sum, { amount }) => sum + amount, 0) || 0,
-				additions,
-				deductions,
-				todayOnlineProbes: todayOnlineProbes[0].count || 0,
-			};
-		} catch (e) {
-			sendErrorToast(e);
-			throw e;
-		}
+		return {
+			total: total.reduce((sum, { amount }) => sum + amount, 0) || 0,
+			additions,
+			deductions,
+			todayOnlineProbes: todayOnlineProbes[0].count || 0,
+		};
 	}, {
 		default: () => ({ total: 0, additions: [], deductions: [], todayOnlineProbes: 0 }),
 	});
@@ -189,45 +183,40 @@
 	const totalDeductions = computed(() => credits.value.deductions.reduce((sum, deduction) => sum + deduction.amount, 0));
 	const dailyAdditions = computed(() => credits.value.todayOnlineProbes * creditsPerAdoptedProbe);
 
-	const loadLazyData = async () => {
-		loading.value = true;
+	const { data: creditsData, pending: loading, error: creditsDataError } = await useLazyAsyncData(
+		() => minDelay($directus.request<{ changes: CreditsChange[]; count: number }>(customEndpoint({
+			method: 'GET',
+			path: '/credits-timeline',
+			params: {
+				userId: getUserFilter('user_id').user_id?._eq || 'all',
+				offset: first.value,
+				limit: itemsPerPage.value,
+			},
+		}))),
+		{ watch: [ first, itemsPerPage ] },
+	);
 
-		try {
-			const { changes, count } = await $directus.request<{ changes: CreditsChange[]; count: number }>(customEndpoint({
-				method: 'GET',
-				path: '/credits-timeline',
-				params: {
-					userId: getUserFilter('user_id').user_id?._eq || 'all',
-					offset: first.value,
-					limit: itemsPerPage.value,
-				},
-			}));
+	const creditsChangesCount = computed(() => creditsData.value?.count || 0);
 
-			creditsChanges.value = [
-				...changes.map(change => ({
-					...change,
-					date_created: formatDateForTable(change.date_created),
-				})),
-			];
-
-			creditsChangesCount.value = count;
-		} catch (e) {
-			sendErrorToast(e);
+	const creditsChanges = computed<CreditsChange[]>(() => {
+		if (!creditsData.value) {
+			return [];
 		}
 
-		loading.value = false;
-	};
+		return [
+			...creditsData.value.changes.map(change => ({
+				...change,
+				date_created: formatDateForTable(change.date_created),
+			})),
+		];
+	});
+
+	useErrorToast(creditsError, creditsDataError);
 
 	onMounted(async () => {
 		if (!route.query.limit) {
 			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 540) / 54), 5), 15);
 		}
-
-		await loadLazyData();
-	});
-
-	watch([ page ], async () => {
-		await loadLazyData();
 	});
 
 	// CREDITS DIALOG

@@ -165,6 +165,7 @@ declare global {
 	type DashboardError = {
 		response?: {
 			statusText: string;
+			status: number;
 		};
 		errors?: [ {
 			message: string;

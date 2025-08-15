@@ -273,13 +273,13 @@
 
 	// STEP 2
 
-	const { data: initialProbes } = await useLazyAsyncData('initial_user_probes', async () => {
-		const result = await $directus.request(readItems('gp_probes', {
+	const { data: initialProbes } = await useLazyAsyncData(
+		'initial_user_probes',
+		() => $directus.request(readItems('gp_probes', {
 			filter: getUserFilter('userId'),
-		}));
-
-		return result;
-	}, { default: () => [] });
+		})),
+		{ default: () => [] },
+	);
 
 	const searchNewProbes = async (activateCallback: (step: string | number) => void) => {
 		activateCallback('2');

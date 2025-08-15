@@ -37,7 +37,7 @@
 						<Button
 							class="ml-auto min-w-36 max-sm:ml-0 max-sm:mt-3"
 							:severity="adoptedProbes.length ? 'secondary' : undefined"
-							:outlined="adoptedProbes.length ? true : false"
+							:outlined="!!adoptedProbes.length"
 							@click="adoptProbeDialog = true"
 						>
 							<nuxt-icon class="pi" name="capture"/>
@@ -177,12 +177,12 @@
 	import countBy from 'lodash/countBy';
 	import isEmpty from 'lodash/isEmpty';
 	import CountryFlag from 'vue-country-flag-next';
+	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { ONLINE_STATUSES, OFFLINE_STATUSES } from '~/constants/probes';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
 	import { pluralize } from '~/utils/pluralize';
-	import { sendErrorToast } from '~/utils/send-toast';
 
 	useHead({
 		title: 'Overview -',
@@ -196,19 +196,10 @@
 
 	// SUMMARY
 
-	const { status: statusProbes, data: adoptedProbes } = await useLazyAsyncData('gp_probes', async () => {
-		try {
-			const result = await $directus.request(readItems('gp_probes', {
-				filter: getUserFilter('userId'),
-				sort: [ 'status', 'name' ],
-			}));
-
-			return result;
-		} catch (e) {
-			sendErrorToast(e);
-			throw e;
-		}
-	}, { default: () => [] });
+	const { data: adoptedProbes, status: statusProbes, error: probesError } = await useLazyAsyncData('gp_probes', () => $directus.request(readItems('gp_probes', {
+		filter: getUserFilter('userId'),
+		sort: [ 'status', 'name' ],
+	})), { default: () => [] });
 
 	const onlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => ONLINE_STATUSES.includes(status)));
 	const offlineProbes = computed(() => adoptedProbes.value.filter(({ status }) => OFFLINE_STATUSES.includes(status)));
@@ -217,40 +208,34 @@
 		.sort((obj1, obj2) => obj2.count - obj1.count));
 
 	// CREDITS
+	const { data: credits, status: statusCredits, error: creditsError } = await useLazyAsyncData('gp_credits', async () => {
+		let fromSponsorshipPromise = Promise.resolve(0);
 
-	const { status: statusCredits, data: credits } = await useLazyAsyncData('gp_credits', async () => {
-		try {
-			let fromSponsorshipPromise = Promise.resolve(0);
+		const totalPromise = $directus.request(readItems('gp_credits', {
+			filter: getUserFilter('user_id'),
+		}));
 
-			const totalPromise = $directus.request(readItems('gp_credits', {
-				filter: getUserFilter('user_id'),
-			}));
-
-			if (user.value.user_type !== 'member') {
-				fromSponsorshipPromise = $directus.request(readItems('gp_credits_additions', {
-					filter: {
-						...getUserFilter('github_id'),
-						reason: { _eq: 'recurring_sponsorship' },
-						date_created: { _gte: '$NOW(-35 day)' },
-					},
-					sort: '-date_created',
-					limit: 1,
-				})).then(additions => additions.reduce((acc, addition) => acc + addition.amount, 0));
-			}
-
-			const [
-				total,
-				fromSponsorship,
-			] = await Promise.all([
-				totalPromise,
-				fromSponsorshipPromise,
-			]);
-
-			return { total, fromSponsorship };
-		} catch (e) {
-			sendErrorToast(e);
-			throw e;
+		if (user.value.user_type !== 'member') {
+			fromSponsorshipPromise = $directus.request(readItems('gp_credits_additions', {
+				filter: {
+					...getUserFilter('github_id'),
+					reason: { _eq: 'recurring_sponsorship' },
+					date_created: { _gte: '$NOW(-35 day)' },
+				},
+				sort: '-date_created',
+				limit: 1,
+			})).then(additions => additions.reduce((acc, addition) => acc + addition.amount, 0));
 		}
+
+		const [
+			total,
+			fromSponsorship,
+		] = await Promise.all([
+			totalPromise,
+			fromSponsorshipPromise,
+		]);
+
+		return { total, fromSponsorship };
 	}, { default: () => {} });
 
 	const total = computed(() => {
@@ -259,6 +244,8 @@
 	});
 
 	const perDay = computed(() => adoptedProbes.value.reduce((sum, { onlineTimesToday }) => sum += onlineTimesToday ? creditsPerAdoptedProbe : 0, 0));
+
+	useErrorToast(probesError, creditsError);
 
 	// ADOPT PROBE DIALOG
 

@@ -19,9 +19,9 @@
 			/>
 		</div>
 
-		<div v-if="displayedNotifications.length" class="mt-6 flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2">
+		<div v-if="notifications.length" class="mt-6 flex w-full max-w-[calc(100vw-16px)] flex-col gap-y-2">
 			<div
-				v-for="notification in displayedNotifications"
+				v-for="notification in notifications"
 				:key="notification.id"
 				:value="notification.id"
 				class="group rounded-xl border border-surface-300 bg-white p-0 dark:border-table-border dark:bg-dark-800"
@@ -74,11 +74,11 @@
 <script setup lang="ts">
 	import { readNotifications } from '@directus/sdk';
 	import { usePagination } from '~/composables/pagination';
+	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useNotifications } from '~/composables/useNotifications';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
-	import { sendErrorToast } from '~/utils/send-toast';
 
 	const auth = useAuth();
 	const route = useRoute();
@@ -86,82 +86,47 @@
 	const { $directus } = useNuxtApp();
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
-	const displayedNotifications = ref<DirectusNotification[]>([]);
-	const notificationsCount = ref<number>(0);
 	const { inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead } = useNotifications();
 	const notificationBus = useEventBus<string[]>('notification-updated');
 	const { getUserFilter } = useUserFilter();
 
+	const { data: notifications, error: notificationError } = await useLazyAsyncData(
+		'directus_notifications_page',
+		() => $directus.request<DirectusNotification[]>(readNotifications({
+			format: 'html',
+			limit: itemsPerPage.value,
+			offset: first.value,
+			filter: getUserFilter('recipient'),
+			sort: [ '-timestamp' ],
+		})),
+		{ default: () => [], watch: [ first, itemsPerPage ] },
+	);
+
+	const { data: notificationsCount, error: notificationCntError } = await useLazyAsyncData(
+		'directus_notifications_cnt',
+		() => $directus.request<{ count: { id: number } }[]>(readNotifications({
+			filter: getUserFilter('recipient'),
+			aggregate: {
+				count: [ 'id' ],
+			},
+		})),
+		{ default: () => 0, transform: data => data?.[0]?.count?.id ?? 0 },
+	);
+
+	useErrorToast(notificationError, notificationCntError);
+
 	notificationBus.on((idsToArchive) => {
-		displayedNotifications.value.forEach((notification) => {
+		notifications.value.forEach((notification) => {
 			if (idsToArchive.includes(notification.id)) {
 				notification.status = 'archived';
 			}
 		});
 	});
 
-	if (!route.query.limit) {
-		itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 210) / 140), 5), 15);
-	}
-
-	// get initial notifications
-	const { data: notifications } = await useAsyncData('directus_notifications_page', async () => {
-		return $directus.request<DirectusNotification[]>(readNotifications({
-			format: 'html',
-			limit: itemsPerPage.value,
-			offset: page.value * itemsPerPage.value,
-			filter: getUserFilter('recipient'),
-			sort: [ '-timestamp' ],
-		}));
-	}, { default: () => [] });
-
-	displayedNotifications.value = notifications.value;
-
-	type NotificationCntResponse = {
-		count: {
-			id: number;
-		};
-	}[];
-
-	// get the count of notifications
-	const { data: cntResponse } = await useAsyncData('directus_notifications_cnt', async () => {
-		return $directus.request(readNotifications({
-			filter: getUserFilter('recipient'),
-			aggregate: {
-				count: [ 'id' ],
-			},
-		}));
-	}, { default: () => [] });
-
-	notificationsCount.value = (cntResponse.value as NotificationCntResponse)?.[0]?.count?.id ?? 0;
-
-	const loadNotifications = async (pageNumber: number) => {
-		try {
-			const [ notificationsResp, notificationsCntResp ] = await Promise.all([
-				$directus.request<DirectusNotification[]>(readNotifications({
-					format: 'html',
-					limit: itemsPerPage.value,
-					offset: pageNumber * itemsPerPage.value,
-					filter: getUserFilter('recipient'),
-					sort: [ '-timestamp' ],
-				})),
-				$directus.request<NotificationCntResponse>(readNotifications({
-					filter: getUserFilter('recipient'),
-					aggregate: {
-						count: [ 'id' ],
-					},
-				})),
-			]);
-
-			displayedNotifications.value = notificationsResp;
-			notificationsCount.value = notificationsCntResp?.[0]?.count?.id ?? 0;
-		} catch (e) {
-			sendErrorToast(e);
+	onMounted(() => {
+		if (!route.query.limit) {
+			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 210) / 140), 5), 15);
 		}
-	};
-
-	// get notifications depending on the selected page in Paginator
-	watch([ page ], async () => {
-		await loadNotifications(page.value);
 	});
+
 </script>

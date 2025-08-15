@@ -315,6 +315,7 @@
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { type StatusCode, useProbeFilters, STATUS_MAP } from '~/composables/useProbeFilters';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { minDelay } from '~/utils/min-delay';
 	import { pluralize } from '~/utils/pluralize';
 
 	const config = useRuntimeConfig();
@@ -361,23 +362,6 @@
 
 	const filterDeps = computed(() => { return { ...filter.value }; });
 
-	type tf = <T>(c: Promise<T>) => Promise<T>;
-
-	const f: tf = async (c, d = 250) => {
-		const start = Date.now();
-
-		try {
-			return await c;
-		} finally {
-			const end = Date.now();
-			const diff = end - start;
-
-			if (diff < d) {
-				await new Promise(resolve => setTimeout(resolve, d - diff));
-			}
-		}
-	};
-
 	const { data: totalCredits, error: creditError } = await useLazyAsyncData(
 		() => $directus.request<[{ sum: { amount: number } }]>(aggregate('gp_credits_additions', {
 			query: {
@@ -412,7 +396,7 @@
 	});
 
 	const { data: probes, pending: loading, error: probeError, refresh: refreshProbes } = await useLazyAsyncData(
-		() => f($directus.request<Probe[]>(readItems('gp_probes', {
+		() => minDelay($directus.request<Probe[]>(readItems('gp_probes', {
 			filter: getCurrentFilter(true),
 			sort: getSortSettings() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
 			offset: first.value,
@@ -426,7 +410,7 @@
 	);
 
 	const { data: statusCounts, error: statusCntError, refresh: refreshStatusCounts } = await useLazyAsyncData(
-		() => f($directus.request<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
+		() => minDelay($directus.request<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
 			query: {
 				filter: getCurrentFilter(),
 				groupBy: [ 'status', 'isOutdated' ],
@@ -474,7 +458,7 @@
 				await router.replace('/probes'); // reset all filters
 			}
 		}
-	}, { deep: true, immediate: true });
+	}, { deep: true });
 
 	watch(loading, (isLoading) => {
 		if (isLoading) {
@@ -482,14 +466,14 @@
 		} else {
 			firstLoading.value = false;
 		}
-	}, { immediate: true });
+	});
 
 	watch(statusCounts, (newStatusCounts) => {
 		paginatedRecords.value = newStatusCounts[filter.value.status];
 		hasAnyProbes.value = hasAnyProbes.value || !!newStatusCounts['all'];
 	}, { deep: true, immediate: true });
 
-	const displayPagination = computed(() => probes.value.length !== statusCounts.value[filter.value.status]);
+	const displayPagination = computed(() => probes.value.length && probes.value.length !== statusCounts.value[filter.value.status]);
 	const onFilterChangeDebounced = debounce(() => onFilterChange(searchInput.value), 500);
 	const searchInput = ref(filter.value.search);
 

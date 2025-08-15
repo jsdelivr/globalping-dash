@@ -106,6 +106,7 @@
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useMetadata } from '~/store/metadata';
 	import { formatDateForTable } from '~/utils/date-formatters';
+	import { minDelay } from '~/utils/min-delay';
 
 	useHead({
 		title: 'Credits -',
@@ -183,7 +184,7 @@
 	const dailyAdditions = computed(() => credits.value.todayOnlineProbes * creditsPerAdoptedProbe);
 
 	const { data: creditsData, pending: loading, error: creditsDataError } = await useLazyAsyncData(
-		() => $directus.request<{ changes: CreditsChange[]; count: number }>(customEndpoint({
+		() => minDelay($directus.request<{ changes: CreditsChange[]; count: number }>(customEndpoint({
 			method: 'GET',
 			path: '/credits-timeline',
 			params: {
@@ -191,7 +192,7 @@
 				offset: first.value,
 				limit: itemsPerPage.value,
 			},
-		})),
+		}))),
 		{ watch: [ first, itemsPerPage ] },
 	);
 

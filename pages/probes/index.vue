@@ -109,20 +109,20 @@
 						</template>
 					</Column>
 
-					<Column field="location" :sortable="true" class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.location}px` }">
+					<Column field="location" :sortable="true" class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.location}px`, maxWidth: `${columnWidths.location}px` }">
 						<template #header>
 							Location <i v-tooltip.top="'Current probe location. If the auto-detected value is wrong, you can adjust it in probe details.'" class="pi pi-info-circle"/>
 						</template>
 
 						<template #body="slotProps">
 							<AsyncCell :loading="loading">
-								<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
-									<div class="px-2 py-3">
+								<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex size-full items-center">
+									<div class="w-full px-2 py-3">
 										<div class="mb-1 flex items-center">
 											<CountryFlag :country="slotProps.data.country" size="small"/>
 											<p class="ml-2 font-bold">{{ slotProps.data.city }}, {{ slotProps.data.country }}</p>
 										</div>
-										<p>{{ slotProps.data.network }}, AS{{ slotProps.data.asn }}</p>
+										<p class="truncate">{{ slotProps.data.network }}, AS{{ slotProps.data.asn }}</p>
 									</div>
 								</NuxtLink>
 							</AsyncCell>

@@ -14,7 +14,11 @@
 		"lint:js:fix": "eslint --cache --max-warnings=0 --fix .",
 		"preview": "nuxt preview",
 		"postinstall": "nuxt prepare",
-		"prepare": "husky || echo 'Failed to install husky'"
+		"prepare": "husky || echo 'Failed to install husky'",
+		"test:e2e": "pnpm run test:e2e:build:directus && pnpm run test:e2e:build:dash && pnpm run test:e2e:run",
+		"test:e2e:build:directus": "./scripts/build-directus.sh",
+		"test:e2e:build:dash": "npx dotenv -e test/e2e/globalping-dash-directus/.env -- pnpm build",
+		"test:e2e:run": "cd test/e2e/globalping-dash-directus; pnpm exec playwright test --grep-invert='.*generate-test\\.spec\\.ts' || E=$?; cd ../../../; exit $E;"
 	},
 	"dependencies": {
 		"@directus/sdk": "^19.1.0",

@@ -39,6 +39,8 @@
 		},
 	});
 
+	const MAX_LOGS = 5000;
+
 	const config = useRuntimeConfig();
 	const route = useRoute();
 	const probeId = route.params.id as string;
@@ -107,6 +109,11 @@
 	// append new logs to the already stored ones
 	watch(() => data.value?.length, () => {
 		logs.value.push(...data.value);
+
+		if (logs.value.length > MAX_LOGS) {
+			logs.value = logs.value.slice(-MAX_LOGS);
+		}
+
 		scrollToBottom();
 	});
 

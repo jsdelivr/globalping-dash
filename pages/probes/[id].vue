@@ -1,6 +1,6 @@
 <template>
-	<div class="min-h-full p-6">
-		<div class="flex flex-col gap-4">
+	<div class="flex h-full flex-col p-6">
+		<div class="flex min-h-0 flex-1 flex-col gap-4">
 			<div class="flex gap-2">
 				<NuxtLink
 					:to="getBackToProbesHref()"
@@ -96,23 +96,23 @@
 				Your probe container is running an outdated software and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="#" @click="updateProbeDialog = true">our guide</NuxtLink> to update it manually.
 			</Message>
 
-			<Tabs value="0">
+			<Tabs v-model:value="activeTab" class="flex min-h-0 flex-1 flex-col">
 				<TabList ref="tabListRef" class="!border-b !border-surface-300 dark:!border-dark-600 [&_[data-pc-section='tablist']]:!border-none">
 					<Tab value="0" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Details</Tab>
-					<!-- temporarily hide Logs tab while it's under construction -->
-					<!-- <Tab value="1" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Logs</Tab> -->
+					<Tab value="1" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Logs</Tab>
 				</TabList>
 
-				<TabPanels class="mt-6 !bg-transparent !p-0">
+				<TabPanels class="mt-6 flex min-h-0 flex-1 flex-col !bg-transparent !p-0">
 					<TabPanel v-if="probeDetails" value="0" tabindex="-1">
 						<ProbeTabDetails v-model:probe-details-updating="probeDetailsUpdating" v-model:probe="probeDetails"/>
 					</TabPanel>
 
-					<TabPanel value="1" tabindex="-1">
-						NO LOGS FOR NOW
+					<TabPanel class="flex min-h-0 flex-1 flex-col" value="1" tabindex="-1">
+						<ProbeTabLogs :is-active="activeTab === '1'"/>
 					</TabPanel>
 				</TabPanels>
 			</Tabs>
+
 		</div>
 
 		<GPDialog
@@ -145,6 +145,7 @@
 	const showMoreIps = ref(false);
 	const windowSize = useWindowSize();
 	const tabListRef = useTemplateRef('tabListRef');
+	const activeTab = ref('0');
 
 	const { data: probeDetails, error: probeDetailsError } = await useAsyncData<Probe>(() => $directus.request(readItem('gp_probes', probeId)));
 

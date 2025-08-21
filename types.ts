@@ -201,4 +201,11 @@ declare global {
 		creditsPerDollar: number;
 		creditsPerAdoptedProbe: number;
 	};
+
+	type ProbeLog = {
+		message: string;
+		scope?: string;
+		level?: string;
+		timestamp?: string;
+	};
 }

@@ -16,7 +16,7 @@
 		>
 			<span v-if="log.timestamp">[{{ log.timestamp.toUpperCase() }}] </span>
 			<span v-if="log.level">[{{ log.level.toUpperCase() }}] </span>
-			<span class="break-words">{{ log.message }}</span>
+			<span class="whitespace-pre-line">{{ log.message }}</span>
 		</div>
 		<span v-if="logs.length === 0" class="inset-0 m-auto text-gray-600 dark:text-gray-400">
 			<span v-if="pending && showLoader">
@@ -71,8 +71,7 @@
 			if (!error.value) {
 				lastFetched.value = Date.now();
 			}
-		}).catch(() => {}) // errors are displayed via useErrorToast
-			.finally(() => { showLoader.value = !isActive; }); // do not show the loader on further refetches
+		}).finally(() => { showLoader.value = !isActive; }); // do not show the loader on further refetches
 	};
 
 
@@ -90,7 +89,7 @@
 
 	const scrollToBottom = () => {
 		nextTick(() => {
-			if (logContainer.value && autoScroll) {
+			if (logContainer.value && autoScroll.value) {
 				logContainer.value.scrollTop = logContainer.value.scrollHeight;
 			}
 		});

@@ -201,7 +201,7 @@
 		</aside>
 
 		<div class="overflow-auto">
-			<div class="mx-auto max-w-[1664px]">
+			<div class="mx-auto h-full max-w-[1664px]">
 				<slot/>
 			</div>
 		</div>

@@ -185,7 +185,7 @@
 
 	// HANDLE CREDITS
 	const { data: probeCreditsPerMonth, error: creditsError } = await useAsyncData(
-		() => $directus.request<[{ sum: { amount: number }; adopted_probe: string }]>(aggregate('gp_credits_additions', {
+		() => $directus.request<{ sum: { amount: number }; adopted_probe: string }[]>(aggregate('gp_credits_additions', {
 			query: {
 				filter: {
 					github_id: { _eq: user.value.external_identifier || 'admin' },
@@ -196,7 +196,7 @@
 			groupBy: [ 'adopted_probe' ],
 			aggregate: { sum: 'amount' },
 		})),
-		{ watch: [ probeDetails ], transform: data => data?.[0].sum.amount ?? 0 },
+		{ watch: [ probeDetails ], transform: data => data[0]?.sum.amount ?? 0 },
 	);
 
 	useErrorToast(creditsError);

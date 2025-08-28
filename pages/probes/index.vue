@@ -363,7 +363,7 @@
 	const filterDeps = computed(() => { return { ...filter.value }; });
 
 	const { data: totalCredits, error: creditError } = await useLazyAsyncData(
-		() => $directus.request<[{ sum: { amount: number } }]>(aggregate('gp_credits_additions', {
+		() => $directus.request<{ sum: { amount: number } }[]>(aggregate('gp_credits_additions', {
 			query: {
 				filter: {
 					...getUserFilter('github_id'),
@@ -375,7 +375,7 @@
 		})),
 		{
 			default: () => 0,
-			transform: data => data[0]?.sum?.amount ?? 0,
+			transform: data => data[0]?.sum.amount ?? 0,
 		},
 	);
 

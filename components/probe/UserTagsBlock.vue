@@ -184,7 +184,7 @@
 	const tagsToEdit = ref<{ uPrefix: string; value: string; format?: string }[]>([]);
 	const isEditingTags = ref<boolean>(false);
 	const popoverContentRef = ref<HTMLElement>();
-	const getDefaultEmptyTags = () => [{ uPrefix: uPrefixes[0], value: '' }];
+	const getDefaultEmptyTags = () => [{ uPrefix: uPrefixes[0]!, value: '' }];
 
 	const openEditTagsPopover = (event: Event) => {
 		editTags();

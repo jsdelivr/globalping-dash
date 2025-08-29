@@ -15,7 +15,7 @@
 			<span class="ml-auto max-md:inline-block" :class="{ 'hidden': selectedProbes.length }"/>
 
 			<Button class="ml-2" @click="adoptProbeDialog = true">
-				<nuxt-icon class="pi" name="capture"/>
+				<NuxtIcon class="pi" name="capture" aria-hidden="true"/>
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
 		</div>
@@ -52,12 +52,12 @@
 									class="min-w-64"
 									@change="onStatusChange"
 								>
-									<template #option="{option}">
+									<template #option="{option}: {option: StatusCode}">
 										<span class="flex h-full items-center gap-2">
 											<span
 												:class="{
 													'font-bold text-bluegray-900 dark:text-white': option === filter.status,
-													'text-bluegray-400': option.code !== filter.status
+													'text-bluegray-400': option !== filter.status
 												}">
 												{{ STATUS_MAP[option].name }}
 											</span>
@@ -72,7 +72,7 @@
 										</span>
 									</template>
 
-									<template #value="{value}">
+									<template #value="{value}: {value: StatusCode}">
 										<span class="flex h-full items-center gap-2">
 											<span class="text-bluegray-400">{{ STATUS_MAP[value].name }}</span>
 											<Tag class="-my-1 border ">{{ statusCounts[value] }}</Tag>
@@ -147,7 +147,7 @@
 							<div class="flex items-center">
 								<span>Credits gained past month:</span>
 								<Tag v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">
-									<nuxt-icon class="mr-2" name="coin"/>+{{ totalCredits.toLocaleString('en-US') }}
+									<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ totalCredits.toLocaleString('en-US') }}
 								</Tag>
 							</div>
 
@@ -226,7 +226,7 @@
 								<div class="flex items-center justify-between">
 									<span class="text-xs font-bold">Credits gained past month:</span>
 									<Tag v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="flex items-center border bg-surface-0 !text-sm" severity="success">
-										<nuxt-icon class="mr-2" name="coin"/>+{{ totalCredits.toLocaleString('en-US') }}
+										<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ totalCredits.toLocaleString('en-US') }}
 									</Tag>
 								</div>
 								<div class="mt-2 flex items-center justify-between">
@@ -469,7 +469,7 @@
 	});
 
 	watch(statusCounts, (newStatusCounts) => {
-		paginatedRecords.value = newStatusCounts[filter.value.status];
+		paginatedRecords.value = newStatusCounts[filter.value.status]!;
 		hasAnyProbes.value = hasAnyProbes.value || !!newStatusCounts['all'];
 	}, { deep: true, immediate: true });
 
@@ -520,9 +520,9 @@
 		columns.at(-1)!.width += dataTableWidth.value - usedWidth;
 
 		return {
-			name: columns[2].width,
-			location: columns[3].width,
-			tags: columns[4].width,
+			name: columns[2]!.width,
+			location: columns[3]!.width,
+			tags: columns[4]!.width,
 		};
 	});
 

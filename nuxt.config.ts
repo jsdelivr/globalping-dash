@@ -47,7 +47,6 @@ export default defineNuxtConfig({
 		'@primevue/nuxt-module',
 		'@pinia/nuxt',
 		'@vueuse/nuxt',
-		'nuxt-icons',
 		'nuxt3-interpolation',
 	],
 	css: [ 'primeicons/primeicons.css', '~/assets/css/base.css', '~/assets/css/global.css' ],

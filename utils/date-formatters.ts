@@ -16,7 +16,7 @@ export const formatDate = (date: string | Date | null, format: 'long' | 'short' 
 	return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
 };
 
-export const formatDateForTable = (date: string | Date | null) => {
+export const formatDateForTable = (date: string | Date | null): string => {
 	if (!date) {
 		return '';
 	}
@@ -25,7 +25,7 @@ export const formatDateForTable = (date: string | Date | null) => {
 		date = new Date(date);
 	}
 
-	return date.toISOString().split('T')[0];
+	return date.toISOString().split('T')[0]!;
 };
 
 /**
@@ -64,11 +64,11 @@ export function getRelativeTimeString (date: Date | string, noTime: boolean = fa
 
 	// Get the divisor to divide from the seconds. E.g. if our unit is "day" our divisor
 	// is one day in seconds, so we can divide our seconds by this to get the # of days
-	const divisor = unitIndex ? cutoffs[unitIndex - 1] : 1;
+	const divisor = unitIndex ? cutoffs[unitIndex - 1]! : 1;
 
 	// Intl.RelativeTimeFormat do its magic
 	const rtf = new Intl.RelativeTimeFormat('en-US', { numeric: 'auto' });
-	return capitalize(rtf.format(Math.ceil(deltaSeconds / divisor), units[unitIndex]));
+	return capitalize(rtf.format(Math.ceil(deltaSeconds / divisor), units[unitIndex]!));
 }
 
 /**

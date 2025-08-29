@@ -49,7 +49,7 @@
 					</span>
 
 					<span class="flex h-[30px] items-center gap-2 rounded-md border border-surface-300 px-2 dark:border-dark-600">
-						<NuxtIcon class="text-green-500" name="coin"/>
+						<NuxtIcon class="text-green-500" name="coin" aria-hidden="true"/>
 						<span class="font-bold text-green-500">+{{ probeCreditsPerMonth }}</span>
 					</span>
 				</div>

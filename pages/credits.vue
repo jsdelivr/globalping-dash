@@ -46,10 +46,10 @@
 				<Column header="Amount" field="amount" class="md:w-44 2xl:w-64">
 					<template #body="slotProps">
 						<Tag v-if="slotProps.data.type === 'addition'" class="flex items-center !text-sm" severity="success">
-							<NuxtIcon class="mr-2" name="coin"/>+{{ (slotProps.data.amount || 0).toLocaleString('en-US') }}
+							<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ (slotProps.data.amount || 0).toLocaleString('en-US') }}
 						</Tag>
 						<Tag v-else class="flex items-center !text-sm" severity="danger">
-							<NuxtIcon class="mr-2" name="coin"/>-{{ (slotProps.data.amount || 0).toLocaleString('en-US') }}
+							<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>-{{ (slotProps.data.amount || 0).toLocaleString('en-US') }}
 						</Tag>
 					</template>
 				</Column>

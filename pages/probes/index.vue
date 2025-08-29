@@ -15,7 +15,7 @@
 			<span class="ml-auto max-md:inline-block" :class="{ 'hidden': selectedProbes.length }"/>
 
 			<Button class="ml-2" @click="adoptProbeDialog = true">
-				<NuxtIcon class="pi" name="capture"/>
+				<NuxtIcon class="pi" name="capture" aria-hidden="true"/>
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
 		</div>
@@ -147,7 +147,7 @@
 							<div class="flex items-center">
 								<span>Credits gained past month:</span>
 								<Tag v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">
-									<NuxtIcon class="mr-2" name="coin"/>+{{ totalCredits.toLocaleString('en-US') }}
+									<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ totalCredits.toLocaleString('en-US') }}
 								</Tag>
 							</div>
 
@@ -226,7 +226,7 @@
 								<div class="flex items-center justify-between">
 									<span class="text-xs font-bold">Credits gained past month:</span>
 									<Tag v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="flex items-center border bg-surface-0 !text-sm" severity="success">
-										<NuxtIcon class="mr-2" name="coin"/>+{{ totalCredits.toLocaleString('en-US') }}
+										<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ totalCredits.toLocaleString('en-US') }}
 									</Tag>
 								</div>
 								<div class="mt-2 flex items-center justify-between">

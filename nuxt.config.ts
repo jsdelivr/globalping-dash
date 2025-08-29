@@ -19,6 +19,7 @@ export default defineNuxtConfig({
 			},
 		},
 		devtools: { enabled: true },
+		ignore: [ 'node_modules' ],
 	},
 	app: {
 		head: {

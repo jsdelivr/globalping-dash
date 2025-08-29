@@ -91,7 +91,7 @@
 			impersonationList.value = users as (User & { github_username: string })[];
 
 			if (impersonationList.value.length === 1) {
-				applyImpersonation(impersonationList.value[0]);
+				applyImpersonation(impersonationList.value[0]!);
 			}
 		} catch (error) {
 			console.error('Error during impersonation:', error instanceof Error ? error.message : 'Unknown error');

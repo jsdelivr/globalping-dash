@@ -14,7 +14,7 @@
 				<p>Are you sure you want to delete these probes? You will not be able to undo this action.</p>
 			</div>
 			<div v-else class="flex flex-col">
-				<p>You are about to delete the probe <span class="font-bold">{{ probes[0].name || probes[0].city }}</span> ({{ probes[0].ip }}).</p>
+				<p>You are about to delete the probe <span class="font-bold">{{ probes[0]!.name || probes[0]!.city }}</span> ({{ probes[0]!.ip }}).</p>
 				<p>Are you sure you want to delete this probe? You will not be able to undo this action.</p>
 			</div>
 		</div>

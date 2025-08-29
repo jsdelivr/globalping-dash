@@ -34,11 +34,11 @@
 			let length = 0;
 
 			for (let i = 0; i < props.tags.length; i++) {
-				if (length + props.tags[i].length > maxChars) {
+				if (length + props.tags[i]!.length > maxChars) {
 					return Math.max(1, i);
 				}
 
-				length += props.tags[i].length;
+				length += props.tags[i]!.length;
 			}
 
 			return props.tags.length;

@@ -186,7 +186,7 @@
 					</div>
 					<div class="mt-6 text-right">
 						<Button class="mr-2" label="Back" severity="secondary" text @click="probeType === 'software' ? activateCallback('0') : activateCallback('3')"/>
-						<Button label="Send adoption code" :loading="sendAdoptionCodeLoading" :disabled="!ip.length" @click="sendAdoptionCode(activateCallback)"/>
+						<Button :label="isResendingCode ? 'Resend code' : 'Send adoption code'" :loading="sendAdoptionCodeLoading" :disabled="!ip.length" @click="sendAdoptionCode(activateCallback)"/>
 					</div>
 				</div>
 			</StepPanel>
@@ -285,37 +285,26 @@
 		activateCallback('2');
 		const startTime = Date.now();
 
-		try {
-			await new Promise<void>((resolve) => {
-				const checkProbes = async () => {
-					const currentProbes = await $directus.request(readItems('gp_probes', {
-						filter: getUserFilter('userId'),
-					}));
+		while (Date.now() - startTime <= 10_000) {
+			try {
+				const currentProbes = await $directus.request(readItems('gp_probes', {
+					filter: getUserFilter('userId'),
+				}));
 
-					if (currentProbes.length > initialProbes.value.length) {
-						newProbesFound(currentProbes);
-						resolve();
-						return;
-					}
+				if (currentProbes.length > initialProbes.value.length) {
+					newProbesFound(currentProbes);
+					return;
+				}
 
-					if (Date.now() - startTime > 10_000) {
-						newProbesNotFound();
-						resolve();
-						return;
-					}
-
-					setTimeout(checkProbes, 1000);
-				};
-
-				checkProbes();
-			});
-		} catch (e: any) {
-			const detail = e.errors ?? 'Request failed';
-			isIpValid.value = false;
-			invalidIpMessage.value = detail;
+				await new Promise(resolve => setTimeout(resolve, 1000));
+			} catch (e: any) {
+				sendErrorToast(e);
+				newProbesNotFound();
+				return;
+			}
 		}
 
-		sendAdoptionCodeLoading.value = false;
+		newProbesNotFound();
 	};
 
 	const newProbesFound = (currentProbes: Probe[]) => {
@@ -341,6 +330,7 @@
 	const ip = ref('');
 	const isIpValid = ref(true);
 	const invalidIpMessage = ref('');
+	const isResendingCode = ref(false);
 
 	const resetIsIpValid = () => {
 		isIpValid.value = true;
@@ -375,6 +365,7 @@
 			const detail = e.errors ?? 'Request failed';
 			isIpValid.value = false;
 			invalidIpMessage.value = detail;
+			isResendingCode.value = true;
 		}
 
 		sendAdoptionCodeLoading.value = false;
@@ -407,9 +398,6 @@
 
 			sendToast('info', 'The code has been resent', 'Paste it to the input to adopt the probe');
 		} catch (e: any) {
-			const detail = e.errors ?? 'Request failed';
-			isIpValid.value = false;
-			invalidIpMessage.value = detail;
 			sendErrorToast(e);
 		}
 	};

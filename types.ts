@@ -82,8 +82,8 @@ declare global {
 		asn: number;
 		city: string;
 		country: TCountry;
-		state: TCountry extends 'US' ? string | null : null;
-		stateName: TCountry extends 'US' ? string | null : null;
+		state: TCountry extends 'US' ? string : null;
+		stateName: TCountry extends 'US' ? string : null;
 		date_created: string;
 		date_updated: string;
 		ip: string;

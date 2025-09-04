@@ -8,15 +8,21 @@
 		<div
 			v-for="(log, index) in logs"
 			:key="index"
-			:class="{
-				'text-rose-600 dark:text-red-400': log.level?.toLowerCase() === 'error',
-				'text-orange-600 dark:text-yellow-300': log.level?.toLowerCase() === 'warn',
-				'text-gray-600 dark:text-gray-400': !['error','warn'].includes(log.level?.toLowerCase() || '')
-			}"
+			class="text-gray-800 dark:text-gray-300"
 		>
-			<span v-if="log.timestamp">[{{ log.timestamp.toUpperCase() }}] </span>
-			<span v-if="log.level">[{{ log.level.toUpperCase() }}] </span>
-			<span class="whitespace-pre-line">{{ log.message }}</span>
+			<span v-if="log.timestamp" class="text-gray-600 dark:text-gray-500">[{{ log.timestamp.toUpperCase() }}] </span>
+			<span v-if="log.scope" class="text-green-600 dark:text-green-500">[{{ log.scope }}] </span>
+			<span
+				:class="{
+					'text-red-600 dark:text-red-500': log.level?.toLowerCase() === 'error',
+					'text-yellow-600 dark:text-yellow-300': log.level?.toLowerCase() === 'warn',
+					'text-cyan-600 dark:text-cyan-300': log.level?.toLowerCase() === 'info',
+					'text-blue-600 dark:text-blue-400': log.level?.toLowerCase() === 'debug',
+				}"
+			>
+				<span v-if="log.level">[{{ log.level.toUpperCase() }}] </span>
+				<span class="whitespace-pre-line">{{ log.message }}</span>
+			</span>
 		</div>
 		<span v-if="logs.length === 0" class="inset-0 m-auto text-gray-600 dark:text-gray-400">
 			<span v-if="pending && showLoader">

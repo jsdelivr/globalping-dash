@@ -273,28 +273,39 @@
 
 	// STEP 2
 
-	const { data: initialProbes } = await useLazyAsyncData(
+	const { data: initialIds } = await useLazyAsyncData(
 		'initial_user_probes',
-		() => $directus.request(readItems('gp_probes', {
-			filter: getUserFilter('userId'),
-		})),
-		{ default: () => [] },
+		async () => {
+			const initialProbes = await $directus.request(readItems('gp_probes', {
+				filter: getUserFilter('userId'),
+			}));
+			const initialIds = new Set(initialProbes.map(probe => probe.id));
+			return initialIds;
+		},
+		{ default: () => new Set() },
 	);
+
+	const searchCanceled = ref(false);
+
+	onBeforeUnmount(() => { searchCanceled.value = true; });
 
 	const searchNewProbes = async (activateCallback: (step: string | number) => void) => {
 		activateCallback('2');
 		const startTime = Date.now();
 
 		while (Date.now() - startTime <= 10_000) {
+			if (searchCanceled.value) {
+				return;
+			}
+
 			try {
 				const currentProbes = await $directus.request(readItems('gp_probes', {
 					filter: getUserFilter('userId'),
 				}));
 
-				if (currentProbes.length > initialProbes.value.length) {
-					newProbesFound(currentProbes);
-					return;
-				}
+				const newProbes = currentProbes.filter(probe => !initialIds.value.has(probe.id));
+
+				if (newProbes.length) { newProbesFound(newProbes); return; }
 
 				await new Promise(resolve => setTimeout(resolve, 1000));
 			} catch (e: any) {
@@ -307,9 +318,8 @@
 		newProbesNotFound();
 	};
 
-	const newProbesFound = (currentProbes: Probe[]) => {
-		const initialProbesIds = new Set(initialProbes.value.map(probe => probe.id));
-		newProbes.value = currentProbes.filter(probe => !initialProbesIds.has(probe.id));
+	const newProbesFound = (freshProbes: Probe[]) => {
+		newProbes.value = freshProbes;
 		isSuccess.value = true;
 
 		const wrapper = stepPanels.value.$el;
@@ -362,6 +372,7 @@
 
 			activateCallback('5');
 		} catch (e: any) {
+			console.error(e);
 			const detail = e.errors ?? 'Request failed';
 			isIpValid.value = false;
 			invalidIpMessage.value = detail;
@@ -424,6 +435,7 @@
 
 			emit('adopted');
 		} catch (e: any) {
+			console.error(e);
 			const detail = e.errors ?? 'Request failed';
 			isCodeValid.value = false;
 			invalidCodeMessage.value = detail;

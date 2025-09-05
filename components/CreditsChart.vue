@@ -56,7 +56,7 @@
 		}[] = [];
 
 		for (let i = 0; i < last30Days.length; i++) {
-			const day = last30Days[i];
+			const day = last30Days[i]!;
 			const addition = dayToAddition.get(day) ?? 0;
 			const deduction = dayToDeduction.get(day) ?? 0;
 			let total;
@@ -64,7 +64,7 @@
 			if (i === 0) {
 				total = props.start + addition - deduction;
 			} else {
-				total = data[i - 1].total + addition - deduction;
+				total = data[i - 1]!.total + addition - deduction;
 			}
 
 			data.push({
@@ -135,9 +135,18 @@
 				callbacks: {
 					title: () => null,
 					label: () => null,
-					afterBody: (ctx: any) => `Total credits: ${changes.value[ctx[0].dataIndex].total.toLocaleString('en-US')}
-Generated: ${changes.value[ctx[0].dataIndex].generated.toLocaleString('en-US')}
-Spent: ${changes.value[ctx[0].dataIndex].spent.toLocaleString('en-US')}`,
+					afterBody: (ctx: any) => {
+						const dataIndex = ctx[0]?.dataIndex;
+						const change = changes.value[dataIndex];
+
+						if (change) {
+							return `Total credits: ${change.total.toLocaleString('en-US')}
+Generated: ${change.generated.toLocaleString('en-US')}
+Spent: ${change.spent.toLocaleString('en-US')}`;
+						}
+
+						return '';
+					},
 				},
 				bodyFont: {
 					weight: 400,

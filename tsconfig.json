@@ -4,7 +4,8 @@
 	"compilerOptions": {
 		"types": [
 			"@types/google.maps"
-		]
+		],
+		"noUncheckedIndexedAccess": true
 	},
 	"exclude": [
 		"test/e2e/globalping-dash-directus"

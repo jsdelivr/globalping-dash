@@ -2,8 +2,7 @@
 	<div
 		ref="logContainer"
 		class="relative flex flex-1 flex-col overflow-y-auto rounded-md border bg-surface-100 p-4 font-mono max-lg:p-2 max-md:gap-4 dark:bg-dark-950"
-		@scroll="autoScroll = false"
-		@scrollend="onScrollEnd"
+		@scroll="onScrollDebounced"
 	>
 		<div
 			v-for="(log, index) in logs"
@@ -21,7 +20,7 @@
 				}"
 			>
 				<span v-if="log.level">[{{ log.level.toUpperCase() }}] </span>
-				<span class="whitespace-pre-line">{{ log.message }}</span>
+				<span class="whitespace-pre">{{ log.message }}</span>
 			</span>
 		</div>
 		<span v-if="logs.length === 0" class="inset-0 m-auto text-gray-600 dark:text-gray-400">
@@ -33,23 +32,23 @@
 			</span>
 		</span>
 	</div>
+
 </template>
 
 <script setup lang="ts">
+	import debounce from 'lodash/debounce';
 	import { useErrorToast } from '~/composables/useErrorToast';
-
-	const { isActive } = defineProps({
-		isActive: {
-			type: Boolean,
-			default: true,
-		},
-	});
 
 	const MAX_LOGS = 5000;
 
+	const props = defineProps({
+		probeUuid: {
+			type: String,
+			required: true,
+		},
+	});
+
 	const config = useRuntimeConfig();
-	const route = useRoute();
-	const probeId = route.params.id as string;
 	const refreshInterval = ref<NodeJS.Timeout>();
 	const logContainer = ref<HTMLDivElement | null>(null);
 	const autoScroll = ref(true);
@@ -58,7 +57,7 @@
 	const showLoader = ref(true);
 
 	const { data, refresh, pending, error } = await useLazyAsyncData<ProbeLog[]>(
-		() => $fetch(`${config.public.gpApiUrl}/v1/probes/${probeId}/logs`, {
+		() => $fetch(`${config.public.gpApiUrl}/v1/probes/${props.probeUuid}/logs`, {
 			params: {
 				since: lastFetched.value,
 			},
@@ -77,21 +76,20 @@
 			if (!error.value) {
 				lastFetched.value = Date.now();
 			}
-		}).finally(() => { showLoader.value = !isActive; }); // do not show the loader on further refetches
+		}).finally(() => { showLoader.value = false; }); // do not show the loader on further refetches
 	};
 
-
-	const onScrollEnd = () => {
+	const onScroll = () => {
 		const scrollHeight = logContainer.value?.scrollHeight ?? 0;
 		const scrollTop = logContainer.value?.scrollTop ?? 0;
 		const containerHeight = logContainer.value?.clientHeight ?? 0;
 		const scrolledTo = scrollTop + containerHeight;
 
-		// if the user scrolled down enough, re-enable autoscroll
-		if (scrollHeight - scrolledTo < 30) {
-			autoScroll.value = true;
-		}
+		// if the user scrolled down enough, enable autoscroll
+		autoScroll.value = scrollHeight - scrolledTo < 30;
 	};
+
+	const onScrollDebounced = debounce(() => onScroll(), 50);
 
 	const scrollToBottom = () => {
 		nextTick(() => {
@@ -101,7 +99,7 @@
 		});
 	};
 
-	const setRefreshInterval = (timeout = 10000) => {
+	const setRefreshInterval = (timeout = 2000) => {
 		if (refreshInterval.value) {
 			clearInterval(refreshInterval.value);
 		}
@@ -122,21 +120,9 @@
 		scrollToBottom();
 	});
 
-	watch(() => isActive, (active) => {
-		if (active) {
-			// fetch data manually on the first tab load
-			if (lastFetched.value === 0) {
-				refreshLogs();
-			}
-
-			autoScroll.value = true;
-			scrollToBottom();
-			setRefreshInterval();
-		} else {
-			showLoader.value = true;
-			clearInterval(refreshInterval.value);
-		}
-	});
+	refreshLogs();
+	scrollToBottom();
+	setRefreshInterval();
 
 	onUnmounted(() => {
 		if (refreshInterval.value) {

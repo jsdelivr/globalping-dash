@@ -72,6 +72,16 @@ export default {
 				'2xs': [ '0.7rem', '0.85rem' ],
 				'3xs': [ '0.6rem', '0.7rem' ],
 			},
+			keyframes: {
+				'dot-pulse': {
+					'0%': { opacity: '.5' },
+					'30%': { opacity: '1' },
+					'60%,100%': { opacity: '.5' },
+				},
+			},
+			animation: {
+				'dot-pulse': 'dot-pulse 1.5s ease-in-out infinite',
+			},
 		},
 	},
 };

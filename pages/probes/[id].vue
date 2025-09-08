@@ -1,5 +1,5 @@
 <template>
-	<div class="flex h-full flex-col p-6">
+	<div class="flex h-full flex-col p-6 pb-0">
 		<div class="flex min-h-0 flex-1 flex-col gap-4">
 			<div class="flex gap-2">
 				<NuxtLink
@@ -112,7 +112,6 @@
 					</TabPanel>
 				</TabPanels>
 			</Tabs>
-
 		</div>
 
 		<GPDialog

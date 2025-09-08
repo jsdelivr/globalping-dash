@@ -240,7 +240,7 @@
 		}
 
 		// check if nothing was changed
-		const locationFields = Object.keys(editedLocation.value) as (keyof Omit<City, 'stateName' | 'customLocation'>)[];
+		const locationFields: Array<'name' | 'country' | 'state'> = [ 'name', 'country', 'state' ];
 
 		if (locationFields.every(key => editedLocation.value[key]?.trim() === initialLocation.value[key]?.trim())) {
 			return;

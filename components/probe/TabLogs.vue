@@ -1,9 +1,9 @@
 <template>
 	<div class="flex min-h-[400px] flex-1 flex-col pb-6">
-		<div class="relative flex min-h-[300px] flex-1 flex-col overflow-hidden rounded-md border bg-surface-100 font-mono dark:bg-dark-950">
+		<div class="relative flex min-h-[300px] flex-1 flex-col overflow-hidden rounded-md border bg-surface-100 dark:bg-dark-950">
 			<div class="flex w-full flex-nowrap items-center justify-between gap-4 border-b bg-surface-200 px-3 py-1.5 text-gray-700 dark:bg-dark-800 dark:text-gray-300">
 				<span v-if="logs.length">
-					Showing {{logs.length}} latest logs.
+					Showing the latest {{logs.length}} {{pluralize('log', logs.length)}}.
 				</span>
 				<LogLoader v-else-if="enabled && !showLargeLoader"/>
 				<label class="ml-auto flex cursor-pointer items-center justify-end gap-2.5 duration-200">
@@ -15,7 +15,7 @@
 			</div>
 			<div
 				ref="logContainer"
-				class="relative flex flex-1 flex-col overflow-y-auto p-4 shadow-inner max-lg:p-2 max-md:gap-2"
+				class="relative flex flex-1 flex-col overflow-y-auto p-4 font-mono shadow-inner max-lg:p-2 max-md:gap-2"
 				@scroll="onScrollDebounced"
 			>
 				<div
@@ -56,6 +56,7 @@
 	import debounce from 'lodash/debounce';
 	import LogLoader from '~/components/probe/LogLoader.vue';
 	import { useErrorToast } from '~/composables/useErrorToast';
+	import { pluralize } from '~/utils/pluralize';
 
 	const MAX_LOGS = 5000;
 

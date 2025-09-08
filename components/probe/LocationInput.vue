@@ -104,6 +104,7 @@
 		country: '',
 		state: null,
 		stateName: null,
+		customLocation: null,
 	});
 
 	const editedLocation = ref<City>({
@@ -111,6 +112,7 @@
 		country: '',
 		state: null,
 		stateName: null,
+		customLocation: null,
 	});
 
 	const containerRef = ref<HTMLElement | null>(null);
@@ -132,6 +134,7 @@
 			country: newProbeDetails.country,
 			state: newProbeDetails.state,
 			stateName: newProbeDetails.stateName,
+			customLocation: newProbeDetails.customLocation,
 		};
 
 		initialLocation.value = { ...newLocation };
@@ -225,7 +228,7 @@
 		const prepInitCity = initCity.trim();
 
 		// check if the city is empty
-		if (prepEditedCity === '') {
+		if (prepEditedCity === '' && !editedLocation.value.customLocation) {
 			sendToast('warn', 'Invalid input', 'City name cannot be empty');
 			return;
 		}
@@ -237,7 +240,7 @@
 		}
 
 		// check if nothing was changed
-		const locationFields = Object.keys(editedLocation.value) as (keyof Omit<City, 'stateName'>)[];
+		const locationFields = Object.keys(editedLocation.value) as (keyof Omit<City, 'stateName' | 'customLocation'>)[];
 
 		if (locationFields.every(key => editedLocation.value[key]?.trim() === initialLocation.value[key]?.trim())) {
 			return;

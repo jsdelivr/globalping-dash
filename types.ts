@@ -21,6 +21,7 @@ declare global {
 		country: TCountry;
 		state: TCountry extends 'US' ? string | null : null;
 		stateName: TCountry extends 'US' ? string | null : null;
+		customLocation: CustomLocation;
 	};
 
 	type Credits = {
@@ -77,6 +78,14 @@ declare global {
 
 	type Status = 'initializing' | 'ready' | 'unbuffer-missing' | 'ping-test-failed' | 'sigterm' | 'offline';
 
+	type CustomLocation<TCountry extends string = string> = null | {
+		country: string;
+		city: string;
+		state: TCountry extends 'US' ? string : null;
+		longitude: number;
+		latitude: number;
+	};
+
 	type Probe<TCountry extends string = string> = {
 		id: string;
 		asn: number;
@@ -110,6 +119,7 @@ declare global {
 		allowedCountries: string[];
 		searchIndex: string;
 		isOutdated: boolean;
+		customLocation: CustomLocation;
 	};
 
 	type User = {

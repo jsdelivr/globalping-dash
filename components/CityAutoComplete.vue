@@ -11,8 +11,9 @@
 			:pt="{root: { tabindex: '-1' }, overlay: { hidden: !active || suggestions.length === 0 }}"
 			option-label="name"
 			loader=" "
+			:placeholder="model.customLocation ? 'Detect automatically' : ''"
 			class="relative size-full rounded-none"
-			input-class="size-full md:rounded-none md:rounded-r-md rounded-md border-none focus:cursor-text cursor-pointer dark:!bg-dark-800 pr-[68px]"
+			input-class="size-full md:rounded-none md:rounded-r-md rounded-md border-none focus:cursor-text cursor-pointer dark:!bg-dark-800 pr-[68px] placeholder:italic"
 			overlay-class="w-full"
 			aria-label="City name"
 			:delay="200"
@@ -39,7 +40,7 @@
 		<i v-if="!active" class="pi pi-pencil text-md pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" aria-hidden="true"/>
 
 		<Button
-			v-if="dirty && model.name.length && isFocused || loading"
+			v-if="isSubmittable || loading"
 			v-tooltip.top="'Save'"
 			variant="text"
 			severity="secondary"
@@ -74,7 +75,7 @@
 	const model = defineModel<City>({ required: true });
 	const inputRef = defineModel<HTMLInputElement | null>('inputRef');
 
-	defineProps({
+	const props = defineProps({
 		active: {
 			type: Boolean,
 			default: true,
@@ -99,6 +100,7 @@
 	const cityQuery = ref<string>(model.value.name);
 	const suggestions = ref<City[]>([]);
 	const isFocused = ref(false);
+	const isSubmittable = computed(() => props.dirty && (model.value.name.length || model.value.customLocation) && isFocused);
 
 	const { data, status, refresh } = await useAsyncData(
 		'city-autocomplete',
@@ -143,7 +145,7 @@
 	};
 
 	const handleEnterEvent = (event: KeyboardEvent) => {
-		if (!autocompleteRef.value?.overlayVisible) {
+		if (isSubmittable.value && !autocompleteRef.value?.overlayVisible) {
 			emit('confirm', event);
 		}
 	};

@@ -154,5 +154,6 @@
 
 	onUnmounted(() => {
 		clearInterval(refreshInterval.value);
+		onScrollDebounced.cancel();
 	});
 </script>

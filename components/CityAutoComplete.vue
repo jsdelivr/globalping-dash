@@ -100,7 +100,7 @@
 	const cityQuery = ref<string>(model.value.name);
 	const suggestions = ref<City[]>([]);
 	const isFocused = ref(false);
-	const isSubmittable = computed(() => props.dirty && (model.value.name.length || model.value.customLocation) && isFocused);
+	const isSubmittable = computed(() => Boolean(props.dirty && (model.value.name.length || model.value.customLocation) && isFocused.value));
 
 	const { data, status, refresh } = await useAsyncData(
 		'city-autocomplete',

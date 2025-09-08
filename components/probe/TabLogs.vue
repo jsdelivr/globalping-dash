@@ -37,12 +37,12 @@
 						<span class="whitespace-pre">{{ log.message }}</span>
 					</span>
 				</div>
-				<span v-if="logs.length === 0" class="inset-0 m-auto text-gray-600 dark:text-gray-400">
+				<span v-if="logs.length === 0" class="inset-0 m-auto p-2 text-center text-gray-600 dark:text-gray-400">
 					<span v-if="pending && showLargeLoader">
 						<span class="pi pi-spinner animate-spin text-2xl dark:text-gray-500"/>
 					</span>
 					<span v-else>
-						No logs currently available.
+						No logs available. A just adopted probe may take a few minutes to sync the logs.
 					</span>
 				</span>
 				<LogLoader v-if="enabled && logs.length" class="px-1 py-2"/>

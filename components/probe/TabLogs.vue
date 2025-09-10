@@ -3,11 +3,11 @@
 		<div class="relative flex min-h-[300px] flex-1 flex-col overflow-hidden rounded-md border bg-surface-0 dark:bg-dark-950">
 			<div class="flex w-full flex-nowrap items-center justify-between gap-4 border-b bg-surface-0 px-3 py-1.5 text-gray-700 dark:bg-dark-800 dark:text-gray-300">
 				<span v-if="logs.length" class="font-bold">
-					Showing the latest {{logs.length}} {{pluralize('log', logs.length)}}.
+					Showing <span class="hidden sm:inline">the latest</span> {{logs.length}} {{pluralize('log', logs.length)}}.
 				</span>
 				<LogLoader v-else-if="enabled && !showLargeLoader"/>
 				<label
-					class="ml-auto flex cursor-pointer select-none items-center justify-end gap-2 rounded-md border border-gray-500 px-2 py-1 duration-200 dark:border-gray-400"
+					class="ml-auto flex cursor-pointer select-none items-center justify-end gap-2 whitespace-nowrap rounded-md border border-gray-500 px-2 py-1 duration-200 dark:border-gray-400"
 					:class="{
 						'border-primary text-primary dark:border-primary': enabled,
 					}"
@@ -18,16 +18,16 @@
 					Live tail
 				</label>
 			</div>
-			<div v-if="logs.length" class="h-4"/>
+			<div v-if="logs.length" class="h-4 max-lg:h-2"/>
 			<div
 				ref="logContainer"
-				class="relative flex flex-1 flex-col overflow-y-auto p-4 pt-0 font-mono max-lg:p-2 max-md:gap-2"
+				class="relative flex flex-1 flex-col overflow-y-auto p-4 pt-0 font-mono max-lg:p-2 max-lg:pt-0"
 				@scroll="onScrollThrottled"
 			>
 				<div
 					v-for="(log, index) in logs"
 					:key="index"
-					class="text-gray-800 dark:text-gray-300"
+					class="whitespace-nowrap text-gray-800 dark:text-gray-300"
 				>
 					<span v-if="log.timestamp" class="text-gray-600 dark:text-gray-500">[{{ log.timestamp.toUpperCase() }}] </span>
 					<span v-if="log.scope" class="text-green-600 dark:text-green-500">[{{ log.scope }}] </span>

@@ -21,7 +21,7 @@
 			<div
 				ref="logContainer"
 				class="relative flex flex-1 flex-col overflow-y-auto p-4 font-mono shadow-inner max-lg:p-2 max-md:gap-2"
-				@scroll="onScrollDebounced"
+				@scroll="onScrollThrottled"
 			>
 				<div
 					v-for="(log, index) in logs"
@@ -50,8 +50,8 @@
 						No logs available. A just adopted probe may take a few minutes to sync the logs.
 					</span>
 				</span>
-				<span class="h-fit px-1 py-2">
-					<LogLoader v-if="enabled && logs.length"/>
+				<span v-if="logs.length" class="h-fit px-1 py-2">
+					<LogLoader v-if="enabled"/>
 					<span v-else class="inline-block size-1.5"/>
 				</span>
 			</div>
@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-	import debounce from 'lodash/debounce';
+	import throttle from 'lodash/throttle';
 	import LogLoader from '~/components/probe/LogLoader.vue';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { pluralize } from '~/utils/pluralize';
@@ -127,7 +127,7 @@
 		autoScroll.value = scrollHeight - scrolledTo < 10;
 	};
 
-	const onScrollDebounced = debounce(() => onScroll(), 50);
+	const onScrollThrottled = throttle(() => onScroll(), 10);
 
 	const scrollToBottom = () => {
 		nextTick(() => {
@@ -163,6 +163,6 @@
 
 	onUnmounted(() => {
 		clearTimeout(refreshTimeout.value);
-		onScrollDebounced.cancel();
+		onScrollThrottled.cancel();
 	});
 </script>

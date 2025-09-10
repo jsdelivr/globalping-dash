@@ -80,7 +80,7 @@ export default {
 				},
 			},
 			animation: {
-				'dot-pulse': 'dot-pulse 1.5s ease-in-out infinite',
+				'dot-pulse': 'dot-pulse 1.2s ease-in-out infinite',
 			},
 		},
 	},

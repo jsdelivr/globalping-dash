@@ -6,7 +6,7 @@
 					Showing the latest {{logs.length}} {{pluralize('log', logs.length)}}.
 				</span>
 				<LogLoader v-else-if="enabled && !showLargeLoader"/>
-				<label class="ml-auto flex cursor-pointer items-center justify-end gap-2.5 duration-200">
+				<label class="ml-auto flex cursor-pointer select-none items-center justify-end gap-2.5 duration-200">
 					<input v-model="enabled" type="checkbox" class="peer sr-only">
 					Live tail
 					<i v-if="enabled" class="pi pi-stop-circle text-lg"/>
@@ -45,7 +45,10 @@
 						No logs available. A just adopted probe may take a few minutes to sync the logs.
 					</span>
 				</span>
-				<LogLoader v-if="enabled && logs.length" class="px-1 py-2"/>
+				<span class="px-1 py-2">
+					<LogLoader v-if="enabled && logs.length"/>
+					<span v-else class="inline-block size-1.5"/>
+				</span>
 			</div>
 		</div>
 	</div>
@@ -58,33 +61,34 @@
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { pluralize } from '~/utils/pluralize';
 
-	const MAX_LOGS = 5000;
+	const REFRESH_INTERVAL = 2000; // ms
+	const MAX_DISPLAYED_LOGS = 5000;
 
 	const props = defineProps({
-		probeUuid: {
+		probeId: {
 			type: String,
 			required: true,
 		},
 	});
 
 	const config = useRuntimeConfig();
-	const refreshInterval = ref<NodeJS.Timeout>();
+	const refreshTimeout = ref<NodeJS.Timeout>();
 	const logContainer = ref<HTMLDivElement | null>(null);
 	const autoScroll = ref(true);
 	const logs = ref<ProbeLog[]>([]);
-	const lastFetched = ref(0);
+	const lastFetchedId = ref('-'); // redis ID
 	const showLargeLoader = ref(true);
 	const enabled = ref(true);
 
-	const { data, refresh, pending, error } = await useLazyAsyncData<ProbeLog[]>(
-		() => $fetch(`${config.public.gpApiUrl}/v1/probes/${props.probeUuid}/logs`, {
+	const { data, refresh, pending, error } = await useLazyAsyncData<{ logs: ProbeLog[]; lastId: string }>(
+		() => $fetch(`${config.public.gpApiUrl}/v1/probes/${props.probeId}/logs`, {
 			params: {
-				since: lastFetched.value,
+				after: lastFetchedId.value,
 			},
 			credentials: 'include',
 		}),
 		{
-			default: () => [],
+			default: () => { return { logs: [], lastId: '-' }; },
 			immediate: false,
 		},
 	);
@@ -93,10 +97,16 @@
 
 	const refreshLogs = async () => {
 		return refresh().then(() => {
-			if (!error.value && enabled.value) {
-				lastFetched.value = Date.now();
+			if (!error.value && enabled.value && data.value.lastId) {
+				lastFetchedId.value = data.value.lastId;
 			}
-		}).finally(() => { showLargeLoader.value = false; }); // do not show the large loader on further refetches
+		}).finally(() => {
+			showLargeLoader.value = false;
+
+			refreshTimeout.value = setTimeout(() => {
+				refreshLogs();
+			}, REFRESH_INTERVAL);
+		}); // do not show the large loader on further refetches
 	};
 
 	const onScroll = () => {
@@ -119,25 +129,16 @@
 		});
 	};
 
-	const setRefreshInterval = (timeout = 2000) => {
-		refreshLogs();
-		clearInterval(refreshInterval.value);
-
-		refreshInterval.value = setInterval(() => {
-			refreshLogs();
-		}, timeout);
-	};
-
 	// append new logs to the already stored ones
 	watch(data, () => {
 		if (!enabled.value) {
 			return;
 		}
 
-		logs.value.push(...data.value);
+		logs.value.push(...data.value.logs);
 
-		if (logs.value.length > MAX_LOGS) {
-			logs.value = logs.value.slice(-MAX_LOGS);
+		if (logs.value.length > MAX_DISPLAYED_LOGS) {
+			logs.value = logs.value.slice(-MAX_DISPLAYED_LOGS);
 		}
 
 		scrollToBottom();
@@ -145,16 +146,11 @@
 
 
 	watch(enabled, (isEnabled) => {
-		if (isEnabled) {
-			setRefreshInterval();
-			return;
-		}
-
-		clearInterval(refreshInterval.value);
+		isEnabled && refreshLogs();
 	}, { immediate: true });
 
 	onUnmounted(() => {
-		clearInterval(refreshInterval.value);
+		clearInterval(refreshTimeout.value);
 		onScrollDebounced.cancel();
 	});
 </script>

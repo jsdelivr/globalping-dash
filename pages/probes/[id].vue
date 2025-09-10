@@ -108,7 +108,7 @@
 					</TabPanel>
 
 					<TabPanel class="flex min-h-0 flex-1 flex-col" value="logs" tabindex="-1">
-						<ProbeTabLogs :probe-uuid="probeDetails.uuid"/>
+						<ProbeTabLogs :probe-id="probeDetails.id"/>
 					</TabPanel>
 				</TabPanels>
 			</Tabs>

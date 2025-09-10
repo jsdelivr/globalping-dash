@@ -1,8 +1,8 @@
 <template>
 	<div class="flex min-h-[400px] flex-1 flex-col pb-6">
-		<div class="relative flex min-h-[300px] flex-1 flex-col overflow-hidden rounded-md border bg-surface-100 dark:bg-dark-950">
-			<div class="flex w-full flex-nowrap items-center justify-between gap-4 border-b bg-surface-200 px-3 py-1.5 text-gray-700 dark:bg-dark-800 dark:text-gray-300">
-				<span v-if="logs.length">
+		<div class="relative flex min-h-[300px] flex-1 flex-col overflow-hidden rounded-md border bg-surface-0 dark:bg-dark-950">
+			<div class="flex w-full flex-nowrap items-center justify-between gap-4 border-b bg-surface-0 px-3 py-1.5 text-gray-700 dark:bg-dark-800 dark:text-gray-300">
+				<span v-if="logs.length" class="font-bold">
 					Showing the latest {{logs.length}} {{pluralize('log', logs.length)}}.
 				</span>
 				<LogLoader v-else-if="enabled && !showLargeLoader"/>
@@ -18,9 +18,10 @@
 					Live tail
 				</label>
 			</div>
+			<div v-if="logs.length" class="h-4"/>
 			<div
 				ref="logContainer"
-				class="relative flex flex-1 flex-col overflow-y-auto p-4 font-mono shadow-inner max-lg:p-2 max-md:gap-2"
+				class="relative flex flex-1 flex-col overflow-y-auto p-4 pt-0 font-mono max-lg:p-2 max-md:gap-2"
 				@scroll="onScrollThrottled"
 			>
 				<div
@@ -47,7 +48,7 @@
 						<span class="pi pi-spinner animate-spin text-2xl dark:text-gray-500"/>
 					</span>
 					<span v-else>
-						No logs available. A just adopted probe may take a few minutes to sync the logs.
+						No logs available. A newly adopted probe may take a few minutes to sync the logs.
 					</span>
 				</span>
 				<span v-if="logs.length" class="h-fit px-1 py-2">

@@ -6,11 +6,16 @@
 					Showing the latest {{logs.length}} {{pluralize('log', logs.length)}}.
 				</span>
 				<LogLoader v-else-if="enabled && !showLargeLoader"/>
-				<label class="ml-auto flex cursor-pointer select-none items-center justify-end gap-2.5 duration-200">
+				<label
+					class="ml-auto flex cursor-pointer select-none items-center justify-end gap-2 rounded-md border border-gray-500 px-2 py-1 duration-200 dark:border-gray-400"
+					:class="{
+						'border-primary text-primary dark:border-primary': enabled,
+					}"
+				>
 					<input v-model="enabled" type="checkbox" class="peer sr-only">
+					<i v-if="enabled" class="pi pi-pause-circle text-[16px]"/>
+					<i v-else class="pi pi-play-circle text-[16px]"/>
 					Live tail
-					<i v-if="enabled" class="pi pi-stop-circle text-lg"/>
-					<i v-else class="pi pi-play-circle text-lg text-primary"/>
 				</label>
 			</div>
 			<div
@@ -45,7 +50,7 @@
 						No logs available. A just adopted probe may take a few minutes to sync the logs.
 					</span>
 				</span>
-				<span class="px-1 py-2">
+				<span class="h-fit px-1 py-2">
 					<LogLoader v-if="enabled && logs.length"/>
 					<span v-else class="inline-block size-1.5"/>
 				</span>
@@ -101,12 +106,15 @@
 				lastFetchedId.value = data.value.lastId;
 			}
 		}).finally(() => {
+			// do not show the large loader on further refetches
 			showLargeLoader.value = false;
 
-			refreshTimeout.value = setTimeout(() => {
-				refreshLogs();
-			}, REFRESH_INTERVAL);
-		}); // do not show the large loader on further refetches
+			if (enabled.value) {
+				refreshTimeout.value = setTimeout(() => {
+					refreshLogs();
+				}, REFRESH_INTERVAL);
+			}
+		});
 	};
 
 	const onScroll = () => {
@@ -146,11 +154,15 @@
 
 
 	watch(enabled, (isEnabled) => {
-		isEnabled && refreshLogs();
+		if (isEnabled) {
+			refreshLogs();
+		} else {
+			clearTimeout(refreshTimeout.value);
+		}
 	}, { immediate: true });
 
 	onUnmounted(() => {
-		clearInterval(refreshTimeout.value);
+		clearTimeout(refreshTimeout.value);
 		onScrollDebounced.cancel();
 	});
 </script>

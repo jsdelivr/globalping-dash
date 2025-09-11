@@ -10,5 +10,11 @@
 	@tailwind components;
 }
 
+@layer utilities {
+	.wrap-anywhere {
+		overflow-wrap: anywhere;
+	}
+}
+
 @tailwind utilities;
 @tailwind variants;

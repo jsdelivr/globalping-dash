@@ -53,7 +53,7 @@
 				</span>
 				<span v-if="logs.length" class="h-fit px-1 py-2">
 					<LogLoader v-if="enabled"/>
-					<span v-else class="inline-block size-1.5"/>
+					<span v-else class="block size-1.5"/>
 				</span>
 			</div>
 		</div>

@@ -51,10 +51,10 @@
 						No logs available. A newly adopted probe may take a few minutes to sync the logs.
 					</span>
 				</span>
-				<span v-if="logs.length" class="h-fit px-1 py-2">
+				<div v-if="logs.length" class="h-fit px-1 py-2">
 					<LogLoader v-if="enabled"/>
 					<span v-else class="block size-1.5"/>
-				</span>
+				</div>
 			</div>
 		</div>
 	</div>

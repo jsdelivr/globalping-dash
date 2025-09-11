@@ -85,3 +85,21 @@ export const formatDateTime = (dateTime: string | Date | null) => {
 
 	return dateTime.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' });
 };
+
+/**
+ * Convert a timestamp to a full time string, such as 2025-01-24 02:00:00 +02:00
+*/
+export const formatTechnicalDateTime = (dateTime: string | Date | null) => {
+	if (!dateTime) {
+		return '';
+	}
+
+	if (typeof dateTime === 'string') {
+		dateTime = new Date(dateTime);
+	}
+
+	const lpad = (num: number, len: number = 2) => String(num).padStart(len, '0');
+	const formatTz = (minutes: number) => `${minutes > 0 ? '-' : '+'}${lpad(Math.floor(Math.abs(minutes) / 60))}:${lpad(Math.abs(minutes) % 60)}`;
+
+	return `${dateTime.getFullYear()}-${lpad(dateTime.getMonth() + 1)}-${lpad(dateTime.getDate())} ${lpad(dateTime.getHours())}:${lpad(dateTime.getMinutes())}:${lpad(dateTime.getSeconds())} ${formatTz(dateTime.getTimezoneOffset())}`;
+};

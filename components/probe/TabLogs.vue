@@ -3,7 +3,7 @@
 		<div class="relative flex min-h-[300px] flex-1 flex-col overflow-hidden rounded-md border bg-surface-0 dark:bg-dark-950">
 			<div class="flex w-full flex-nowrap items-center justify-between gap-4 border-b bg-surface-0 px-3 py-1.5 text-gray-700 dark:bg-dark-800 dark:text-gray-300">
 				<span v-if="logs.length" class="font-bold">
-					Showing <span class="hidden sm:inline">the latest</span> {{logs.length}} {{pluralize('log', logs.length)}}.
+					Showing {{logs.length}} <span class="hidden sm:inline">most recent</span> {{pluralize('log', logs.length)}}.
 				</span>
 				<LogLoader v-else-if="enabled && !showLargeLoader"/>
 				<label
@@ -29,7 +29,7 @@
 					:key="index"
 					class="whitespace-nowrap text-gray-800 dark:text-gray-300"
 				>
-					<span v-if="log.timestamp" class="text-gray-600 dark:text-gray-500">[{{ log.timestamp.toUpperCase() }}] </span>
+					<span v-if="log.timestamp" class="text-gray-600 dark:text-gray-500">[{{ formatTechnicalDateTime(log.timestamp) }}] </span>
 					<span v-if="log.scope" class="text-green-600 dark:text-green-500">[{{ log.scope }}] </span>
 					<span
 						:class="{
@@ -65,6 +65,7 @@
 	import throttle from 'lodash/throttle';
 	import LogLoader from '~/components/probe/LogLoader.vue';
 	import { useErrorToast } from '~/composables/useErrorToast';
+	import { formatTechnicalDateTime } from '~/utils/date-formatters';
 	import { pluralize } from '~/utils/pluralize';
 
 	const REFRESH_INTERVAL = 2000; // ms

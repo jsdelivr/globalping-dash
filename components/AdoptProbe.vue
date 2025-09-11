@@ -275,14 +275,10 @@
 
 	const { data: initialIds } = await useLazyAsyncData(
 		'initial_user_probes',
-		async () => {
-			const initialProbes = await $directus.request(readItems('gp_probes', {
-				filter: getUserFilter('userId'),
-			}));
-			const initialIds = new Set(initialProbes.map(probe => probe.id));
-			return initialIds;
-		},
-		{ default: () => new Set() },
+		() => $directus.request(readItems('gp_probes', {
+			filter: getUserFilter('userId'),
+		})),
+		{ default: () => new Set(), transform: probes => new Set(probes.map(probe => probe.id)) },
 	);
 
 	const searchCanceled = ref(false);

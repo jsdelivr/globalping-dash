@@ -7,6 +7,7 @@ export const sendToast = (severity: ToastMessageOptions['severity'], summary: st
 };
 
 export const sendErrorToast = (error: unknown) => {
+	console.error(error);
 	const toastService = useToastService();
 	const e = error as DashboardError;
 

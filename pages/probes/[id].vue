@@ -99,7 +99,7 @@
 			<Tabs v-if="probeDetails" v-model:value="activeTab" lazy class="flex min-h-0 flex-1 flex-col">
 				<TabList ref="tabListRef" class="!border-b !border-surface-300 dark:!border-dark-600 [&_[data-pc-section='tablist']]:!border-none">
 					<Tab value="details" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Details</Tab>
-					<Tab v-if="auth.isAdmin" value="logs" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Logs</Tab>
+					<Tab value="logs" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Logs</Tab>
 				</TabList>
 
 				<TabPanels class="mt-6 flex min-h-0 flex-1 flex-col !bg-transparent !p-0">

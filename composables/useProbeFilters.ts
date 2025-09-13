@@ -35,7 +35,7 @@ interface ProbeFiltersOptions {
 	active?: MaybeRefOrGetter<boolean>;
 }
 
-export const useProbeFilters = ({ active }: ProbeFiltersOptions) => {
+export const useProbeFilters = ({ active }: ProbeFiltersOptions = { active: () => true }) => {
 	const route = useRoute();
 	const { getUserFilter } = useUserFilter();
 

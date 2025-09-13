@@ -358,7 +358,7 @@
 		onBatchChange,
 		getSortSettings,
 		getCurrentFilter,
-	} = useProbeFilters();
+	} = useProbeFilters({ active });
 
 	const filterDeps = computed(() => { return { ...filter.value }; });
 

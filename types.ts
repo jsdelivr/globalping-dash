@@ -21,7 +21,6 @@ declare global {
 		country: TCountry;
 		state: TCountry extends 'US' ? string | null : null;
 		stateName: TCountry extends 'US' ? string | null : null;
-		customLocation: CustomLocation<TCountry>;
 	};
 
 	type Credits = {

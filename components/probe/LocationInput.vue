@@ -224,12 +224,6 @@
 		const prepEditedCity = editedCity.trim();
 		const prepInitCity = initCity.trim();
 
-		// check if the city is empty
-		if (prepEditedCity === '') {
-			sendToast('warn', 'Invalid input', 'City name cannot be empty');
-			return;
-		}
-
 		// check if trimmed values are the same, stop editing-updating, restore to initial city's value
 		if (prepEditedCity === prepInitCity && editedCity !== initCity) {
 			editedLocation.value.name = initCity;
@@ -237,7 +231,7 @@
 		}
 
 		// check if nothing was changed
-		const locationFields = Object.keys(editedLocation.value) as (keyof Omit<City, 'stateName'>)[];
+		const locationFields: Array<'name' | 'country' | 'state'> = [ 'name', 'country', 'state' ];
 
 		if (locationFields.every(key => editedLocation.value[key]?.trim() === initialLocation.value[key]?.trim())) {
 			return;

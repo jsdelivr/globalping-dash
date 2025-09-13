@@ -31,7 +31,11 @@ export const STATUS_MAP: Record<StatusCode, StatusOption> = {
 	'offline': { name: 'Offline', options: OFFLINE_STATUSES },
 } as const;
 
-export const useProbeFilters = () => {
+interface ProbeFiltersOptions {
+	active?: MaybeRefOrGetter<boolean>;
+}
+
+export const useProbeFilters = ({ active }: ProbeFiltersOptions) => {
 	const route = useRoute();
 	const { getUserFilter } = useUserFilter();
 
@@ -109,6 +113,10 @@ export const useProbeFilters = () => {
 		() => route.query.desc,
 		() => route.query.status,
 	], async ([ search, by, desc, status ]) => {
+		if (!toValue(active)) {
+			return;
+		}
+
 		if (typeof search === 'string') {
 			filter.value.search = search;
 		} else {

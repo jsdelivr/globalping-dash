@@ -16,7 +16,7 @@ export const formatDate = (date: string | Date | null, format: 'long' | 'short' 
 	return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
 };
 
-export const formatDateForTable = (date: string | Date | null) => {
+export const formatDateForTable = (date: string | Date | null): string => {
 	if (!date) {
 		return '';
 	}
@@ -25,7 +25,7 @@ export const formatDateForTable = (date: string | Date | null) => {
 		date = new Date(date);
 	}
 
-	return date.toISOString().split('T')[0];
+	return date.toISOString().split('T')[0]!;
 };
 
 /**
@@ -64,11 +64,11 @@ export function getRelativeTimeString (date: Date | string, noTime: boolean = fa
 
 	// Get the divisor to divide from the seconds. E.g. if our unit is "day" our divisor
 	// is one day in seconds, so we can divide our seconds by this to get the # of days
-	const divisor = unitIndex ? cutoffs[unitIndex - 1] : 1;
+	const divisor = unitIndex ? cutoffs[unitIndex - 1]! : 1;
 
 	// Intl.RelativeTimeFormat do its magic
 	const rtf = new Intl.RelativeTimeFormat('en-US', { numeric: 'auto' });
-	return capitalize(rtf.format(Math.ceil(deltaSeconds / divisor), units[unitIndex]));
+	return capitalize(rtf.format(Math.ceil(deltaSeconds / divisor), units[unitIndex]!));
 }
 
 /**
@@ -84,4 +84,22 @@ export const formatDateTime = (dateTime: string | Date | null) => {
 	}
 
 	return dateTime.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' });
+};
+
+/**
+ * Convert a timestamp to a full time string, such as 2025-01-24 02:00:00 +02:00
+*/
+export const formatTechnicalDateTime = (dateTime: string | Date | null) => {
+	if (!dateTime) {
+		return '';
+	}
+
+	if (typeof dateTime === 'string') {
+		dateTime = new Date(dateTime);
+	}
+
+	const lpad = (num: number, len: number = 2) => String(num).padStart(len, '0');
+	const formatTz = (minutes: number) => `${minutes > 0 ? '-' : '+'}${lpad(Math.floor(Math.abs(minutes) / 60))}:${lpad(Math.abs(minutes) % 60)}`;
+
+	return `${dateTime.getFullYear()}-${lpad(dateTime.getMonth() + 1)}-${lpad(dateTime.getDate())} ${lpad(dateTime.getHours())}:${lpad(dateTime.getMinutes())}:${lpad(dateTime.getSeconds())} ${formatTz(dateTime.getTimezoneOffset())}`;
 };

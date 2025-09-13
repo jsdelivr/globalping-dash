@@ -81,7 +81,7 @@
 						<div class="w-80 p-4 text-left sm:p-6">
 							<p class="font-bold">Software probe</p>
 							<p class="mt-2">A Docker container that runs on your own hardware.</p>
-							<nuxt-icon class="mt-2 inline-block text-6xl text-[#099CEC]" name="docker"/>
+							<NuxtIcon class="mt-2 inline-block text-6xl text-[#099CEC]" name="docker" aria-hidden="true"/>
 						</div>
 					</button>
 					<button class="group relative flex flex-row items-stretch overflow-hidden rounded-xl border hover:border-[#17d4a7] dark:bg-dark-900" @click="() => { probeType = 'hardware'; activateCallback('3'); }">
@@ -186,7 +186,7 @@
 					</div>
 					<div class="mt-6 text-right">
 						<Button class="mr-2" label="Back" severity="secondary" text @click="probeType === 'software' ? activateCallback('0') : activateCallback('3')"/>
-						<Button label="Send adoption code" :loading="sendAdoptionCodeLoading" :disabled="!ip.length" @click="sendAdoptionCode(activateCallback)"/>
+						<Button :label="isResendingCode ? 'Resend code' : 'Send adoption code'" :loading="sendAdoptionCodeLoading" :disabled="!ip.length" @click="sendAdoptionCode(activateCallback)"/>
 					</div>
 				</div>
 			</StepPanel>
@@ -273,54 +273,49 @@
 
 	// STEP 2
 
-	const { data: initialProbes } = await useLazyAsyncData(
+	const { data: initialIds } = await useLazyAsyncData(
 		'initial_user_probes',
 		() => $directus.request(readItems('gp_probes', {
 			filter: getUserFilter('userId'),
 		})),
-		{ default: () => [] },
+		{ default: () => new Set(), transform: probes => new Set(probes.map(probe => probe.id)) },
 	);
+
+	const searchCanceled = ref(false);
+
+	onBeforeUnmount(() => { searchCanceled.value = true; });
 
 	const searchNewProbes = async (activateCallback: (step: string | number) => void) => {
 		activateCallback('2');
 		const startTime = Date.now();
 
-		try {
-			await new Promise<void>((resolve) => {
-				const checkProbes = async () => {
-					const currentProbes = await $directus.request(readItems('gp_probes', {
-						filter: getUserFilter('userId'),
-					}));
+		while (Date.now() - startTime <= 10_000) {
+			if (searchCanceled.value) {
+				return;
+			}
 
-					if (currentProbes.length > initialProbes.value.length) {
-						newProbesFound(currentProbes);
-						resolve();
-						return;
-					}
+			try {
+				const currentProbes = await $directus.request(readItems('gp_probes', {
+					filter: getUserFilter('userId'),
+				}));
 
-					if (Date.now() - startTime > 10_000) {
-						newProbesNotFound();
-						resolve();
-						return;
-					}
+				const newProbes = currentProbes.filter(probe => !initialIds.value.has(probe.id));
 
-					setTimeout(checkProbes, 1000);
-				};
+				if (newProbes.length) { newProbesFound(newProbes); return; }
 
-				checkProbes();
-			});
-		} catch (e: any) {
-			const detail = e.errors ?? 'Request failed';
-			isIpValid.value = false;
-			invalidIpMessage.value = detail;
+				await new Promise(resolve => setTimeout(resolve, 1000));
+			} catch (e: any) {
+				sendErrorToast(e);
+				newProbesNotFound();
+				return;
+			}
 		}
 
-		sendAdoptionCodeLoading.value = false;
+		newProbesNotFound();
 	};
 
-	const newProbesFound = (currentProbes: Probe[]) => {
-		const initialProbesIds = new Set(initialProbes.value.map(probe => probe.id));
-		newProbes.value = currentProbes.filter(probe => !initialProbesIds.has(probe.id));
+	const newProbesFound = (freshProbes: Probe[]) => {
+		newProbes.value = freshProbes;
 		isSuccess.value = true;
 
 		const wrapper = stepPanels.value.$el;
@@ -341,6 +336,7 @@
 	const ip = ref('');
 	const isIpValid = ref(true);
 	const invalidIpMessage = ref('');
+	const isResendingCode = ref(false);
 
 	const resetIsIpValid = () => {
 		isIpValid.value = true;
@@ -372,9 +368,11 @@
 
 			activateCallback('5');
 		} catch (e: any) {
+			console.error(e);
 			const detail = e.errors ?? 'Request failed';
 			isIpValid.value = false;
 			invalidIpMessage.value = detail;
+			isResendingCode.value = true;
 		}
 
 		sendAdoptionCodeLoading.value = false;
@@ -407,9 +405,6 @@
 
 			sendToast('info', 'The code has been resent', 'Paste it to the input to adopt the probe');
 		} catch (e: any) {
-			const detail = e.errors ?? 'Request failed';
-			isIpValid.value = false;
-			invalidIpMessage.value = detail;
 			sendErrorToast(e);
 		}
 	};
@@ -436,6 +431,7 @@
 
 			emit('adopted');
 		} catch (e: any) {
+			console.error(e);
 			const detail = e.errors ?? 'Request failed';
 			isCodeValid.value = false;
 			invalidCodeMessage.value = detail;

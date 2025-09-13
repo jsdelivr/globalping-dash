@@ -1,9 +1,9 @@
 <template>
-	<div class="min-h-full p-6">
-		<div class="flex flex-col gap-4">
+	<div class="flex h-full flex-col p-6 pb-0">
+		<div class="flex min-h-0 flex-1 flex-col gap-4">
 			<div class="flex gap-2">
 				<NuxtLink
-					:to="getBackToProbesHref()"
+					:to="probePageLink"
 					class="mr-auto flex cursor-pointer items-center gap-2 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-offset-2"
 					aria-label="Go back to the list of probes"
 				>
@@ -49,7 +49,7 @@
 					</span>
 
 					<span class="flex h-[30px] items-center gap-2 rounded-md border border-surface-300 px-2 dark:border-dark-600">
-						<nuxt-icon class="text-green-500" name="coin"/>
+						<NuxtIcon class="text-green-500" name="coin" aria-hidden="true"/>
 						<span class="font-bold text-green-500">+{{ probeCreditsPerMonth }}</span>
 					</span>
 				</div>
@@ -96,20 +96,19 @@
 				Your probe container is running an outdated software and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="#" @click="updateProbeDialog = true">our guide</NuxtLink> to update it manually.
 			</Message>
 
-			<Tabs value="0">
+			<Tabs v-if="probeDetails" v-model:value="activeTab" lazy class="flex min-h-0 flex-1 flex-col">
 				<TabList ref="tabListRef" class="!border-b !border-surface-300 dark:!border-dark-600 [&_[data-pc-section='tablist']]:!border-none">
-					<Tab value="0" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Details</Tab>
-					<!-- temporarily hide Logs tab while it's under construction -->
-					<!-- <Tab value="1" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Logs</Tab> -->
+					<Tab value="details" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Details</Tab>
+					<Tab value="logs" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Logs</Tab>
 				</TabList>
 
-				<TabPanels class="mt-6 !bg-transparent !p-0">
-					<TabPanel v-if="probeDetails" value="0" tabindex="-1">
+				<TabPanels class="mt-6 flex min-h-0 flex-1 flex-col !bg-transparent !p-0">
+					<TabPanel value="details" tabindex="-1">
 						<ProbeTabDetails v-model:probe-details-updating="probeDetailsUpdating" v-model:probe="probeDetails"/>
 					</TabPanel>
 
-					<TabPanel value="1" tabindex="-1">
-						NO LOGS FOR NOW
+					<TabPanel class="flex min-h-0 flex-1 flex-col" value="logs" tabindex="-1">
+						<ProbeTabLogs :probe-id="probeDetails.id"/>
 					</TabPanel>
 				</TabPanels>
 			</Tabs>
@@ -128,6 +127,7 @@
 <script setup lang="ts">
 	import { readItem, aggregate } from '@directus/sdk';
 	import { useErrorToast } from '~/composables/useErrorToast';
+	import { useProbeDetailTabs } from '~/composables/useProbeDetailTabs';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata.js';
 	import { getProbeStatusColor, getProbeStatusText, isOutdated } from '~/utils/probe-status';
@@ -145,6 +145,8 @@
 	const showMoreIps = ref(false);
 	const windowSize = useWindowSize();
 	const tabListRef = useTemplateRef('tabListRef');
+	const activeTab = useProbeDetailTabs();
+	const probePageLink = ref('/probes');
 
 	const { data: probeDetails, error: probeDetailsError } = await useAsyncData<Probe>(() => $directus.request(readItem('gp_probes', probeId)));
 
@@ -184,7 +186,7 @@
 
 	// HANDLE CREDITS
 	const { data: probeCreditsPerMonth, error: creditsError } = await useAsyncData(
-		() => $directus.request<[{ sum: { amount: number }; adopted_probe: string }]>(aggregate('gp_credits_additions', {
+		() => $directus.request<{ sum: { amount: number }; adopted_probe: string }[]>(aggregate('gp_credits_additions', {
 			query: {
 				filter: {
 					github_id: { _eq: user.value.external_identifier || 'admin' },
@@ -195,17 +197,16 @@
 			groupBy: [ 'adopted_probe' ],
 			aggregate: { sum: 'amount' },
 		})),
-		{ watch: [ probeDetails ], transform: data => data?.[0].sum.amount ?? 0 },
+		{ watch: [ probeDetails ], transform: data => data[0]?.sum.amount ?? 0 },
 	);
 
 	useErrorToast(creditsError);
 
-	// HANDLE GO BACK TO PROBES
-	const getBackToProbesHref = () => {
-		const defaultPath = '/probes';
-		const prevPath = typeof router.options.history.state.back === 'string' ? router.options.history.state.back : defaultPath;
-		const isPrevPathValid = prevPath.startsWith(defaultPath);
+	onMounted(() => {
+		const prevPage = router.options.history.state.back;
 
-		return isPrevPathValid ? prevPath : defaultPath;
-	};
+		if (typeof prevPage === 'string' && prevPage?.startsWith('/probes?')) {
+			probePageLink.value = prevPage;
+		}
+	});
 </script>

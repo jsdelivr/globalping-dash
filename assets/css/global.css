@@ -44,10 +44,6 @@ html {
 	background: linear-gradient(to left, var(--dark-800), transparent);
 }
 
-.nuxt-icon svg {
-	margin-bottom: 0 !important;
-}
-
 .no-scrollbar::-webkit-scrollbar {
 	display: none;
 }

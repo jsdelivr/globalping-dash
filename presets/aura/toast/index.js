@@ -60,7 +60,7 @@ export default {
 	messageText: {
 		class: [
 			// Font and Text
-			'text-base leading-[normal]',
+			'text-base leading-[normal] wrap-anywhere',
 			'ml-2',
 			'flex-1',
 		],

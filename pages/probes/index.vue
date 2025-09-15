@@ -361,10 +361,10 @@
 	} = useProbeFilters({ active });
 
 	const filterDeps = computed(() => ({ ...filter.value }));
-	const mainFetchDeps = ref(route.params);
+	const mainFetchDeps = ref(route.query);
 
-	watch(() => route.params, (newParams) => {
-		mainFetchDeps.value = newParams;
+	watch(() => route.query, (newQuery) => {
+		mainFetchDeps.value = newQuery;
 	}, { deep: true });
 
 	const { data: totalCredits, error: creditError } = await useLazyAsyncData(

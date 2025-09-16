@@ -362,7 +362,7 @@
 	} = useProbeFilters({ active });
 
 	const filterDeps = computed(() => ({ ...filter.value }));
-	const mainFetchDeps = computedDebounced(() => [ filterDeps.value, first.value ]);
+	const mainFetchDeps = computedDebounced(() => [ filterDeps.value, first.value, itemsPerPage.value ]);
 
 	const { data: totalCredits, error: creditError } = await useLazyAsyncData(
 		() => $directus.request<{ sum: { amount: number } }[]>(aggregate('gp_credits_additions', {
@@ -405,7 +405,7 @@
 			limit: itemsPerPage.value,
 		}))),
 		{
-			watch: [ mainFetchDeps, itemsPerPage ],
+			watch: [ mainFetchDeps ],
 			default: () => [],
 			immediate: false,
 		},

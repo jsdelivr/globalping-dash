@@ -310,6 +310,7 @@
 	import CountryFlag from 'vue-country-flag-next';
 	import BigProbeIcon from '~/components/BigProbeIcon.vue';
 	import FilterSettings from '~/components/FilterSettings.vue';
+	import { computedDebounced } from '~/composables/computedDebounced';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
 	import { useErrorToast } from '~/composables/useErrorToast';
@@ -360,7 +361,8 @@
 		getCurrentFilter,
 	} = useProbeFilters({ active });
 
-	const filterDeps = computed(() => { return { ...filter.value }; });
+	const filterDeps = computed(() => ({ ...filter.value }));
+	const mainFetchDeps = computedDebounced(() => [ filterDeps.value, first.value, itemsPerPage.value ]);
 
 	const { data: totalCredits, error: creditError } = await useLazyAsyncData(
 		() => $directus.request<{ sum: { amount: number } }[]>(aggregate('gp_credits_additions', {
@@ -403,7 +405,7 @@
 			limit: itemsPerPage.value,
 		}))),
 		{
-			watch: [ filterDeps, first, itemsPerPage ],
+			watch: [ mainFetchDeps ],
 			default: () => [],
 			immediate: false,
 		},

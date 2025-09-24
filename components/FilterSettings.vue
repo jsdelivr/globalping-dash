@@ -85,6 +85,8 @@
 			</div>
 		</div>
 
+		<AdminFilterSettings v-if="auth.isAdmin" :filter="draftFilter"/>
+
 		<div class="mt-4 flex justify-end gap-2">
 			<Button label="Cancel" severity="secondary" text @click="emit('cancel')"/>
 			<Button label="Apply" @click="emit('apply', draftFilter)"/>
@@ -99,6 +101,9 @@
 		SORTABLE_FIELDS,
 		STATUS_MAP,
 	} from '~/composables/useProbeFilters';
+	import { useAuth } from '~/store/auth';
+
+	const auth = useAuth();
 
 	const { filter, statusCounts } = defineProps({
 		filter: {

@@ -42,7 +42,7 @@
 						<div class="flex w-full items-center">
 							<h3 class="px-2">List of probes</h3>
 
-							<div class="ml-auto flex h-9 items-stretch gap-x-4 self-end font-normal">
+							<div class="ml-auto flex h-9 items-stretch gap-x-2 self-end font-normal">
 								<span class="flex items-center font-bold">Status:</span>
 								<Select
 									v-model="filter.status"
@@ -50,7 +50,7 @@
 									:pt="{ listContainer: { class: '!max-h-64' } }"
 									option-label="code"
 									class="min-w-64"
-									@change="onStatusChange"
+									@change="onParamChange"
 								>
 									<template #option="{option}: {option: StatusCode}">
 										<span class="flex h-full items-center gap-2">
@@ -85,6 +85,22 @@
 										<InputText v-model="searchInput" class="m-0 h-full min-w-[280px]" placeholder="Filter by name, location, or tags" @input="onFilterChangeDebounced"/>
 									</IconField>
 								</InputGroup>
+
+								<div v-if="auth.isAdmin" class="flex size-9 items-stretch justify-between rounded-md border border-surface-300 text-bluegray-700 focus-within:border-primary hover:border-surface-400 dark:border-dark-600 dark:bg-dark-900 dark:text-dark-0 dark:hover:border-dark-400">
+									<Button
+										class="relative hover:bg-white focus:ring-primary dark:hover:bg-dark-900 dark:focus:ring-primary"
+										severity="secondary"
+										size="small"
+										text
+										@click="adminOptsRef.toggle($event)">
+										<i class="pi pi-sliders-h"/>
+										<i v-if="filter.adoption !== 'all'" class="pi pi-circle-fill absolute right-2 top-2 text-[0.4rem] text-primary"/>
+									</Button>
+
+									<Popover ref="adminOptsRef" class="w-fit translate-x-[calc(2.25rem-100%)] gap-4 p-4 [&>*]:border-none" role="dialog">
+										<AdminFilterSettings/>
+									</Popover>
+								</div>
 							</div>
 						</div>
 					</template>
@@ -308,6 +324,7 @@
 	import { aggregate, readItems } from '@directus/sdk';
 	import debounce from 'lodash/debounce';
 	import CountryFlag from 'vue-country-flag-next';
+	import AdminFilterSettings from '~/components/AdminFilterSettings.vue';
 	import BigProbeIcon from '~/components/BigProbeIcon.vue';
 	import FilterSettings from '~/components/FilterSettings.vue';
 	import { computedDebounced } from '~/composables/computedDebounced';
@@ -316,6 +333,7 @@
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { type StatusCode, useProbeFilters, STATUS_MAP } from '~/composables/useProbeFilters';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { useAuth } from '~/store/auth';
 	import { minDelay } from '~/utils/min-delay';
 	import { pluralize } from '~/utils/pluralize';
 
@@ -324,11 +342,13 @@
 	const { $directus } = useNuxtApp();
 	const router = useRouter();
 	const route = useRoute();
+	const auth = useAuth();
 
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const startProbeDialog = ref(false);
 	const adoptProbeDialog = ref(false);
 	const mobileFiltersRef = ref();
+	const adminOptsRef = ref();
 	const firstLoading = ref(true);
 	const hasAnyProbes = ref(false);
 	const active = ref(true);
@@ -355,7 +375,7 @@
 		anyFilterApplied,
 		onSortChange,
 		onFilterChange,
-		onStatusChange,
+		onParamChange,
 		onBatchChange,
 		getSortSettings,
 		getCurrentFilter,
@@ -399,7 +419,7 @@
 
 	const { data: probes, pending: loading, error: probeError, refresh: refreshProbes } = await useLazyAsyncData(
 		() => minDelay($directus.request<Probe[]>(readItems('gp_probes', {
-			filter: getCurrentFilter(true),
+			filter: getCurrentFilter(),
 			sort: getSortSettings() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
 			offset: first.value,
 			limit: itemsPerPage.value,
@@ -414,7 +434,7 @@
 	const { data: statusCounts, error: statusCntError, refresh: refreshStatusCounts } = await useLazyAsyncData(
 		() => minDelay($directus.request<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
 			query: {
-				filter: getCurrentFilter(),
+				filter: getCurrentFilter([ 'status' ]),
 				groupBy: [ 'status', 'isOutdated' ],
 			},
 			aggregate: { count: '*' },

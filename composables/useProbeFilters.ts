@@ -52,8 +52,8 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 		const { sortField = '', sortOrder = 1 } = event;
 
 		if (!sortOrder || typeof sortField !== 'string' || !SORTABLE_FIELDS.includes(sortField)) {
-			filter.value.by = 'name';
-			filter.value.desc = false;
+			filter.value.by = DEFAULT_FILTER.by;
+			filter.value.desc = DEFAULT_FILTER.desc;
 		} else {
 			filter.value.by = sortField;
 			filter.value.desc = sortOrder === -1;
@@ -74,10 +74,10 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 
 	const constructQuery = () => ({
 		...filter.value.search && { filter: filter.value.search },
-		...filter.value.by !== 'name' && { by: filter.value.by },
+		...!isDefault('by') && { by: filter.value.by },
 		...filter.value.desc && { desc: 'true' },
-		...filter.value.status !== 'all' && { status: filter.value.status },
-		...auth.isAdmin && filter.value.adoption !== DEFAULT_FILTER.adoption && { adoption: filter.value.adoption },
+		...!isDefault('status') && { status: filter.value.status },
+		...auth.isAdmin && !isDefault('adoption') && { adoption: filter.value.adoption },
 	});
 
 	const onParamChange = () => {
@@ -107,15 +107,25 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 		}
 	};
 
-	const getCurrentFilter = (ignoredFields: Array<keyof Filter> = []) => ({
-		...getUserFilter('userId'),
-		...filter.value.search && { searchIndex: { _icontains: filter.value.search } },
-		...!ignoredFields.includes('status') && filter.value.status !== DEFAULT_FILTER.status && { status: { _in: STATUS_MAP[filter.value.status].options } },
-		...!ignoredFields.includes('status') && filter.value.status === 'online-outdated' && { isOutdated: { _eq: true } },
-		...!ignoredFields.includes('adoption') && auth.isAdmin && filter.value.adoption !== DEFAULT_FILTER.adoption && {
-			userId: filter.value.adoption === 'adopted' ? { _neq: null } : { _eq: null },
-		},
-	});
+	const getCurrentFilter = (ignoredFields: Array<keyof Filter> = []) => getDirectusFilter(filter, ignoredFields);
+
+	const getDirectusFilter = (filter: MaybeRefOrGetter<Filter>, ignoredFields: Array<keyof Filter> = []) => {
+		const filterValue = toValue(filter);
+
+		return {
+			...getUserFilter('userId'),
+			...filterValue.search && { searchIndex: { _icontains: filterValue.search } },
+			...!ignoredFields.includes('status') && !isDefault('status', filter) && { status: { _in: STATUS_MAP[filterValue.status].options } },
+			...!ignoredFields.includes('status') && filterValue.status === 'online-outdated' && { isOutdated: { _eq: true } },
+			...!ignoredFields.includes('adoption') && auth.isAdmin && !isDefault('adoption', filter) && {
+				userId: filterValue.adoption === 'adopted' ? { _neq: null } : { _eq: null },
+			},
+		};
+	};
+
+	const isDefault = (field: keyof Filter, filterObj: MaybeRefOrGetter<Filter> = filter) => {
+		return toValue(filterObj)[field] === DEFAULT_FILTER[field];
+	};
 
 	watch([
 		() => route.query.filter,
@@ -171,5 +181,8 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 		// builders
 		getSortSettings,
 		getCurrentFilter,
+		getDirectusFilter,
+		// helpers
+		isDefault,
 	};
 };

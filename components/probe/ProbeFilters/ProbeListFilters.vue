@@ -54,7 +54,7 @@
 				<i v-if="!isDefault('adoption')" class="pi pi-circle-fill absolute right-2 top-2 text-[0.4rem] text-primary"/>
 			</Button>
 
-			<Popover ref="adminOptsRef" class="w-fit translate-x-[calc(2.25rem-100%)] gap-4 p-4 [&>*]:border-none" role="dialog">
+			<Popover ref="adminOptsRef" class="w-fit gap-4 p-4 [&>*]:border-none" role="dialog">
 				<AdminFilterSettings/>
 			</Popover>
 		</div>

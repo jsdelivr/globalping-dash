@@ -57,7 +57,15 @@
 								<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
 									<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2">
 										<BigProbeIcon class="col-span-1 row-span-2" :probe="slotProps.data" border/>
-										<p class="col-start-2 col-end-3 flex items-center font-bold">{{ slotProps.data.name || slotProps.data.city }}</p>
+										<p class="col-start-2 col-end-3 flex flex-wrap items-center gap-x-1 font-bold">
+											{{ slotProps.data.name || slotProps.data.city }}
+											<span v-if="auth.isAdmin" class="font-normal text-bluegray-800 dark:text-bluegray-300">
+												({{slotProps.data.user?.github_username
+													? `u-${slotProps.data.user.github_username}`
+													: 'not adopted'
+												}})
+											</span>
+										</p>
 										<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-900 dark:text-bluegray-400">{{ slotProps.data.ip }}</p>
 									</div>
 								</NuxtLink>
@@ -149,8 +157,14 @@
 									<NuxtLink :to="`/probes/${probe.id}`">
 										<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
 											<BigProbeIcon class="col-span-1 row-span-2" :probe="probe" border/>
-											<div class="col-start-2 col-end-3 flex items-center font-bold">
+											<div class="col-start-2 col-end-3 flex flex-wrap items-center gap-x-1 font-bold">
 												<p>{{ probe.name || probe.city }}</p>
+												<span v-if="auth.isAdmin" class="font-normal text-bluegray-800 dark:text-bluegray-300">
+													({{probe.user?.github_username
+														? `u-${probe.user.github_username}`
+														: 'not adopted'
+													}})
+												</span>
 											</div>
 											<p class="col-start-2 col-end-3 max-w-full overflow-hidden text-ellipsis text-[13px] text-bluegray-400">{{ probe.ip }}</p>
 										</div>
@@ -270,6 +284,7 @@
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useProbeFilters } from '~/composables/useProbeFilters';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { useAuth } from '~/store/auth';
 	import { minDelay } from '~/utils/min-delay';
 	import { pluralize } from '~/utils/pluralize';
 
@@ -278,6 +293,7 @@
 	const { $directus } = useNuxtApp();
 	const router = useRouter();
 	const route = useRoute();
+	const auth = useAuth();
 
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const startProbeDialog = ref(false);
@@ -346,11 +362,18 @@
 	});
 
 	const { data: probes, pending: loading, error: probeError, refresh: refreshProbes } = await useLazyAsyncData(
-		() => minDelay($directus.request<Probe[]>(readItems('gp_probes', {
+		() => minDelay($directus.request<ProbeWithUser[]>(readItems('gp_probes', {
 			filter: getCurrentFilter(),
 			sort: getSortSettings() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
 			offset: first.value,
 			limit: itemsPerPage.value,
+			fields: [
+				'*',
+				{ user: [ 'id', 'github_username' ] } as unknown as 'userId', // directus SDK types do not support relational fields
+			],
+			alias: {
+				user: 'userId',
+			},
 		}))),
 		{
 			watch: [ mainFetchDeps ],
@@ -359,7 +382,7 @@
 		},
 	);
 
-	const { data: filteredProbeCount, error: filteredProbeCntErr, refresh: refreshFilteredProbeCnt } = await useLazyAsyncData(
+	const { data: filteredProbeCount, error: filteredProbeCntErr, refresh: refreshFilteredProbeCnt, pending: filteredProbeCntLoading } = await useLazyAsyncData(
 		() => $directus.request<[{ count: number }]>(readItems('gp_probes', {
 			filter: getCurrentFilter(),
 			aggregate: { count: '*' },
@@ -403,7 +426,7 @@
 		}
 	});
 
-	const displayPagination = computed(() => probes.value.length && probes.value.length !== filteredProbeCount.value);
+	const displayPagination = computed(() => probes.value.length && !filteredProbeCntLoading.value && filteredProbeCount.value > itemsPerPage.value);
 
 	// PROBES LIST
 	onMounted(async () => {

@@ -60,10 +60,7 @@
 										<p class="col-start-2 col-end-3 flex flex-wrap items-center gap-x-1 font-bold">
 											{{ slotProps.data.name || slotProps.data.city }}
 											<span v-if="auth.isAdmin" class="font-normal text-bluegray-800 dark:text-bluegray-300">
-												({{slotProps.data.user?.github_username
-													? `u-${slotProps.data.user.github_username}`
-													: 'not adopted'
-												}})
+												({{slotProps.data.user?.github_username ?? 'not adopted'}})
 											</span>
 										</p>
 										<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-900 dark:text-bluegray-400">{{ slotProps.data.ip }}</p>
@@ -160,10 +157,7 @@
 											<div class="col-start-2 col-end-3 flex flex-wrap items-center gap-x-1 font-bold">
 												<p>{{ probe.name || probe.city }}</p>
 												<span v-if="auth.isAdmin" class="font-normal text-bluegray-800 dark:text-bluegray-300">
-													({{probe.user?.github_username
-														? `u-${probe.user.github_username}`
-														: 'not adopted'
-													}})
+													({{probe.user?.github_username ?? 'not adopted'}})
 												</span>
 											</div>
 											<p class="col-start-2 col-end-3 max-w-full overflow-hidden text-ellipsis text-[13px] text-bluegray-400">{{ probe.ip }}</p>

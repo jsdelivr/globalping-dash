@@ -56,11 +56,12 @@
 							<AsyncCell :loading="loading">
 								<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
 									<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2">
-										<BigProbeIcon class="col-span-1 row-span-2" :probe="slotProps.data" border/>
-										<p class="col-start-2 col-end-3 flex flex-wrap items-center gap-x-1 font-bold">
-											{{ slotProps.data.name || slotProps.data.city }}
-											<span v-if="auth.isAdmin" class="font-normal text-bluegray-800 dark:text-bluegray-300">
-												({{slotProps.data.user?.github_username ?? 'not adopted'}})
+										<BigProbeIcon class="inset-y-0 col-span-1 row-span-2 my-auto" :probe="slotProps.data" border/>
+										<p class="wrap-anywhere col-start-2 col-end-3 font-bold">
+											{{ slotProps.data.name || slotProps.data.city }}<span v-if="auth.isAdmin">,
+												<span class="font-normal text-bluegray-800 dark:text-bluegray-300">
+													{{slotProps.data.user?.github_username ?? 'not adopted'}}
+												</span>
 											</span>
 										</p>
 										<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-900 dark:text-bluegray-400">{{ slotProps.data.ip }}</p>
@@ -153,12 +154,15 @@
 								<div v-for="probe in probes" :key="probe.id" class="probe box-content block pb-2 pt-4">
 									<NuxtLink :to="`/probes/${probe.id}`">
 										<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
-											<BigProbeIcon class="col-span-1 row-span-2" :probe="probe" border/>
+											<BigProbeIcon class="inset-y-0 col-span-1 row-span-2 my-auto" :probe="probe" border/>
 											<div class="col-start-2 col-end-3 flex flex-wrap items-center gap-x-1 font-bold">
-												<p>{{ probe.name || probe.city }}</p>
-												<span v-if="auth.isAdmin" class="font-normal text-bluegray-800 dark:text-bluegray-300">
-													({{probe.user?.github_username ?? 'not adopted'}})
-												</span>
+												<p class="wrap-anywhere col-start-2 col-end-3 font-bold">
+													{{ probe.name || probe.city }}<span v-if="auth.isAdmin">,
+														<span class="font-normal text-bluegray-800 dark:text-bluegray-300">
+															{{probe.user?.github_username ?? 'not adopted'}}
+														</span>
+													</span>
+												</p>
 											</div>
 											<p class="col-start-2 col-end-3 max-w-full overflow-hidden text-ellipsis text-[13px] text-bluegray-400">{{ probe.ip }}</p>
 										</div>

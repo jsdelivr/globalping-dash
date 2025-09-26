@@ -4,7 +4,6 @@
 		<Select
 			v-model="usedFilter.adoption"
 			:options="ADOPTION_OPTIONS"
-			:pt="{ listContainer: { class: '!max-h-64' } }"
 			class="min-w-48"
 			@change="onChange"
 		>
@@ -36,5 +35,7 @@
 
 	const { filter: appliedFilter, onParamChange } = useProbeFilters();
 	const usedFilter = computed(() => props.filter ?? appliedFilter.value);
+
+	// only apply changes if the default (shared) filter is used
 	const onChange = props.filter ? () => {} : onParamChange;
 </script>

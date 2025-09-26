@@ -74,12 +74,12 @@
 
 	const active = ref(true);
 	const { filter, onParamChange, onFilterChange, getDirectusFilter, isDefault } = useProbeFilters({ active });
-	const adminOptsRef = ref();
-	const STATUS_CODES = Object.keys(STATUS_MAP) as StatusCode[];
-
 	const searchInput = ref(filter.value.search);
 	const onFilterChangeDebounced = debounce(() => onFilterChange(searchInput.value), 500);
 	const filterDeps = computed(() => ({ ...filter.value }));
+
+	const adminOptsRef = ref();
+	const STATUS_CODES = Object.keys(STATUS_MAP) as StatusCode[];
 
 	const { data: statusCounts, error: statusCntError } = await useLazyAsyncData(
 		() => $directus.request<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {

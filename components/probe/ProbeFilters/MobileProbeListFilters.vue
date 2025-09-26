@@ -99,11 +99,7 @@
 	import debounce from 'lodash/debounce';
 	import AdminFilterSettings from '~/components/probe/ProbeFilters/AdminFilterSettings.vue';
 	import { useErrorToast } from '~/composables/useErrorToast';
-	import {
-		type StatusCode,
-		SORTABLE_FIELDS,
-		STATUS_MAP, useProbeFilters,
-	} from '~/composables/useProbeFilters';
+	import { type StatusCode, SORTABLE_FIELDS, STATUS_MAP, useProbeFilters } from '~/composables/useProbeFilters';
 	import { useAuth } from '~/store/auth';
 
 	const auth = useAuth();

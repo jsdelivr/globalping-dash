@@ -7,35 +7,24 @@
 			class="min-w-48"
 			@change="onChange"
 		>
-			<template #value="{value}: {value: AdoptionOption}">
-				{{ value[0]!.toUpperCase() + value.slice(1) }}
+			<template #value="{value}">
+				{{ value[0].toUpperCase() + value.slice(1) }}
 			</template>
-			<template #option="{option}: {option: AdoptionOption}">
-				{{ option[0]!.toUpperCase() + option.slice(1) }}
+			<template #option="{option}">
+				{{ option[0].toUpperCase() + option.slice(1) }}
 			</template>
 		</Select>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import {
-		useProbeFilters,
-		ADOPTION_OPTIONS,
-		type AdoptionOption,
-		type Filter,
-	} from '~/composables/useProbeFilters';
+	import { useProbeFilters, ADOPTION_OPTIONS, type Filter } from '~/composables/useProbeFilters';
 
-	const props = defineProps({
-		filter: {
-			required: false,
-			type: Object as PropType<Filter>,
-			default: null,
-		},
-	});
+	const filter = defineModel('filter', { required: false, type: Object as PropType<Filter> });
 
 	const { filter: appliedFilter, onParamChange } = useProbeFilters();
-	const usedFilter = computed(() => props.filter ?? appliedFilter.value);
+	const usedFilter = computed(() => filter.value ?? appliedFilter.value);
 
 	// only apply changes if the default (shared) filter is used
-	const onChange = props.filter ? () => {} : onParamChange;
+	const onChange = filter.value ? () => {} : onParamChange;
 </script>

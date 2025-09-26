@@ -85,7 +85,7 @@
 			</div>
 		</div>
 
-		<AdminFilterSettings v-if="auth.isAdmin" :filter="draftFilter"/>
+		<AdminFilterSettings v-if="auth.isAdmin" v-model:filter="draftFilter"/>
 
 		<div class="mt-4 flex justify-end gap-2">
 			<Button label="Cancel" severity="secondary" text @click="emit('cancel')"/>

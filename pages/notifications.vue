@@ -102,7 +102,7 @@
 		{ default: () => [], watch: [ first, itemsPerPage ] },
 	);
 
-	const { data: notificationsCount, error: notificationCntError } = await useLazyAsyncData(
+	const { data: notificationsCount, error: notificationCountError } = await useLazyAsyncData(
 		'directus_notifications_cnt',
 		() => $directus.request<{ count: { id: number } }[]>(readNotifications({
 			filter: getUserFilter('recipient'),
@@ -113,7 +113,7 @@
 		{ default: () => 0, transform: data => data?.[0]?.count?.id ?? 0 },
 	);
 
-	useErrorToast(notificationError, notificationCntError);
+	useErrorToast(notificationError, notificationCountError);
 
 	notificationBus.on((idsToArchive) => {
 		notifications.value.forEach((notification) => {

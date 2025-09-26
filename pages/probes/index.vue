@@ -19,7 +19,7 @@
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
 		</div>
-		<div v-if="hasAnyProbes || loading || countLoading">
+		<div v-if="hasAnyProbes || firstLoading || countLoading">
 			<div class="max-md:hidden">
 				<DataTable
 					ref="dataTableRef"
@@ -28,7 +28,7 @@
 					lazy
 					:rows="itemsPerPage"
 					data-key="id"
-					:total-records="paginatedRecords"
+					:total-records="filteredProbeCount"
 					sort-mode="single"
 					:sort-field="filter.by"
 					:sort-order="filter.desc ? -1 : 1"
@@ -41,51 +41,7 @@
 					<template #header>
 						<div class="flex w-full items-center">
 							<h3 class="px-2">List of probes</h3>
-
-							<div class="ml-auto flex h-9 items-stretch gap-x-4 self-end font-normal">
-								<span class="flex items-center font-bold">Status:</span>
-								<Select
-									v-model="filter.status"
-									:options="STATUS_CODES"
-									:pt="{ listContainer: { class: '!max-h-64' } }"
-									option-label="code"
-									class="min-w-64"
-									@change="onStatusChange"
-								>
-									<template #option="{option}: {option: StatusCode}">
-										<span class="flex h-full items-center gap-2">
-											<span
-												:class="{
-													'font-bold text-bluegray-900 dark:text-white': option === filter.status,
-													'text-bluegray-400': option !== filter.status
-												}">
-												{{ STATUS_MAP[option].name }}
-											</span>
-											<Tag
-												class="-my-0.5"
-												:class="{
-													'bg-primary text-white dark:bg-white dark:text-bluegray-900 ': option === filter.status,
-													'border border-surface-300 bg-surface-0 text-bluegray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-surface-0': option !== filter.status
-												}">
-												{{ statusCounts[option] }}
-											</Tag>
-										</span>
-									</template>
-
-									<template #value="{value}: {value: StatusCode}">
-										<span class="flex h-full items-center gap-2">
-											<span class="text-bluegray-400">{{ STATUS_MAP[value].name }}</span>
-											<Tag class="-my-1 border ">{{ statusCounts[value] }}</Tag>
-										</span>
-									</template>
-								</Select>
-								<InputGroup class="!w-auto">
-									<IconField>
-										<InputIcon class="pi pi-search"/>
-										<InputText v-model="searchInput" class="m-0 h-full min-w-[280px]" placeholder="Filter by name, location, or tags" @input="onFilterChangeDebounced"/>
-									</IconField>
-								</InputGroup>
-							</div>
+							<ProbeListFilters/>
 						</div>
 					</template>
 
@@ -100,8 +56,14 @@
 							<AsyncCell :loading="loading">
 								<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
 									<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2">
-										<BigProbeIcon class="col-span-1 row-span-2" :probe="slotProps.data" border/>
-										<p class="col-start-2 col-end-3 flex items-center font-bold">{{ slotProps.data.name || slotProps.data.city }}</p>
+										<BigProbeIcon class="inset-y-0 col-span-1 row-span-2 my-auto" :probe="slotProps.data" border/>
+										<p class="wrap-anywhere col-start-2 col-end-3 font-bold">
+											{{ slotProps.data.name || slotProps.data.city }}<span v-if="auth.isAdmin">,
+												<span class="font-normal text-bluegray-800 dark:text-bluegray-300">
+													{{slotProps.data.user?.github_username ?? 'not adopted'}}
+												</span>
+											</span>
+										</p>
 										<p class="col-start-2 col-end-3 row-start-2 row-end-3 text-[13px] text-bluegray-900 dark:text-bluegray-400">{{ slotProps.data.ip }}</p>
 									</div>
 								</NuxtLink>
@@ -179,10 +141,8 @@
 							ref="mobileFiltersRef"
 							class="!left-1/2 w-[95%] !-translate-x-1/2 !transform p-6 [&>*]:border-none"
 							role="dialog">
-							<FilterSettings
-								:status-counts="statusCounts as Record<StatusCode, number>"
-								:filter="filter"
-								@apply="(newFilter) => {mobileFiltersRef.toggle(); onBatchChange(newFilter)}"
+							<MobileProbeListFilters
+								@apply="() => mobileFiltersRef.toggle()"
 								@cancel="mobileFiltersRef.hide()"
 							/>
 						</Popover>
@@ -194,9 +154,15 @@
 								<div v-for="probe in probes" :key="probe.id" class="probe box-content block pb-2 pt-4">
 									<NuxtLink :to="`/probes/${probe.id}`">
 										<div class="mb-6 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3">
-											<BigProbeIcon class="col-span-1 row-span-2" :probe="probe" border/>
-											<div class="col-start-2 col-end-3 flex items-center font-bold">
-												<p>{{ probe.name || probe.city }}</p>
+											<BigProbeIcon class="inset-y-0 col-span-1 row-span-2 my-auto" :probe="probe" border/>
+											<div class="col-start-2 col-end-3 flex flex-wrap items-center gap-x-1 font-bold">
+												<p class="wrap-anywhere col-start-2 col-end-3 font-bold">
+													{{ probe.name || probe.city }}<span v-if="auth.isAdmin">,
+														<span class="font-normal text-bluegray-800 dark:text-bluegray-300">
+															{{probe.user?.github_username ?? 'not adopted'}}
+														</span>
+													</span>
+												</p>
 											</div>
 											<p class="col-start-2 col-end-3 max-w-full overflow-hidden text-ellipsis text-[13px] text-bluegray-400">{{ probe.ip }}</p>
 										</div>
@@ -231,7 +197,7 @@
 								</div>
 								<div class="mt-2 flex items-center justify-between">
 									<span class="text-xs font-bold">Number of probes:</span>
-									<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ statusCounts[filter.status] }}</Tag>
+									<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ filteredProbeCount }}</Tag>
 								</div>
 								<Button
 									class="mt-2 w-full"
@@ -251,7 +217,7 @@
 				class="mt-6"
 				:first="first"
 				:rows="itemsPerPage"
-				:total-records="paginatedRecords"
+				:total-records="filteredProbeCount"
 				:page-link-size="pageLinkSize"
 				:template="template"
 				@page="page = $event.page"
@@ -306,16 +272,17 @@
 
 <script setup lang="ts">
 	import { aggregate, readItems } from '@directus/sdk';
-	import debounce from 'lodash/debounce';
 	import CountryFlag from 'vue-country-flag-next';
 	import BigProbeIcon from '~/components/BigProbeIcon.vue';
-	import FilterSettings from '~/components/FilterSettings.vue';
+	import MobileProbeListFilters from '~/components/probe/ProbeFilters/MobileProbeListFilters.vue';
+	import ProbeListFilters from '~/components/probe/ProbeFilters/ProbeListFilters.vue';
 	import { computedDebounced } from '~/composables/computedDebounced';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';
 	import { useErrorToast } from '~/composables/useErrorToast';
-	import { type StatusCode, useProbeFilters, STATUS_MAP } from '~/composables/useProbeFilters';
+	import { useProbeFilters } from '~/composables/useProbeFilters';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { useAuth } from '~/store/auth';
 	import { minDelay } from '~/utils/min-delay';
 	import { pluralize } from '~/utils/pluralize';
 
@@ -324,6 +291,7 @@
 	const { $directus } = useNuxtApp();
 	const router = useRouter();
 	const route = useRoute();
+	const auth = useAuth();
 
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const startProbeDialog = ref(false);
@@ -336,9 +304,6 @@
 	const gmapsLoaded = ref(false);
 	const selectedProbes = ref<Probe[]>([]);
 	const deleteProbesDialog = ref(false);
-	const paginatedRecords = ref(0);
-
-	const STATUS_CODES = Object.keys(STATUS_MAP) as StatusCode[];
 
 	const { getUserFilter } = useUserFilter();
 
@@ -354,9 +319,6 @@
 		filter,
 		anyFilterApplied,
 		onSortChange,
-		onFilterChange,
-		onStatusChange,
-		onBatchChange,
 		getSortSettings,
 		getCurrentFilter,
 	} = useProbeFilters({ active });
@@ -381,7 +343,7 @@
 		},
 	);
 
-	const { data: probeCount, pending: countLoading } = await useLazyAsyncData(
+	const { data: probeCount, pending: countLoading, refresh: refreshProbeCount } = await useLazyAsyncData(
 		() => $directus.request<[{ count: number }]>(aggregate('gp_probes', {
 			query: {
 				filter: getUserFilter('userId'),
@@ -398,11 +360,18 @@
 	});
 
 	const { data: probes, pending: loading, error: probeError, refresh: refreshProbes } = await useLazyAsyncData(
-		() => minDelay($directus.request<Probe[]>(readItems('gp_probes', {
-			filter: getCurrentFilter(true),
+		() => minDelay($directus.request<ProbeWithUser[]>(readItems('gp_probes', {
+			filter: getCurrentFilter(),
 			sort: getSortSettings() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
 			offset: first.value,
 			limit: itemsPerPage.value,
+			fields: [
+				'*',
+				{ user: [ 'id', 'github_username' ] } as unknown as 'userId', // directus SDK types do not support relational fields
+			],
+			alias: {
+				user: 'userId',
+			},
 		}))),
 		{
 			watch: [ mainFetchDeps ],
@@ -411,36 +380,21 @@
 		},
 	);
 
-	const { data: statusCounts, error: statusCntError, refresh: refreshStatusCounts } = await useLazyAsyncData(
-		() => minDelay($directus.request<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
-			query: {
-				filter: getCurrentFilter(),
-				groupBy: [ 'status', 'isOutdated' ],
-			},
+	const { data: filteredProbeCount, error: filteredProbeCountError, refresh: refreshFilteredProbeCount, pending: filteredProbeCountLoading } = await useLazyAsyncData(
+		() => $directus.request<[{ count: number }]>(readItems('gp_probes', {
+			filter: getCurrentFilter(),
 			aggregate: { count: '*' },
-		}))),
+		})),
 		{
 			watch: [ filterDeps ],
-			default: () => Object.fromEntries(STATUS_CODES.map(status => [ status, 0 ])),
-			transform: (data) => {
-				const counts = Object.fromEntries(STATUS_CODES.map(status => [ status, 0 ]));
-
-				STATUS_CODES.forEach((code) => {
-					counts[code] = data.reduce((sum, status) => {
-						return STATUS_MAP[code].options.includes(status.status) && (status.isOutdated || !STATUS_MAP[code].outdatedOnly)
-							? sum + status.count
-							: sum;
-					}, 0);
-				});
-
-				return counts;
-			},
+			default: () => 0,
+			transform: data => data?.[0]?.count ?? 0,
 		},
 	);
 
-	useErrorToast(creditError, probeError, statusCntError);
+	useErrorToast(creditError, probeError, filteredProbeCountError);
 
-	const refresh = () => Promise.all([ refreshProbes(), refreshStatusCounts() ]);
+	const refresh = () => Promise.all([ refreshProbes(), refreshFilteredProbeCount(), refreshProbeCount() ]);
 
 	watch([ probes, loading ], async ([ adoptedProbes, isLoading ]) => {
 		if (isLoading) {
@@ -470,14 +424,7 @@
 		}
 	});
 
-	watch(statusCounts, (newStatusCounts) => {
-		paginatedRecords.value = newStatusCounts[filter.value.status]!;
-		hasAnyProbes.value = hasAnyProbes.value || !!newStatusCounts['all'];
-	}, { deep: true, immediate: true });
-
-	const displayPagination = computed(() => probes.value.length && probes.value.length !== statusCounts.value[filter.value.status]);
-	const onFilterChangeDebounced = debounce(() => onFilterChange(searchInput.value), 500);
-	const searchInput = ref(filter.value.search);
+	const displayPagination = computed(() => probes.value.length && !filteredProbeCountLoading.value && filteredProbeCount.value > itemsPerPage.value);
 
 	// PROBES LIST
 	onMounted(async () => {
@@ -532,10 +479,6 @@
 		deleteProbesDialog.value = false;
 		refresh();
 	};
-
-	onBeforeUnmount(() => {
-		onFilterChangeDebounced.cancel();
-	});
 
 	onBeforeRouteLeave(() => { active.value = false; });
 </script>

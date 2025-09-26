@@ -41,7 +41,7 @@
 			<span class="flex items-center font-bold">Filter:</span>
 			<IconField class="h-9 !w-full">
 				<InputIcon class="pi pi-search"/>
-				<InputText v-model="draftFilter.search" class="m-0 size-full" placeholder="Filter by name, location, or tags"/>
+				<InputText v-model="searchInput" class="m-0 size-full" placeholder="Filter by name, location, or tags" @value-change="onFilterChangeDebounced"/>
 			</IconField>
 		</InputGroup>
 
@@ -85,33 +85,33 @@
 			</div>
 		</div>
 
+		<AdminFilterSettings v-if="auth.isAdmin" v-model:filter="draftFilter"/>
+
 		<div class="mt-4 flex justify-end gap-2">
 			<Button label="Cancel" severity="secondary" text @click="emit('cancel')"/>
-			<Button label="Apply" @click="emit('apply', draftFilter)"/>
+			<Button label="Apply" @click="onBatchChange(draftFilter); emit('apply')"/>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import {
-		type StatusCode,
-		type Filter,
-		SORTABLE_FIELDS,
-		STATUS_MAP,
-	} from '~/composables/useProbeFilters';
+	import { aggregate } from '@directus/sdk';
+	import debounce from 'lodash/debounce';
+	import AdminFilterSettings from '~/components/probe/ProbeFilters/AdminFilterSettings.vue';
+	import { useErrorToast } from '~/composables/useErrorToast';
+	import { type StatusCode, SORTABLE_FIELDS, STATUS_MAP, useProbeFilters } from '~/composables/useProbeFilters';
+	import { useAuth } from '~/store/auth';
 
-	const { filter, statusCounts } = defineProps({
-		filter: {
-			required: true,
-			type: Object as PropType<Filter>,
-		},
-		statusCounts: {
-			required: true,
-			type: Object as PropType<Record<StatusCode, number>>,
-		},
-	});
+	const auth = useAuth();
+	const { $directus } = useNuxtApp();
 
-	const draftFilter = ref({ ...filter });
+	const { filter, getDirectusFilter, onBatchChange } = useProbeFilters();
+
+	const draftFilter = ref({ ...filter.value });
+	const draftFilterDeps = computed(() => ({ ...draftFilter.value }));
+
+	const searchInput = ref(draftFilter.value.search);
+	const onFilterChangeDebounced = debounce(() => draftFilter.value.search = searchInput.value, 300);
 
 	const STATUS_CODES = Object.keys(STATUS_MAP) as StatusCode[];
 
@@ -121,8 +121,36 @@
 		tags: 'Tag count',
 	};
 
+	const { data: statusCounts, error: statusCountError } = await useLazyAsyncData(
+		() => $directus.request<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
+			query: {
+				filter: getDirectusFilter(draftFilter, [ 'status' ]),
+				groupBy: [ 'status', 'isOutdated' ],
+			},
+			aggregate: { count: '*' },
+		})),
+		{
+			watch: [ draftFilterDeps ],
+			default: () => Object.fromEntries(STATUS_CODES.map(status => [ status, 0 ])),
+			transform: (data) => {
+				const counts = Object.fromEntries(STATUS_CODES.map(status => [ status, 0 ]));
+
+				STATUS_CODES.forEach((code) => {
+					counts[code] = data.reduce((sum, status) => {
+						return STATUS_MAP[code].options.includes(status.status) && (status.isOutdated || !STATUS_MAP[code].outdatedOnly)
+							? sum + status.count
+							: sum;
+					}, 0);
+				});
+
+				return counts;
+			},
+		},
+	);
+
+	useErrorToast(statusCountError);
+
 	const emit = defineEmits<{
-		(e: 'cancel'): void;
-		(e: 'apply', payload: Filter): void;
+		(e: 'cancel' | 'apply'): void;
 	}>();
 </script>

@@ -121,6 +121,8 @@ declare global {
 		customLocation: CustomLocation<TCountry>;
 	};
 
+	type ProbeWithUser<TCountry extends string = string> = Probe<TCountry> & { user: Partial<User> };
+
 	type User = {
 		id: string;
 		first_name: string | null;

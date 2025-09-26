@@ -3,8 +3,10 @@ import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUserFilter } from '~/composables/useUserFilter';
 import { ONLINE_STATUSES, OFFLINE_STATUSES } from '~/constants/probes';
+import { useAuth } from '~/store/auth';
 
 export type StatusCode = 'all' | 'online' | 'ping-test-failed' | 'offline' | 'online-outdated';
+export type AdoptionOption = 'all' | 'adopted' | 'non-adopted';
 
 type StatusOption = {
 	name: string;
@@ -17,9 +19,10 @@ export interface Filter {
 	status: StatusCode;
 	by: string;
 	desc: boolean;
+	adoption: AdoptionOption;
 }
 
-const DEFAULT_FILTER: Filter = { search: '', status: 'all', by: 'name', desc: false } as const;
+const DEFAULT_FILTER: Filter = { search: '', status: 'all', by: 'name', desc: false, adoption: 'all' } as const;
 
 export const SORTABLE_FIELDS: string[] = [ 'name', 'location', 'tags' ] as const;
 
@@ -31,12 +34,15 @@ export const STATUS_MAP: Record<StatusCode, StatusOption> = {
 	'offline': { name: 'Offline', options: OFFLINE_STATUSES },
 } as const;
 
+export const ADOPTION_OPTIONS: string[] = [ 'all', 'adopted', 'non-adopted' ] as const;
+
 interface ProbeFiltersOptions {
 	active?: MaybeRefOrGetter<boolean>;
 }
 
 export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {}) => {
 	const route = useRoute();
+	const auth = useAuth();
 	const { getUserFilter } = useUserFilter();
 
 	const filter = ref<Filter>({ ...DEFAULT_FILTER });
@@ -46,8 +52,8 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 		const { sortField = '', sortOrder = 1 } = event;
 
 		if (!sortOrder || typeof sortField !== 'string' || !SORTABLE_FIELDS.includes(sortField)) {
-			filter.value.by = 'name';
-			filter.value.desc = false;
+			filter.value.by = DEFAULT_FILTER.by;
+			filter.value.desc = DEFAULT_FILTER.desc;
 		} else {
 			filter.value.by = sortField;
 			filter.value.desc = sortOrder === -1;
@@ -68,9 +74,10 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 
 	const constructQuery = () => ({
 		...filter.value.search && { filter: filter.value.search },
-		...filter.value.by !== 'name' && { by: filter.value.by },
+		...!isDefault('by') && { by: filter.value.by },
 		...filter.value.desc && { desc: 'true' },
-		...filter.value.status !== 'all' && { status: filter.value.status },
+		...!isDefault('status') && { status: filter.value.status },
+		...auth.isAdmin && !isDefault('adoption') && { adoption: filter.value.adoption },
 	});
 
 	const onParamChange = () => {
@@ -100,19 +107,33 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 		}
 	};
 
-	const getCurrentFilter = (includeStatus: boolean = false) => ({
-		...getUserFilter('userId'),
-		...filter.value.search && { searchIndex: { _icontains: filter.value.search } },
-		...includeStatus && filter.value.status !== 'all' && { status: { _in: STATUS_MAP[filter.value.status].options } },
-		...includeStatus && filter.value.status === 'online-outdated' && { isOutdated: { _eq: true } },
-	});
+	const getCurrentFilter = (ignoredFields: Array<keyof Filter> = []) => getDirectusFilter(filter, ignoredFields);
+
+	const getDirectusFilter = (filter: MaybeRefOrGetter<Filter>, ignoredFields: Array<keyof Filter> = []) => {
+		const filterValue = toValue(filter);
+
+		return {
+			...getUserFilter('userId'),
+			...filterValue.search && { searchIndex: { _icontains: filterValue.search } },
+			...!ignoredFields.includes('status') && !isDefault('status', filter) && { status: { _in: STATUS_MAP[filterValue.status].options } },
+			...!ignoredFields.includes('status') && filterValue.status === 'online-outdated' && { isOutdated: { _eq: true } },
+			...!ignoredFields.includes('adoption') && auth.isAdmin && !isDefault('adoption', filter) && {
+				userId: filterValue.adoption === 'adopted' ? { _neq: null } : { _eq: null },
+			},
+		};
+	};
+
+	const isDefault = (field: keyof Filter, filterObj: MaybeRefOrGetter<Filter> = filter) => {
+		return toValue(filterObj)[field] === DEFAULT_FILTER[field];
+	};
 
 	watch([
 		() => route.query.filter,
 		() => route.query.by,
 		() => route.query.desc,
 		() => route.query.status,
-	], async ([ search, by, desc, status ]) => {
+		() => route.query.adoption,
+	], async ([ search, by, desc, status, adoption ]) => {
 		if (!toValue(active)) {
 			return;
 		}
@@ -140,6 +161,12 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 		} else {
 			filter.value.status = DEFAULT_FILTER.status;
 		}
+
+		if (typeof adoption === 'string' && ADOPTION_OPTIONS.includes(adoption) && auth.isAdmin) {
+			filter.value.adoption = adoption as AdoptionOption;
+		} else {
+			filter.value.adoption = DEFAULT_FILTER.adoption;
+		}
 	}, { immediate: true });
 
 	return {
@@ -149,10 +176,13 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 		// handlers
 		onSortChange,
 		onFilterChange,
-		onStatusChange: () => onParamChange(),
+		onParamChange,
 		onBatchChange,
 		// builders
 		getSortSettings,
 		getCurrentFilter,
+		getDirectusFilter,
+		// helpers
+		isDefault,
 	};
 };

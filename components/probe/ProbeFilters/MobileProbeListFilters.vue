@@ -121,7 +121,7 @@
 		tags: 'Tag count',
 	};
 
-	const { data: statusCounts, error: statusCntError } = await useLazyAsyncData(
+	const { data: statusCounts, error: statusCountError } = await useLazyAsyncData(
 		() => $directus.request<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
 			query: {
 				filter: getDirectusFilter(draftFilter, [ 'status' ]),
@@ -148,7 +148,7 @@
 		},
 	);
 
-	useErrorToast(statusCntError);
+	useErrorToast(statusCountError);
 
 	const emit = defineEmits<{
 		(e: 'cancel' | 'apply'): void;

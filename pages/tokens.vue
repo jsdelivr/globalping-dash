@@ -253,7 +253,7 @@
 		},
 	);
 
-	const { data: tokensCount, pending: tokenCountPending, error: tokenCntError, refresh: refreshTokenCount } = await useAsyncData(
+	const { data: tokensCount, pending: tokenCountPending, error: tokenCountError, refresh: refreshTokenCount } = await useAsyncData(
 		() => $directus.request<[{ count: number }]>(aggregate(
 			'gp_tokens',
 			{
@@ -454,5 +454,5 @@
 	};
 
 	// ERROR HANDLING
-	useErrorToast(tokenError, tokenCntError, applicationError);
+	useErrorToast(tokenError, tokenCountError, applicationError);
 </script>

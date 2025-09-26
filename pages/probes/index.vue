@@ -141,7 +141,7 @@
 							class="!left-1/2 w-[95%] !-translate-x-1/2 !transform p-6 [&>*]:border-none"
 							role="dialog">
 							<MobileProbeListFilters
-								@apply="() => {mobileFiltersRef.toggle()}"
+								@apply="() => mobileFiltersRef.toggle()"
 								@cancel="mobileFiltersRef.hide()"
 							/>
 						</Popover>
@@ -376,7 +376,7 @@
 		},
 	);
 
-	const { data: filteredProbeCount, error: filteredProbeCntErr, refresh: refreshFilteredProbeCnt, pending: filteredProbeCntLoading } = await useLazyAsyncData(
+	const { data: filteredProbeCount, error: filteredProbeCountError, refresh: refreshFilteredProbeCount, pending: filteredProbeCountLoading } = await useLazyAsyncData(
 		() => $directus.request<[{ count: number }]>(readItems('gp_probes', {
 			filter: getCurrentFilter(),
 			aggregate: { count: '*' },
@@ -388,9 +388,9 @@
 		},
 	);
 
-	useErrorToast(creditError, probeError, filteredProbeCntErr);
+	useErrorToast(creditError, probeError, filteredProbeCountError);
 
-	const refresh = () => Promise.all([ refreshProbes(), refreshFilteredProbeCnt(), refreshProbeCount() ]);
+	const refresh = () => Promise.all([ refreshProbes(), refreshFilteredProbeCount(), refreshProbeCount() ]);
 
 	watch([ probes, loading ], async ([ adoptedProbes, isLoading ]) => {
 		if (isLoading) {
@@ -420,7 +420,7 @@
 		}
 	});
 
-	const displayPagination = computed(() => probes.value.length && !filteredProbeCntLoading.value && filteredProbeCount.value > itemsPerPage.value);
+	const displayPagination = computed(() => probes.value.length && !filteredProbeCountLoading.value && filteredProbeCount.value > itemsPerPage.value);
 
 	// PROBES LIST
 	onMounted(async () => {

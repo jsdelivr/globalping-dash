@@ -81,7 +81,7 @@
 	const adminOptsRef = ref();
 	const STATUS_CODES = Object.keys(STATUS_MAP) as StatusCode[];
 
-	const { data: statusCounts, error: statusCntError } = await useLazyAsyncData(
+	const { data: statusCounts, error: statusCountError } = await useLazyAsyncData(
 		() => $directus.request<[{ count: number; status: Status; isOutdated: boolean }]>(aggregate('gp_probes', {
 			query: {
 				filter: getDirectusFilter(filter, [ 'status' ]),
@@ -108,7 +108,7 @@
 		},
 	);
 
-	useErrorToast(statusCntError);
+	useErrorToast(statusCountError);
 
 	onBeforeUnmount(() => {
 		onFilterChangeDebounced.cancel();

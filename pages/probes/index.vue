@@ -19,7 +19,7 @@
 				<span class="font-bold">Adopt a probe</span>
 			</Button>
 		</div>
-		<div v-if="hasAnyProbes || loading || countLoading">
+		<div v-if="hasAnyProbes || firstLoading || countLoading">
 			<div class="max-md:hidden">
 				<DataTable
 					ref="dataTableRef"
@@ -32,7 +32,7 @@
 					sort-mode="single"
 					:sort-field="filter.by"
 					:sort-order="filter.desc ? -1 : 1"
-					:loading="firstLoading || !hasAnyProbes"
+					:loading="firstLoading"
 					:row-class="() => 'cursor-pointer hover:bg-surface-50 dark:hover:bg-dark-700'"
 					:pt="{footer: '!pt-0 border-t-0'}"
 					:pt-options="{ mergeProps: true }"
@@ -352,7 +352,7 @@
 	);
 
 	watch(probeCount, (newProbeCount) => {
-		hasAnyProbes.value = hasAnyProbes.value || !!newProbeCount;
+		hasAnyProbes.value = !!newProbeCount;
 	});
 
 	const { data: probes, pending: loading, error: probeError, refresh: refreshProbes } = await useLazyAsyncData(

@@ -339,7 +339,7 @@
 		},
 	);
 
-	const { data: probeCount, pending: countLoading } = await useLazyAsyncData(
+	const { data: probeCount, pending: countLoading, refresh: refreshProbeCount } = await useLazyAsyncData(
 		() => $directus.request<[{ count: number }]>(aggregate('gp_probes', {
 			query: {
 				filter: getUserFilter('userId'),
@@ -352,7 +352,7 @@
 	);
 
 	watch(probeCount, (newProbeCount) => {
-		hasAnyProbes.value = !!newProbeCount;
+		hasAnyProbes.value = hasAnyProbes.value || !!newProbeCount;
 	});
 
 	const { data: probes, pending: loading, error: probeError, refresh: refreshProbes } = await useLazyAsyncData(
@@ -390,7 +390,7 @@
 
 	useErrorToast(creditError, probeError, filteredProbeCntErr);
 
-	const refresh = () => Promise.all([ refreshProbes(), refreshFilteredProbeCnt() ]);
+	const refresh = () => Promise.all([ refreshProbes(), refreshFilteredProbeCnt(), refreshProbeCount() ]);
 
 	watch([ probes, loading ], async ([ adoptedProbes, isLoading ]) => {
 		if (isLoading) {

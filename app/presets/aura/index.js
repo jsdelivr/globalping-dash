@@ -32,7 +32,7 @@ import drawer from './drawer';
 // import fileupload from './fileupload';
 // import floatlabel from './floatlabel';
 // import galleria from './galleria';
-import global from './global.js';
+import global from './global';
 import iconfield from './iconfield';
 // import image from './image';
 // import inplace from './inplace';

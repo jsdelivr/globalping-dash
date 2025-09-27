@@ -25,9 +25,9 @@
 		"@nuxtjs/google-fonts": "^3.2.0",
 		"@nuxtjs/tailwindcss": "^6.14.0",
 		"@pinia/nuxt": "^0.11.1",
-		"@primevue/forms": "4.3.6",
+		"@primevue/forms": "4.3.9",
 		"@primevue/nuxt-module": "4.3.9",
-		"@primevue/themes": "4.3.6",
+		"@primevue/themes": "4.3.9",
 		"@vueuse/core": "^13.4.0",
 		"@vueuse/nuxt": "^13.4.0",
 		"chart.js": "^4.5.0",
@@ -36,7 +36,7 @@
 		"nuxt3-interpolation": "^1.0.16",
 		"pinia": "^3.0.3",
 		"primeicons": "^7.0.0",
-		"primevue": "4.3.6",
+		"primevue": "4.3.9",
 		"tailwindcss": "^3.4.17",
 		"tailwindcss-primeui": "^0.6.1",
 		"vue": "^3.5.17",
@@ -67,7 +67,7 @@
 	},
 	"pnpm": {
 		"patchedDependencies": {
-			"primevue@4.3.6": "patches/primevue@4.3.6.patch",
+			"primevue@4.3.9": "patches/primevue@4.3.9.patch",
 			"@primevue/nuxt-module": "patches/@primevue__nuxt-module.patch"
 		}
 	},

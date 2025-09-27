@@ -58,7 +58,7 @@
 									<div class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 px-2">
 										<BigProbeIcon class="inset-y-0 col-span-1 row-span-2 my-auto" :probe="slotProps.data" border/>
 										<p class="wrap-anywhere col-start-2 col-end-3 font-bold">
-											{{ slotProps.data.name || slotProps.data.city }}<span v-if="auth.isAdmin">,
+											{{ slotProps.data.name || slotProps.data.city }}<span v-if="auth.adminMode">,
 												<span class="font-normal text-bluegray-800 dark:text-bluegray-300">
 													{{slotProps.data.user?.github_username ?? 'not adopted'}}
 												</span>
@@ -157,7 +157,7 @@
 											<BigProbeIcon class="inset-y-0 col-span-1 row-span-2 my-auto" :probe="probe" border/>
 											<div class="col-start-2 col-end-3 flex flex-wrap items-center gap-x-1 font-bold">
 												<p class="wrap-anywhere col-start-2 col-end-3 font-bold">
-													{{ probe.name || probe.city }}<span v-if="auth.isAdmin">,
+													{{ probe.name || probe.city }}<span v-if="auth.adminMode">,
 														<span class="font-normal text-bluegray-800 dark:text-bluegray-300">
 															{{probe.user?.github_username ?? 'not adopted'}}
 														</span>

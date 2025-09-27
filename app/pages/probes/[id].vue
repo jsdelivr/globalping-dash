@@ -88,11 +88,11 @@
 				</div>
 			</show-more>
 
-			<Message v-if="isOutdated(probeDetails?.hardwareDeviceFirmware, metadata.targetHardwareDeviceFirmware)" severity="warn" icon="pi pi-exclamation-triangle">
+			<Message v-if="probeDetails?.isOutdated && probeDetails.hardwareDevice" severity="warn" icon="pi pi-exclamation-triangle">
 				Your hardware probe is running an outdated firmware and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="https://github.com/jsdelivr/globalping-hwprobe#download-the-latest-firmware" target="_blank">our guide</NuxtLink> to update it manually.
 			</Message>
 
-			<Message v-else-if="isOutdated(probeDetails?.nodeVersion, metadata.targetNodeVersion)" severity="warn" icon="pi pi-exclamation-triangle">
+			<Message v-else-if="probeDetails?.isOutdated && !probeDetails.hardwareDevice" severity="warn" icon="pi pi-exclamation-triangle">
 				Your probe container is running an outdated software and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="#" @click="updateProbeDialog = true">our guide</NuxtLink> to update it manually.
 			</Message>
 
@@ -129,8 +129,7 @@
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useProbeDetailTabs } from '~/composables/useProbeDetailTabs';
 	import { useAuth } from '~/store/auth';
-	import { useMetadata } from '~/store/metadata.js';
-	import { getProbeStatusColor, getProbeStatusText, isOutdated } from '~/utils/probe-status';
+	import { getProbeStatusColor, getProbeStatusText } from '~/utils/probe-status';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();
@@ -138,7 +137,6 @@
 	const router = useRouter();
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
-	const metadata = useMetadata();
 	const probeId = route.params.id as string;
 	const probeDetailsUpdating = ref(false);
 	const updateProbeDialog = ref(false);

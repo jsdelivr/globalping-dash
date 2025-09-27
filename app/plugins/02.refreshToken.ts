@@ -5,7 +5,7 @@ export default defineNuxtPlugin(async () => {
 		const auth = useAuth();
 		const expiresAt = auth.expiresAt;
 
-		if (expiresAt && expiresAt - new Date().getTime() < 3 * 60 * 1000) {
+		if (expiresAt && expiresAt - new Date().getTime() < 60 * 60 * 1000) {
 			auth.refresh();
 		}
 	}, 60 * 1000);

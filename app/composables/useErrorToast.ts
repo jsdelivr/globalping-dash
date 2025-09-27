@@ -3,7 +3,7 @@ import isEqual from 'lodash/isEqual';
 import { watch, toValue, type MaybeRefOrGetter } from 'vue';
 import { sendErrorToast } from '~/utils/send-toast';
 
-export function useErrorToast (...sources: MaybeRefOrGetter<NuxtError | null>[]) {
+export function useErrorToast (...sources: MaybeRefOrGetter<NuxtError | null | undefined>[]) {
 	return watch(
 		() => sources.map(s => toValue(s)),
 		(newVals, oldVals) => {

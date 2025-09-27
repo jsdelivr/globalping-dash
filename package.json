@@ -44,7 +44,7 @@
 		"vue-router": "^4.5.1"
 	},
 	"devDependencies": {
-		"@martin-kolarik/eslint-config": "^8.0.1",
+		"@martin-kolarik/eslint-config": "^8.0.4",
 		"@martin-kolarik/stylelint-config": "^3.0.0",
 		"@nuxt/eslint-config": "^1.4.1",
 		"@types/google.maps": "^3.58.1",

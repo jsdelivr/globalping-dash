@@ -64,7 +64,9 @@ export default defineNuxtConfig({
 			Inter: [ 400, 700 ],
 		},
 	},
-	tailwindcss: {},
+	tailwindcss: {
+		cssPath: '~/assets/css/tailwind.css',
+	},
 	typescript: {
 		typeCheck: 'build',
 	},

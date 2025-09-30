@@ -7,7 +7,7 @@ export default {
 	],
 	darkMode: 'selector',
 	content: [
-		'presets/**/*.{js,vue,ts}',
+		'app/presets/**/*.{js,vue,ts}',
 	],
 	theme: {
 		borderWidth: {

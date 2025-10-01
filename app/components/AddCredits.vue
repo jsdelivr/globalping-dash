@@ -179,19 +179,23 @@
 
 	const { data: adoptionsExists } = await useLazyAsyncData(
 		'gp_adopted_probes_exist',
-		() => $directus.request(readItems('gp_probes', {
-			filter: getUserFilter('userId'),
-			limit: 1,
-		})),
+		() => auth.isLoggedIn
+			? $directus.request(readItems('gp_probes', {
+				filter: getUserFilter('userId'),
+				limit: 1,
+			}))
+			: Promise.resolve([]),
 		{ default: () => false, transform: data => !!data.length },
 	);
 
 	const { data: sponsorshipDetails } = await useLazyAsyncData(
 		'gp_sponsorship-details',
-		() => $directus.request<SponsorshipDetails>(customEndpoint({
-			path: '/sponsorship-details',
-			params: { userId: auth.user.id },
-		})),
+		() => auth.isLoggedIn
+			? $directus.request<SponsorshipDetails>(customEndpoint({
+				path: '/sponsorship-details',
+				params: { userId: auth.user.id },
+			}))
+			: Promise.resolve({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }),
 		{ default: () => ({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }) },
 	);
 

@@ -7,7 +7,7 @@
 
 			<AsyncBlock :status="statusProbes">
 				<div class="p-4 sm:p-6">
-					<div class="flex max-sm:flex-wrap">
+					<div class="flex max-sm:flex-wrap sm:h-14">
 						<div class="flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:bg-surface-50 max-sm:p-4 max-sm:dark:bg-dark-700">
 							<BigIcon name="gp" border/>
 							<div><span data-testid="probes-count" class="mx-2 text-3xl font-bold">{{ adoptedProbes.length }}</span>{{ pluralize('Probe', adoptedProbes.length) }}</div>
@@ -58,24 +58,25 @@
 
 			<AsyncBlock :status="statusCredits">
 				<div class="p-4 sm:p-6">
-					<div class="flex gap-x-2 max-sm:flex-wrap">
+					<div class="flex gap-2 max-sm:flex-wrap sm:h-14">
 						<div class="flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:bg-surface-50 max-sm:p-4 max-sm:dark:bg-dark-700">
 							<BigIcon name="coin" border/>
 							<div><span data-testid="total-credits" class="mx-2 text-3xl font-bold">{{ total.toLocaleString('en-US') }}</span>Total</div>
 						</div>
-						<div class="-mb-1 -mt-3 ml-auto flex flex-col items-center rounded-md border px-4 pt-2 max-sm:ml-0 max-sm:mt-3 max-sm:py-2">
+						<div class="ml-auto flex flex-col items-center rounded-md border px-4 py-2 max-sm:ml-0 max-sm:mt-3 max-sm:py-2">
 							<div>
 								<span data-testid="credits-from-probes" class="p-button-label font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500 dark:text-bluegray-400': !perDay }">+{{ perDay.toLocaleString('en-US') }}</span>
 								<span>&nbsp;/ day</span>
 							</div>
 							<div class="text-xs font-semibold text-bluegray-500">from probes</div>
 						</div>
-						<div :class="{ 'border-yellow-200 bg-yellow-50/80 dark:border-yellow-500/20 dark:bg-yellow-500/10': credits?.fromSponsorship }" class="-mb-1 -mt-3 ml-0 flex flex-col items-center rounded-md border px-4 pt-2 max-sm:mt-3 max-sm:py-2">
+						<div :class="{ 'border-yellow-200 bg-yellow-50/80 dark:border-yellow-500/20 dark:bg-yellow-500/10': credits?.fromSponsorship }" class="relative ml-0 flex flex-col items-center rounded-md border px-4 py-2 max-sm:mt-3 max-sm:py-2">
 							<div>
 								<span data-testid="credits-from-sponsorship" class="p-button-label font-bold" :class="{ 'text-green-500': credits?.fromSponsorship, 'text-bluegray-500 dark:text-bluegray-400': !credits?.fromSponsorship }">+{{ credits?.fromSponsorship.toLocaleString('en-US') }}</span>
 								<span>&nbsp;/ month</span>
 							</div>
 							<div :class="{'!text-yellow-500 dark:!text-yellow-500/90': credits?.fromSponsorship}" class="text-xs font-semibold text-bluegray-500">from sponsorship</div>
+							<span v-if="sponsorshipDetails.bonus" class="absolute -top-3 right-0 translate-x-[min(calc(50%),1rem)] rounded-full bg-primary p-1 text-[0.75rem] font-semibold text-white">+{{sponsorshipDetails.bonus}}%</span>
 						</div>
 					</div>
 					<div class="mt-6 flex items-center text-nowrap">
@@ -173,7 +174,7 @@
 
 <script setup lang="ts">
 	import { NuxtLink } from '#components';
-	import { readItems } from '@directus/sdk';
+	import { customEndpoint, readItems } from '@directus/sdk';
 	import countBy from 'lodash/countBy';
 	import isEmpty from 'lodash/isEmpty';
 	import CountryFlag from 'vue-country-flag-next';
@@ -245,7 +246,17 @@
 
 	const perDay = computed(() => adoptedProbes.value.reduce((sum, { onlineTimesToday }) => sum += onlineTimesToday ? creditsPerAdoptedProbe : 0, 0));
 
-	useErrorToast(probesError, creditsError);
+	// SPONSORSHIP
+	const { data: sponsorshipDetails, error: sponsorshipDetailsError } = await useLazyAsyncData(
+		'gp_sponsorship-details',
+		() => $directus.request<SponsorshipDetails>(customEndpoint({
+			path: '/sponsorship-details',
+			params: { userId: auth.user.id },
+		})),
+		{ default: () => ({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }) },
+	);
+
+	useErrorToast(probesError, creditsError, sponsorshipDetailsError);
 
 	// ADOPT PROBE DIALOG
 

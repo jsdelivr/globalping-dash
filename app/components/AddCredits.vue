@@ -16,7 +16,7 @@
 					Create a free account to help us fight abuse and get access to higher limits and extra features.
 				</p>
 				<div
-					class="mt-1 rounded-xl p-2"
+					class="mt-1 rounded-xl p-2 max-md:p-4"
 					:class="{
 						'bg-surface-50 dark:bg-dark-800': !step1Completed,
 						'bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] dark:from-dark-800 dark:to-dark-800': step1Completed,
@@ -68,7 +68,7 @@
 					Become a member of the community by hosting a probe. For each day your probe stays online, you will get additional free credits.
 				</p>
 				<div
-					class="mt-1 rounded-xl bg-surface-50 p-2 dark:bg-dark-700"
+					class="mt-1 rounded-xl bg-surface-50 p-2 max-md:p-4 dark:bg-dark-700"
 					:class="{
 						'border': !step1Completed,
 						'bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] dark:from-dark-800 dark:to-dark-800': step2Completed,
@@ -118,7 +118,7 @@
 					Support the active development of the project by a one-time or monthly donation.
 				</p>
 				<div
-					class="mt-1 rounded-xl bg-surface-50 p-2 dark:bg-dark-700"
+					class="mt-1 flex flex-col gap-2 rounded-xl bg-surface-50 p-2 max-md:p-4 dark:bg-dark-700"
 					:class="{
 						'border': !step1Completed,
 						'bg-gradient-to-r from-[#F4FCF7] to-[#E5FCF6] dark:from-dark-800 dark:to-dark-800': step3Completed,
@@ -126,7 +126,7 @@
 					}"
 				>
 					<div class="flex items-center justify-between max-sm:flex-col max-sm:text-center">
-						<div class="ml-2">You get <span class=" ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="font-bold" :class="{'text-primary': step3Completed}">+{{ creditsPerDollar }} credits</span> / $1</span></div>
+						<div class="ml-2">You get <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="font-bold" :class="{'text-primary': step3Completed}">+{{ (creditsPerDollar * (1 + sponsorshipDetails.bonus/100)).toFixed() }} credits</span> / $1</span></div>
 						<Button
 							v-if="!step1Completed"
 							disabled
@@ -147,6 +147,10 @@
 							<Button label="Become a sponsor"/>
 						</NuxtLink>
 					</div>
+					<div class="ml-1.5 border-l-2 border-l-primary bg-white p-3 pl-4 dark:bg-dark-700">
+						The base reward is 4000 credits per $1 donated, with up to a 1500% bonus based on your donation history.
+						<span v-if="step3Completed && sponsorshipDetails.bonus">You currently receive a {{sponsorshipDetails.bonus}}% bonus.</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -160,7 +164,7 @@
 </template>
 
 <script setup lang="ts">
-	import { readItems } from '@directus/sdk';
+	import { customEndpoint, readItems } from '@directus/sdk';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
@@ -180,6 +184,15 @@
 			limit: 1,
 		})),
 		{ default: () => false, transform: data => !!data.length },
+	);
+
+	const { data: sponsorshipDetails } = await useLazyAsyncData(
+		'gp_sponsorship-details',
+		() => $directus.request<SponsorshipDetails>(customEndpoint({
+			path: '/sponsorship-details',
+			params: { userId: auth.user.id },
+		})),
+		{ default: () => ({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }) },
 	);
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;

@@ -253,7 +253,7 @@
 			path: '/sponsorship-details',
 			params: { userId: auth.user.id },
 		})),
-		{ default: () => ({ bonus: 0 }) },
+		{ default: () => ({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }) },
 	);
 
 	useErrorToast(probesError, creditsError, sponsorshipDetailsError);

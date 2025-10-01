@@ -149,7 +149,7 @@
 					</div>
 					<div class="ml-1.5 border-l-2 border-l-primary bg-white p-3 pl-4 dark:bg-dark-700">
 						The base reward is 4000 credits per $1 donated, with up to a 1500% bonus based on your donation history.
-						<span v-if="step3Completed && sponsorshipDetails.bonus">You currently receive a {{sponsorshipDetails.bonus}}% bonus.</span>
+						<span v-if="sponsorshipDetails.bonus">You currently receive a {{sponsorshipDetails.bonus}}% bonus.</span>
 					</div>
 				</div>
 			</div>

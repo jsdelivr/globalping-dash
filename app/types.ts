@@ -219,4 +219,10 @@ declare global {
 		level?: string;
 		timestamp?: string;
 	};
+
+	type SponsorshipDetails = {
+		bonus: number;
+		donatedInLastYear: number;
+		donatedByMonth: number[];
+	};
 }

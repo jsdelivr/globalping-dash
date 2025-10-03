@@ -14,7 +14,7 @@
 	const wrapperHeight = ref('auto');
 	const initialWrapperHeight = ref('auto');
 	const isExpanding = ref(false);
-	const { width } = useElementSize(wrapperRef);
+	const { width: containerWidth } = useElementSize(wrapperRef);
 	const windowSize = useWindowSize();
 	const lastWindowWidth = ref(windowSize.width.value);
 
@@ -54,7 +54,7 @@
 		updateWrapperHeight();
 	}, { flush: 'post' });
 
-	watch(width, () => {
+	watch(containerWidth, () => {
 		const currentWindowWidth = windowSize.width.value;
 		updateWrapperHeight(lastWindowWidth.value !== currentWindowWidth);
 		lastWindowWidth.value = currentWindowWidth;

@@ -30,9 +30,11 @@
 
 	onMounted(() => {
 		if (wrapperRef.value) {
-			const initialHeight = `${wrapperRef.value.scrollHeight}px`;
-			initialWrapperHeight.value = initialHeight;
-			wrapperHeight.value = initialHeight;
+			requestAnimationFrame(() => {
+				const initialHeight = `${wrapperRef.value!.scrollHeight}px`;
+				initialWrapperHeight.value = initialHeight;
+				wrapperHeight.value = initialHeight;
+			});
 		}
 	});
 

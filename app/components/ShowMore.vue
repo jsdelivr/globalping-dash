@@ -14,6 +14,7 @@
 	const wrapperHeight = ref('auto');
 	const initialWrapperHeight = ref('auto');
 	const isExpanding = ref(false);
+	const { width } = useElementSize(wrapperRef);
 
 	const props = defineProps({
 		duration: {
@@ -43,7 +44,7 @@
 		}, props.duration);
 	});
 
-	watch(expanded, () => {
+	watch([ expanded, width ], () => {
 		updateWrapperHeight();
 	}, { flush: 'post' });
 

@@ -15,6 +15,8 @@
 	const initialWrapperHeight = ref('auto');
 	const isExpanding = ref(false);
 	const { width } = useElementSize(wrapperRef);
+	const windowSize = useWindowSize();
+	const lastWindowWidth = ref(windowSize.width.value);
 
 	const props = defineProps({
 		duration: {
@@ -29,6 +31,8 @@
 	});
 
 	onMounted(() => {
+		lastWindowWidth.value = windowSize.width.value;
+
 		if (wrapperRef.value) {
 			requestAnimationFrame(() => {
 				const initialHeight = `${wrapperRef.value!.scrollHeight}px`;
@@ -46,14 +50,14 @@
 		}, props.duration);
 	});
 
-	watch([ expanded, width ], () => {
+	watch(expanded, () => {
 		updateWrapperHeight();
 	}, { flush: 'post' });
 
-	const windowSize = useWindowSize();
-
-	watch(windowSize.width, () => {
-		updateWrapperHeight(true);
+	watch(width, () => {
+		const currentWindowWidth = windowSize.width.value;
+		updateWrapperHeight(lastWindowWidth.value !== currentWindowWidth);
+		lastWindowWidth.value = currentWindowWidth;
 	}, { flush: 'post' });
 
 	const updateWrapperHeight = async (onResize: boolean = false) => {

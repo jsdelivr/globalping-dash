@@ -14,6 +14,9 @@
 	const wrapperHeight = ref('auto');
 	const initialWrapperHeight = ref('auto');
 	const isExpanding = ref(false);
+	const { width: containerWidth } = useElementSize(wrapperRef);
+	const { width: windowWidth } = useWindowSize();
+	const lastWindowWidth = ref(windowWidth.value);
 
 	const props = defineProps({
 		duration: {
@@ -28,10 +31,14 @@
 	});
 
 	onMounted(() => {
+		lastWindowWidth.value = windowWidth.value;
+
 		if (wrapperRef.value) {
-			const initialHeight = `${wrapperRef.value.scrollHeight}px`;
-			initialWrapperHeight.value = initialHeight;
-			wrapperHeight.value = initialHeight;
+			requestAnimationFrame(() => {
+				const initialHeight = `${wrapperRef.value!.scrollHeight}px`;
+				initialWrapperHeight.value = initialHeight;
+				wrapperHeight.value = initialHeight;
+			});
 		}
 	});
 
@@ -47,19 +54,22 @@
 		updateWrapperHeight();
 	}, { flush: 'post' });
 
-	const windowSize = useWindowSize();
-
-	watch(windowSize.width, () => {
-		updateWrapperHeight(true);
+	watch(containerWidth, () => {
+		const currentWindowWidth = windowWidth.value;
+		// We only want to reset the initial wrapper height on window resize, as other wrapper width changes
+		// can only happen during the expansion animation and do not affect the initial wrapper height.
+		// They may, however, alter the true height of the wrapper.
+		updateWrapperHeight(lastWindowWidth.value !== currentWindowWidth);
+		lastWindowWidth.value = currentWindowWidth;
 	}, { flush: 'post' });
 
-	const updateWrapperHeight = async (onResize: boolean = false) => {
+	const updateWrapperHeight = async (resetInitialHeight: boolean = false) => {
 		if (!wrapperRef.value) {
 			return;
 		}
 
 		// Reset the state on window resize as the initial content height might change.
-		if (onResize) {
+		if (resetInitialHeight) {
 			expanded.value = false;
 			initialWrapperHeight.value = 'auto';
 			wrapperHeight.value = 'auto';

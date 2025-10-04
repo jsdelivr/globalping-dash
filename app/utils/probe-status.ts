@@ -28,7 +28,7 @@ export const getProbeStatusColor = (probe: Probe) => {
 };
 
 export const getOfflineDurationText = (probe: Probe) => {
-	if (probe.status !== 'offline') {
+	if (probe.status !== 'offline' || !Date.parse(probe.lastSyncDate)) {
 		return undefined;
 	}
 
@@ -43,8 +43,8 @@ export const getOfflineDurationText = (probe: Probe) => {
 };
 
 export const getProbeStatusText = (probe: Probe, showOfflineDuration = false) => {
-	if (probe.status === 'offline' && showOfflineDuration) {
-		return getOfflineDurationText(probe);
+	if (showOfflineDuration && probe.status === 'offline') {
+		return getOfflineDurationText(probe) ?? 'Offline';
 	}
 
 	return capitalize(getExtendedProbeStatus(probe).replaceAll('-', ' '));

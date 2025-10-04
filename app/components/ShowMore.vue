@@ -56,6 +56,9 @@
 
 	watch(containerWidth, () => {
 		const currentWindowWidth = windowWidth.value;
+		// We only want to reset the initial wrapper height on window resize, as other wrapper width changes
+		// can only happen during the expansion animation and do not affect the initial wrapper height.
+		// They may, however, alter the true height of the wrapper.
 		updateWrapperHeight(lastWindowWidth.value !== currentWindowWidth);
 		lastWindowWidth.value = currentWindowWidth;
 	}, { flush: 'post' });

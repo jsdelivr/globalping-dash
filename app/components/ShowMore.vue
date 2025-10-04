@@ -63,13 +63,13 @@
 		lastWindowWidth.value = currentWindowWidth;
 	}, { flush: 'post' });
 
-	const updateWrapperHeight = async (onResize: boolean = false) => {
+	const updateWrapperHeight = async (resetInitialHeight: boolean = false) => {
 		if (!wrapperRef.value) {
 			return;
 		}
 
 		// Reset the state on window resize as the initial content height might change.
-		if (onResize) {
+		if (resetInitialHeight) {
 			expanded.value = false;
 			initialWrapperHeight.value = 'auto';
 			wrapperHeight.value = 'auto';

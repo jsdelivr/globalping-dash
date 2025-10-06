@@ -12,7 +12,7 @@
 				</NuxtLink>
 
 				<div v-if="probeDetails" class="flex items-center gap-1 rounded-full border border-surface-300 py-1 md:hidden dark:border-dark-600">
-					<span class="flex items-center gap-2 pl-3">
+					<span v-tooltip.top="getOfflineDurationText(probeDetails)" class="flex items-center gap-2 pl-3">
 						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails)"/>
 
 						<span class="font-bold text-bluegray-900 dark:text-bluegray-0">
@@ -30,7 +30,7 @@
 				<ProbeNameInput v-model:probe-details-updating="probeDetailsUpdating" v-model:probe="probeDetails"/>
 
 				<div class="hidden items-center gap-1 rounded-full border border-surface-300 py-1 md:flex dark:border-dark-600">
-					<span class="flex items-center gap-2 pl-3">
+					<span v-tooltip.top="getOfflineDurationText(probeDetails)" class="flex items-center gap-2 pl-3">
 						<i class="pi pi-circle-fill text-[8px]" :class="getProbeStatusColor(probeDetails)"/>
 
 						<span class="font-bold text-bluegray-900 dark:text-bluegray-0">
@@ -129,7 +129,7 @@
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useProbeDetailTabs } from '~/composables/useProbeDetailTabs';
 	import { useAuth } from '~/store/auth';
-	import { getProbeStatusColor, getProbeStatusText } from '~/utils/probe-status';
+	import { getOfflineDurationText, getProbeStatusColor, getProbeStatusText } from '~/utils/probe-status';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();

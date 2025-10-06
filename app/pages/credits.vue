@@ -1,12 +1,12 @@
 <template>
-	<div class="min-h-full p-4 sm:p-6" :class="{'min-w-[640px]': creditsChanges.length}">
+	<div class="min-h-full p-4 sm:p-6">
 		<div class="mb-4 flex">
 			<h1 class="page-title">Credits</h1>
 			<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" class="ml-auto" target="_blank" rel="noopener">
 				<Button label="Become a sponsor" icon="pi pi-github"/>
 			</NuxtLink>
 		</div>
-		<div class="mt-2 flex">
+		<div class="mt-2 flex max-md:grid max-md:grid-cols-2 max-md:gap-4">
 			<div class="mr-20">
 				<p>Total credits</p>
 				<p data-testid="total-credits" class="text-lg font-bold">{{ credits.total.toLocaleString('en-US') }}</p>
@@ -36,11 +36,12 @@
 				data-key="id"
 				:total-records="creditsChangesCount"
 				:loading="loading"
+				class="max-md:hidden"
 			>
 				<Column header="Date" field="date_created" class="md:w-44 2xl:w-64"/>
 				<Column header="Comment" field="comment">
 					<template #body="slotProps">
-						{{ formatComment(slotProps.data) }}
+						{{ formatCreditComment(slotProps.data) }}
 					</template>
 				</Column>
 				<Column header="Amount" field="amount" class="md:w-44 2xl:w-64">
@@ -54,6 +55,11 @@
 					</template>
 				</Column>
 			</DataTable>
+			<div class="relative flex w-full flex-col gap-2 md:hidden">
+				<AsyncCell v-for="(creditChange, index) in creditsChanges" :key="index" class="min-h-28 min-w-full dark:opacity-20" :loading="loading">
+					<CreditItem :credit-change="creditChange"/>
+				</AsyncCell>
+			</div>
 			<Paginator
 				v-if="creditsChanges.length !== creditsChangesCount"
 				class="mt-6"
@@ -101,11 +107,13 @@
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, readItems } from '@directus/sdk';
+	import CreditItem from '~/components/list-items/CreditItem.vue';
 	import { usePagination } from '~/composables/pagination';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useMetadata } from '~/store/metadata';
 	import { formatDateForTable } from '~/utils/date-formatters';
+	import { formatCreditComment } from '~/utils/format-credit-comment';
 	import { minDelay } from '~/utils/min-delay';
 
 	useHead({
@@ -223,23 +231,4 @@
 
 	const creditsDialog = ref(false);
 	const adoptProbeDialog = ref(false);
-
-	const formatComment = (change: CreditsChange) => {
-		if (change.type === 'deduction') {
-			return 'Measurements ran on this day.';
-		}
-
-		switch (change.reason) {
-			case 'one_time_sponsorship':
-				return `One-time $${change.meta?.amountInDollars} sponsorship.`;
-			case 'recurring_sponsorship':
-				return `Recurring $${change.meta?.amountInDollars} sponsorship.`;
-			case 'tier_changed':
-				return `Sponsorship tier changed. Adding a diff of $${change.meta?.amountInDollars}.`;
-			case 'adopted_probe':
-				return `Adopted probes.`;
-			default:
-				return change.meta?.comment || 'Other';
-		}
-	};
 </script>

@@ -33,13 +33,13 @@ export const getOfflineDurationText = (probe: Probe) => {
 	}
 
 	const syncDate = new Date(probe.lastSyncDate);
-	const dayDiff = (Date.now() - syncDate.getTime()) / (1000 * 60 * 60 * 24);
+	const dayDiff = Math.floor((Date.now() - syncDate.getTime()) / (1000 * 60 * 60 * 24));
 
 	if (dayDiff < 1) {
 		return 'Offline for less than a day';
 	}
 
-	return `Offline for ${Math.floor(dayDiff)} ${pluralize('day', Math.floor(dayDiff))}`;
+	return `Offline for ${dayDiff} ${pluralize('day', dayDiff)}`;
 };
 
 export const getProbeStatusText = (probe: Probe, showOfflineDuration = false) => {

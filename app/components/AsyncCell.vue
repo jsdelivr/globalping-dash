@@ -1,5 +1,5 @@
 <template>
-	<Skeleton v-if="loading" width="10rem" class="flex self-center"/>
+	<Skeleton v-if="loading" class="flex max-w-40 self-center"/>
 	<slot v-else/>
 </template>
 

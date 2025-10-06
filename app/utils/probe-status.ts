@@ -1,4 +1,5 @@
 import capitalize from 'lodash/capitalize';
+import { pluralize } from '~/utils/pluralize';
 
 export const getExtendedProbeStatus = (probe: Probe) => {
 	if (probe.status === 'ready' && probe.isOutdated && probe.hardwareDevice) {
@@ -26,6 +27,25 @@ export const getProbeStatusColor = (probe: Probe) => {
 	}
 };
 
-export const getProbeStatusText = (probe: Probe) => {
+export const getOfflineDurationText = (probe: Probe) => {
+	if (probe.status !== 'offline' || !Date.parse(probe.lastSyncDate)) {
+		return undefined;
+	}
+
+	const syncDate = new Date(probe.lastSyncDate);
+	const dayDiff = Math.floor((Date.now() - syncDate.getTime()) / (1000 * 60 * 60 * 24));
+
+	if (dayDiff < 1) {
+		return 'Offline for less than a day';
+	}
+
+	return `Offline for ${dayDiff} ${pluralize('day', dayDiff)}`;
+};
+
+export const getProbeStatusText = (probe: Probe, showOfflineDuration = false) => {
+	if (showOfflineDuration && probe.status === 'offline') {
+		return getOfflineDurationText(probe) ?? 'Offline';
+	}
+
 	return capitalize(getExtendedProbeStatus(probe).replaceAll('-', ' '));
 };

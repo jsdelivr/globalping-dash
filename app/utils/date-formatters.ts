@@ -33,7 +33,7 @@ export const formatDateForTable = (date: string | Date | null): string => {
  * "a minute ago", "in 2 hours", "yesterday", "3 months ago", etc.
  * using Intl.RelativeTimeFormat
  */
-export function getRelativeTimeString (date: Date | string, noTime: boolean = false) {
+export function getRelativeTimeString (date: Date | string | null, noTime: boolean = false) {
 	if (!date) {
 		return '';
 	}

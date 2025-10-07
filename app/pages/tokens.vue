@@ -1,5 +1,5 @@
 <template>
-	<div class="min-h-full p-4 sm:p-6" :class="{'min-w-[640px]': tokens.length}">
+	<div class="min-h-full p-4 sm:p-6">
 		<div data-testid="tokens-table">
 			<div class="mb-4 flex">
 				<h1 class="page-title">Tokens</h1>
@@ -19,6 +19,7 @@
 					data-key="id"
 					:total-records="tokensCount"
 					:loading="loadingTokens"
+					class="max-md:hidden"
 				>
 					<Column header="Name" field="name"/>
 					<Column header="Origins">
@@ -71,6 +72,16 @@
 						</div>
 					</template>
 				</DataTable>
+				<div class="relative flex w-full flex-col gap-2 md:hidden">
+					<AsyncWrapper v-for="token in tokens" :key="token.id" :loading="loadingTokens">
+						<TokenItem
+							:token="token"
+							@edit="openTokenDetails('edit', token.id)"
+							@regenerate="openRegenerateDialog(token.id)"
+							@delete="openDeleteDialog(token.id)"
+						/>
+					</AsyncWrapper>
+				</div>
 				<Paginator
 					v-if="tokens.length !== tokensCount"
 					class="mt-6"
@@ -106,6 +117,7 @@
 					data-key="id"
 					:total-records="appsCount"
 					:loading="loadingApplications"
+					class="max-md:hidden"
 				>
 					<Column header="Name" field="name"/>
 					<Column header="Owner">
@@ -125,6 +137,14 @@
 						</template>
 					</Column>
 				</DataTable>
+				<div class="relative flex w-full flex-col gap-2 md:hidden">
+					<AsyncWrapper v-for="app in apps" :key="app.id" :loading="loadingApplications">
+						<AppItem
+							:app="app"
+							@revoke="openRevokeDialog(app.id)"
+						/>
+					</AsyncWrapper>
+				</div>
 				<Paginator
 					v-if="apps.length !== appsCount"
 					class="mt-6"
@@ -215,6 +235,9 @@
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
+	import AsyncWrapper from '~/components/AsyncWrapper.vue';
+	import AppItem from '~/components/list-items/AppItem.vue';
+	import TokenItem from '~/components/list-items/TokenItem.vue';
 	import { usePagination } from '~/composables/pagination';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';

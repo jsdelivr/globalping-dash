@@ -229,7 +229,7 @@
 				value: token,
 			}));
 
-			emit('generate', response.id, token);
+			emit('generate', response.id, token, name.value);
 		} catch (e) {
 			sendErrorToast(e);
 		}
@@ -284,7 +284,7 @@
 
 			sendToast('success', 'Done', 'The token has been successfully regenerated');
 
-			emit('regenerate', response.id, token);
+			emit('regenerate', response.id, token, name.value);
 		} catch (e) {
 			sendErrorToast(e);
 		}

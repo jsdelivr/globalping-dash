@@ -76,14 +76,35 @@
 					<div v-if="loadingTokens && !tokens.length" class="flex h-32 w-full items-center justify-center">
 						<i class="pi pi-spin pi-spinner text-xl"/>
 					</div>
-					<AsyncWrapper v-for="token in tokens" v-else :key="token.id" :loading="loadingTokens">
-						<TokenItem
-							:token="token"
-							@edit="openTokenDetails('edit', token.id)"
-							@regenerate="openRegenerateDialog(token.id)"
-							@delete="openDeleteDialog(token.id)"
-						/>
-					</AsyncWrapper>
+					<template v-else>
+						<div v-if="generatedToken && expandedTokens[generatedToken.id]" class="flex flex-col gap-4 rounded-xl bg-surface-100 p-4 dark:bg-dark-600">
+							<div class="flex gap-2">
+								<p>
+									<i class="pi pi-info-circle mr-2"/>
+									<span class="font-bold">Don't forget to copy your new access token <Tag class="bg-surface-300 dark:bg-dark-700">{{generatedToken.name}}</Tag>.</span>
+									You won’t be able to see it again.
+								</p>
+								<Button
+									icon="pi pi-times"
+									severity="secondary"
+									text
+									rounded
+									aria-label="Close"
+									class="shrink-0"
+									@click="resetState"
+								/>
+							</div>
+							<CodeBlock data-testid="token-value" :commands="[[generatedToken!.value]]"/>
+						</div>
+						<AsyncWrapper v-for="token in tokens" :key="token.id" :loading="loadingTokens">
+							<TokenItem
+								:token="token"
+								@edit="openTokenDetails('edit', token.id)"
+								@regenerate="openRegenerateDialog(token.id)"
+								@delete="openDeleteDialog(token.id)"
+							/>
+						</AsyncWrapper>
+					</template>
 				</div>
 				<Paginator
 					v-if="tokens.length !== tokensCount"
@@ -330,13 +351,13 @@
 
 	const tokenDetailsDialog = ref(false);
 
-	const expandedTokens = ref({});
-	const generatedToken = ref<{ id: number; value: string } | null>(null);
+	const expandedTokens = ref<Record<number, boolean>>({});
+	const generatedToken = ref<{ id: number; value: string; name: string } | null>(null);
 
-	const handleGenerate = async (id: number, tokenValue: string) => {
+	const handleGenerate = async (id: number, tokenValue: string, name: string) => {
 		await navigateTo('/tokens');
 		await loadTokens();
-		generatedToken.value = { id, value: tokenValue };
+		generatedToken.value = { id, value: tokenValue, name };
 		expandedTokens.value = { [id]: true };
 		tokenDetailsDialog.value = false;
 	};
@@ -348,9 +369,9 @@
 		tokenDetailsDialog.value = false;
 	};
 
-	const handleRegenerate = async (id: number, tokenValue: string) => {
+	const handleRegenerate = async (id: number, tokenValue: string, name: string) => {
 		await loadTokens();
-		generatedToken.value = { id, value: tokenValue };
+		generatedToken.value = { id, value: tokenValue, name };
 		expandedTokens.value = { [id]: true };
 		tokenDetailsDialog.value = false;
 	};
@@ -381,7 +402,7 @@
 				value: token,
 			}));
 
-			generatedToken.value = { id, value: token };
+			generatedToken.value = { id, value: token, name: tokenToRegenerate.value!.name ?? '' };
 			expandedTokens.value = { [id]: true };
 			tokenToRegenerate.value = null;
 			regenerateDialog.value = false;

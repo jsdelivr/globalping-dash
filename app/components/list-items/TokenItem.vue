@@ -29,7 +29,7 @@
 			<button aria-label="Edit token" class="rounded-lg border p-2 duration-200 hover:bg-surface-200 dark:hover:bg-dark-600" @click="emit('edit')">
 				<i class="pi pi-pencil"/>
 			</button>
-			<button aria-label="Refresh token" class="rounded-lg border p-2 duration-200 hover:bg-surface-200 dark:hover:bg-dark-600" @click="emit('regenerate')">
+			<button aria-label="Regenerate token" class="rounded-lg border p-2 duration-200 hover:bg-surface-200 dark:hover:bg-dark-600" @click="emit('regenerate')">
 				<i class="pi pi-refresh"/>
 			</button>
 			<button aria-label="Delete token" class="rounded-lg border p-2 duration-200 hover:bg-surface-200 dark:hover:bg-dark-600" @click="emit('delete')">

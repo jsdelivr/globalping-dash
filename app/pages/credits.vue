@@ -56,7 +56,10 @@
 				</Column>
 			</DataTable>
 			<div class="relative flex w-full flex-col gap-2 md:hidden">
-				<AsyncWrapper v-for="(creditChange, index) in creditsChanges" :key="index" :loading="loading">
+				<div v-if="loading && !creditsChanges.length" class="flex h-32 w-full items-center justify-center">
+					<i class="pi pi-spin pi-spinner text-xl"/>
+				</div>
+				<AsyncWrapper v-for="(creditChange, index) in creditsChanges" v-else :key="index" :loading="loading">
 					<CreditItem :credit-change="creditChange"/>
 				</AsyncWrapper>
 			</div>

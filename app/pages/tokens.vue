@@ -73,7 +73,10 @@
 					</template>
 				</DataTable>
 				<div class="relative flex w-full flex-col gap-2 md:hidden">
-					<AsyncWrapper v-for="token in tokens" :key="token.id" :loading="loadingTokens">
+					<div v-if="loadingTokens && !tokens.length" class="flex h-32 w-full items-center justify-center">
+						<i class="pi pi-spin pi-spinner text-xl"/>
+					</div>
+					<AsyncWrapper v-for="token in tokens" v-else :key="token.id" :loading="loadingTokens">
 						<TokenItem
 							:token="token"
 							@edit="openTokenDetails('edit', token.id)"
@@ -138,7 +141,10 @@
 					</Column>
 				</DataTable>
 				<div class="relative flex w-full flex-col gap-2 md:hidden">
-					<AsyncWrapper v-for="app in apps" :key="app.id" :loading="loadingApplications">
+					<div v-if="loadingApplications && !apps.length" class="flex h-32 w-full items-center justify-center">
+						<i class="pi pi-spin pi-spinner text-xl"/>
+					</div>
+					<AsyncWrapper v-for="app in apps" v-else :key="app.id" :loading="loadingApplications">
 						<AppItem
 							:app="app"
 							@revoke="openRevokeDialog(app.id)"

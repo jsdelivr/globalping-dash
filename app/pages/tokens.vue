@@ -1,5 +1,5 @@
 <template>
-	<div class="min-h-full p-4 sm:p-6" :class="{'min-w-[640px]': tokens.length}">
+	<div class="min-h-full p-4 sm:p-6">
 		<div data-testid="tokens-table">
 			<div class="mb-4 flex">
 				<h1 class="page-title">Tokens</h1>
@@ -19,6 +19,7 @@
 					data-key="id"
 					:total-records="tokensCount"
 					:loading="loadingTokens"
+					class="max-md:hidden"
 				>
 					<Column header="Name" field="name"/>
 					<Column header="Origins">
@@ -71,6 +72,40 @@
 						</div>
 					</template>
 				</DataTable>
+				<div class="relative flex w-full flex-col gap-2 md:hidden">
+					<div v-if="loadingTokens && !tokens.length" class="flex h-32 w-full items-center justify-center">
+						<i class="pi pi-spin pi-spinner text-xl"/>
+					</div>
+					<template v-else>
+						<div v-if="generatedToken && expandedTokens[generatedToken.id]" class="flex flex-col gap-4 rounded-xl bg-surface-100 p-4 dark:bg-dark-600">
+							<div class="flex gap-2">
+								<p>
+									<i class="pi pi-info-circle mr-2"/>
+									<span class="font-bold">Don't forget to copy your new access token <Tag class="bg-surface-300 dark:bg-dark-700">{{generatedToken.name}}</Tag>.</span>
+									You won’t be able to see it again.
+								</p>
+								<Button
+									icon="pi pi-times"
+									severity="secondary"
+									text
+									rounded
+									aria-label="Close"
+									class="shrink-0"
+									@click="resetState"
+								/>
+							</div>
+							<CodeBlock data-testid="token-value" :commands="[[generatedToken!.value]]"/>
+						</div>
+						<AsyncRow v-for="token in tokens" :key="token.id" :loading="loadingTokens">
+							<TokenItem
+								:token="token"
+								@edit="openTokenDetails('edit', token.id)"
+								@regenerate="openRegenerateDialog(token.id)"
+								@delete="openDeleteDialog(token.id)"
+							/>
+						</AsyncRow>
+					</template>
+				</div>
 				<Paginator
 					v-if="tokens.length !== tokensCount"
 					class="mt-6"
@@ -106,6 +141,7 @@
 					data-key="id"
 					:total-records="appsCount"
 					:loading="loadingApplications"
+					class="max-md:hidden"
 				>
 					<Column header="Name" field="name"/>
 					<Column header="Owner">
@@ -125,6 +161,17 @@
 						</template>
 					</Column>
 				</DataTable>
+				<div class="relative flex w-full flex-col gap-2 md:hidden">
+					<div v-if="loadingApplications && !apps.length" class="flex h-32 w-full items-center justify-center">
+						<i class="pi pi-spin pi-spinner text-xl"/>
+					</div>
+					<AsyncRow v-for="app in apps" v-else :key="app.id" :loading="loadingApplications">
+						<AppItem
+							:app="app"
+							@revoke="openRevokeDialog(app.id)"
+						/>
+					</AsyncRow>
+				</div>
 				<Paginator
 					v-if="apps.length !== appsCount"
 					class="mt-6"
@@ -215,6 +262,9 @@
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
+	import AsyncRow from '~/components/AsyncRow.vue';
+	import AppItem from '~/components/list-items/AppItem.vue';
+	import TokenItem from '~/components/list-items/TokenItem.vue';
 	import { usePagination } from '~/composables/pagination';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';
@@ -301,13 +351,13 @@
 
 	const tokenDetailsDialog = ref(false);
 
-	const expandedTokens = ref({});
-	const generatedToken = ref<{ id: number; value: string } | null>(null);
+	const expandedTokens = ref<Record<number, boolean>>({});
+	const generatedToken = ref<{ id: number; value: string; name: string } | null>(null);
 
-	const handleGenerate = async (id: number, tokenValue: string) => {
+	const handleGenerate = async (id: number, tokenValue: string, name: string) => {
 		await navigateTo('/tokens');
 		await loadTokens();
-		generatedToken.value = { id, value: tokenValue };
+		generatedToken.value = { id, value: tokenValue, name };
 		expandedTokens.value = { [id]: true };
 		tokenDetailsDialog.value = false;
 	};
@@ -319,9 +369,9 @@
 		tokenDetailsDialog.value = false;
 	};
 
-	const handleRegenerate = async (id: number, tokenValue: string) => {
+	const handleRegenerate = async (id: number, tokenValue: string, name: string) => {
 		await loadTokens();
-		generatedToken.value = { id, value: tokenValue };
+		generatedToken.value = { id, value: tokenValue, name };
 		expandedTokens.value = { [id]: true };
 		tokenDetailsDialog.value = false;
 	};
@@ -352,7 +402,7 @@
 				value: token,
 			}));
 
-			generatedToken.value = { id, value: token };
+			generatedToken.value = { id, value: token, name: tokenToRegenerate.value!.name ?? '' };
 			expandedTokens.value = { [id]: true };
 			tokenToRegenerate.value = null;
 			regenerateDialog.value = false;

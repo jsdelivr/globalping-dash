@@ -1,5 +1,5 @@
 <template>
-	<div class="flex min-h-28 w-full flex-col justify-between gap-2 rounded-lg border px-4 py-3">
+	<div class="flex w-full flex-col justify-between gap-2 rounded-lg border px-4 py-3">
 		<div class="flex justify-between gap-6">
 			<b>Date</b>
 			<span>{{ creditChange.date_created }}</span>

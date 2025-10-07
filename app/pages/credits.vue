@@ -56,9 +56,12 @@
 				</Column>
 			</DataTable>
 			<div class="relative flex w-full flex-col gap-2 md:hidden">
-				<AsyncCell v-for="(creditChange, index) in creditsChanges" :key="index" class="min-h-28 min-w-full dark:opacity-20" :loading="loading">
+				<div v-if="loading && !creditsChanges.length" class="flex h-32 w-full items-center justify-center">
+					<i class="pi pi-spin pi-spinner text-xl"/>
+				</div>
+				<AsyncWrapper v-for="(creditChange, index) in creditsChanges" v-else :key="index" :loading="loading">
 					<CreditItem :credit-change="creditChange"/>
-				</AsyncCell>
+				</AsyncWrapper>
 			</div>
 			<Paginator
 				v-if="creditsChanges.length !== creditsChangesCount"

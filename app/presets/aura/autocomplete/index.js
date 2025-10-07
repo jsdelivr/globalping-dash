@@ -17,7 +17,7 @@ export default {
 
 			// States
 			{
-				'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default': props.disabled,
+				'bg-surface-200 dark:bg-dark-900 select-none pointer-events-none cursor-default': props.disabled,
 			},
 		],
 	}),
@@ -43,7 +43,7 @@ export default {
 			// Color
 			'text-bluegray-900 dark:text-surface-0',
 			'placeholder:text-surface-400 dark:placeholder:text-surface-500',
-			{ 'bg-surface-0 dark:bg-surface-700': !props.disabled },
+			{ 'bg-surface-0 dark:bg-dark-900': !props.disabled },
 			'border',
 			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
 

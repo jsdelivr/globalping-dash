@@ -82,10 +82,9 @@
 			A list of origins which are allowed to use the token. If empty, any origin is valid.
 			Examples of valid origins: "https://www.jsdelivr.com", "https://www.jsdelivr.com:10000".
 		</p>
-		<div v-if="token" class="mt-7 text-right">
-			<Button class="mr-2" label="Cancel" severity="secondary" text @click="$emit('cancel')"/>
+		<div v-if="token" class="mt-7 flex flex-wrap justify-end gap-x-2 gap-y-1">
+			<Button label="Cancel" severity="secondary" text @click="$emit('cancel')"/>
 			<Button
-				class="mr-2"
 				severity="info"
 				label="Regenerate token"
 				:loading="regenerateTokenLoading"

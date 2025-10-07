@@ -96,14 +96,14 @@
 							</div>
 							<CodeBlock data-testid="token-value" :commands="[[generatedToken!.value]]"/>
 						</div>
-						<AsyncWrapper v-for="token in tokens" :key="token.id" :loading="loadingTokens">
+						<AsyncRow v-for="token in tokens" :key="token.id" :loading="loadingTokens">
 							<TokenItem
 								:token="token"
 								@edit="openTokenDetails('edit', token.id)"
 								@regenerate="openRegenerateDialog(token.id)"
 								@delete="openDeleteDialog(token.id)"
 							/>
-						</AsyncWrapper>
+						</AsyncRow>
 					</template>
 				</div>
 				<Paginator
@@ -165,12 +165,12 @@
 					<div v-if="loadingApplications && !apps.length" class="flex h-32 w-full items-center justify-center">
 						<i class="pi pi-spin pi-spinner text-xl"/>
 					</div>
-					<AsyncWrapper v-for="app in apps" v-else :key="app.id" :loading="loadingApplications">
+					<AsyncRow v-for="app in apps" v-else :key="app.id" :loading="loadingApplications">
 						<AppItem
 							:app="app"
 							@revoke="openRevokeDialog(app.id)"
 						/>
-					</AsyncWrapper>
+					</AsyncRow>
 				</div>
 				<Paginator
 					v-if="apps.length !== appsCount"
@@ -262,7 +262,7 @@
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
-	import AsyncWrapper from '~/components/AsyncWrapper.vue';
+	import AsyncRow from '~/components/AsyncRow.vue';
 	import AppItem from '~/components/list-items/AppItem.vue';
 	import TokenItem from '~/components/list-items/TokenItem.vue';
 	import { usePagination } from '~/composables/pagination';

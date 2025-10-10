@@ -137,7 +137,7 @@
 	const router = useRouter();
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
-	const probeId = route.params.id as string;
+	const probeId = computed(() => route.params.id as string);
 	const probeDetailsUpdating = ref(false);
 	const updateProbeDialog = ref(false);
 	const showMoreIps = ref(false);
@@ -146,7 +146,10 @@
 	const activeTab = useProbeDetailTabs();
 	const probePageLink = ref('/probes');
 
-	const { data: probeDetails, error: probeDetailsError } = await useAsyncData<Probe>(() => $directus.request(readItem('gp_probes', probeId)));
+	const { data: probeDetails, error: probeDetailsError } = await useAsyncData(
+		probeId,
+		() => $directus.request<Probe>(readItem('gp_probes', probeId.value)),
+	);
 
 	watch(probeDetailsError, (newError) => {
 		if (!newError) {
@@ -182,8 +185,11 @@
 		return probeDetails?.value?.altIps?.slice(0, 1) ?? [];
 	};
 
+	const probeCreditsKey = computed(() => `credits-${probeId.value}`);
+
 	// HANDLE CREDITS
 	const { data: probeCreditsPerMonth, error: creditsError } = await useAsyncData(
+		probeCreditsKey,
 		() => $directus.request<{ sum: { amount: number }; adopted_probe: string }[]>(aggregate('gp_credits_additions', {
 			query: {
 				filter: {

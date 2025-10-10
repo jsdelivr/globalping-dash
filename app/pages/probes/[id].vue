@@ -201,7 +201,7 @@
 			groupBy: [ 'adopted_probe' ],
 			aggregate: { sum: 'amount' },
 		})),
-		{ watch: [ probeDetails ], transform: data => data[0]?.sum.amount ?? 0, immediate: false },
+		{ watch: [ probeDetails ], transform: data => data[0]?.sum.amount ?? 0 },
 	);
 
 	useErrorToast(creditsError);

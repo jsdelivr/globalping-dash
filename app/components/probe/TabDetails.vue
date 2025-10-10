@@ -9,7 +9,7 @@
 				<div class="flex grow flex-col gap-3 p-6">
 					<p class="text-sm leading-[125%] text-bluegray-600 dark:text-bluegray-0">
 						Location of the probe. If the auto-detected value is wrong, you can adjust it here.
-						<span v-if="probe.allowedCountries.length > 1">The country can only be changed to one of the values reported by our GeoIP providers.</span>
+						<span v-if="probe.allowedCountries.length > 1">The country can only be changed to one of the values reported by <NuxtLink :href="`https://geodebug.globalping.dev/${probe.ip}`" class="hover:underline" target="_blank">our GeoIP providers</NuxtLink>.</span>
 					</p>
 
 					<div class="relative h-80 min-h-80 w-full grow rounded-md bg-surface-200 sm:h-auto dark:bg-dark-950">

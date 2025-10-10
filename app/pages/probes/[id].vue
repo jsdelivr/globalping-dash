@@ -146,7 +146,7 @@
 	const activeTab = useProbeDetailTabs();
 	const probePageLink = ref('/probes');
 
-	const { data: probeDetails, error: probeDetailsError } = await useLazyAsyncData(
+	const { data: probeDetails, error: probeDetailsError } = await useAsyncData(
 		probeId,
 		() => $directus.request<Probe>(readItem('gp_probes', probeId.value)),
 	);
@@ -188,7 +188,7 @@
 	const probeCreditsKey = computed(() => `credits-${probeId.value}`);
 
 	// HANDLE CREDITS
-	const { data: probeCreditsPerMonth, error: creditsError } = await useLazyAsyncData(
+	const { data: probeCreditsPerMonth, error: creditsError } = await useAsyncData(
 		probeCreditsKey,
 		() => $directus.request<{ sum: { amount: number }; adopted_probe: string }[]>(aggregate('gp_credits_additions', {
 			query: {

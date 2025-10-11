@@ -20,6 +20,9 @@
 			<template #value="slotProps">
 				{{ renderTreeSelectValue(slotProps.value, nodes) }}
 			</template>
+			<template #option="slotProps">
+				<span :class="{'font-bold': slotProps.node.data.field === 'type'}">{{slotProps.node.label}}</span>
+			</template>
 			<template #footer>
 				<div class="relative flex w-full justify-end">
 					<Button :disabled="selectedCount === 0" class="w-full" aria-label="Confirm" @click="onConfirm">

@@ -6,15 +6,16 @@
 			v-model="selectedValues"
 			:options="nodes"
 			selection-mode="checkbox"
-			class="w-32 font-normal md:w-72"
+			class="w-32 font-normal md:w-56"
 			:expanded-keys="expandedKeys"
 			:pt="{
 				pcTree: {
-					root: 'pb-4',
+					root: 'p-0',
 					nodeToggleButton: 'hidden',
 					node: 'focus:outline-none',
 				}
 			}"
+			@change="onChangeDebounced"
 			@hide="applyFilter"
 		>
 			<template #value="slotProps">
@@ -23,18 +24,12 @@
 			<template #option="slotProps">
 				<span :class="{'font-bold': slotProps.node.data.field === 'type'}">{{slotProps.node.label}}</span>
 			</template>
-			<template #footer>
-				<div class="relative flex w-full justify-end">
-					<Button :disabled="selectedCount === 0" class="w-full" aria-label="Confirm" @click="onConfirm">
-						Confirm
-					</Button>
-				</div>
-			</template>
 		</TreeSelect>
 	</div>
 </template>
 
 <script setup>
+	import debounce from 'lodash/debounce';
 	import { FIELD_LABELS, TYPE_REASONS, useCreditsFilters } from '~/composables/useCreditsFilters.js';
 	import { buildNodesByKey, renderTreeSelectValue } from '~/utils/tree-select.ts';
 
@@ -104,7 +99,11 @@
 
 	// HANDLERS
 
-	const onConfirm = () => {
+	const onChange = () => {
+		if (selectedCount.value === 0) {
+			return;
+		}
+
 		const selectedKeys = Object.keys(selectedValues.value);
 
 		filter.value = selectedKeys.reduce((selected, key) => {
@@ -122,6 +121,7 @@
 		});
 
 		onParamChange();
-		treeSelectRef.value?.hide?.();
 	};
+
+	const onChangeDebounced = debounce(onChange, 350);
 </script>

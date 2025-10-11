@@ -41,7 +41,7 @@ export default {
 			'p-1.5 gap-0.5',
 
 			// Colors
-			context.checked || context.selected ? 'text-bluegray-900 dark:text-surface-0 font-bold' : 'bg-transparent text-surface-600 dark:text-white/70',
+			context.checked || context.selected ? 'text-bluegray-900 dark:text-surface-0' : 'bg-transparent text-surface-600 dark:text-white/70',
 
 			// States
 			{ 'hover:bg-surface-100 dark:hover:bg-dark-600': !context.selected },

@@ -6,10 +6,9 @@
 			v-model="selectedValues"
 			:options="nodes"
 			selection-mode="checkbox"
-			class="w-32 md:w-72"
+			class="w-32 font-normal md:w-72"
 			:expanded-keys="expandedKeys"
 			:pt="{
-				panel: 'p-4 rounded-md bg-surface-0 dark:bg-dark-900 border',
 				pcTree: {
 					root: 'pb-4',
 					nodeToggleButton: 'hidden',

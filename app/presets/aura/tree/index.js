@@ -29,7 +29,7 @@ export default {
 	node: {
 		class: [ 'p-0 my-[2px] mx-0 first:mt-0', 'rounded-md', 'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10' ],
 	},
-	nodeContent: ({ context, props }) => ({
+	nodeContent: ({ context }) => ({
 		class: [
 			// Flex and Alignment
 			'flex items-center',
@@ -38,18 +38,18 @@ export default {
 			'rounded-md',
 
 			// Spacing
-			'py-1 px-2 gap-2',
+			'p-1.5 gap-0.5',
 
 			// Colors
-			context.selected ? 'bg-highlight text-primary-600 dark:text-white' : 'bg-transparent text-surface-600 dark:text-white/70',
+			context.checked || context.selected ? 'text-bluegray-900 dark:text-surface-0 font-bold' : 'bg-transparent text-surface-600 dark:text-white/70',
 
 			// States
-			{ 'hover:bg-surface-50 dark:hover:bg-[rgba(255,255,255,0.03)]': (props.selectionMode === 'single' || props.selectionMode === 'multiple') && !context.selected },
+			{ 'hover:bg-surface-100 dark:hover:bg-dark-600': !context.selected },
 
 			// Transition
 			'transition-shadow duration-200',
 
-			{ 'cursor-pointer select-none': props.selectionMode === 'single' || props.selectionMode === 'multiple' },
+			'cursor-pointer select-none',
 		],
 	}),
 	nodeToggleButton: ({ context }) => ({
@@ -66,8 +66,8 @@ export default {
 			// Colors
 			'bg-transparent',
 			{
-				'text-surface-600 dark:text-white/70': !context.selected,
-				'text-primary-600 dark:text-white': context.selected,
+				'text-surface-600 dark:text-white/70': !(context.checked || context.selected),
+				'text-bluegray-900 dark:text-white': context.checked || context.selected,
 				'invisible': context.leaf,
 			},
 
@@ -89,16 +89,16 @@ export default {
 
 			// Color
 			{
-				'text-surface-600 dark:text-white/70': !context.selected,
-				'text-primary-600 dark:text-white': context.selected,
+				'text-surface-600 dark:text-white/70': !(context.checked || context.selected),
+				'text-bluegray-900 dark:text-white': context.checked || context.selected,
 			},
 		],
 	}),
 	nodeLabel: ({ context }) => ({
 		class: [
 			{
-				'text-surface-600 dark:text-white/70': !context.selected,
-				'text-primary-600 dark:text-white': context.selected,
+				'text-surface-600 dark:text-white/70': !(context.checked || context.selected),
+				'text-bluegray-900 dark:text-white': context.checked || context.selected,
 			},
 		],
 	}),

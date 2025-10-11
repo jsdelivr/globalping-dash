@@ -43,7 +43,7 @@ export default {
 			'py-2 px-3',
 
 			// Color
-			'text-surface-800 dark:text-white/80',
+			'text-bluegray-400',
 
 			// Transition
 			'transition duration-200',
@@ -72,13 +72,16 @@ export default {
 	panel: {
 		class: [
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-white/80',
 
 			// Shape
-			'border border-surface-300 dark:border-surface-700',
+			'border border-surface-300 dark:border-dark-600',
 			'rounded-md',
 			'shadow-md',
+
+			// Padding
+			'p-3',
 		],
 	},
 	treeContainer: {

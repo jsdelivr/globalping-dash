@@ -125,7 +125,9 @@
 							<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${defaultPrefix}`"/>,
 							allowing you to select them in measurements,
 							and a list of your active probes is also available on your
-							<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${defaultPrefix}`" target="_blank" rel="noopener">user page</NuxtLink>.</label>
+							<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${defaultPrefix}`" target="_blank" rel="noopener">user page</NuxtLink>.
+							To use your <span v-if="defaultPrefix === user.github_username">organization name</span><span v-else>personal username</span> instead, change your default tag prefix above.
+						</label>
 					</div>
 				</div>
 			</div>

@@ -5,12 +5,16 @@ type TreeNode = {
 	children?: TreeNode[];
 } & Record<string, unknown>;
 
-export const renderTreeSelectValue = (selected: Array<TreeNode>, treeNodes: Array<TreeNode>) => {
+export const renderTreeSelectValue = (selected: Array<TreeNode>, forestRoots: Array<TreeNode>) => {
 	if (!selected?.length) {
 		return 'Select Items';
 	}
 
-	const nodeCount = treeNodes.reduce((acc, node) => acc + (node.children?.length || 0) + 1, 0);
+	const getTreeNodeCount = (node: TreeNode): number => {
+		return (node.children?.reduce((sum, child) => sum + getTreeNodeCount(child), 0) ?? 0) + 1;
+	};
+
+	const nodeCount = forestRoots.reduce((sum, node) => sum + getTreeNodeCount(node), 0);
 
 	if (selected.length === nodeCount) {
 		return 'All';
@@ -30,7 +34,7 @@ export const renderTreeSelectValue = (selected: Array<TreeNode>, treeNodes: Arra
 		return selected.includes(node) ? [ node.label ] : [];
 	};
 
-	return treeNodes.reduce<string[]>((acc, node) => [ ...acc, ...getNodeLabels(node) ], []).join(', ');
+	return forestRoots.reduce<string[]>((labels, node) => [ ...labels, ...getNodeLabels(node) ], []).join(', ');
 };
 
 /**
@@ -40,17 +44,17 @@ export const renderTreeSelectValue = (selected: Array<TreeNode>, treeNodes: Arra
  * @returns An array of root tree nodes.
  */
 export const buildNodesByKey = (keyToData: Record<string, never>, getLabel: (key: string) => string): TreeNode[] => {
-	const nodeMap: Record<string, TreeNode> = {};
-
 	// create all tree nodes
-	for (const [ key, data ] of Object.entries(keyToData)) {
-		nodeMap[key] = {
+	const nodeMap = Object.entries(keyToData).reduce<Record<string, TreeNode>>((map, [ key, data ]) => {
+		map[key] = {
 			key,
 			label: getLabel(key),
 			data,
 			children: [],
 		};
-	}
+
+		return map;
+	}, {});
 
 	// link by children to parents via prefix, e.g.; key "1-2" means parent "1" has child "1-2"
 	const roots = [];

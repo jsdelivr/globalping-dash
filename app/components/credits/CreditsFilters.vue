@@ -2,7 +2,6 @@
 	<div class="flex items-center justify-end gap-4">
 		Type:
 		<TreeSelect
-			ref="treeSelectRef"
 			v-model="selectedValues"
 			:options="nodes"
 			selection-mode="checkbox"
@@ -33,19 +32,19 @@
 	import { FIELD_LABELS, TYPE_REASONS, useCreditsFilters } from '~/composables/useCreditsFilters.js';
 	import { buildNodesByKey, renderTreeSelectValue } from '~/utils/tree-select.ts';
 
-	const { filter, onParamChange, key } = useCreditsFilters();
+	const { filter, onParamChange, key: creditsFilterKey } = useCreditsFilters();
 
 	// TREE SELECT STRUCTURE DEFINITIONS
 
 	// e.g., 0-0 -> { field: 'reason', value: 'adopted-probes' }
-	const keyValueMap = Object.entries(TYPE_REASONS).reduce((acc, [ key, reasons ], index) => {
-		acc[index] = { field: 'type', value: key };
+	const keyValueMap = Object.entries(TYPE_REASONS).reduce((map, [ key, reasons ], index) => {
+		map[index] = { field: 'type', value: key };
 
 		reasons.forEach((reason, reasonIndex) => {
-			acc[`${index}-${reasonIndex}`] = { field: 'reason', value: reason };
+			map[`${index}-${reasonIndex}`] = { field: 'reason', value: reason };
 		});
 
-		return acc;
+		return map;
 	}, {});
 
 	const getNodeLabelForKey = (key) => {
@@ -55,6 +54,7 @@
 
 	const nodes = ref(buildNodesByKey(keyValueMap, getNodeLabelForKey));
 
+	// expand all nodes that have children
 	const expandedKeys = computed(() => nodes.value.reduce((expanded, node) => {
 		if (node.children?.length) {
 			expanded[node.key] = true;
@@ -63,7 +63,6 @@
 		return expanded;
 	}, {}));
 
-	const treeSelectRef = ref();
 	const selectedValues = ref({});
 	const selectedCount = computed(() => Object.values(selectedValues.value).filter(value => value.checked).length);
 
@@ -95,7 +94,7 @@
 		selectedValues.value = nodes.value.reduce((selected, node) => buildSelection(node, filter.value, selected), {});
 	};
 
-	watch(key, applyFilter, { immediate: true });
+	watch(creditsFilterKey, applyFilter, { immediate: true });
 
 	// HANDLERS
 
@@ -104,13 +103,9 @@
 			return;
 		}
 
-		const selectedKeys = Object.keys(selectedValues.value);
-
-		filter.value = selectedKeys.reduce((selected, key) => {
-			const { field, value } = keyValueMap[key];
-			const { checked, partialChecked } = selectedValues.value[key];
-
+		filter.value = Object.entries(selectedValues.value).reduce((selected, [ key, { checked, partialChecked }]) => {
 			if (checked || partialChecked) {
+				const { field, value } = keyValueMap[key];
 				selected[field].push(value);
 			}
 

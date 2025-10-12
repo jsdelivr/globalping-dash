@@ -29,7 +29,8 @@
 
 <script setup>
 	import debounce from 'lodash/debounce';
-	import { FIELD_LABELS, TYPE_REASONS, useCreditsFilters } from '~/composables/useCreditsFilters.js';
+	import isEqual from 'lodash/isEqual';
+	import { FIELD_LABELS, TYPE_REASONS, useCreditsFilters } from '~/composables/useCreditsFilters';
 	import { buildNodesByKey, renderTreeSelectValue } from '~/utils/tree-select.ts';
 
 	const { filter, onParamChange, key: creditsFilterKey } = useCreditsFilters();
@@ -103,7 +104,7 @@
 			return;
 		}
 
-		filter.value = Object.entries(selectedValues.value).reduce((selected, [ key, { checked, partialChecked }]) => {
+		const suggestedFilter = Object.entries(selectedValues.value).reduce((selected, [ key, { checked, partialChecked }]) => {
 			if (checked || partialChecked) {
 				const { field, value } = keyValueMap[key];
 				selected[field].push(value);
@@ -115,7 +116,11 @@
 			reason: [],
 		});
 
-		onParamChange();
+		// do not reset page (via onParamChange) if there is no filter change
+		if (!isEqual(suggestedFilter, filter.value)) {
+			filter.value = suggestedFilter;
+			onParamChange();
+		}
 	};
 
 	const onChangeDebounced = debounce(onChange, 350);

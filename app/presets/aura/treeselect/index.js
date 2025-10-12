@@ -81,7 +81,7 @@ export default {
 			'shadow-md',
 
 			// Padding
-			'p-2',
+			'p-1',
 		],
 	},
 	treeContainer: {

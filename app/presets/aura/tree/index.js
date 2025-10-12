@@ -38,7 +38,7 @@ export default {
 			'rounded-md',
 
 			// Spacing
-			'p-1.5 gap-0.5',
+			'p-2 gap-0.5',
 
 			// Colors
 			context.checked || context.selected ? 'text-bluegray-900 dark:text-surface-0' : 'bg-transparent text-surface-600 dark:text-white/70',

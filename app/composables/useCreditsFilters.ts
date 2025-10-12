@@ -1,4 +1,5 @@
-import _ from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
+import isEqual from 'lodash/isEqual';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -15,7 +16,7 @@ const PERMITTED_VALUES = {
 	reason: [ 'adopted-probes', 'sponsorship' ],
 };
 
-const DEFAULT_FILTER = _.cloneDeep(PERMITTED_VALUES) as Filter;
+const DEFAULT_FILTER = cloneDeep(PERMITTED_VALUES) as Filter;
 
 export const FIELD_LABELS = {
 	type: {
@@ -36,13 +37,13 @@ export const TYPE_REASONS = {
 export const useCreditsFilters = () => {
 	const route = useRoute();
 	const active = ref(true);
-	const filter = ref<Filter>(_.cloneDeep(DEFAULT_FILTER));
+	const filter = ref<Filter>(cloneDeep(DEFAULT_FILTER));
 	const key = computed(() => JSON.stringify(filter.value));
 	const anyFilterApplied = computed(() => (Object.keys(DEFAULT_FILTER) as Array<keyof Filter>).some(key => !isDefault(key)));
 
 	const constructQuery = () => ({
-		...!isDefault('type') && { type: filter.value.type },
-		...!isDefault('reason') && { reason: filter.value.reason },
+		...!isDefault('type') && filter.value.type.length && { type: filter.value.type },
+		...!isDefault('reason') && filter.value.reason.length && { reason: filter.value.reason },
 	});
 
 	const onParamChange = () => {
@@ -52,13 +53,13 @@ export const useCreditsFilters = () => {
 	};
 
 	const isDefault = (field: keyof Filter, filterObj: MaybeRefOrGetter<Filter> = filter) => {
-		return _.isEqual(toValue(filterObj)[field], DEFAULT_FILTER[field]);
+		return isEqual(toValue(filterObj)[field], DEFAULT_FILTER[field]);
 	};
 
 	const getCurrentFilter = () => {
 		return {
 			type: filter.value.type,
-			reason: _.isEqual(filter.value.reason, PERMITTED_VALUES.reason) ? [ ...filter.value.reason, 'other' ] : filter.value.reason,
+			reason: isEqual(filter.value.reason, PERMITTED_VALUES.reason) ? [ ...filter.value.reason, 'other' ] : filter.value.reason,
 		};
 	};
 

@@ -7,6 +7,7 @@ import { useAuth } from '~/store/auth';
 
 export type StatusCode = 'all' | 'online' | 'ping-test-failed' | 'offline' | 'online-outdated';
 export type AdoptionOption = 'all' | 'adopted' | 'non-adopted';
+export type ProbeTypeOption = 'all' | 'hardware' | 'software';
 
 type StatusOption = {
 	name: string;
@@ -20,9 +21,10 @@ export interface Filter {
 	by: string;
 	desc: boolean;
 	adoption: AdoptionOption;
+	probeType: ProbeTypeOption;
 }
 
-const DEFAULT_FILTER: Filter = { search: '', status: 'all', by: 'name', desc: false, adoption: 'all' } as const;
+const DEFAULT_FILTER: Filter = { search: '', status: 'all', by: 'name', desc: false, adoption: 'all', probeType: 'all' } as const;
 
 export const SORTABLE_FIELDS: string[] = [ 'name', 'location', 'tags' ] as const;
 
@@ -35,6 +37,8 @@ export const STATUS_MAP: Record<StatusCode, StatusOption> = {
 } as const;
 
 export const ADOPTION_OPTIONS: string[] = [ 'all', 'adopted', 'non-adopted' ] as const;
+export const PROBE_TYPE_OPTIONS: string[] = [ 'all', 'hardware', 'software' ] as const;
+const ADMIN_FILTERS: (keyof Filter)[] = [ 'adoption', 'probeType' ] as const;
 
 interface ProbeFiltersOptions {
 	active?: MaybeRefOrGetter<boolean>;
@@ -47,6 +51,7 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 
 	const filter = ref<Filter>({ ...DEFAULT_FILTER });
 	const anyFilterApplied = computed(() => (Object.keys(DEFAULT_FILTER) as Array<keyof Filter>).some(key => filter.value[key] !== DEFAULT_FILTER[key]));
+	const anyAdminFilterApplied = computed(() => ADMIN_FILTERS.some(key => !isDefault(key)));
 
 	const onSortChange = (event: DataTableSortEvent) => {
 		const { sortField = '', sortOrder = 1 } = event;
@@ -78,6 +83,7 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 		...filter.value.desc && { desc: 'true' },
 		...!isDefault('status') && { status: filter.value.status },
 		...auth.isAdmin && !isDefault('adoption') && { adoption: filter.value.adoption },
+		...auth.isAdmin && !isDefault('probeType') && { type: filter.value.probeType },
 	});
 
 	const onParamChange = () => {
@@ -120,6 +126,9 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 			...!ignoredFields.includes('adoption') && auth.isAdmin && !isDefault('adoption', filter) && {
 				userId: filterValue.adoption === 'adopted' ? { _neq: null } : { _eq: null },
 			},
+			...!ignoredFields.includes('probeType') && auth.isAdmin && !isDefault('probeType', filter) && {
+				hardwareDevice: filterValue.probeType === 'hardware' ? { _neq: null } : { _eq: null },
+			},
 		};
 	};
 
@@ -133,7 +142,8 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 		() => route.query.desc,
 		() => route.query.status,
 		() => route.query.adoption,
-	], async ([ search, by, desc, status, adoption ]) => {
+		() => route.query.type,
+	], async ([ search, by, desc, status, adoption, probeType ]) => {
 		if (!toValue(active)) {
 			return;
 		}
@@ -167,12 +177,19 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 		} else {
 			filter.value.adoption = DEFAULT_FILTER.adoption;
 		}
+
+		if (typeof probeType === 'string' && PROBE_TYPE_OPTIONS.includes(probeType) && auth.isAdmin) {
+			filter.value.probeType = probeType as ProbeTypeOption;
+		} else {
+			filter.value.probeType = DEFAULT_FILTER.probeType;
+		}
 	}, { immediate: true });
 
 	return {
 		// state
 		filter,
 		anyFilterApplied,
+		anyAdminFilterApplied,
 		// handlers
 		onSortChange,
 		onFilterChange,

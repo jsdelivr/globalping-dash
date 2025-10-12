@@ -51,7 +51,7 @@
 				text
 				@click="adminOptsRef.toggle($event)">
 				<i class="pi pi-sliders-h"/>
-				<i v-if="!isDefault('adoption')" class="pi pi-circle-fill absolute right-2 top-2 text-[0.4rem] text-primary"/>
+				<i v-if="anyAdminFilterApplied" class="pi pi-circle-fill absolute right-2 top-2 text-[0.4rem] text-primary"/>
 			</Button>
 
 			<Popover ref="adminOptsRef" class="w-fit gap-4 p-4 [&>*]:border-none" role="dialog">
@@ -73,7 +73,7 @@
 	const { $directus } = useNuxtApp();
 
 	const active = ref(true);
-	const { filter, onParamChange, onFilterChange, getDirectusFilter, isDefault } = useProbeFilters({ active });
+	const { filter, onParamChange, onFilterChange, getDirectusFilter, anyAdminFilterApplied } = useProbeFilters({ active });
 	const searchInput = ref(filter.value.search);
 	const onFilterChangeDebounced = debounce(() => onFilterChange(searchInput.value), 500);
 	const filterDeps = computed(() => ({ ...filter.value }));

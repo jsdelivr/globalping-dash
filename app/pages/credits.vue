@@ -265,7 +265,7 @@
 
 	onMounted(async () => {
 		if (!route.query.limit) {
-			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 540) / 54), 5), 15);
+			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 595) / 54), 5), 15);
 		}
 	});
 

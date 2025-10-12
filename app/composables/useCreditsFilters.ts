@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 type CreditsChangeType = 'additions' | 'deductions';
-type CreditsChangeReason = 'adopted-probes' | 'sponsorship' | 'other';
+type CreditsChangeReason = 'adopted-probes' | 'sponsorship';
 
 type Filter = {
 	type: CreditsChangeType[];
@@ -12,7 +12,7 @@ type Filter = {
 
 const PERMITTED_VALUES = {
 	type: [ 'additions', 'deductions' ],
-	reason: [ 'adopted-probes', 'sponsorship', 'other' ],
+	reason: [ 'adopted-probes', 'sponsorship' ],
 };
 
 const DEFAULT_FILTER = _.cloneDeep(PERMITTED_VALUES) as Filter;
@@ -25,12 +25,11 @@ export const FIELD_LABELS = {
 	reason: {
 		'adopted-probes': 'Adopted probes',
 		'sponsorship': 'Sponsorship',
-		'other': 'Other',
 	},
 };
 
 export const TYPE_REASONS = {
-	additions: [ 'adopted-probes', 'sponsorship', 'other' ],
+	additions: [ 'adopted-probes', 'sponsorship' ],
 	deductions: [],
 };
 
@@ -54,6 +53,13 @@ export const useCreditsFilters = () => {
 
 	const isDefault = (field: keyof Filter, filterObj: MaybeRefOrGetter<Filter> = filter) => {
 		return _.isEqual(toValue(filterObj)[field], DEFAULT_FILTER[field]);
+	};
+
+	const getCurrentFilter = () => {
+		return {
+			type: filter.value.type,
+			reason: _.isEqual(filter.value.reason, PERMITTED_VALUES.reason) ? [ ...filter.value.reason, 'other' ] : filter.value.reason,
+		};
 	};
 
 	watch([ () => route.query.type, () => route.query.reason ], async ([ type, reason ]) => {
@@ -90,6 +96,7 @@ export const useCreditsFilters = () => {
 		onParamChange,
 		// builders
 		constructQuery,
+		getCurrentFilter,
 		// helpers
 		isDefault,
 	};

@@ -223,7 +223,7 @@
 	const totalDeductions = computed(() => credits.value.deductions.reduce((sum, deduction) => sum + deduction.amount, 0));
 	const dailyAdditions = computed(() => credits.value.todayOnlineProbes * creditsPerAdoptedProbe);
 
-	const { key, constructQuery, anyFilterApplied } = useCreditsFilters();
+	const { key, getCurrentFilter, anyFilterApplied } = useCreditsFilters();
 	const filterDeps = computedDebounced(() => [ key.value, first.value, itemsPerPage.value ]);
 
 	const { data: creditsData, pending: loading, error: creditsDataError } = await useLazyAsyncData(
@@ -232,7 +232,7 @@
 			path: '/credits-timeline',
 			params: {
 				userId: getUserFilter('user_id').user_id?._eq || 'all',
-				...constructQuery(),
+				...getCurrentFilter(),
 				offset: first.value,
 				limit: itemsPerPage.value,
 			},

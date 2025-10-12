@@ -57,9 +57,13 @@ export const useCreditsFilters = () => {
 	};
 
 	const getCurrentFilter = () => {
+		const { type, reason } = filter.value;
+		const allReasons = new Set(PERMITTED_VALUES.reason);
+		const filterReasons = new Set(reason);
+
 		return {
-			type: filter.value.type,
-			reason: isEqual(filter.value.reason, PERMITTED_VALUES.reason) ? [ ...filter.value.reason, 'other' ] : filter.value.reason,
+			type,
+			reason: isEqual(filterReasons, allReasons) ? [ ...reason, 'other' ] : reason,
 		};
 	};
 

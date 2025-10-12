@@ -16,7 +16,7 @@
 				}
 			}"
 			@change="onChangeDebounced"
-			@hide="applyFilter"
+			@hide="onHide"
 		>
 			<template #value="slotProps">
 				{{ renderTreeSelectValue(slotProps.value, nodes) }}
@@ -124,4 +124,13 @@
 	};
 
 	const onChangeDebounced = debounce(onChange, 350);
+
+	const onHide = () => {
+		onChangeDebounced.flush();
+		applyFilter();
+	};
+
+	onBeforeUnmount(() => {
+		onChangeDebounced.cancel();
+	});
 </script>

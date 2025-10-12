@@ -21,7 +21,7 @@
 				{{ renderTreeSelectValue(slotProps.value, nodes) }}
 			</template>
 			<template #option="slotProps">
-				<span :class="{'font-bold': slotProps.node.data.field === 'type'}">{{slotProps.node.label}}</span>
+				<span :class="{'font-medium': slotProps.node.data.field === 'type'}">{{slotProps.node.label}}</span>
 			</template>
 		</TreeSelect>
 	</div>

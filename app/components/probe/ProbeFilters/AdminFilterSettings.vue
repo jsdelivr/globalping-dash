@@ -1,24 +1,43 @@
 <template>
-	<div class="flex flex-col gap-2">
-		<span class="flex items-center font-bold">Adoption status:</span>
-		<Select
-			v-model="usedFilter.adoption"
-			:options="ADOPTION_OPTIONS"
-			class="min-w-48"
-			@change="onChange"
-		>
-			<template #value="{value}">
-				{{ value[0].toUpperCase() + value.slice(1) }}
-			</template>
-			<template #option="{option}">
-				{{ option[0].toUpperCase() + option.slice(1) }}
-			</template>
-		</Select>
+	<div class="flex flex-col gap-4">
+		<div class="flex flex-col gap-2">
+			<span class="flex items-center font-bold">Adoption status:</span>
+			<Select
+				v-model="usedFilter.adoption"
+				:options="ADOPTION_OPTIONS"
+				class="min-w-48"
+				@change="onChange"
+			>
+				<template #value="{value}">
+					{{upperFirst(value)}}
+				</template>
+				<template #option="{option}">
+					{{upperFirst(option)}}
+				</template>
+			</Select>
+		</div>
+		<div class="flex flex-col gap-2">
+			<span class="flex items-center font-bold">Probe type:</span>
+			<Select
+				v-model="usedFilter.probeType"
+				:options="PROBE_TYPE_OPTIONS"
+				class="min-w-48"
+				@change="onChange"
+			>
+				<template #value="{value}">
+					{{upperFirst(value)}}
+				</template>
+				<template #option="{option}">
+					{{upperFirst(option)}}
+				</template>
+			</Select>
+		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import { useProbeFilters, ADOPTION_OPTIONS, type Filter } from '~/composables/useProbeFilters';
+	import upperFirst from 'lodash/upperFirst';
+	import { useProbeFilters, ADOPTION_OPTIONS, type Filter, PROBE_TYPE_OPTIONS } from '~/composables/useProbeFilters';
 
 	const filter = defineModel('filter', { required: false, type: Object as PropType<Filter> });
 

@@ -43,7 +43,7 @@ export const renderTreeSelectValue = (selected: Array<TreeNode>, forestRoots: Ar
  * @param getLabel - A mapping function from a node key to its label.
  * @returns An array of root tree nodes.
  */
-export const buildNodesByKey = (keyToData: Record<string, never>, getLabel: (key: string) => string): TreeNode[] => {
+export const buildNodesByKey = (keyToData: Record<string, unknown>, getLabel: (key: string) => string): TreeNode[] => {
 	// create all tree nodes
 	const nodeMap = Object.entries(keyToData).reduce<Record<string, TreeNode>>((map, [ key, data ]) => {
 		map[key] = {

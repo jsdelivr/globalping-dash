@@ -163,6 +163,9 @@
 
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
 
+	const { key: creditsFilterKey, getCurrentFilter, anyFilterApplied } = useCreditsFilters();
+	const filterDeps = computedDebounced(() => [ creditsFilterKey.value, first.value, itemsPerPage.value ]);
+
 	const { data: credits, error: creditsError } = await useLazyAsyncData('credits-stats', async () => {
 		const [ total, additions, deductions, todayOnlineProbes ] = await Promise.all([
 			$directus.request<{ amount: number }[]>(readItems('gp_credits', {
@@ -222,9 +225,6 @@
 	const totalAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + addition.amount, 0));
 	const totalDeductions = computed(() => credits.value.deductions.reduce((sum, deduction) => sum + deduction.amount, 0));
 	const dailyAdditions = computed(() => credits.value.todayOnlineProbes * creditsPerAdoptedProbe);
-
-	const { key, getCurrentFilter, anyFilterApplied } = useCreditsFilters();
-	const filterDeps = computedDebounced(() => [ key.value, first.value, itemsPerPage.value ]);
 
 	const { data: creditsData, pending: loading, error: creditsDataError } = await useLazyAsyncData(
 		() => minDelay($directus.request<{ changes: CreditsChange[]; count: number }>(customEndpoint({

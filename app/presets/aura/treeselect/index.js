@@ -9,9 +9,9 @@ export default {
 			'rounded-md',
 
 			// Color and Background
-			{ 'bg-surface-0 dark:bg-surface-950': !props.disabled },
-			'border',
-			{ 'border-surface-300 dark:border-surface-700': !props.invalid },
+			{ 'bg-surface-0 dark:bg-dark-900': !props.disabled },
+			'border outline-none',
+			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
 
 			// Invalid State
 			'invalid:focus:ring-red-200',
@@ -23,13 +23,13 @@ export default {
 			'duration-200',
 
 			// States
-			{ 'hover:border-surface-400 dark:hover:border-surface-600': !props.invalid },
-			{ 'outline-none outline-offset-0 ring-1 ring-primary-500 dark:ring-primary-400 z-10': state.focused },
+			{ 'hover:border-surface-400 dark:hover:border-dark-400': !props.invalid },
+			{ 'ring-1 ring-primary-500 dark:ring-primary-400 z-10': state.focused },
 
 			// Misc
 			'cursor-pointer',
 			'select-none',
-			{ 'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default': props.disabled },
+			{ 'bg-surface-200 dark:bg-dark-900 select-none pointer-events-none cursor-default': props.disabled },
 		],
 	}),
 	labelContainer: {
@@ -43,7 +43,7 @@ export default {
 			'py-2 px-3',
 
 			// Color
-			'text-surface-800 dark:text-white/80',
+			'text-bluegray-400',
 
 			// Transition
 			'transition duration-200',
@@ -72,13 +72,16 @@ export default {
 	panel: {
 		class: [
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-white/80',
 
 			// Shape
-			'border border-surface-300 dark:border-surface-700',
+			'border border-surface-300 dark:border-dark-600',
 			'rounded-md',
 			'shadow-md',
+
+			// Padding
+			'p-1',
 		],
 	},
 	treeContainer: {

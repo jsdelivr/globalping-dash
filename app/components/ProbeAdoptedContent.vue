@@ -16,8 +16,8 @@
 			</div>
 		</div>
 
-		<div v-if="!user.public_probes && !auth.impersonation" class="mt-4 rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
-			<ToggleSwitch v-model="publicProbes" :input-id="`public-probes-${getCurrentInstance()?.uid}`" @update:model-value="updatePublicProbes"/>
+		<div v-if="!auth.impersonation" class="mt-4 rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
+			<ToggleSwitch v-model="publicProbes" :disabled="isLoading" :input-id="`public-probes-${getCurrentInstance()?.uid}`" @update:model-value="updatePublicProbes"/>
 			<label :for="`public-probes-${getCurrentInstance()?.uid}`" class="block cursor-pointer font-bold">Make your probes public</label>
 			<p class="mt-3 text-xs">
 				When enabled, your probes are automatically tagged by
@@ -42,7 +42,9 @@
 	import CountryFlag from 'vue-country-flag-next';
 	import { useNotifications } from '~/composables/useNotifications';
 	import { useAuth } from '~/store/auth';
+	import { minDelay } from '~/utils/min-delay';
 	import { pluralize } from '~/utils/pluralize';
+	import { sendErrorToast } from '~/utils/send-toast';
 
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();
@@ -59,12 +61,22 @@
 	defineEmits([ 'cancel' ]);
 
 	const publicProbes = ref(user.value.public_probes);
+	const isLoading = ref(false);
+
 	const updatePublicProbes = async () => {
-		await $directus.request(updateMe({
-			public_probes: publicProbes.value,
-		}));
+		isLoading.value = true;
+
+		try {
+			await minDelay($directus.request(updateMe({
+				public_probes: publicProbes.value,
+			})), 500);
+		} catch (e) {
+			sendErrorToast(e);
+		}
 
 		await auth.refresh();
+		publicProbes.value = user.value.public_probes;
+		isLoading.value = false;
 	};
 
 	onMounted(async () => {

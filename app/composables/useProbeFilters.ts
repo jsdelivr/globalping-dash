@@ -82,8 +82,8 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 		...!isDefault('by') && { by: filter.value.by },
 		...filter.value.desc && { desc: 'true' },
 		...!isDefault('status') && { status: filter.value.status },
-		...auth.isAdmin && !isDefault('adoption') && { adoption: filter.value.adoption },
-		...auth.isAdmin && !isDefault('probeType') && { type: filter.value.probeType },
+		...auth.adminMode && !isDefault('adoption') && { adoption: filter.value.adoption },
+		...auth.adminMode && !isDefault('probeType') && { type: filter.value.probeType },
 	});
 
 	const onParamChange = () => {
@@ -123,10 +123,10 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 			...filterValue.search && { searchIndex: { _icontains: filterValue.search } },
 			...!ignoredFields.includes('status') && !isDefault('status', filter) && { status: { _in: STATUS_MAP[filterValue.status].options } },
 			...!ignoredFields.includes('status') && filterValue.status === 'online-outdated' && { isOutdated: { _eq: true } },
-			...!ignoredFields.includes('adoption') && auth.isAdmin && !isDefault('adoption', filter) && {
+			...!ignoredFields.includes('adoption') && auth.adminMode && !isDefault('adoption', filter) && {
 				userId: filterValue.adoption === 'adopted' ? { _neq: null } : { _eq: null },
 			},
-			...!ignoredFields.includes('probeType') && auth.isAdmin && !isDefault('probeType', filter) && {
+			...!ignoredFields.includes('probeType') && auth.adminMode && !isDefault('probeType', filter) && {
 				hardwareDevice: filterValue.probeType === 'hardware' ? { _neq: null } : { _eq: null },
 			},
 		};
@@ -172,13 +172,13 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 			filter.value.status = DEFAULT_FILTER.status;
 		}
 
-		if (typeof adoption === 'string' && ADOPTION_OPTIONS.includes(adoption) && auth.isAdmin) {
+		if (typeof adoption === 'string' && ADOPTION_OPTIONS.includes(adoption) && auth.adminMode) {
 			filter.value.adoption = adoption as AdoptionOption;
 		} else {
 			filter.value.adoption = DEFAULT_FILTER.adoption;
 		}
 
-		if (typeof probeType === 'string' && PROBE_TYPE_OPTIONS.includes(probeType) && auth.isAdmin) {
+		if (typeof probeType === 'string' && PROBE_TYPE_OPTIONS.includes(probeType) && auth.adminMode) {
 			filter.value.probeType = probeType as ProbeTypeOption;
 		} else {
 			filter.value.probeType = DEFAULT_FILTER.probeType;

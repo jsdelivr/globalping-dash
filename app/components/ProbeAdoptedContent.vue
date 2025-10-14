@@ -16,7 +16,7 @@
 			</div>
 		</div>
 
-		<div v-if="!auth.impersonation" class="mt-4 rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
+		<div v-if="shouldDisplaySwitch" class="mt-4 rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
 			<ToggleSwitch v-model="publicProbes" :disabled="isLoading" :input-id="`public-probes-${getCurrentInstance()?.uid}`" @update:model-value="updatePublicProbes"/>
 			<label :for="`public-probes-${getCurrentInstance()?.uid}`" class="block cursor-pointer font-bold">Make your probes public</label>
 			<p class="mt-3 text-xs">
@@ -60,8 +60,9 @@
 
 	defineEmits([ 'cancel' ]);
 
-	const publicProbes = ref(user.value.public_probes);
 	const isLoading = ref(false);
+	const publicProbes = ref(user.value.public_probes);
+	const shouldDisplaySwitch = !user.value.public_probes && !auth.impersonation;
 
 	const updatePublicProbes = async () => {
 		isLoading.value = true;

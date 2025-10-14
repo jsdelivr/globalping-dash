@@ -46,7 +46,7 @@
 				</template>
 				<Column header="Date" field="date_created" class="md:w-44 2xl:w-64">
 					<template #body="slotProps">
-						<AsyncCell :loading="loading">
+						<AsyncCell :loading="loading" size="small">
 							{{ slotProps.data.date_created }}
 						</AsyncCell>
 					</template>
@@ -61,7 +61,7 @@
 				<Column header="Amount" field="amount" class="md:w-44 2xl:w-64">
 					<template #body="slotProps">
 						<div class="flex min-h-7 items-center">
-							<AsyncCell :loading="loading">
+							<AsyncCell :loading="loading" size="small">
 								<Tag v-if="slotProps.data.type === 'addition'" class="flex items-center !text-sm" severity="success">
 									<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ (slotProps.data.amount || 0).toLocaleString('en-US') }}
 								</Tag>

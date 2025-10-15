@@ -27,7 +27,7 @@
 		<div class="mt-6">
 			<CreditsChart :start="credits.total - totalAdditions + totalDeductions" :additions="credits.additions" :deductions="credits.deductions"/>
 		</div>
-		<div v-if="creditsChanges.length || loading" class="mt-6">
+		<div v-if="creditsChanges.length || loading || anyFilterApplied" class="mt-6">
 			<DataTable
 				:value="creditsChanges"
 				lazy
@@ -35,33 +35,59 @@
 				:rows="itemsPerPage"
 				data-key="id"
 				:total-records="creditsChangesCount"
-				:loading="loading"
+				:loading="initialLoading"
 				class="max-md:hidden"
 			>
-				<Column header="Date" field="date_created" class="md:w-44 2xl:w-64"/>
+				<template #header>
+					<div class="flex items-center justify-between">
+						History
+						<CreditsFilters/>
+					</div>
+				</template>
+				<Column header="Date" field="date_created" class="md:w-44 2xl:w-64">
+					<template #body="slotProps">
+						<AsyncCell :loading="loading" size="small">
+							{{ slotProps.data.date_created }}
+						</AsyncCell>
+					</template>
+				</Column>
 				<Column header="Comment" field="comment">
 					<template #body="slotProps">
-						{{ formatCreditComment(slotProps.data) }}
+						<AsyncCell :loading="loading">
+							{{ formatCreditComment(slotProps.data) }}
+						</AsyncCell>
 					</template>
 				</Column>
 				<Column header="Amount" field="amount" class="md:w-44 2xl:w-64">
 					<template #body="slotProps">
-						<Tag v-if="slotProps.data.type === 'addition'" class="flex items-center !text-sm" severity="success">
-							<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ (slotProps.data.amount || 0).toLocaleString('en-US') }}
-						</Tag>
-						<Tag v-else class="flex items-center !text-sm" severity="danger">
-							<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>-{{ (slotProps.data.amount || 0).toLocaleString('en-US') }}
-						</Tag>
+						<div class="flex min-h-7 items-center">
+							<AsyncCell :loading="loading" size="small">
+								<Tag v-if="slotProps.data.type === 'addition'" class="flex items-center !text-sm" severity="success">
+									<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ (slotProps.data.amount || 0).toLocaleString('en-US') }}
+								</Tag>
+								<Tag v-else class="flex items-center !text-sm" severity="danger">
+									<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>-{{ (slotProps.data.amount || 0).toLocaleString('en-US') }}
+								</Tag>
+							</AsyncCell>
+						</div>
 					</template>
 				</Column>
+				<template #empty><div class="p-6 text-center">No entries match the filter.</div></template>
 			</DataTable>
 			<div class="relative flex w-full flex-col gap-2 md:hidden">
+				<div class="flex items-center justify-between px-2">
+					<h2 class="text-lg font-semibold">History</h2>
+					<CreditsFilters/>
+				</div>
 				<div v-if="loading && !creditsChanges.length" class="flex h-32 w-full items-center justify-center">
 					<i class="pi pi-spin pi-spinner text-xl"/>
 				</div>
-				<AsyncWrapper v-for="(creditChange, index) in creditsChanges" v-else :key="index" :loading="loading">
+				<p v-else-if="!creditsChanges.length && anyFilterApplied" class="rounded-lg bg-surface-0 p-6 py-12 text-center dark:bg-dark-700">
+					No entries match the filter.
+				</p>
+				<AsyncRow v-for="(creditChange, index) in creditsChanges" v-else :key="index" :loading="loading">
 					<CreditItem :credit-change="creditChange"/>
-				</AsyncWrapper>
+				</AsyncRow>
 			</div>
 			<Paginator
 				v-if="creditsChanges.length !== creditsChangesCount"
@@ -111,7 +137,9 @@
 <script setup lang="ts">
 	import { aggregate, customEndpoint, readItems } from '@directus/sdk';
 	import CreditItem from '~/components/list-items/CreditItem.vue';
+	import { computedDebounced } from '~/composables/computedDebounced';
 	import { usePagination } from '~/composables/pagination';
+	import { useCreditsFilters } from '~/composables/useCreditsFilters';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useMetadata } from '~/store/metadata';
@@ -131,8 +159,12 @@
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
+	const initialLoading = ref(true);
 
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
+
+	const { key: creditsFilterKey, getCurrentFilter, anyFilterApplied } = useCreditsFilters();
+	const filterDeps = computedDebounced(() => [ creditsFilterKey.value, first.value, itemsPerPage.value ]);
 
 	const { data: credits, error: creditsError } = await useLazyAsyncData('credits-stats', async () => {
 		const [ total, additions, deductions, todayOnlineProbes ] = await Promise.all([
@@ -200,12 +232,19 @@
 			path: '/credits-timeline',
 			params: {
 				userId: getUserFilter('user_id').user_id?._eq || 'all',
+				...getCurrentFilter(),
 				offset: first.value,
 				limit: itemsPerPage.value,
 			},
 		}))),
-		{ watch: [ first, itemsPerPage ] },
+		{ watch: [ filterDeps ] },
 	);
+
+	watch(loading, (loading) => {
+		if (!loading) {
+			initialLoading.value = false;
+		}
+	});
 
 	const creditsChangesCount = computed(() => creditsData.value?.count || 0);
 
@@ -226,7 +265,7 @@
 
 	onMounted(async () => {
 		if (!route.query.limit) {
-			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 540) / 54), 5), 15);
+			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 595) / 54), 5), 15);
 		}
 	});
 

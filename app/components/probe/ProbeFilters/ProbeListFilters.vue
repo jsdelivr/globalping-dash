@@ -43,7 +43,7 @@
 			</IconField>
 		</InputGroup>
 
-		<div v-if="auth.isAdmin" class="flex size-9 items-stretch justify-between rounded-md border border-surface-300 text-bluegray-700 focus-within:border-primary hover:border-surface-400 dark:border-dark-600 dark:bg-dark-900 dark:text-dark-0 dark:hover:border-dark-400">
+		<div v-if="auth.adminMode" class="flex size-9 items-stretch justify-between rounded-md border border-surface-300 text-bluegray-700 focus-within:border-primary hover:border-surface-400 dark:border-dark-600 dark:bg-dark-900 dark:text-dark-0 dark:hover:border-dark-400">
 			<Button
 				class="relative hover:bg-white focus:ring-primary dark:hover:bg-dark-900 dark:focus:ring-primary"
 				severity="secondary"
@@ -51,7 +51,7 @@
 				text
 				@click="adminOptsRef.toggle($event)">
 				<i class="pi pi-sliders-h"/>
-				<i v-if="!isDefault('adoption')" class="pi pi-circle-fill absolute right-2 top-2 text-[0.4rem] text-primary"/>
+				<i v-if="anyAdminFilterApplied" class="pi pi-circle-fill absolute right-2 top-2 text-[0.4rem] text-primary"/>
 			</Button>
 
 			<Popover ref="adminOptsRef" class="w-fit gap-4 p-4 [&>*]:border-none" role="dialog">
@@ -73,7 +73,7 @@
 	const { $directus } = useNuxtApp();
 
 	const active = ref(true);
-	const { filter, onParamChange, onFilterChange, getDirectusFilter, isDefault } = useProbeFilters({ active });
+	const { filter, onParamChange, onFilterChange, getDirectusFilter, anyAdminFilterApplied } = useProbeFilters({ active });
 	const searchInput = ref(filter.value.search);
 	const onFilterChangeDebounced = debounce(() => onFilterChange(searchInput.value), 500);
 	const filterDeps = computed(() => ({ ...filter.value }));

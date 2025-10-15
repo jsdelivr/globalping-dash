@@ -97,8 +97,8 @@ import togglebutton from './togglebutton';
 import toggleswitch from './toggleswitch';
 // import toolbar from './toolbar';
 import tooltip from './tooltip';
-// import tree from './tree';
-// import treeselect from './treeselect';
+import tree from './tree';
+import treeselect from './treeselect';
 // import treetable from './treetable';
 
 export default {
@@ -133,7 +133,7 @@ export default {
 	inputgroupaddon,
 	// inputmask,
 	// knob,
-	// treeselect,
+	treeselect,
 	// textarea,
 	// password,
 	iconfield,
@@ -149,7 +149,7 @@ export default {
 	// data
 	paginator,
 	datatable,
-	// tree,
+	tree,
 	// dataview,
 	// organizationchart,
 	// orderlist,

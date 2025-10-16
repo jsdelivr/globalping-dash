@@ -24,9 +24,9 @@ pnpm i
 pnpm exec playwright install --with-deps chromium
 
 # Prepare .env files
-cp .env.e2e.example .env.e2e
-cp .env.example .env
-perl -pi -e 's/DASH_INDEX_FILE_PATH=.*/DASH_INDEX_FILE_PATH=..\/..\/..\/.output\/server\/index.mjs/' .env
+cp .env.docker.e2e.example .env.docker.e2e
+cp .env.scripts.e2e.example .env.scripts.e2e
+perl -pi -e 's/DASH_INDEX_FILE_PATH=.*/DASH_INDEX_FILE_PATH=..\/..\/..\/.output\/server\/index.mjs/' .env.scripts.e2e
 
 # Build globalping-dash-directus
 docker compose -f docker-compose.e2e.yml up --build -d

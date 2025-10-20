@@ -55,7 +55,7 @@
 			</Button>
 
 			<Popover ref="adminOptsRef" class="w-fit gap-4 p-4 [&>*]:border-none" role="dialog">
-				<AdminFilterSettings/>
+				<ProbeFiltersAdminOnly/>
 			</Popover>
 		</div>
 	</div>
@@ -64,7 +64,6 @@
 <script setup lang="ts">
 	import { aggregate } from '@directus/sdk';
 	import debounce from 'lodash/debounce';
-	import AdminFilterSettings from '~/components/probe/ProbeFilters/AdminFilterSettings.vue';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { STATUS_MAP, type StatusCode, useProbeFilters } from '~/composables/useProbeFilters';
 	import { useAuth } from '~/store/auth';

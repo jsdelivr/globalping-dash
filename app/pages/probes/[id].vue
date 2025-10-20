@@ -119,7 +119,7 @@
 			header="Update a probe"
 			size="large"
 		>
-			<UpdateProbe/>
+			<GpDialogContentUpdateProbe/>
 		</GPDialog>
 	</div>
 </template>

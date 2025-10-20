@@ -1,6 +1,6 @@
 <template>
-	<BlockLoading v-if="status === 'pending'"/>
-	<BlockError v-else-if="status === 'error'"/>
+	<AsyncBlockLoading v-if="status === 'pending'"/>
+	<AsyncBlockError v-else-if="status === 'error'"/>
 
 	<div v-else>
 		<slot/>

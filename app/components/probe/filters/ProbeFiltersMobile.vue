@@ -85,7 +85,7 @@
 			</div>
 		</div>
 
-		<AdminFilterSettings v-if="auth.adminMode" v-model:filter="draftFilter"/>
+		<ProbeFiltersAdminOnly v-if="auth.adminMode" v-model:filter="draftFilter"/>
 
 		<div class="mt-4 flex justify-end gap-2">
 			<Button label="Cancel" severity="secondary" text @click="emit('cancel')"/>
@@ -97,7 +97,6 @@
 <script setup lang="ts">
 	import { aggregate } from '@directus/sdk';
 	import debounce from 'lodash/debounce';
-	import AdminFilterSettings from '~/components/probe/ProbeFilters/AdminFilterSettings.vue';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { type StatusCode, SORTABLE_FIELDS, STATUS_MAP, useProbeFilters } from '~/composables/useProbeFilters';
 	import { useAuth } from '~/store/auth';

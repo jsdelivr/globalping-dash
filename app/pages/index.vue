@@ -151,7 +151,7 @@
 			content-class="!p-0"
 			size="large"
 		>
-			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="refreshNuxtData"/>
+			<GpDialogContentAdoptProbe @cancel="adoptProbeDialog = false" @adopted="refreshNuxtData"/>
 		</GPDialog>
 
 		<GPDialog
@@ -161,7 +161,7 @@
 			content-class="!p-0"
 			size="w-[700px]"
 		>
-			<AddCredits
+			<GpDialogContentAddCredits
 				@cancel="creditsDialog = false"
 				@adopt-a-probe="() => {
 					creditsDialog = false;

@@ -41,7 +41,7 @@
 					<template #header>
 						<div class="flex w-full items-center">
 							<h3 class="px-2">List of probes</h3>
-							<ProbeListFilters/>
+							<ProbeFiltersDesktop/>
 						</div>
 					</template>
 
@@ -99,7 +99,7 @@
 						<template #body="slotProps">
 							<AsyncCell :loading="loading">
 								<NuxtLink :to="`/probes/${slotProps.data.id}`" class="flex h-full items-center">
-									<TagsList :tags="getAllTags(slotProps.data)" :wrapper="desktopTagsWrapperRef"/>
+									<ProbeTagsList :tags="getAllTags(slotProps.data)" :wrapper="desktopTagsWrapperRef"/>
 								</NuxtLink>
 							</AsyncCell>
 						</template>
@@ -141,7 +141,7 @@
 							ref="mobileFiltersRef"
 							class="!left-1/2 w-[95%] !-translate-x-1/2 !transform p-6 [&>*]:border-none"
 							role="dialog">
-							<MobileProbeListFilters
+							<ProbeFiltersMobile
 								@apply="() => mobileFiltersRef.toggle()"
 								@cancel="mobileFiltersRef.hide()"
 							/>
@@ -179,7 +179,7 @@
 												<span>{{ probe.version }}</span>
 											</div>
 											<div>
-												<TagsList :tags="getAllTags(probe)"/>
+												<ProbeTagsList :tags="getAllTags(probe)"/>
 											</div>
 										</div>
 									</NuxtLink>
@@ -244,7 +244,7 @@
 			header="Start a probe"
 			size="large"
 		>
-			<StartProbe/>
+			<GpDialogContentStartProbe/>
 		</GPDialog>
 		<GPDialog
 			v-model:visible="adoptProbeDialog"
@@ -252,20 +252,20 @@
 			content-class="!p-0"
 			size="large"
 		>
-			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="refresh"/>
+			<GpDialogContentAdoptProbe @cancel="adoptProbeDialog = false" @adopted="refresh"/>
 		</GPDialog>
 		<GPDialog
 			v-model:visible="deleteProbesDialog"
 			:header="`Delete ${pluralize('probe', selectedProbes.length)}`"
 		>
-			<DeleteProbes :probes="selectedProbes" @cancel="deleteProbesDialog = false" @success="onDeleteSuccess"/>
+			<GpDialogContentDeleteProbes :probes="selectedProbes" @cancel="deleteProbesDialog = false" @success="onDeleteSuccess"/>
 		</GPDialog>
 		<GPDialog
 			view-name="update-a-probe"
 			header="Update a probe"
 			size="large"
 		>
-			<UpdateProbe/>
+			<GpDialogContentUpdateProbe/>
 		</GPDialog>
 	</div>
 </template>
@@ -273,9 +273,6 @@
 <script setup lang="ts">
 	import { aggregate, readItems } from '@directus/sdk';
 	import CountryFlag from 'vue-country-flag-next';
-	import BigProbeIcon from '~/components/BigProbeIcon.vue';
-	import MobileProbeListFilters from '~/components/probe/ProbeFilters/MobileProbeListFilters.vue';
-	import ProbeListFilters from '~/components/probe/ProbeFilters/ProbeListFilters.vue';
 	import { computedDebounced } from '~/composables/computedDebounced';
 	import { useGoogleMaps } from '~/composables/maps';
 	import { usePagination } from '~/composables/pagination';

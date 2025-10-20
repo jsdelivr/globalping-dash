@@ -1,4 +1,4 @@
-import { useAppearance } from '~/store/appearance.js';
+import { useAppearance } from '~/store/appearance';
 
 const MAP_MIN_ZOOM = 1;
 const MAP_MAX_ZOOM = 22;

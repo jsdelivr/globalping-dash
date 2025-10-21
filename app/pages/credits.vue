@@ -86,7 +86,7 @@
 					No entries match the filter.
 				</p>
 				<AsyncRow v-for="(creditChange, index) in creditsChanges" v-else :key="index" :loading="loading">
-					<CreditItem :credit-change="creditChange"/>
+					<ListItemCredits :credit-change="creditChange"/>
 				</AsyncRow>
 			</div>
 			<Paginator
@@ -114,7 +114,7 @@
 			content-class="!p-0"
 			size="w-[700px]"
 		>
-			<AddCredits
+			<GpDialogContentAddCredits
 				@cancel="creditsDialog = false"
 				@adopt-a-probe="() => {
 					creditsDialog = false;
@@ -129,14 +129,13 @@
 			content-class="!p-0"
 			size="large"
 		>
-			<AdoptProbe @cancel="adoptProbeDialog = false" @adopted="refreshNuxtData"/>
+			<GpDialogContentAdoptProbe @cancel="adoptProbeDialog = false" @adopted="refreshNuxtData"/>
 		</GPDialog>
 	</div>
 </template>
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, readItems } from '@directus/sdk';
-	import CreditItem from '~/components/list-items/CreditItem.vue';
 	import { computedDebounced } from '~/composables/computedDebounced';
 	import { usePagination } from '~/composables/pagination';
 	import { useCreditsFilters } from '~/composables/useCreditsFilters';

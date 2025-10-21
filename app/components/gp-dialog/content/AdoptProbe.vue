@@ -107,11 +107,11 @@
 							<!-- inline-block is required so mt-2 is not collapsed -->
 							<p class="mb-4 mt-2 inline-block text-lg font-bold">Configure the probe</p>
 							<p>Recreate the container by running the following commands. The new container will be automatically bound to your account.</p>
-							<StartProbeCommands :adopt="true" :recreate="true"/>
+							<ProbeStartCommands :adopt="true" :recreate="true"/>
 						</TabPanel>
 						<TabPanel value="1">
 							<p class="mb-4 mt-2 inline-block text-lg font-bold">Join the network</p>
-							<StartProbe :adopt="true"/>
+							<GpDialogContentStartProbe :adopt="true"/>
 						</TabPanel>
 					</TabPanels>
 				</Tabs>

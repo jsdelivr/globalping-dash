@@ -97,7 +97,7 @@
 							<CodeBlock data-testid="token-value" :commands="[[generatedToken!.value]]"/>
 						</div>
 						<AsyncRow v-for="token in tokens" :key="token.id" :loading="loadingTokens">
-							<TokenItem
+							<ListItemTokens
 								:token="token"
 								@edit="openTokenDetails('edit', token.id)"
 								@regenerate="openRegenerateDialog(token.id)"
@@ -166,7 +166,7 @@
 						<i class="pi pi-spin pi-spinner text-xl"/>
 					</div>
 					<AsyncRow v-for="app in apps" v-else :key="app.id" :loading="loadingApplications">
-						<AppItem
+						<ListItemApps
 							:app="app"
 							@revoke="openRevokeDialog(app.id)"
 						/>
@@ -262,9 +262,6 @@
 
 <script setup lang="ts">
 	import { aggregate, customEndpoint, deleteItem, readItems, updateItem } from '@directus/sdk';
-	import AsyncRow from '~/components/AsyncRow.vue';
-	import AppItem from '~/components/list-items/AppItem.vue';
-	import TokenItem from '~/components/list-items/TokenItem.vue';
 	import { usePagination } from '~/composables/pagination';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';

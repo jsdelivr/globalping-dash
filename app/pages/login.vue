@@ -42,7 +42,7 @@
 			content-class="!p-0"
 			size="w-[700px]"
 		>
-			<AddCredits @cancel="addCreditsDialog = false"/>
+			<GpDialogContentAddCredits @cancel="addCreditsDialog = false"/>
 		</GPDialog>
 	</section>
 </template>

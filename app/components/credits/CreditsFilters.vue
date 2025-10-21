@@ -31,7 +31,7 @@
 	import debounce from 'lodash/debounce';
 	import isEqual from 'lodash/isEqual';
 	import { FIELD_LABELS, TYPE_REASONS, useCreditsFilters } from '~/composables/useCreditsFilters';
-	import { buildNodesByKey, renderTreeSelectValue } from '~/utils/tree-select.ts';
+	import { buildNodesByKey, renderTreeSelectValue } from '~/utils/tree-select';
 
 	const { filter, onParamChange, key: creditsFilterKey } = useCreditsFilters();
 

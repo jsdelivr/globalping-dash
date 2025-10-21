@@ -5,7 +5,7 @@
 				<span v-if="logs.length" class="font-bold">
 					Showing {{logs.length}} <span class="hidden sm:inline">most recent</span> {{pluralize('log', logs.length)}}.
 				</span>
-				<LogLoader v-else-if="enabled && !showLargeLoader"/>
+				<ProbeLogLoader v-else-if="enabled && !showLargeLoader"/>
 				<label
 					class="ml-auto flex cursor-pointer select-none items-center justify-end gap-2 whitespace-nowrap rounded-md border border-gray-500 px-2 py-1 duration-200 dark:border-gray-400"
 					:class="{
@@ -52,7 +52,7 @@
 					</span>
 				</span>
 				<div v-if="logs.length" class="h-fit px-1 py-2">
-					<LogLoader v-if="enabled"/>
+					<ProbeLogLoader v-if="enabled"/>
 					<span v-else class="block size-1.5"/>
 				</div>
 			</div>
@@ -63,7 +63,6 @@
 
 <script setup lang="ts">
 	import throttle from 'lodash/throttle';
-	import LogLoader from '~/components/probe/LogLoader.vue';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { formatTechnicalDateTime } from '~/utils/date-formatters';
 	import { pluralize } from '~/utils/pluralize';

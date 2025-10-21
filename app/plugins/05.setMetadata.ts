@@ -1,5 +1,5 @@
 import { customEndpoint } from '@directus/sdk';
-import { useMetadata } from '~/store/metadata.js';
+import { useMetadata } from '~/store/metadata';
 
 export default defineNuxtPlugin(async () => {
 	const metadata = useMetadata();

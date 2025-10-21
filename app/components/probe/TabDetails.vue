@@ -99,7 +99,7 @@
 			header="Delete probe"
 			aria-label="Remove a probe dialog"
 		>
-			<DeleteProbes :probes="[ probe ]" @cancel="deleteDialog = false" @success="onDeleteSuccess"/>
+			<GpDialogContentDeleteProbes :probes="[ probe ]" @cancel="deleteDialog = false" @success="onDeleteSuccess"/>
 		</GPDialog>
 	</div>
 </template>

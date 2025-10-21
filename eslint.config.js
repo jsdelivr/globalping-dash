@@ -51,6 +51,14 @@ export default createConfigForNuxt().prepend(
 	},
 	{
 		files: [
+			'{app,server}/**/*.{ts,vue}',
+		],
+		rules: {
+			'import/extensions': [ 'error', 'never' ],
+		},
+	},
+	{
+		files: [
 			'**/*.vue',
 		],
 		rules: {

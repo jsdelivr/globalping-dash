@@ -42,7 +42,7 @@
 		<div
 			class="relative flex h-full grow items-center rounded-md border border-[#D1D5DB] bg-white focus:z-10 focus:ring-1 focus:ring-primary sm:rounded-l-none sm:border-l-0 dark:border-dark-600 dark:bg-dark-800"
 		>
-			<CityAutoComplete
+			<ProbeCityAutocomplete
 				v-model="editedLocation"
 				v-model:input-ref="inputCityRef"
 				:dirty="isDirty"

@@ -67,6 +67,7 @@ declare global {
 		reason: 'one_time_sponsorship' | 'recurring_sponsorship' | 'tier_changed';
 		meta: {
 			amountInDollars: number;
+			monthsCovered?: number;
 		};
 	} | {
 		reason: 'other';

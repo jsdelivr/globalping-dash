@@ -82,7 +82,7 @@
 	watch(selectedOption, () => {
 		filter.value.year = selectedOption.value.value.year;
 		filter.value.month = selectedOption.value.value.month;
-		onParamChange();
+		onParamChange([ 'month', 'year' ], false);
 	});
 </script>
 

@@ -126,16 +126,21 @@ export const useCreditsFilters = () => {
 		};
 	});
 
-	const constructQuery = () => ({
-		...!isDefault('type') && filter.value.type.length && { type: filter.value.type },
-		...!isDefault('reason') && filter.value.reason.length && { reason: filter.value.reason },
-		...!isDefault('year') && { year: filter.value.year },
-		...!isDefault('month') && { month: (filter.value.month as number) + 1 },
+	const shouldAddToQuery = (key: keyof Filter, routeKeys: string[]) => !isDefault(key) && routeKeys.includes(key);
+
+	const constructQuery = (keysToUpdate: string[], resetQuery = true) => ({
+		...!resetQuery
+			? Object.fromEntries(Object.entries(route.query).filter(([ key ]) => !keysToUpdate.includes(key)))
+			: {},
+		...shouldAddToQuery('type', keysToUpdate) && filter.value.type.length && { type: filter.value.type },
+		...shouldAddToQuery('reason', keysToUpdate) && filter.value.reason.length && { reason: filter.value.reason },
+		...shouldAddToQuery('year', keysToUpdate) && { year: filter.value.year },
+		...shouldAddToQuery('month', keysToUpdate) && { month: (filter.value.month as number) + 1 },
 	});
 
-	const onParamChange = () => {
+	const onParamChange = (keysToUpdate = Object.keys(filter.value), resetQuery = true) => {
 		navigateTo({
-			query: constructQuery(),
+			query: constructQuery(keysToUpdate, resetQuery),
 		});
 	};
 

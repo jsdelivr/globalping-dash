@@ -63,6 +63,7 @@ export default {
 				'dark-950': 'var(--dark-950)',
 
 				'main-900': 'var(--main-900)',
+				'jsd-orange': 'var(--jsd-orange)',
 			},
 			fontFamily: {
 				// Inter + the tailwind defaults

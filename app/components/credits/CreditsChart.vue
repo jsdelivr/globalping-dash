@@ -1,11 +1,37 @@
 <template>
-	<div class="credits-chart">
-		<Chart type="line" :data="chartData" :options="chartOptions" class="h-40"/>
+	<div class="min-h-52 rounded-xl border bg-white text-black dark:bg-dark-800 dark:text-white">
+		<h4 class="border-b px-4 py-2 font-bold md:hidden">Overview</h4>
+		<div class="flex items-stretch gap-4 rounded-xl p-4 max-md:flex-col">
+			<div class="flex flex-col gap-2 md:min-w-44">
+				<div class="bg-gradient-highlight flex flex-1 flex-col justify-between gap-2 rounded-lg p-4">
+					<div class="flex items-center gap-2">
+						<i class="pi-arrow-up pi text-primary-400"/> <span class="text-sm">Generated</span>
+					</div>
+					<div class="flex items-center gap-2 text-2xl font-bold">
+						<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>
+						<span data-testid="generated-credits">{{ totalAdditions.toLocaleString('en-US') }}</span>
+					</div>
+				</div>
+				<div class="bg-gradient-orange flex flex-1 flex-col justify-between gap-2 rounded-lg p-4">
+					<div class="flex items-center gap-2">
+						<i class="pi-arrow-down pi text-jsd-orange"/> <span class="text-sm">Spent</span>
+					</div>
+					<div class="flex items-center gap-2 text-2xl font-bold">
+						<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>
+						<span data-testid="spent-credits">{{ totalDeductions.toLocaleString('en-US') }}</span>
+					</div>
+				</div>
+			</div>
+			<div class="credits-chart relative flex-1">
+				<Chart type="line" :data="chartData" :options="chartOptions" class="h-52 w-full"/>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
 	import Chart from 'primevue/chart';
+	import { useCreditsFilters } from '~/composables/useCreditsFilters';
 	import { formatDate } from '~/utils/date-formatters';
 
 	const props = defineProps({
@@ -21,6 +47,10 @@
 			type: Array as PropType<Pick<CreditsDeduction, 'amount' | 'date'>[]>,
 			default: () => [],
 		},
+		loading: {
+			type: Boolean,
+			default: false,
+		},
 	});
 
 	const documentStyle = getComputedStyle(document.documentElement);
@@ -28,98 +58,126 @@
 	const bluegray700 = documentStyle.getPropertyValue('--bluegray-700');
 	const surface300 = documentStyle.getPropertyValue('--p-surface-300');
 	const primary = documentStyle.getPropertyValue('--p-primary-color');
+	const jsdOrange = documentStyle.getPropertyValue('--jsd-orange');
 	const dark = document.documentElement.classList.contains('dark');
 
-	const changes = computed(() => {
-		const dayToAddition = new Map<string, number>();
-		const dayToDeduction = new Map<string, number>();
+	const totalAdditions = computed(() => props.additions.reduce((acc, { amount }) => acc + amount, 0));
+	const totalDeductions = computed(() => props.deductions.reduce((acc, { amount }) => acc + amount, 0));
+
+	const { filter } = useCreditsFilters();
+
+	type ChangeData = {
+		label: string;
+		total: number;
+		generated: number;
+		spent: number;
+	};
+
+	let lastComputedChanges: ChangeData[] = [];
+
+	const changes = computed<ChangeData[]>(() => {
+		// avoid updating chart data if the data is still loading
+		if (props.loading && lastComputedChanges.length > 0) {
+			return lastComputedChanges;
+		}
+
+		const dateToAddition = new Map<string, number>();
+		const dateToDeduction = new Map<string, number>();
+
+		const periodKeys: string[] = [];
+		const now = new Date();
+
+		// create x axis keys based on the applied filter
+		if (filter.value.year === 'last') {
+			for (let i = 11; i >= 0; i--) {
+				const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1));
+				periodKeys.push(formatDate(d.toISOString(), 'year-month'));
+			}
+		} else if (filter.value.month === 'last') {
+			for (let i = 29; i >= 0; i--) {
+				const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
+				periodKeys.push(formatDate(d.toISOString(), 'short'));
+			}
+		} else if (typeof filter.value.month === 'undefined') {
+			const year = filter.value.year as number;
+
+			for (let i = 0; i < 12; i++) {
+				const d = new Date(Date.UTC(year, i, 1));
+				periodKeys.push(formatDate(d.toISOString(), 'year-month'));
+			}
+		} else {
+			const year = filter.value.year as number;
+			const month = filter.value.month as number;
+			const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+
+			for (let i = 1; i <= daysInMonth; i++) {
+				const d = new Date(Date.UTC(year, month, i));
+				periodKeys.push(formatDate(d.toISOString(), 'short'));
+			}
+		}
+
+		// prefill with zeros
+		periodKeys.forEach((key) => {
+			dateToAddition.set(key, 0);
+			dateToDeduction.set(key, 0);
+		});
+
+		// fill with actual values
+		const groupBy = typeof filter.value.month === 'undefined' ? 'year' : 'day';
 
 		for (const addition of props.additions) {
-			const day = formatDate(addition.date_created, 'short');
-			const current = dayToAddition.get(day) ?? 0;
-			dayToAddition.set(day, current + addition.amount);
+			const day = formatDate(addition.date_created, groupBy === 'day' ? 'short' : 'year-month');
+			const current = dateToAddition.get(day) ?? 0;
+			dateToAddition.set(day, current + addition.amount);
 		}
 
 		for (const deduction of props.deductions) {
-			const day = formatDate(deduction.date, 'short');
-			const current = dayToDeduction.get(day) ?? 0;
-			dayToDeduction.set(day, current + deduction.amount);
+			const day = formatDate(deduction.date, groupBy === 'day' ? 'short' : 'year-month');
+			const current = dateToDeduction.get(day) ?? 0;
+			dateToDeduction.set(day, current + deduction.amount);
 		}
 
-		const last30Days = getLast30Days();
+		const sortedDates = periodKeys.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-		const data: {
-			label: string;
-			total: number;
-			generated: number;
-			spent: number;
-		}[] = [];
+		const data: ChangeData[] = [];
 
-		for (let i = 0; i < last30Days.length; i++) {
-			const day = last30Days[i]!;
-			const addition = dayToAddition.get(day) ?? 0;
-			const deduction = dayToDeduction.get(day) ?? 0;
-			let total;
+		let currentBalance = props.start;
 
-			if (i === 0) {
-				total = props.start + addition - deduction;
-			} else {
-				total = data[i - 1]!.total + addition - deduction;
-			}
+		for (const date of sortedDates) {
+			const generated = dateToAddition.get(date) ?? 0;
+			const spent = dateToDeduction.get(date) ?? 0;
+
+			currentBalance = currentBalance + generated - spent;
 
 			data.push({
-				label: day,
-				total,
-				generated: addition,
-				spent: deduction,
+				label: date,
+				total: currentBalance,
+				generated,
+				spent,
 			});
 		}
 
+		lastComputedChanges = data;
 		return data;
 	});
-
-	const getLast30Days = () => {
-		const days = [];
-		const currentDay = new Date();
-		currentDay.setDate(currentDay.getDate() + 1);
-
-		for (let i = 0; i < 30; i++) {
-			currentDay.setDate(currentDay.getDate() - 1);
-			days.push(formatDate(currentDay, 'short'));
-		}
-
-		return days.reverse();
-	};
 
 	const chartData = computed(() => {
 		return {
 			labels: changes.value.map(({ label }) => label),
 			datasets: [
 				{
-					data: changes.value.map(({ total }) => total),
+					data: changes.value.map(({ generated }) => generated),
+					borderColor: primary,
+					backgroundColor: primary,
+				},
+				{
+					data: changes.value.map(({ spent }) => spent),
+					borderColor: jsdOrange,
+					backgroundColor: jsdOrange,
 				},
 			],
 		};
 	});
-
-	let width: number, height: number, gradient: any;
-
-	const getGradient = (ctx: any, chartArea: any) => {
-		const chartWidth = chartArea.right - chartArea.left;
-		const chartHeight = chartArea.bottom - chartArea.top;
-
-		if (!gradient || width !== chartWidth || height !== chartHeight) {
-			// Create the gradient because this is either the first render
-			// or the size of the chart has changed
-			width = chartWidth;
-			height = chartHeight;
-			gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-			gradient.addColorStop(1, 'rgba(23,212,167,0.6)');
-			gradient.addColorStop(0, 'rgba(23,212,167,0)');
-		}
-
-		return gradient;
-	};
 
 	const chartOptions = computed(() => ({
 		animation: {
@@ -169,7 +227,7 @@ Spent: ${change.spent.toLocaleString('en-US')}`;
 				},
 			},
 			y: {
-				max: changes.value.length ? undefined : 1000,
+				max: totalAdditions.value + totalDeductions.value ? undefined : 1000,
 				beginAtZero: true,
 				ticks: {
 					color: bluegray400,
@@ -186,22 +244,9 @@ Spent: ${change.spent.toLocaleString('en-US')}`;
 			line: {
 				borderColor: primary,
 				borderWidth: 2,
-				fill: 'origin',
-				backgroundColor (context: any) {
-					const chart = context.chart;
-					const { ctx, chartArea } = chart;
-
-					if (!chartArea) {
-						// This case happens on initial chart load
-						return;
-					}
-
-					return getGradient(ctx, chartArea);
-				},
+				tension: 0.25,
 			},
 			point: {
-				borderColor: primary,
-				backgroundColor: primary,
 				radius: 0,
 				hitRadius: 100,
 				hoverRadius: 5,

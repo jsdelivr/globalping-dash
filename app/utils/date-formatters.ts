@@ -1,12 +1,16 @@
 import capitalize from 'lodash/capitalize';
 
-export const formatDate = (date: string | Date | null, format: 'long' | 'short' = 'long') => {
+export const formatDate = (date: string | Date | null, format: 'year-month' | 'long' | 'short' = 'long') => {
 	if (!date) {
 		return '';
 	}
 
 	if (typeof date === 'string') {
 		date = new Date(date);
+	}
+
+	if (format === 'year-month') {
+		return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 	}
 
 	if (format === 'short') {

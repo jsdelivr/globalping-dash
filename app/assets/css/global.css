@@ -70,4 +70,12 @@ input[disabled], textarea[disabled], select[disabled='disabled'] {
 	.page-title {
 		@apply text-2xl font-bold
 	}
+
+	.bg-gradient-highlight {
+		@apply bg-gradient-to-tr from-white from-[-40%] to-primary-100/50 dark:from-dark-800 dark:to-dark-600 dark:from-[-70%] dark:to-[180%]
+	}
+
+	.bg-gradient-orange {
+		@apply bg-gradient-to-tr from-white from-[-40%] to-orange-100 to-[130%] dark:from-dark-800 dark:to-dark-600 dark:from-[-70%] dark:to-[180%]
+	}
 }

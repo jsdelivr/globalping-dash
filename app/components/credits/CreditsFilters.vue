@@ -33,7 +33,7 @@
 	import { FIELD_LABELS, TYPE_REASONS, useCreditsFilters } from '~/composables/useCreditsFilters';
 	import { buildNodesByKey, renderTreeSelectValue } from '~/utils/tree-select';
 
-	const { filter, onParamChange, key: creditsFilterKey } = useCreditsFilters();
+	const { filter, onParamChange, creditsTableFilterKey } = useCreditsFilters();
 
 	// TREE SELECT STRUCTURE DEFINITIONS
 
@@ -95,7 +95,7 @@
 		selectedValues.value = nodes.value.reduce((selected, node) => buildSelection(node, filter.value, selected), {});
 	};
 
-	watch(creditsFilterKey, applyFilter, { immediate: true });
+	watch(creditsTableFilterKey, applyFilter, { immediate: true });
 
 	// HANDLERS
 
@@ -117,8 +117,9 @@
 		});
 
 		// do not reset page (via onParamChange) if there is no filter change
-		if (!isEqual(suggestedFilter, filter.value)) {
-			filter.value = suggestedFilter;
+		if (!isEqual(suggestedFilter, { type: filter.value.type, reason: filter.value.reason })) {
+			filter.value.type = suggestedFilter.type;
+			filter.value.reason = suggestedFilter.reason;
 			onParamChange();
 		}
 	};

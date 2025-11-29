@@ -89,7 +89,6 @@
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
-	import { minDelay } from '~/utils/min-delay';
 
 	const auth = useAuth();
 	const metadata = useMetadata();
@@ -100,7 +99,7 @@
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 
 	const { data: credits, error: creditsError, pending: creditsDataLoading } = await useLazyAsyncData('credits-stats', async () => {
-		const [ additions, deductions, sponsorshipDonations ] = await minDelay(Promise.all([
+		const [ additions, deductions, sponsorshipDonations ] = await Promise.all([
 			$directus.request<[{ sum: { amount: number }; date_created: 'datetime'; reason: string }]>(aggregate('gp_credits_additions', {
 				query: {
 					filter: {
@@ -131,7 +130,7 @@
 				},
 				fields: [ 'meta' ],
 			})),
-		]));
+		]);
 
 		return {
 			additions,

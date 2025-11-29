@@ -46,7 +46,7 @@
 					/>
 				</h4>
 				<div class="flex flex-1 gap-2 p-3 max-md:flex-col">
-					<div class="ga relative flex min-h-16 flex-1 flex-col justify-between rounded-lg bg-surface-50 p-3 dark:bg-dark-700">
+					<div class="relative flex min-h-16 flex-1 flex-col justify-between gap-1.5 rounded-lg bg-surface-50 p-3 dark:bg-dark-700">
 						<span class="inline-flex justify-between gap-2">
 							Online probes
 							<span class="size-4 shrink-0 rounded-full border-4 border-green-200 bg-green-500 dark:size-2.5 dark:border-[0.2rem] dark:border-green-500 dark:bg-green-300"/>

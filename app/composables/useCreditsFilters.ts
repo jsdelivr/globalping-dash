@@ -68,7 +68,6 @@ const PERMITTED_VALUES = {
 	reason: [ 'adopted-probes', 'sponsorship' ],
 	month: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, undefined, 'last' ],
 	year: [ ...AVAILABLE_YEARS, undefined, 'last' ],
-	period: [ 'month', 'year' ],
 };
 
 const DEFAULT_FILTER = {

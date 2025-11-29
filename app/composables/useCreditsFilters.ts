@@ -6,12 +6,13 @@ import { MONTH_NAMES } from '~/constants/months';
 
 type CreditsChangeType = 'additions' | 'deductions';
 type CreditsChangeReason = 'adopted-probes' | 'sponsorship';
+type CreditsTimeFrame = number | 'last' | undefined;
 
 type Filter = {
 	type: CreditsChangeType[];
 	reason: CreditsChangeReason[];
-	year: number | undefined | 'last';
-	month: number | undefined | 'last';
+	year: CreditsTimeFrame;
+	month: CreditsTimeFrame;
 };
 
 const FIRST_YEAR = 2023;
@@ -25,8 +26,8 @@ const AVAILABLE_YEARS = Array.from(
 export interface PeriodOption {
 	label: string;
 	value: {
-		year: number | 'last' | undefined;
-		month?: number | 'last' | undefined;
+		year: CreditsTimeFrame;
+		month?: CreditsTimeFrame;
 	};
 	withSeparator?: boolean;
 }
@@ -185,7 +186,7 @@ export const useCreditsFilters = () => {
 				filter.value.reason = filter.value.type.includes('additions') ? DEFAULT_FILTER.reason : [];
 			}
 
-			if (month && PERMITTED_VALUES.month.includes(Number(month) - 1)) {
+			if (PERMITTED_VALUES.month.includes(Number(month) - 1)) {
 				filter.value.month = Number(month) - 1;
 			} else if (year) {
 				filter.value.month = undefined;
@@ -193,12 +194,10 @@ export const useCreditsFilters = () => {
 				filter.value.month = DEFAULT_FILTER.month;
 			}
 
-			if (year) {
-				if (PERMITTED_VALUES.year.includes(Number(year))) {
-					filter.value.year = Number(year);
-				} else if (year === 'last') {
-					filter.value.year = 'last';
-				}
+			if (PERMITTED_VALUES.year.includes(Number(year))) {
+				filter.value.year = Number(year);
+			} else if (year === 'last') {
+				filter.value.year = 'last';
 			} else {
 				filter.value.year = DEFAULT_FILTER.year;
 				filter.value.month = DEFAULT_FILTER.month;

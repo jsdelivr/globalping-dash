@@ -74,7 +74,7 @@
 			</div>
 		</div>
 		<CreditsChart
-			:start="totalCredits - totalAdditions + totalDeductions"
+			:start="credits.startingBalance"
 			:additions="credits.additions"
 			:deductions="credits.deductions"
 			:loading="creditsDataLoading"
@@ -98,8 +98,16 @@
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 
+	const filterStartDate = computed(() => {
+		if ('_gte' in directusDateQuery.value) {
+			return directusDateQuery.value._gte;
+		}
+
+		return directusDateQuery.value._between[0];
+	});
+
 	const { data: credits, error: creditsError, pending: creditsDataLoading } = await useLazyAsyncData('credits-stats', async () => {
-		const [ additions, deductions, sponsorshipDonations ] = await Promise.all([
+		const [ additions, deductions, sponsorshipDonations, prevAdditions, prevDeductions ] = await Promise.all([
 			$directus.request<[{ sum: { amount: number }; date_created: 'datetime'; reason: string }]>(aggregate('gp_credits_additions', {
 				query: {
 					filter: {
@@ -130,16 +138,37 @@
 				},
 				fields: [ 'meta' ],
 			})),
+			$directus.request<[{ sum: { amount: number } }]>(aggregate('gp_credits_additions', {
+				query: {
+					filter: {
+						...getUserFilter('github_id'),
+						date_created: { _lt: filterStartDate.value },
+					},
+				},
+				aggregate: { sum: 'amount' },
+			})),
+			$directus.request<[{ sum: { amount: number } }]>(aggregate('gp_credits_deductions', {
+				query: {
+					filter: {
+						...getUserFilter('user_id'),
+						date: { _lt: filterStartDate.value },
+					},
+				},
+				aggregate: { sum: 'amount' },
+			})),
 		]);
 
 		return {
+			prevAdditions,
+			prevDeductions,
 			additions,
 			deductions,
 			sponsorshipDonations,
 		};
 	}, {
-		default: () => ({ additions: [], deductions: [], totalDonated: 0 }),
-		transform: ({ additions, deductions, sponsorshipDonations }) => ({
+		default: () => ({ startingBalance: 0, additions: [], deductions: [], totalDonated: 0 }),
+		transform: ({ prevAdditions, prevDeductions, additions, deductions, sponsorshipDonations }) => ({
+			startingBalance: (prevAdditions[0].sum?.amount || 0) - (prevDeductions[0].sum?.amount || 0),
 			deductions: deductions.map((addition) => {
 				const { sum, ...rest } = addition;
 				return { ...rest, amount: sum.amount };
@@ -152,15 +181,6 @@
 		}),
 		watch: [ directusDateQuery ],
 	});
-
-	const { data: totalCredits, error: totalCreditsError } = await useLazyAsyncData(
-		'total-credits',
-		() => $directus.request<{ amount: number }[]>(readItems('gp_credits', { filter: getUserFilter('user_id') })),
-		{
-			transform: data => data.reduce((sum, { amount }) => sum + amount, 0) || 0,
-			default: () => 0,
-		},
-	);
 
 	const { data: todayOnlineProbes, error: onlineProbesError } = await useLazyAsyncData(
 		'online-probes',
@@ -192,11 +212,9 @@
 		},
 	);
 
-	const totalAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + addition.amount, 0));
-	const totalDeductions = computed(() => credits.value.deductions.reduce((sum, deduction) => sum + deduction.amount, 0));
 	const probeAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + (addition.reason === 'adopted_probe' ? addition.amount : 0), 0));
 	const sponsorshipAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + (addition.reason.includes('sponsorship') ? addition.amount : 0), 0));
 	const dailyAdditions = computed(() => todayOnlineProbes.value * creditsPerAdoptedProbe);
 
-	useErrorToast(creditsError, sponsorshipError, totalCreditsError, onlineProbesError);
+	useErrorToast(creditsError, sponsorshipError, onlineProbesError);
 </script>

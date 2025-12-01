@@ -132,7 +132,7 @@ export default {
 			'first:mt-0 mt-[2px]',
 
 			// Shape
-			'border-0 rounded focus:outline-primary',
+			'border-0 rounded',
 
 			// Colors
 			{
@@ -193,7 +193,7 @@ export default {
 	header: {
 		class: [
 			// Spacing
-			'p-2',
+			'pt-2 px-2 pb-0',
 			'm-0',
 
 			// Shape

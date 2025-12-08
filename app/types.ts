@@ -10,7 +10,7 @@ declare global {
 		'gp_credits_deductions': CreditsDeduction[];
 		'gp_tokens': Token[];
 		'gp_apps': Application[];
-		'gp_apps_approvals': AppAppoval[];
+		'gp_apps_approvals': AppApproval[];
 
 		'directus_users': User;
 		'city-autocomplete': City[];
@@ -165,7 +165,7 @@ declare global {
 		user_id: string;
 	};
 
-	type AppAppoval = {
+	type AppApproval = {
 		id: string;
 		date_created: string | null;
 		date_updated: string | null;

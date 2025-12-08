@@ -50,7 +50,7 @@ export const initGoogleMap = async (probe: Probe, showPulse: boolean = false, ma
 
 	const appearance = useAppearance();
 
-	// adjust the map center to visually shift marker verically by offset value
+	// adjust the map center to visually shift marker vertically by offset value
 	const mapCenterLat = mapCenterYOffsetPx ? probe.latitude - mapCenterYOffsetPx / Math.pow(2, MAP_ZOOM_REG) : probe.latitude;
 	const mapCenterLng = probe.longitude;
 

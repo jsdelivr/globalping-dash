@@ -116,7 +116,7 @@
 
 	const { data: credits, error: creditsError, pending: creditsDataLoading } = await useLazyAsyncData('credits-stats', async () => {
 		const [ additions, deductions, sponsorshipDonations, sponsorshipDetails, adoptions ] = await minDelay(Promise.all([
-			$directus.request<[{ sum: { amount: number }; date_created: 'datetime'; reason: string }]>(aggregate('gp_credits_additions', {
+			$directus.request<{ sum: { amount: number }; date_created: 'datetime'; reason: string }[]>(aggregate('gp_credits_additions', {
 				query: {
 					filter: {
 						...getUserFilter('github_id'),
@@ -126,7 +126,7 @@
 				groupBy: [ 'date_created', 'reason' ],
 				aggregate: { sum: 'amount' },
 			})),
-			$directus.request<[{ sum: { amount: number }; date: 'datetime' }]>(aggregate('gp_credits_deductions', {
+			$directus.request<{ sum: { amount: number }; date: 'datetime' }[]>(aggregate('gp_credits_deductions', {
 				query: {
 					filter: {
 						...getUserFilter('user_id'),
@@ -136,7 +136,7 @@
 				groupBy: [ 'date' ],
 				aggregate: { sum: 'amount' },
 			})),
-			$directus.request<[{ meta: null | { amountInDollars?: number } }]>(readItems('gp_credits_additions', {
+			$directus.request<{ meta: null | { amountInDollars?: number } }[]>(readItems('gp_credits_additions', {
 				filter: {
 					...getUserFilter('github_id'),
 					date_created: directusDateQuery.value,

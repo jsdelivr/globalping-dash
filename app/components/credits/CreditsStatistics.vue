@@ -221,7 +221,24 @@
 
 	const probeAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + (addition.reason === 'adopted_probe' ? addition.amount : 0), 0));
 	const sponsorshipAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + (addition.reason.includes('sponsorship') ? addition.amount : 0), 0));
-	const dailyAdditions = computed(() => credits.value.onlineProbes * creditsPerAdoptedProbe);
+	const dailyAdditions = computed(() => {
+		if (isRelativeFilter.value) {
+			return credits.value.onlineProbes * creditsPerAdoptedProbe;
+		}
+
+		const year = filter.value.year as number;
+		const month = filter.value.month as number;
+		let periodLength;
+
+		if (typeof filter.value.month === 'undefined') {
+			const isLeap = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+			periodLength = isLeap ? 366 : 365;
+		} else {
+			periodLength = new Date(year, month + 1, 0).getDate();
+		}
+
+		return Math.round(probeAdditions.value / periodLength);
+	});
 
 	useErrorToast(creditsError);
 </script>

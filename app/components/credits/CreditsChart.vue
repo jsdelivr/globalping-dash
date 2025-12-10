@@ -138,11 +138,9 @@
 			dateToDeduction.set(day, current + deduction.amount);
 		}
 
-		const sortedDates = periodKeys.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-
 		const data: ChangeData[] = [];
 
-		for (const date of sortedDates) {
+		for (const date of periodKeys) {
 			const gained = dateToAddition.get(date) ?? 0;
 			const spent = dateToDeduction.get(date) ?? 0;
 

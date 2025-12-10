@@ -79,11 +79,7 @@ export const useCreditsFilters = () => {
 			const isFirstYear = year === FIRST_YEAR;
 
 			const minMonth = isFirstYear ? FIRST_MONTH : 0;
-			let maxMonth = 11;
-
-			if (isCurrentYear) {
-				maxMonth = isFirstYear ? CURRENT_MONTH : CURRENT_MONTH - 1;
-			}
+			const maxMonth = isCurrentYear ? CURRENT_MONTH - 1 : 11;
 
 			if (maxMonth === 11) {
 				options.push({

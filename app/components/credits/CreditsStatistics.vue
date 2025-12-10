@@ -11,37 +11,31 @@
 				<h4 class="border-b px-4 py-2 font-bold">
 					From sponsorship
 				</h4>
-				<div class="relative flex gap-2 p-3 max-md:flex-col md:h-28">
-					<AsyncCell class="min-h-full max-w-full max-md:min-h-[6rem] md:flex-1" :loading="creditsDataLoading">
-						<div class="relative flex h-full flex-col justify-between gap-1.5 rounded-lg bg-surface-50 p-3 dark:bg-dark-700">
-							Donated
-							<b class="text-2xl">
-								${{credits.totalDonated.toLocaleString('en-US')}}
-							</b>
-						</div>
-					</AsyncCell>
-					<AsyncCell class="min-h-full max-w-full max-md:min-h-[6rem] md:flex-1" :loading="creditsDataLoading">
-						<div class="relative flex h-full flex-col justify-between gap-1.5 rounded-lg bg-surface-50 p-3 dark:bg-dark-700">
-							<span v-if="isRelativeFilter">
-								Current bonus
-							</span>
-							<span v-else>
-								Bonus
-							</span>
-							<b class="text-2xl">
-								{{credits.bonus > 0 ? `+${credits.bonus}%` : '0%'}}
-							</b>
-						</div>
-					</AsyncCell>
-					<AsyncCell class="min-h-full max-w-full max-md:min-h-[6rem] md:flex-1" :loading="creditsDataLoading">
-						<div class="bg-gradient-highlight relative flex h-full flex-col justify-between gap-1.5 rounded-lg p-3">
-							Credits gained
-							<b class="inline-flex items-center gap-2 text-2xl">
-								<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>{{ (sponsorshipAdditions).toLocaleString('en-US') }}
-							</b>
-						</div>
-					</AsyncCell>
-				</div>
+				<AsyncBlock class="relative flex min-h-28 gap-2 p-3 max-md:min-h-[21rem] max-md:flex-col" :status="creditsDataLoading ? 'pending' : ''">
+					<div class="relative flex h-full flex-1 flex-col justify-between gap-1.5 rounded-lg bg-surface-50 p-3 dark:bg-dark-700">
+						Donated
+						<b class="text-2xl">
+							${{credits.totalDonated.toLocaleString('en-US')}}
+						</b>
+					</div>
+					<div class="relative flex h-full flex-1 flex-col justify-between gap-1.5 rounded-lg bg-surface-50 p-3 dark:bg-dark-700">
+						<span v-if="isRelativeFilter">
+							Current bonus
+						</span>
+						<span v-else>
+							Bonus
+						</span>
+						<b class="text-2xl">
+							{{credits.bonus > 0 ? `+${credits.bonus}%` : '0%'}}
+						</b>
+					</div>
+					<div class="bg-gradient-highlight relative flex h-full flex-1 flex-col justify-between gap-1.5 rounded-lg p-3">
+						Credits gained
+						<b class="inline-flex items-center gap-2 text-2xl">
+							<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>{{ (sponsorshipAdditions).toLocaleString('en-US') }}
+						</b>
+					</div>
+				</AsyncBlock>
 			</div>
 			<div class="flex flex-1 flex-col rounded-xl border bg-white dark:bg-dark-800 dark:text-white">
 				<h4 class="flex items-center gap-2 border-b px-4 py-2 font-bold">
@@ -51,42 +45,36 @@
 						class="pi pi-info-circle"
 					/>
 				</h4>
-				<div class="relative flex gap-2 p-3 max-md:flex-col md:h-28">
-					<AsyncCell class="min-h-full max-w-full max-md:min-h-[6rem] md:flex-1" :loading="creditsDataLoading">
-						<div class="relative flex h-full flex-col justify-between gap-1.5 rounded-lg bg-surface-50 p-3 dark:bg-dark-700">
-							<span class="inline-flex justify-between gap-2">
-								Online probes
-								<span v-if="isRelativeFilter" class="size-4 shrink-0 rounded-full border-4 border-green-200 bg-green-500 dark:size-2.5 dark:border-[0.2rem] dark:border-green-500 dark:bg-green-300"/>
-							</span>
-							<b class="text-2xl">
-								{{ credits.onlineProbes }}
-							</b>
-						</div>
-					</AsyncCell>
-					<AsyncCell class="min-h-full max-w-full max-md:min-h-[6rem] md:flex-1" :loading="creditsDataLoading">
-						<div class="relative flex h-full flex-col justify-between gap-1.5 rounded-lg bg-surface-50 p-3 dark:bg-dark-700">
-							<span v-if="isRelativeFilter">
-								Estimated per day
-							</span>
-							<span v-else>
-								Daily average
-							</span>
-							<b class="inline-flex items-center gap-2 text-2xl">
-								<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>
-								<span data-testid="estimated-credits">{{ dailyAdditions.toLocaleString('en-US') }}</span>
-							</b>
+				<AsyncBlock class="relative flex min-h-28 gap-2 p-3 max-md:min-h-[21rem] max-md:flex-col" :status="creditsDataLoading ? 'pending' : ''">
+					<div class="relative flex h-full flex-1 flex-col justify-between gap-1.5 rounded-lg bg-surface-50 p-3 dark:bg-dark-700">
+						<span class="inline-flex justify-between gap-2">
+							Online probes
+							<span v-if="isRelativeFilter" class="size-4 shrink-0 rounded-full border-4 border-green-200 bg-green-500 dark:size-2.5 dark:border-[0.2rem] dark:border-green-500 dark:bg-green-300"/>
+						</span>
+						<b class="text-2xl">
+							{{ credits.onlineProbes }}
+						</b>
+					</div>
+					<div class="relative flex h-full flex-1 flex-col justify-between gap-1.5 rounded-lg bg-surface-50 p-3 dark:bg-dark-700">
+						<span v-if="isRelativeFilter">
+							Estimated per day
+						</span>
+						<span v-else>
+							Daily average
+						</span>
+						<b class="inline-flex items-center gap-2 text-2xl">
+							<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>
+							<span data-testid="estimated-credits">{{ dailyAdditions.toLocaleString('en-US') }}</span>
+						</b>
 
-						</div>
-					</AsyncCell>
-					<AsyncCell class="min-h-full max-w-full max-md:min-h-[6rem] md:flex-1" :loading="creditsDataLoading">
-						<div class="bg-gradient-highlight relative flex h-full flex-col justify-between gap-1.5 rounded-lg p-3">
-							Credits gained
-							<b class="inline-flex items-center gap-2 text-2xl">
-								<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>{{ probeAdditions.toLocaleString('en-US') }}
-							</b>
-						</div>
-					</AsyncCell>
-				</div>
+					</div>
+					<div class="bg-gradient-highlight relative flex h-full flex-1 flex-col justify-between gap-1.5 rounded-lg p-3">
+						Credits gained
+						<b class="inline-flex items-center gap-2 text-2xl">
+							<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>{{ probeAdditions.toLocaleString('en-US') }}
+						</b>
+					</div>
+				</AsyncBlock>
 			</div>
 		</div>
 		<CreditsChart

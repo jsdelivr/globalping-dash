@@ -1,7 +1,7 @@
 <template>
 	<div class="min-h-52 rounded-xl border bg-white text-black dark:bg-dark-800 dark:text-white">
 		<h4 class="border-b px-4 py-2 font-bold md:hidden">Overview</h4>
-		<div class="flex items-stretch gap-4 rounded-xl p-4 max-md:flex-col">
+		<AsyncBlock class="flex min-h-64 items-stretch gap-4 rounded-xl p-4 max-md:min-h-[32.5rem] max-md:flex-col" :status="loading ? 'pending' : ''">
 			<div class="flex flex-col gap-2 md:min-w-44">
 				<AsyncCell class="flex max-w-full flex-col max-md:min-h-24 md:flex-1" :loading="loading">
 					<div class="bg-gradient-highlight flex flex-1 flex-col justify-between gap-2 rounded-lg p-4">
@@ -31,7 +31,7 @@
 					<Chart type="line" :data="chartData" :options="chartOptions" class="size-full"/>
 				</AsyncCell>
 			</div>
-		</div>
+		</AsyncBlock>
 	</div>
 </template>
 

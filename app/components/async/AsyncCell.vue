@@ -1,8 +1,6 @@
 <template>
 	<Skeleton v-if="loading" class="flex self-center" :class="sizeClass"/>
-	<div v-else class="relative">
-		<slot/>
-	</div>
+	<slot v-else/>
 </template>
 
 <script setup lang="ts">

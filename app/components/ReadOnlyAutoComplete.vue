@@ -8,7 +8,7 @@
 			inputChip: { class: 'hidden' },
 			inputMultiple: {
 				class: 'pb-1 pr-9 min-h-10',
-				// Tabindex should be unset, otherwise Copying of the selected value is not working.
+				// Tabindex should be unset; otherwise, Copying of the selected value is not working.
 				tabindex: ''
 			},
 			chipItem: { class: 'mt-1' },

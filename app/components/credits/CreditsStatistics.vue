@@ -160,7 +160,7 @@
 					},
 					aggregate: { count: '*' },
 				}))
-				: $directus.request<[{ meta: { ip: string; id: string } }]>(readItems('gp_credits_additions', {
+				: $directus.request<{ meta: { ip: string; id: string } }[]>(readItems('gp_credits_additions', {
 					filter: {
 						...getUserFilter('github_id'),
 						date_created: directusDateQuery.value,
@@ -215,13 +215,13 @@
 		}
 
 		const year = filter.value.year as number;
-		const month = filter.value.month as number;
 		let periodLength;
 
 		if (typeof filter.value.month === 'undefined') {
 			const isLeap = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 			periodLength = isLeap ? 366 : 365;
 		} else {
+			const month = filter.value.month as number;
 			periodLength = new Date(year, month + 1, 0).getDate();
 		}
 

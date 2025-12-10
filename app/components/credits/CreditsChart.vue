@@ -3,27 +3,33 @@
 		<h4 class="border-b px-4 py-2 font-bold md:hidden">Overview</h4>
 		<div class="flex items-stretch gap-4 rounded-xl p-4 max-md:flex-col">
 			<div class="flex flex-col gap-2 md:min-w-44">
-				<div class="bg-gradient-highlight flex flex-1 flex-col justify-between gap-2 rounded-lg p-4">
-					<div class="flex items-center gap-2">
-						<i class="pi-arrow-up pi text-primary-400"/> <span class="text-sm">Generated</span>
+				<AsyncCell class="flex max-w-full flex-col max-md:min-h-24 md:flex-1" :loading="loading">
+					<div class="bg-gradient-highlight flex flex-1 flex-col justify-between gap-2 rounded-lg p-4">
+						<div class="flex items-center gap-2">
+							<i class="pi-arrow-up pi text-primary-400"/> <span class="text-sm">Gained</span>
+						</div>
+						<div class="flex items-center gap-2 text-2xl font-bold">
+							<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>
+							<span data-testid="generated-credits">{{ totalAdditions.toLocaleString('en-US') }}</span>
+						</div>
 					</div>
-					<div class="flex items-center gap-2 text-2xl font-bold">
-						<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>
-						<span data-testid="generated-credits">{{ totalAdditions.toLocaleString('en-US') }}</span>
+				</AsyncCell>
+				<AsyncCell class="flex max-w-full flex-col max-md:min-h-24 md:flex-1" :loading="loading">
+					<div class="bg-gradient-orange flex flex-1 flex-col justify-between gap-2 rounded-lg p-4">
+						<div class="flex items-center gap-2">
+							<i class="pi-arrow-down pi text-jsd-orange"/> <span class="text-sm">Spent</span>
+						</div>
+						<div class="flex items-center gap-2 text-2xl font-bold">
+							<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>
+							<span data-testid="spent-credits">{{ totalDeductions.toLocaleString('en-US') }}</span>
+						</div>
 					</div>
-				</div>
-				<div class="bg-gradient-orange flex flex-1 flex-col justify-between gap-2 rounded-lg p-4">
-					<div class="flex items-center gap-2">
-						<i class="pi-arrow-down pi text-jsd-orange"/> <span class="text-sm">Spent</span>
-					</div>
-					<div class="flex items-center gap-2 text-2xl font-bold">
-						<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>
-						<span data-testid="spent-credits">{{ totalDeductions.toLocaleString('en-US') }}</span>
-					</div>
-				</div>
+				</AsyncCell>
 			</div>
-			<div class="credits-chart relative flex-1">
-				<Chart type="line" :data="chartData" :options="chartOptions" class="h-52 w-full"/>
+			<div class="credits-chart relative h-52 md:flex-1">
+				<AsyncCell class="h-full min-h-full max-w-full" :loading="loading">
+					<Chart type="line" :data="chartData" :options="chartOptions" class="size-full"/>
+				</AsyncCell>
 			</div>
 		</div>
 	</div>
@@ -35,10 +41,6 @@
 	import { formatDate } from '~/utils/date-formatters';
 
 	const props = defineProps({
-		start: {
-			type: Number,
-			default: 0,
-		},
 		additions: {
 			type: Array as PropType<Pick<CreditsAddition, 'amount' | 'date_created'>[]>,
 			default: () => [],
@@ -68,8 +70,7 @@
 
 	type ChangeData = {
 		label: string;
-		total: number;
-		generated: number;
+		gained: number;
 		spent: number;
 	};
 
@@ -88,12 +89,12 @@
 		const now = new Date();
 
 		// create x axis keys based on the applied filter
-		if (filter.value.year === 'last') {
+		if (filter.value.year === 'past') {
 			for (let i = 11; i >= 0; i--) {
 				const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1));
 				periodKeys.push(formatDate(d.toISOString(), 'year-month'));
 			}
-		} else if (filter.value.month === 'last') {
+		} else if (filter.value.month === 'past') {
 			for (let i = 29; i >= 0; i--) {
 				const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
 				periodKeys.push(formatDate(d.toISOString(), 'short'));
@@ -141,18 +142,13 @@
 
 		const data: ChangeData[] = [];
 
-		let currentBalance = props.start;
-
 		for (const date of sortedDates) {
-			const generated = dateToAddition.get(date) ?? 0;
+			const gained = dateToAddition.get(date) ?? 0;
 			const spent = dateToDeduction.get(date) ?? 0;
-
-			currentBalance = currentBalance + generated - spent;
 
 			data.push({
 				label: date,
-				total: currentBalance,
-				generated,
+				gained,
 				spent,
 			});
 		}
@@ -166,7 +162,7 @@
 			labels: changes.value.map(({ label }) => label),
 			datasets: [
 				{
-					data: changes.value.map(({ generated }) => generated),
+					data: changes.value.map(({ gained }) => gained),
 					borderColor: primary,
 					backgroundColor: primary,
 				},
@@ -198,8 +194,7 @@
 						const change = changes.value[dataIndex];
 
 						if (change) {
-							return `Total credits: ${change.total.toLocaleString('en-US')}
-Generated: ${change.generated.toLocaleString('en-US')}
+							return `Gained: ${change.gained.toLocaleString('en-US')}
 Spent: ${change.spent.toLocaleString('en-US')}`;
 						}
 

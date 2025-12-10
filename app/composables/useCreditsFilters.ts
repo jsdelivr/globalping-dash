@@ -3,10 +3,11 @@ import isEqual from 'lodash/isEqual';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { MONTH_NAMES } from '~/constants/months';
+import { useAuth } from '~/store/auth';
 
 type CreditsChangeType = 'additions' | 'deductions';
 type CreditsChangeReason = 'adopted-probes' | 'sponsorship';
-type CreditsTimeFrame = number | 'last' | undefined;
+type CreditsTimeFrame = number | 'past' | undefined;
 
 type Filter = {
 	type: CreditsChangeType[];
@@ -14,15 +15,6 @@ type Filter = {
 	year: CreditsTimeFrame;
 	month: CreditsTimeFrame;
 };
-
-const FIRST_YEAR = 2023;
-const CURRENT_YEAR = new Date().getUTCFullYear();
-const CURRENT_MONTH = new Date().getUTCMonth();
-const AVAILABLE_YEARS = Array.from(
-	{ length: CURRENT_YEAR - FIRST_YEAR + 1 },
-	(_, i) => FIRST_YEAR + i,
-);
-
 export interface PeriodOption {
 	label: string;
 	value: {
@@ -32,49 +24,16 @@ export interface PeriodOption {
 	withSeparator?: boolean;
 }
 
-export const PERIOD_OPTIONS: PeriodOption[] = [
-	{
-		label: 'Last year',
-		value: {
-			year: 'last',
-			month: undefined,
-		},
-	},
-	{
-		label: 'Last month',
-		value: {
-			year: undefined,
-			month: 'last',
-		},
-		withSeparator: true,
-	},
-	...AVAILABLE_YEARS.map(year => [
-		...MONTH_NAMES.map((month, i) => ({
-			label: `${month} ${year}`,
-			value: { year, month: i },
-			withSeparator: i === 0,
-		})),
-		{
-			label: year.toString(),
-			value: { year, month: undefined },
-		},
-	]).flat()
-		.filter(opt => opt.value.year !== CURRENT_YEAR
-			|| (typeof opt.value.month !== 'undefined' && opt.value.month < CURRENT_MONTH))
-		.reverse(),
-] as const;
-
 const PERMITTED_VALUES = {
 	type: [ 'additions', 'deductions' ],
 	reason: [ 'adopted-probes', 'sponsorship' ],
-	month: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, undefined, 'last' ],
-	year: [ ...AVAILABLE_YEARS, undefined, 'last' ],
+	month: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, undefined, 'past' ],
 };
 
 const DEFAULT_FILTER = {
 	type: PERMITTED_VALUES.type,
 	reason: PERMITTED_VALUES.reason,
-	month: 'last',
+	month: 'past',
 	year: undefined,
 } as Filter;
 
@@ -100,6 +59,51 @@ export const useCreditsFilters = () => {
 	const filter = ref<Filter>(cloneDeep(DEFAULT_FILTER));
 	const anyFilterApplied = computed(() => (Object.keys(DEFAULT_FILTER) as Array<keyof Filter>).some(key => !isDefault(key)));
 
+	const { user } = useAuth();
+	const userCreated = Date.parse(user.date_created) ? new Date(user.date_created) : new Date('2023-01-01');
+
+	const FIRST_YEAR = userCreated.getUTCFullYear();
+	const FIRST_MONTH = userCreated.getUTCMonth();
+	const CURRENT_YEAR = new Date().getUTCFullYear();
+	const CURRENT_MONTH = new Date().getUTCMonth();
+
+	const periodOptions = computed<PeriodOption[]>(() => {
+		const options: PeriodOption[] = [
+			{ label: 'Past year', value: { year: 'past', month: undefined } },
+			{ label: 'Past month', value: { year: undefined, month: 'past' }, withSeparator: true },
+		];
+
+		// add valid months for all years, also add the whole year option if the final month is December
+		for (let year = CURRENT_YEAR; year >= FIRST_YEAR; year--) {
+			const isCurrentYear = year === CURRENT_YEAR;
+			const isFirstYear = year === FIRST_YEAR;
+
+			const minMonth = isFirstYear ? FIRST_MONTH : 0;
+			let maxMonth = 11;
+
+			if (isCurrentYear) {
+				maxMonth = isFirstYear ? CURRENT_MONTH : CURRENT_MONTH - 1;
+			}
+
+			if (maxMonth === 11) {
+				options.push({
+					label: year.toString(),
+					value: { year, month: undefined },
+				});
+			}
+
+			for (let month = maxMonth; month >= minMonth; month--) {
+				options.push({
+					label: `${MONTH_NAMES[month]} ${year}`,
+					value: { year, month },
+					withSeparator: month === 0,
+				});
+			}
+		}
+
+		return options;
+	});
+
 	const creditsTableFilterKey = computed(() => JSON.stringify({
 		type: filter.value.type,
 		reason: filter.value.reason,
@@ -108,9 +112,9 @@ export const useCreditsFilters = () => {
 	const directusDateQuery = computed<{ _gte: string } | { _between: [ string, string ] }>(() => {
 		const { year, month } = filter.value;
 
-		if (year === 'last') {
+		if (year === 'past') {
 			return { _gte: '$NOW(-365 day)' };
-		} else if (month === 'last') {
+		} else if (month === 'past') {
 			return { _gte: '$NOW(-30 day)' };
 		}
 
@@ -194,10 +198,10 @@ export const useCreditsFilters = () => {
 				filter.value.month = DEFAULT_FILTER.month;
 			}
 
-			if (PERMITTED_VALUES.year.includes(Number(year))) {
+			if (Number(year) >= FIRST_YEAR && Number(year) <= CURRENT_YEAR) {
 				filter.value.year = Number(year);
-			} else if (year === 'last') {
-				filter.value.year = 'last';
+			} else if (year === 'past') {
+				filter.value.year = 'past';
 			} else {
 				filter.value.year = DEFAULT_FILTER.year;
 				filter.value.month = DEFAULT_FILTER.month;
@@ -216,6 +220,7 @@ export const useCreditsFilters = () => {
 		filter,
 		directusDateQuery,
 		creditsTableFilterKey,
+		periodOptions,
 		// handlers
 		onParamChange,
 		// builders

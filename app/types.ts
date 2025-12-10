@@ -137,6 +137,7 @@ declare global {
 		public_probes: boolean;
 		adoption_token: string;
 		default_prefix: string;
+		date_created: string;
 	};
 
 	type Token = {

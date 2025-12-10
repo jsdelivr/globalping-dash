@@ -41,6 +41,7 @@ export const useAuth = defineStore('auth', {
 			adoption_token: '',
 			default_prefix: '',
 			last_page: '',
+			date_created: '',
 		},
 	}),
 	actions: {

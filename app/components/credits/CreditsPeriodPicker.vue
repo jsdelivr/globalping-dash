@@ -9,11 +9,13 @@
 				label: { class: 'p-1 focus:outline-none' },
 				listContainer: { tabindex: -1 },
 			}"
-			panel-class="pv-select-panel min-w-[12rem]"
+			option-label="label"
+			append-to="self"
+			panel-class="pv-select-panel min-w-[12rem] !left-auto !right-0 font-normal"
 			@before-hide="filterInput = ''"
 		>
 			<template #value="slotProps">
-				<div class="flex items-center gap-2 max-md:-mr-3">
+				<div class="flex min-h-7 items-center gap-2 max-md:-mr-3">
 					<span class="flex items-center gap-1 rounded-lg border bg-white px-2 py-1 text-sm duration-200 max-md:hidden dark:bg-dark-500 dark:group-hover:bg-dark-400">
 						<i class="pi pi-calendar"/>
 						{{ typeof filter.month !== 'undefined' ? 'Month' : 'Year' }}
@@ -27,7 +29,7 @@
 
 			<template #header>
 				<div class="flex flex-col">
-					<div class="m-2 flex items-center gap-2 rounded-md border px-3 py-2 ring-primary focus-within:ring-2 dark:bg-dark-800">
+					<div class="m-2 flex items-center gap-2 rounded-md border px-3 py-2 ring-primary focus-within:ring-1 dark:bg-dark-800">
 						<i class="pi pi-search"/>
 						<input
 							ref="filterRef"
@@ -55,22 +57,22 @@
 </template>
 
 <script setup lang="ts">
-	import { PERIOD_OPTIONS, type PeriodOption, useCreditsFilters } from '~/composables/useCreditsFilters';
+	import { type PeriodOption, useCreditsFilters } from '~/composables/useCreditsFilters';
 
-	const { filter, onParamChange, directusDateQuery } = useCreditsFilters();
+	const { filter, onParamChange, directusDateQuery, periodOptions } = useCreditsFilters();
 	const filterInput = ref('');
 
 	const filteredOptions = computed(() => {
 		if (filterInput.value) {
 			const search = filterInput.value.toLowerCase();
-			return PERIOD_OPTIONS.filter(opt => opt.label.toLowerCase().includes(search)).map(opt => ({ ...opt, withSeparator: false }));
+			return periodOptions.value.filter(opt => opt.label.toLowerCase().includes(search)).map(opt => ({ ...opt, withSeparator: false }));
 		}
 
-		return PERIOD_OPTIONS;
+		return periodOptions.value;
 	});
 
 	const getInitialOption = (): PeriodOption => {
-		return PERIOD_OPTIONS.find(opt => (opt.value.year === filter.value.year) && (opt.value.month === filter.value.month)) || PERIOD_OPTIONS[0]!;
+		return periodOptions.value.find(opt => (opt.value.year === filter.value.year) && (opt.value.month === filter.value.month)) || periodOptions.value[0]!;
 	};
 
 	const selectedOption = ref(getInitialOption());

@@ -93,7 +93,6 @@
 	const emit = defineEmits([ 'addCredits' ]);
 
 	const config = useRuntimeConfig();
-	const route = useRoute();
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const initialLoading = ref(true);
 
@@ -141,10 +140,4 @@
 	});
 
 	useErrorToast(creditsDataError);
-
-	onMounted(async () => {
-		if (!route.query.limit) {
-			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 595) / 54), 5), 15);
-		}
-	});
 </script>

@@ -172,7 +172,7 @@
 					},
 					aggregate: { count: '*' },
 				}))
-				: $directus.request<[{ meta: { ip: string } | { id: string } }]>(readItems('gp_credits_additions', {
+				: $directus.request<[{ meta: { ip: string; id: string } }]>(readItems('gp_credits_additions', {
 					filter: {
 						...getUserFilter('github_id'),
 						date_created: directusDateQuery.value,
@@ -209,7 +209,7 @@
 				: adoptions.reduce((keys, adoption) => {
 					// TS doesnt infer the correct type automatically
 					if ('meta' in adoption) {
-						const key = 'id' in adoption.meta ? adoption.meta.id : adoption.meta.ip;
+						const key = adoption.meta.id || adoption.meta.ip;
 						keys.add(key);
 					}
 

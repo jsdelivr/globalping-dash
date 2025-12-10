@@ -182,8 +182,8 @@
 	}, {
 		default: () => ({ additions: [], deductions: [], totalDonated: 0, bonus: 0, onlineProbes: 0 }),
 		transform: ({ additions, deductions, sponsorshipDonations, sponsorshipDetails, adoptions }) => ({
-			deductions: deductions.map((addition) => {
-				const { sum, ...rest } = addition;
+			deductions: deductions.map((deduction) => {
+				const { sum, ...rest } = deduction;
 				return { ...rest, amount: sum.amount };
 			}),
 			additions: additions.map((addition) => {

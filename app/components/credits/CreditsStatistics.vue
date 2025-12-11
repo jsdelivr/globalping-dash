@@ -171,7 +171,7 @@
 					},
 					fields: [ 'meta' ],
 				})),
-		]), 500);
+		]));
 
 		return {
 			additions,

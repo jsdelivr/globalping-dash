@@ -1,9 +1,9 @@
 <template>
-	<div class="min-h-52 rounded-xl border bg-white text-black dark:bg-dark-800 dark:text-white">
+	<div class="min-h-52 rounded-xl border bg-white dark:bg-dark-800 dark:text-white">
 		<h4 class="border-b px-4 py-2 font-bold md:hidden">Overview</h4>
-		<AsyncBlock class="flex min-h-64 items-stretch gap-4 rounded-xl p-4 max-md:min-h-[32.5rem] max-md:flex-col" :status="loading ? 'pending' : ''">
+		<AsyncBlock class="flex min-h-60 items-stretch gap-4 rounded-xl p-3 max-md:min-h-[32.5rem] max-md:flex-col" :status="loading ? 'pending' : ''">
 			<div class="flex flex-col gap-2 md:min-w-44">
-				<AsyncCell class="flex max-w-full flex-col max-md:min-h-24 md:flex-1" :loading="loading">
+				<div class="flex max-w-full flex-col max-md:min-h-24 md:flex-1">
 					<div class="bg-gradient-highlight flex flex-1 flex-col justify-between gap-2 rounded-lg p-4">
 						<div class="flex items-center gap-2">
 							<i class="pi-arrow-up pi text-primary-400"/> <span class="text-sm">Gained</span>
@@ -13,8 +13,8 @@
 							<span data-testid="generated-credits">{{ totalAdditions.toLocaleString('en-US') }}</span>
 						</div>
 					</div>
-				</AsyncCell>
-				<AsyncCell class="flex max-w-full flex-col max-md:min-h-24 md:flex-1" :loading="loading">
+				</div>
+				<div class="flex max-w-full flex-col max-md:min-h-24 md:flex-1">
 					<div class="bg-gradient-orange flex flex-1 flex-col justify-between gap-2 rounded-lg p-4">
 						<div class="flex items-center gap-2">
 							<i class="pi-arrow-down pi text-jsd-orange"/> <span class="text-sm">Spent</span>
@@ -24,12 +24,10 @@
 							<span data-testid="spent-credits">{{ totalDeductions.toLocaleString('en-US') }}</span>
 						</div>
 					</div>
-				</AsyncCell>
+				</div>
 			</div>
 			<div class="credits-chart relative h-52 md:flex-1">
-				<AsyncCell class="h-full min-h-full max-w-full" :loading="loading">
-					<Chart type="line" :data="chartData" :options="chartOptions" class="size-full"/>
-				</AsyncCell>
+				<Chart type="line" :data="chartData" :options="chartOptions" class="size-full"/>
 			</div>
 		</AsyncBlock>
 	</div>
@@ -74,14 +72,7 @@
 		spent: number;
 	};
 
-	let lastComputedChanges: ChangeData[] = [];
-
 	const changes = computed<ChangeData[]>(() => {
-		// avoid updating chart data if the data is still loading
-		if (props.loading && lastComputedChanges.length > 0) {
-			return lastComputedChanges;
-		}
-
 		const dateToAddition = new Map<string, number>();
 		const dateToDeduction = new Map<string, number>();
 
@@ -151,7 +142,6 @@
 			});
 		}
 
-		lastComputedChanges = data;
 		return data;
 	});
 

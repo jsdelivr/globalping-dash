@@ -69,8 +69,8 @@ export const useCreditsFilters = () => {
 
 	const periodOptions = computed<PeriodOption[]>(() => {
 		const options: PeriodOption[] = [
-			{ label: 'Past year', value: { year: 'past', month: undefined } },
-			{ label: 'Past month', value: { year: undefined, month: 'past' }, withSeparator: true },
+			{ label: 'Past month', value: { year: undefined, month: 'past' } },
+			{ label: 'Past year', value: { year: 'past', month: undefined }, withSeparator: true },
 		];
 
 		// add valid months for all years, also add the whole year option if the final month is December

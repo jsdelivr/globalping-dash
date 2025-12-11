@@ -57,7 +57,7 @@
 					</div>
 					<div class="relative flex h-full flex-1 flex-col justify-between gap-1.5 rounded-lg bg-surface-50 p-3 dark:bg-dark-700">
 						<span v-if="isRelativeFilter">
-							Estimated per day
+							Estimated today
 						</span>
 						<span v-else>
 							Daily average

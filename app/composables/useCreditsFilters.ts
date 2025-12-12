@@ -7,20 +7,16 @@ import { useAuth } from '~/store/auth';
 
 type CreditsChangeType = 'additions' | 'deductions';
 type CreditsChangeReason = 'adopted-probes' | 'sponsorship';
-type CreditsTimeFrame = number | 'past' | undefined;
+type CreditsPeriod = { year: 'past'; month: undefined } | { year: undefined; month: 'past' } | { year: number; month: number | undefined };
 
 type Filter = {
 	type: CreditsChangeType[];
 	reason: CreditsChangeReason[];
-	year: CreditsTimeFrame;
-	month: CreditsTimeFrame;
+	period: CreditsPeriod;
 };
 export interface PeriodOption {
 	label: string;
-	value: {
-		year: CreditsTimeFrame;
-		month?: CreditsTimeFrame;
-	};
+	value: CreditsPeriod;
 	withSeparator?: boolean;
 }
 
@@ -33,8 +29,10 @@ const PERMITTED_VALUES = {
 const DEFAULT_FILTER = {
 	type: PERMITTED_VALUES.type,
 	reason: PERMITTED_VALUES.reason,
-	month: 'past',
-	year: undefined,
+	period: {
+		month: 'past',
+		year: undefined,
+	},
 } as Filter;
 
 export const FIELD_LABELS = {
@@ -106,7 +104,7 @@ export const useCreditsFilters = () => {
 	}));
 
 	const directusDateQuery = computed<{ _gte: string } | { _between: [ string, string ] }>(() => {
-		const { year, month } = filter.value;
+		const { year, month } = filter.value.period;
 
 		if (year === 'past') {
 			return { _gte: '$NOW(-365 day)' };
@@ -128,14 +126,21 @@ export const useCreditsFilters = () => {
 
 	const shouldAddToQuery = (key: keyof Filter, routeKeys: string[]) => !isDefault(key) && routeKeys.includes(key);
 
+	const constructPeriodQuery = () => {
+		if (filter.value.period.year === 'past') {
+			return 'past-year';
+		}
+
+		return String(filter.value.period.year) + (typeof filter.value.period.month === 'number' ? `-${filter.value.period.month + 1}` : '');
+	};
+
 	const constructQuery = (keysToUpdate: string[], resetQuery = true) => ({
 		...!resetQuery
 			? Object.fromEntries(Object.entries(route.query).filter(([ key ]) => !keysToUpdate.includes(key)))
 			: {},
 		...shouldAddToQuery('type', keysToUpdate) && filter.value.type.length && { type: filter.value.type },
 		...shouldAddToQuery('reason', keysToUpdate) && filter.value.reason.length && { reason: filter.value.reason },
-		...shouldAddToQuery('year', keysToUpdate) && { year: filter.value.year },
-		...shouldAddToQuery('month', keysToUpdate) && { month: (filter.value.month as number) + 1 },
+		...shouldAddToQuery('period', keysToUpdate) && { period: constructPeriodQuery() },
 	});
 
 	const onParamChange = (keysToUpdate = Object.keys(filter.value), resetQuery = true) => {
@@ -145,7 +150,7 @@ export const useCreditsFilters = () => {
 	};
 
 	const isDefault = (field: keyof Filter, filterObj: MaybeRefOrGetter<Filter> = filter) => {
-		return typeof toValue(filterObj)[field] === 'undefined' || isEqual(toValue(filterObj)[field], DEFAULT_FILTER[field]);
+		return isEqual(toValue(filterObj)[field], DEFAULT_FILTER[field]);
 	};
 
 	const getTableFilter = () => {
@@ -163,10 +168,9 @@ export const useCreditsFilters = () => {
 		[
 			() => route.query.type,
 			() => route.query.reason,
-			() => route.query.year,
-			() => route.query.month,
+			() => route.query.period,
 		],
-		async ([ type, reason, year, month ]) => {
+		async ([ type, reason, period ]) => {
 			if (!toValue(active)) {
 				return;
 			}
@@ -186,21 +190,32 @@ export const useCreditsFilters = () => {
 				filter.value.reason = filter.value.type.includes('additions') ? DEFAULT_FILTER.reason : [];
 			}
 
-			if (PERMITTED_VALUES.month.includes(Number(month) - 1)) {
-				filter.value.month = Number(month) - 1;
-			} else if (year) {
-				filter.value.month = undefined;
-			} else {
-				filter.value.month = DEFAULT_FILTER.month;
+			if (typeof period !== 'string') {
+				filter.value.period = { ...DEFAULT_FILTER.period };
+				return;
 			}
 
+			if (period === 'past-year') {
+				filter.value.period = {
+					month: undefined,
+					year: 'past',
+				};
+
+				return;
+			}
+
+			const [ year, month ] = period.split('-');
+
 			if (Number(year) >= FIRST_YEAR && Number(year) <= CURRENT_YEAR) {
-				filter.value.year = Number(year);
-			} else if (year === 'past') {
-				filter.value.year = 'past';
+				filter.value.period.year = Number(year);
+			}
+
+			if (PERMITTED_VALUES.month.includes(Number(month) - 1)) {
+				filter.value.period.month = Number(month) - 1;
+			} else if (year && !month) {
+				filter.value.period.month = undefined;
 			} else {
-				filter.value.year = DEFAULT_FILTER.year;
-				filter.value.month = DEFAULT_FILTER.month;
+				filter.value.period = { ...DEFAULT_FILTER.period };
 			}
 		},
 		{ immediate: true },

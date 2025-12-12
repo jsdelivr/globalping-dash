@@ -103,15 +103,15 @@
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 
-	const isRelativeFilter = computed(() => filter.value.month === 'past' || filter.value.year === 'past');
+	const isRelativeFilter = computed(() => filter.value.period.month === 'past' || filter.value.period.year === 'past');
 
 	const endDate = computed(() => {
 		if (isRelativeFilter.value) {
 			return undefined;
 		}
 
-		const year = filter.value.year as number;
-		const month = (filter.value.month as number) ?? 11;
+		const year = filter.value.period.year as number;
+		const month = (filter.value.period.month as number) ?? 11;
 		return new Date(year, month + 1, 0, 23, 59, 59, 999).toISOString();
 	});
 
@@ -120,7 +120,7 @@
 	const withPeriodGrouping = <T extends string>(field: T): PeriodGrouping<T>[] => {
 		const groupings: PeriodGrouping<T>[] = [ `year(${field})`, `month(${field})` ];
 
-		if (typeof filter.value.month !== 'undefined') {
+		if (typeof filter.value.period.month !== 'undefined') {
 			groupings.push(`day(${field})`);
 		}
 
@@ -228,13 +228,13 @@
 			return credits.value.onlineProbes * creditsPerAdoptedProbe;
 		}
 
-		const year = filter.value.year as number;
+		const year = filter.value.period.year as number;
 		let periodLength;
 
-		if (typeof filter.value.month === 'undefined') {
+		if (typeof filter.value.period.month === 'undefined') {
 			periodLength = isLeapYear(year) ? 366 : 365;
 		} else {
-			const month = filter.value.month as number;
+			const month = filter.value.period.month as number;
 			periodLength = new Date(year, month + 1, 0).getDate();
 		}
 

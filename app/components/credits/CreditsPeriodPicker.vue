@@ -18,7 +18,7 @@
 				<div class="flex min-h-7 items-center gap-2 max-md:-mr-3">
 					<span class="flex items-center gap-1 rounded-lg border bg-white px-2 py-1 text-sm duration-200 max-md:hidden dark:bg-dark-500 dark:group-hover:bg-dark-400">
 						<i class="pi pi-calendar"/>
-						{{ typeof filter.month !== 'undefined' ? 'Month' : 'Year' }}
+						{{ typeof filter.period.month !== 'undefined' ? 'Month' : 'Year' }}
 					</span>
 					<span class="pl-3 md:hidden">
 						<i class="pi pi-calendar"/>
@@ -72,7 +72,8 @@
 	});
 
 	const getInitialOption = (): PeriodOption => {
-		return periodOptions.value.find(opt => (opt.value.year === filter.value.year) && (opt.value.month === filter.value.month)) || periodOptions.value[0]!;
+		return periodOptions.value
+			.find(opt => (opt.value.year === filter.value.period.year) && (opt.value.month === filter.value.period.month)) || periodOptions.value[0]!;
 	};
 
 	const selectedOption = ref(getInitialOption());
@@ -82,9 +83,8 @@
 	}, { immediate: true });
 
 	watch(selectedOption, () => {
-		filter.value.year = selectedOption.value.value.year;
-		filter.value.month = selectedOption.value.value.month;
-		onParamChange([ 'month', 'year' ], false);
+		filter.value.period = { ...selectedOption.value.value };
+		onParamChange([ 'period' ], false);
 	});
 </script>
 

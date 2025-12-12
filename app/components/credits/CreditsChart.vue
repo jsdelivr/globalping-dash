@@ -80,26 +80,25 @@
 		const now = new Date();
 
 		// create x axis keys based on the applied filter
-		if (filter.value.year === 'past') {
+		if (filter.value.period.year === 'past') {
 			for (let i = 12; i >= 0; i--) {
 				const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1));
 				periodKeys.push(formatDate(d.toISOString(), 'year-month'));
 			}
-		} else if (filter.value.month === 'past') {
+		} else if (filter.value.period.month === 'past') {
 			for (let i = 30; i >= 0; i--) {
 				const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
 				periodKeys.push(formatDate(d.toISOString(), 'short'));
 			}
-		} else if (typeof filter.value.month === 'undefined') {
-			const year = filter.value.year as number;
+		} else if (typeof filter.value.period.month === 'undefined') {
+			const year = filter.value.period.year;
 
 			for (let i = 0; i < 12; i++) {
 				const d = new Date(Date.UTC(year, i, 1));
 				periodKeys.push(formatDate(d.toISOString(), 'year-month'));
 			}
 		} else {
-			const year = filter.value.year as number;
-			const month = filter.value.month as number;
+			const { year, month } = filter.value.period;
 			const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
 
 			for (let i = 1; i <= daysInMonth; i++) {
@@ -115,7 +114,7 @@
 		});
 
 		// fill with actual values
-		const groupBy = typeof filter.value.month === 'undefined' ? 'year' : 'day';
+		const groupBy = typeof filter.value.period.month === 'undefined' ? 'year' : 'day';
 
 		for (const addition of props.additions) {
 			const day = formatDate(addition.date_created, groupBy === 'day' ? 'short' : 'year-month');

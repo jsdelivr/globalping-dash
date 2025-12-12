@@ -228,6 +228,7 @@ Spent: ${change.spent.toLocaleString('en-US')}`;
 				borderColor: primary,
 				borderWidth: 2,
 				tension: 0.25,
+				cubicInterpolationMode: 'monotone',
 			},
 			point: {
 				radius: 0,

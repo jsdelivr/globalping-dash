@@ -115,26 +115,40 @@
 		return new Date(year, month + 1, 0, 23, 59, 59, 999).toISOString();
 	});
 
+	type PeriodGrouping<T extends string> = `year(${T})` | `month(${T})` | `day(${T})`;
+
+	const withPeriodGrouping = <T extends string>(field: T): PeriodGrouping<T>[] => {
+		const groupings: PeriodGrouping<T>[] = [ `year(${field})`, `month(${field})` ];
+
+		if (typeof filter.value.month !== 'undefined') {
+			groupings.push(`day(${field})`);
+		}
+
+		return groupings;
+	};
+
+	type DateGroupFields<T extends string> = Record<`${T}_year` | `${T}_month`, number> & Partial<Record<`${T}_day`, number>>;
+
 	const { data: credits, error: creditsError, pending: creditsDataLoading } = await useLazyAsyncData('credits-stats', async () => {
 		const [ additions, deductions, sponsorshipDonations, sponsorshipDetails, adoptions ] = await minDelay(Promise.all([
-			$directus.request<{ sum: { amount: number }; date_created: 'datetime'; reason: string }[]>(aggregate('gp_credits_additions', {
+			$directus.request<Array<{ sum: { amount: number }; reason: string } & DateGroupFields<'date_created'>>>(aggregate('gp_credits_additions', {
 				query: {
 					filter: {
 						...getUserFilter('github_id'),
 						date_created: directusDateQuery.value,
 					},
 				},
-				groupBy: [ 'date_created', 'reason' ],
+				groupBy: [ ...withPeriodGrouping('date_created'), 'reason' ],
 				aggregate: { sum: 'amount' },
 			})),
-			$directus.request<{ sum: { amount: number }; date: 'datetime' }[]>(aggregate('gp_credits_deductions', {
+			$directus.request<Array<{ sum: { amount: number } } & DateGroupFields<'date'>>>(aggregate('gp_credits_deductions', {
 				query: {
 					filter: {
 						...getUserFilter('user_id'),
 						date: directusDateQuery.value,
 					},
 				},
-				groupBy: [ 'date' ],
+				groupBy: [ ...withPeriodGrouping('date') ],
 				aggregate: { sum: 'amount' },
 			})),
 			$directus.request<{ meta: null | { amountInDollars?: number } }[]>(readItems('gp_credits_additions', {
@@ -183,27 +197,26 @@
 	}, {
 		default: () => ({ additions: [], deductions: [], totalDonated: 0, bonus: 0, onlineProbes: 0 }),
 		transform: ({ additions, deductions, sponsorshipDonations, sponsorshipDetails, adoptions }) => ({
-			deductions: deductions.map((deduction) => {
-				const { sum, ...rest } = deduction;
-				return { ...rest, amount: sum.amount };
+			additions: additions.map((item) => {
+				return {
+					reason: item.reason,
+					amount: item.sum.amount,
+					date_created: `${item.date_created_year}-${item.date_created_month}${item.date_created_day ? '-' + item.date_created_day : ''}` as 'datetime',
+				};
 			}),
-			additions: additions.map((addition) => {
-				const { sum, ...rest } = addition;
-				return { ...rest, amount: sum.amount };
+			deductions: deductions.map((item) => {
+				return {
+					amount: item.sum.amount,
+					date: `${item.date_year}-${item.date_month}${item.date_day ? '-' + item.date_day : ''}` as 'datetime',
+				};
 			}),
 			totalDonated: sponsorshipDonations.reduce((sum, { meta }) => sum + (meta?.amountInDollars ?? 0), 0),
 			bonus: sponsorshipDetails.bonus,
 			onlineProbes: adoptions.length && 'count' in adoptions[0]
 				? adoptions[0].count
-				: adoptions.reduce((keys, adoption) => {
-					// TS doesnt infer the correct type automatically
-					if ('meta' in adoption) {
-						const key = adoption.meta.id || adoption.meta.ip;
-						keys.add(key);
-					}
-
-					return keys;
-				}, new Set()).size,
+				: new Set((adoptions as { meta: { ip: string; id: string } }[])
+					.map(a => a.meta.id || a.meta.ip)
+					.filter(Boolean)).size,
 		}),
 		watch: [ directusDateQuery ],
 	});

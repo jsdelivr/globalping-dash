@@ -222,7 +222,9 @@
 	});
 
 	const probeAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + (addition.reason === 'adopted_probe' ? addition.amount : 0), 0));
-	const sponsorshipAdditions = computed(() => credits.value.additions.reduce((sum, addition) => sum + (addition.reason.includes('sponsorship') ? addition.amount : 0), 0));
+	const sponsorshipAdditions = computed(() => credits.value.additions.reduce((sum, addition) => {
+		return sum + ([ 'recurring_sponsorship', 'one_time_sponsorship', 'tier_changed' ].includes(addition.reason) ? addition.amount : 0);
+	}, 0));
 	const dailyAdditions = computed(() => {
 		if (isRelativeFilter.value) {
 			return credits.value.onlineProbes * creditsPerAdoptedProbe;

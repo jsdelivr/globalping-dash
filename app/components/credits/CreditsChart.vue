@@ -81,12 +81,12 @@
 
 		// create x axis keys based on the applied filter
 		if (filter.value.year === 'past') {
-			for (let i = 11; i >= 0; i--) {
+			for (let i = 12; i >= 0; i--) {
 				const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1));
 				periodKeys.push(formatDate(d.toISOString(), 'year-month'));
 			}
 		} else if (filter.value.month === 'past') {
-			for (let i = 29; i >= 0; i--) {
+			for (let i = 30; i >= 0; i--) {
 				const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
 				periodKeys.push(formatDate(d.toISOString(), 'short'));
 			}

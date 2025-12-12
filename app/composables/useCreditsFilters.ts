@@ -208,6 +208,9 @@ export const useCreditsFilters = () => {
 
 			if (Number(year) >= FIRST_YEAR && Number(year) <= CURRENT_YEAR) {
 				filter.value.period.year = Number(year);
+			} else {
+				filter.value.period = { ...DEFAULT_FILTER.period };
+				return;
 			}
 
 			if (PERMITTED_VALUES.month.includes(Number(month) - 1)) {

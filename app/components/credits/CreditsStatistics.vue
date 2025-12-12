@@ -112,7 +112,7 @@
 
 		const year = filter.value.period.year as number;
 		const month = (filter.value.period.month as number) ?? 11;
-		return new Date(year, month + 1, 0, 23, 59, 59, 999).toISOString();
+		return new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999)).toISOString();
 	});
 
 	type PeriodGrouping<T extends string> = `year(${T})` | `month(${T})` | `day(${T})`;

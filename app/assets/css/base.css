@@ -50,6 +50,18 @@
 	--dark-900: #162034;
 	--dark-950: #131728;
 
+	--red-50: #fef2f2;
+	--red-100: #fee2e2;
+	--red-200: #fecaca;
+	--red-300: #fca5a5;
+	--red-400: #f87171;
+	--red-500: #ef4444;
+	--red-600: #dc2626;
+	--red-700: #b91c1c;
+	--red-800: #991b1b;
+	--red-900: #7f1d1d;
+	--red-950: #450a0a;
+
 	--sidebar-border: #4f6180;
 	--table-border: #2d3c59;
 	--sidebar-item: #33415a;
@@ -57,7 +69,6 @@
 	--header-bg-table-bg: #17233a;
 	--main-bg: #162034;
 
-	--jsd-orange: #f35634;
 	--main-900: var(--bluegray-900);
 
 	--p-primary-color: var(--p-primary-500);

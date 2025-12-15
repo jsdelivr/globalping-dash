@@ -15,9 +15,9 @@
 					</div>
 				</div>
 				<div class="flex max-w-full flex-col max-md:min-h-24 md:flex-1">
-					<div class="bg-gradient-orange flex flex-1 flex-col justify-between gap-2 rounded-lg p-4">
+					<div class="bg-gradient-red flex flex-1 flex-col justify-between gap-2 rounded-lg p-4">
 						<div class="flex items-center gap-2">
-							<i class="pi-arrow-down pi text-jsd-orange"/> <span class="text-sm">Spent</span>
+							<i class="pi-arrow-down pi text-red-400"/> <span class="text-sm">Spent</span>
 						</div>
 						<div class="flex items-center gap-2 text-2xl font-bold">
 							<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>
@@ -58,7 +58,7 @@
 	const bluegray700 = documentStyle.getPropertyValue('--bluegray-700');
 	const surface300 = documentStyle.getPropertyValue('--p-surface-300');
 	const primary = documentStyle.getPropertyValue('--p-primary-color');
-	const jsdOrange = documentStyle.getPropertyValue('--jsd-orange');
+	const red400 = documentStyle.getPropertyValue('--red-400');
 	const dark = document.documentElement.classList.contains('dark');
 
 	const totalAdditions = computed(() => props.additions.reduce((acc, { amount }) => acc + amount, 0));
@@ -155,8 +155,8 @@
 				},
 				{
 					data: changes.value.map(({ spent }) => spent),
-					borderColor: jsdOrange,
-					backgroundColor: jsdOrange,
+					borderColor: red400,
+					backgroundColor: red400,
 				},
 			],
 		};

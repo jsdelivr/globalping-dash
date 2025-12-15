@@ -75,7 +75,7 @@ input[disabled], textarea[disabled], select[disabled='disabled'] {
 		@apply bg-gradient-to-tr from-white from-[-40%] to-primary-100/50 dark:from-dark-700 dark:to-dark-700
 	}
 
-	.bg-gradient-orange {
-		@apply bg-gradient-to-tr from-white from-[-40%] to-orange-100 to-[130%] dark:from-dark-700 dark:to-dark-700
+	.bg-gradient-red {
+		@apply bg-gradient-to-tr from-white from-[-40%] to-red-100 to-[130%] dark:from-dark-700 dark:to-dark-700
 	}
 }

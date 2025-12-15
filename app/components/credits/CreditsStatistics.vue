@@ -8,8 +8,12 @@
 		</div>
 		<div class="flex gap-4 max-xl:flex-col">
 			<div class="flex flex-1 flex-col rounded-xl border bg-white dark:bg-dark-800 dark:text-white">
-				<h4 class="border-b px-4 py-2 font-bold">
+				<h4 class="flex items-center gap-2 border-b px-4 py-2 font-bold">
 					From sponsorship
+					<i
+						v-tooltip.top="'The base reward is 4000 credits per $1 donated, with up to a 1500% bonus based on your donation history.'"
+						class="pi pi-info-circle"
+					/>
 				</h4>
 				<AsyncBlock class="relative flex min-h-28 gap-2 p-3 max-md:min-h-[21rem] max-md:flex-col" :status="creditsDataLoading ? 'pending' : ''">
 					<div class="relative flex h-full flex-1 flex-col justify-between gap-1.5 rounded-lg bg-surface-50 p-3 dark:bg-dark-700">

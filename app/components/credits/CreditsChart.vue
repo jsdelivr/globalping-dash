@@ -36,7 +36,7 @@
 <script setup lang="ts">
 	import Chart from 'primevue/chart';
 	import { useCreditsFilters } from '~/composables/useCreditsFilters';
-	import { formatDate } from '~/utils/date-formatters';
+	import { formatUtcDate } from '~/utils/date-formatters';
 
 	const props = defineProps({
 		additions: {
@@ -83,19 +83,19 @@
 		if (filter.value.period.year === 'past') {
 			for (let i = 12; i >= 0; i--) {
 				const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1));
-				periodKeys.push(formatDate(d.toISOString(), 'year-month'));
+				periodKeys.push(formatUtcDate(d.toISOString(), 'year-month'));
 			}
 		} else if (filter.value.period.month === 'past') {
 			for (let i = 30; i >= 0; i--) {
 				const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
-				periodKeys.push(formatDate(d.toISOString(), 'short'));
+				periodKeys.push(formatUtcDate(d.toISOString(), 'short'));
 			}
 		} else if (typeof filter.value.period.month === 'undefined') {
 			const year = filter.value.period.year;
 
 			for (let i = 0; i < 12; i++) {
 				const d = new Date(Date.UTC(year, i, 1));
-				periodKeys.push(formatDate(d.toISOString(), 'year-month'));
+				periodKeys.push(formatUtcDate(d.toISOString(), 'year-month'));
 			}
 		} else {
 			const { year, month } = filter.value.period;
@@ -103,7 +103,7 @@
 
 			for (let i = 1; i <= daysInMonth; i++) {
 				const d = new Date(Date.UTC(year, month, i));
-				periodKeys.push(formatDate(d.toISOString(), 'short'));
+				periodKeys.push(formatUtcDate(d.toISOString(), 'short'));
 			}
 		}
 
@@ -117,13 +117,13 @@
 		const groupBy = typeof filter.value.period.month === 'undefined' ? 'year' : 'day';
 
 		for (const addition of props.additions) {
-			const day = formatDate(addition.date_created, groupBy === 'day' ? 'short' : 'year-month');
+			const day = formatUtcDate(addition.date_created, groupBy === 'day' ? 'short' : 'year-month');
 			const current = dateToAddition.get(day) ?? 0;
 			dateToAddition.set(day, current + addition.amount);
 		}
 
 		for (const deduction of props.deductions) {
-			const day = formatDate(deduction.date, groupBy === 'day' ? 'short' : 'year-month');
+			const day = formatUtcDate(deduction.date, groupBy === 'day' ? 'short' : 'year-month');
 			const current = dateToDeduction.get(day) ?? 0;
 			dateToDeduction.set(day, current + deduction.amount);
 		}

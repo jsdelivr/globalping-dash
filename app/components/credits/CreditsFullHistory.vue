@@ -86,7 +86,7 @@
 	import { useCreditsFilters } from '~/composables/useCreditsFilters';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';
-	import { formatDateForTable } from '~/utils/date-formatters';
+	import { formatUtcDateForTable } from '~/utils/date-formatters';
 	import { formatCreditComment } from '~/utils/format-credit-comment';
 	import { minDelay } from '~/utils/min-delay';
 
@@ -134,7 +134,7 @@
 		return [
 			...creditsData.value.changes.map(change => ({
 				...change,
-				date_created: formatDateForTable(change.date_created),
+				date_created: formatUtcDateForTable(change.date_created),
 			})),
 		];
 	});

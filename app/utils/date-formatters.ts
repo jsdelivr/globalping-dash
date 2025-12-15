@@ -1,6 +1,9 @@
 import capitalize from 'lodash/capitalize';
 
-export const formatDate = (date: string | Date | null, format: 'year-month' | 'long' | 'short' = 'long') => {
+type DateFormat = 'year-month' | 'long' | 'short';
+type FormatOptions = { format?: DateFormat; timeZone?: string };
+
+const formatDateInternal = (date: string | Date | null, { format = 'long', timeZone }: FormatOptions) => {
 	if (!date) {
 		return '';
 	}
@@ -10,17 +13,25 @@ export const formatDate = (date: string | Date | null, format: 'year-month' | 'l
 	}
 
 	if (format === 'year-month') {
-		return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+		return date.toLocaleDateString('en-US', { timeZone, month: 'short', year: 'numeric' });
 	}
 
 	if (format === 'short') {
-		return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+		return date.toLocaleDateString('en-US', { timeZone, day: 'numeric', month: 'short' });
 	}
 
-	return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+	return date.toLocaleDateString('en-US', { timeZone, day: 'numeric', month: 'short', year: 'numeric' });
 };
 
-export const formatDateForTable = (date: string | Date | null): string => {
+export const formatDate = (date: string | Date | null, format: DateFormat = 'long') => {
+	return formatDateInternal(date, { format });
+};
+
+export const formatUtcDate = (date: string | Date | null, format: DateFormat = 'long') => {
+	return formatDateInternal(date, { format, timeZone: 'UTC' });
+};
+
+export const formatUtcDateForTable = (date: string | Date | null): string => {
 	if (!date) {
 		return '';
 	}

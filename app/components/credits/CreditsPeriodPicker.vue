@@ -7,6 +7,7 @@
 			:pt="{
 				label: { class: '!p-1' },
 				listContainer: { tabindex: -1 },
+				dropdown: { class: '!pr-2 !w-10'}
 			}"
 			:pt-options="{ mergeProps: true }"
 			option-label="label"
@@ -15,7 +16,7 @@
 			@before-hide="filterInput = ''"
 		>
 			<template #value="slotProps">
-				<div class="flex min-h-7 items-center gap-2 max-md:-mr-3">
+				<div class="flex min-h-7 items-center gap-4">
 					<span class="flex items-center gap-1 rounded-lg border bg-white px-2 py-1 text-sm duration-200 max-md:hidden dark:bg-dark-500 dark:group-hover:bg-dark-400">
 						<i class="pi pi-calendar"/>
 						{{ typeof filter.period.month !== 'undefined' ? 'Month' : 'Year' }}
@@ -23,7 +24,7 @@
 					<span class="pl-3 md:hidden">
 						<i class="pi pi-calendar"/>
 					</span>
-					<span class="flex-1 text-center md:pl-4">{{ slotProps.value.label }}</span>
+					<span class="flex-1 text-center">{{ slotProps.value.label }}</span>
 				</div>
 			</template>
 

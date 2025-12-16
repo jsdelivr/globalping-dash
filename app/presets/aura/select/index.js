@@ -24,7 +24,7 @@ export default {
 			{ 'border-red-500 dark:border-red-400': props.invalid },
 
 			// Transitions
-			'transition-colors transition-shadow',
+			'transition-[background-color,color,border-color,box-shadow]',
 			'duration-200',
 
 			// States

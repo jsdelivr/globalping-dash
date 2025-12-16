@@ -131,7 +131,8 @@ export const useCreditsFilters = () => {
 			return 'past-year';
 		}
 
-		return String(filter.value.period.year) + (typeof filter.value.period.month === 'number' ? `-${filter.value.period.month + 1}` : '');
+		return String(filter.value.period.year)
+			+ (typeof filter.value.period.month === 'number' ? `-${String(filter.value.period.month + 1).padStart(2, '0')}` : '');
 	};
 
 	const constructQuery = (keysToUpdate: string[], resetQuery = true) => ({

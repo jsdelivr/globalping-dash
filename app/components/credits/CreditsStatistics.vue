@@ -133,6 +133,23 @@
 
 	type DateGroupFields<T extends string> = Record<`${T}_year` | `${T}_month`, number> & Partial<Record<`${T}_day`, number>>;
 
+	const mergeDateFragments = <T extends string>(item: DateGroupFields<T> & Record<string, unknown>, date_key: T) => {
+		const formattedDateFragments: Array<string> = [];
+		const suffixes = [ 'year', 'month', 'day' ];
+
+		suffixes.forEach((suffix) => {
+			const value = item[`${date_key}_${suffix}`];
+
+			if (typeof value === 'number') {
+				const value = item[`${date_key}_${suffix}`];
+				const formatted = String(value).padStart(2, '0');
+				formattedDateFragments.push(formatted);
+			}
+		});
+
+		return formattedDateFragments.join('-') as 'datetime';
+	};
+
 	const { data: credits, error: creditsError, pending: creditsDataLoading } = await useLazyAsyncData('credits-stats', async () => {
 		const [ additions, deductions, sponsorshipDonations, sponsorshipDetails, adoptions ] = await minDelay(Promise.all([
 			$directus.request<Array<{ sum: { amount: number }; reason: string } & DateGroupFields<'date_created'>>>(aggregate('gp_credits_additions', {
@@ -205,13 +222,13 @@
 				return {
 					reason: item.reason,
 					amount: item.sum.amount,
-					date_created: `${item.date_created_year}-${item.date_created_month}${item.date_created_day ? '-' + item.date_created_day : ''}` as 'datetime',
+					date_created: mergeDateFragments(item, 'date_created'),
 				};
 			}),
 			deductions: deductions.map((item) => {
 				return {
 					amount: item.sum.amount,
-					date: `${item.date_year}-${item.date_month}${item.date_day ? '-' + item.date_day : ''}` as 'datetime',
+					date: mergeDateFragments(item, 'date'),
 				};
 			}),
 			totalDonated: sponsorshipDonations.reduce((sum, { meta }) => sum + (meta?.amountInDollars ?? 0), 0),

@@ -3,12 +3,12 @@
 		<Select
 			v-model="selectedOption"
 			:options="filteredOptions"
-			class="group flex cursor-pointer rounded-xl border bg-surface-200 p-0 font-bold text-surface-900 ring-primary ease-out focus-within:ring-1 hover:bg-surface-300 dark:bg-dark-700 dark:text-white dark:hover:bg-dark-600"
+			class="group flex cursor-pointer rounded-xl border bg-surface-200 p-0 font-bold text-surface-900 ease-out hover:bg-surface-300 dark:bg-dark-700 dark:text-white dark:hover:bg-dark-600"
 			:pt="{
-				root: { class: 'duration-200' },
-				label: { class: 'p-1 focus:outline-none' },
+				label: { class: '!p-1' },
 				listContainer: { tabindex: -1 },
 			}"
+			:pt-options="{ mergeProps: true }"
 			option-label="label"
 			append-to="self"
 			panel-class="pv-select-panel min-w-[12rem] !left-auto !right-0 font-normal"

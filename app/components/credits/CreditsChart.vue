@@ -10,7 +10,7 @@
 						</div>
 						<div class="flex items-center gap-2 text-2xl font-bold">
 							<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>
-							<span data-testid="generated-credits">{{ totalAdditions.toLocaleString('en-US') }}</span>
+							<span data-testid="gained-credits">{{ totalAdditions.toLocaleString('en-US') }}</span>
 						</div>
 					</div>
 				</div>

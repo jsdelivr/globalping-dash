@@ -33,7 +33,6 @@
 					<div class="m-2 flex items-center gap-2 rounded-md border px-3 py-2 ring-primary focus-within:ring-1 dark:bg-dark-800">
 						<i class="pi pi-search"/>
 						<input
-							ref="filterRef"
 							v-model="filterInput"
 							class="flex-1 bg-transparent text-sm outline-none focus:ring-0"
 							placeholder="Filter periods">

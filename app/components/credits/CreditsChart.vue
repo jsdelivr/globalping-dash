@@ -35,6 +35,7 @@
 
 <script setup lang="ts">
 	import Chart from 'primevue/chart';
+	import relativeDayUtc from 'relative-day-utc';
 	import { useCreditsFilters } from '~/composables/useCreditsFilters';
 	import { formatUtcDate } from '~/utils/date-formatters';
 

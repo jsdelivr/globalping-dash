@@ -86,7 +86,7 @@
 				periodKeys.push(formatUtcDate(d.toISOString(), 'year-month'));
 			}
 		} else if (filter.value.period.month === 'past') {
-			for (let i = 30; i >= 0; i--) {
+			for (let i = 29; i >= 0; i--) {
 				const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
 				periodKeys.push(formatUtcDate(d.toISOString(), 'short'));
 			}
@@ -200,6 +200,10 @@ Spent: ${change.spent.toLocaleString('en-US')}`;
 			x: {
 				ticks: {
 					color: bluegray400,
+					font: {
+						size: 10,
+						weight: 400,
+					},
 				},
 				grid: {
 					color: dark ? bluegray700 : surface300,
@@ -213,6 +217,10 @@ Spent: ${change.spent.toLocaleString('en-US')}`;
 				beginAtZero: true,
 				ticks: {
 					color: bluegray400,
+					font: {
+						size: 10,
+						weight: 400,
+					},
 				},
 				grid: {
 					color: dark ? bluegray700 : surface300,

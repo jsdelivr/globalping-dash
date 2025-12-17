@@ -1,5 +1,6 @@
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
+import relativeDayUtc from 'relative-day-utc';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { MONTH_NAMES } from '~/constants/months';
@@ -107,9 +108,9 @@ export const useCreditsFilters = () => {
 		const { year, month } = filter.value.period;
 
 		if (year === 'past') {
-			return { _gte: '$NOW(-365 day)' };
+			return { _gte: relativeDayUtc(-364).toISOString() };
 		} else if (month === 'past') {
-			return { _gte: '$NOW(-30 day)' };
+			return { _gte: relativeDayUtc(-29).toISOString() };
 		}
 
 		const yearOnly = typeof month === 'undefined';

@@ -145,6 +145,7 @@
 	});
 
 	const hoverLinePlugin = {
+		id: 'hoverLine',
 		afterDatasetsDraw (chart: any) {
 			const { ctx, tooltip, chartArea: { top, bottom } } = chart;
 
@@ -158,11 +159,13 @@
 			// persist hover line state
 			if (typeof chart._hoverLineX === 'undefined') {
 				chart._hoverLineX = null;
+				chart._hoverLineAnimating = false;
 			}
 
 			if (targetX === null) {
 				// nothing to draw
 				chart._hoverLineX = null;
+				chart._hoverLineAnimating = false;
 				return;
 			}
 
@@ -174,10 +177,19 @@
 			const diff = targetX - chart._hoverLineX;
 
 			if (Math.abs(diff) > 0.5) {
-				chart._hoverLineX += diff * 0.02;
-				requestAnimationFrame(() => chart.draw());
+				chart._hoverLineX += diff * 0.1;
+
+				if (!chart._hoverLineAnimating) {
+					chart._hoverLineAnimating = true;
+
+					requestAnimationFrame(() => {
+						chart._hoverLineAnimating = false;
+						chart.draw();
+					});
+				}
 			} else {
 				chart._hoverLineX = targetX;
+				chart._hoverLineAnimating = false;
 			}
 
 			// draw the line

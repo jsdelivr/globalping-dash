@@ -176,7 +176,9 @@
 			// move hover line towards the hovered x position (animated)
 			const diff = targetX - chart._hoverLineX;
 
+			// only animate if the diff is large enough
 			if (Math.abs(diff) > 0.5) {
+				// 0.1 == 10% of the diff per frame
 				chart._hoverLineX += diff * 0.1;
 
 				if (!chart._hoverLineAnimating) {

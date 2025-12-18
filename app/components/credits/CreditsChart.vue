@@ -147,7 +147,7 @@
 
 	const hoverLinePlugin = {
 		id: 'hoverLine',
-		afterDatasetsDraw (chart: any) {
+		beforeDatasetsDraw (chart: any) {
 			const { ctx, tooltip, chartArea: { top, bottom } } = chart;
 
 			// find the hovered x position

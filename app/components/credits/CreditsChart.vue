@@ -307,7 +307,6 @@
 			},
 			point: {
 				radius: 0,
-				hoverRadius: 0,
 			},
 		},
 	}));

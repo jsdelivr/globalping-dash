@@ -35,7 +35,6 @@
 
 <script setup lang="ts">
 	import Chart from 'primevue/chart';
-	import relativeDayUtc from 'relative-day-utc';
 	import { useCreditsFilters } from '~/composables/useCreditsFilters';
 	import { formatUtcDate } from '~/utils/date-formatters';
 
@@ -82,9 +81,7 @@
 
 		// create x axis keys based on the applied filter
 		if (filter.value.period.year === 'past') {
-			const goBackMonths = relativeDayUtc(-364).getUTCMonth() === now.getUTCMonth() ? 12 : 11;
-
-			for (let i = goBackMonths; i >= 0; i--) {
+			for (let i = 12; i >= 0; i--) {
 				const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1));
 				periodKeys.push(formatUtcDate(d.toISOString(), 'year-month'));
 			}

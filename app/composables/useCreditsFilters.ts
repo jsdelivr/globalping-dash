@@ -108,7 +108,8 @@ export const useCreditsFilters = () => {
 		const { year, month } = filter.value.period;
 
 		if (year === 'past') {
-			return { _gte: relativeDayUtc(-364).toISOString() };
+			const sinceYear = new Date(Date.UTC(CURRENT_YEAR - 1, CURRENT_MONTH, 1, 0, 0, 0));
+			return { _gte: sinceYear.toISOString() };
 		} else if (month === 'past') {
 			return { _gte: relativeDayUtc(-29).toISOString() };
 		}

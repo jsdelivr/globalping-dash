@@ -64,6 +64,9 @@ importers:
       primevue:
         specifier: 4.3.9
         version: 4.3.9(patch_hash=7kxnyix34druf7kld2f2hfoque)(vue@3.5.22(typescript@5.9.2))
+      relative-day-utc:
+        specifier: ^1.3.0
+        version: 1.3.0
       tailwindcss:
         specifier: ^3.4.17
         version: 3.4.17
@@ -4394,6 +4397,9 @@ packages:
   regjsparser@0.12.0:
     resolution: {integrity: sha512-cnE+y8bz4NhMjISKbgeVJtqNbtf5QpjZP+Bslo+UqkIt9QPnX9q095eiRRASJG1/tz6dlNr6Z5NsBiWYokp6EQ==}
     hasBin: true
+
+  relative-day-utc@1.3.0:
+    resolution: {integrity: sha512-EyxLsTrfTBiS5n4mWbHKuxelu7uRIynBhAICEj2BuXwMFKndHPLTBYp/X4KY9yVlPo80fzBg6Anlbjk9JRI7kg==}
 
   replace-in-file@6.3.5:
     resolution: {integrity: sha512-arB9d3ENdKva2fxRnSjwBEXfK1npgyci7ZZuwysgAp7ORjHSyxz6oqIjTEv8R0Ydl4Ll7uOAZXL4vbkhGIizCg==}
@@ -10140,6 +10146,8 @@ snapshots:
   regjsparser@0.12.0:
     dependencies:
       jsesc: 3.0.2
+
+  relative-day-utc@1.3.0: {}
 
   replace-in-file@6.3.5:
     dependencies:

@@ -27,7 +27,7 @@
 				</div>
 			</div>
 			<div class="credits-chart relative h-52 md:flex-1">
-				<Chart type="line" :data="chartData" :options="chartOptions" class="size-full"/>
+				<Chart type="line" :data="chartData" :options="chartOptions" class="size-full" :plugins="[hoverLinePlugin]"/>
 			</div>
 		</AsyncBlock>
 	</div>
@@ -144,6 +144,56 @@
 		return data;
 	});
 
+	const hoverLinePlugin = {
+		afterDatasetsDraw (chart: any) {
+			const { ctx, tooltip, chartArea: { top, bottom } } = chart;
+
+			// find the hovered x position
+			let targetX = null;
+
+			if (tooltip && tooltip._active && tooltip._active.length) {
+				targetX = tooltip._active[0].element.x;
+			}
+
+			// persist hover line state
+			if (typeof chart._hoverLineX === 'undefined') {
+				chart._hoverLineX = null;
+			}
+
+			if (targetX === null) {
+				// nothing to draw
+				chart._hoverLineX = null;
+				return;
+			}
+
+			if (chart._hoverLineX === null) {
+				chart._hoverLineX = targetX;
+			}
+
+			// move hover line towards the hovered x position (animated)
+			const diff = targetX - chart._hoverLineX;
+
+			if (Math.abs(diff) > 0.5) {
+				chart._hoverLineX += diff * 0.02;
+				requestAnimationFrame(() => chart.draw());
+			} else {
+				chart._hoverLineX = targetX;
+			}
+
+			// draw the line
+			ctx.save();
+			ctx.beginPath();
+			ctx.moveTo(chart._hoverLineX, top);
+			ctx.lineTo(chart._hoverLineX, bottom);
+
+			ctx.lineWidth = 1;
+			ctx.strokeStyle = bluegray400;
+
+			ctx.stroke();
+			ctx.restore();
+		},
+	};
+
 	const chartData = computed(() => {
 		return {
 			labels: changes.value.map(({ label }) => label),
@@ -168,6 +218,10 @@
 		},
 		maintainAspectRatio: false,
 		aspectRatio: 0.6,
+		interaction: {
+			mode: 'index',
+			intersect: false,
+		},
 		plugins: {
 			legend: {
 				display: false,
@@ -239,8 +293,6 @@ Spent: ${change.spent.toLocaleString('en-US')}`;
 			},
 			point: {
 				radius: 0,
-				hitRadius: 100,
-				hoverRadius: 5,
 			},
 		},
 	}));

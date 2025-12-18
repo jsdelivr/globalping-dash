@@ -27,7 +27,7 @@
 				</div>
 			</div>
 			<div class="credits-chart relative h-52 md:flex-1">
-				<Chart type="line" :data="chartData" :options="chartOptions" class="size-full"/>
+				<Chart type="line" :data="chartData" :options="chartOptions" class="size-full" :plugins="[hoverLinePlugin]"/>
 			</div>
 		</AsyncBlock>
 	</div>
@@ -57,6 +57,7 @@
 	const bluegray400 = documentStyle.getPropertyValue('--bluegray-400');
 	const bluegray700 = documentStyle.getPropertyValue('--bluegray-700');
 	const surface300 = documentStyle.getPropertyValue('--p-surface-300');
+	const surface400 = documentStyle.getPropertyValue('--p-surface-400');
 	const primary = documentStyle.getPropertyValue('--p-primary-color');
 	const red400 = documentStyle.getPropertyValue('--red-400');
 	const dark = document.documentElement.classList.contains('dark');
@@ -144,6 +145,70 @@
 		return data;
 	});
 
+	const hoverLinePlugin = {
+		id: 'hoverLine',
+		beforeDatasetsDraw (chart: any) {
+			const { ctx, tooltip, chartArea: { top, bottom } } = chart;
+
+			// find the hovered x position
+			let targetX = null;
+
+			if (tooltip && tooltip._active && tooltip._active.length) {
+				targetX = tooltip._active[0].element.x;
+			}
+
+			// persist hover line state
+			if (typeof chart._hoverLineX === 'undefined') {
+				chart._hoverLineX = null;
+				chart._hoverLineAnimating = false;
+			}
+
+			if (targetX === null) {
+				// nothing to draw
+				chart._hoverLineX = null;
+				chart._hoverLineAnimating = false;
+				return;
+			}
+
+			if (chart._hoverLineX === null) {
+				chart._hoverLineX = targetX;
+			}
+
+			// move hover line towards the hovered x position (animated)
+			const diff = targetX - chart._hoverLineX;
+
+			// only animate if the diff is large enough
+			if (Math.abs(diff) > 0.5) {
+				// 0.1 == 10% of the diff per frame
+				chart._hoverLineX += diff * 0.1;
+
+				if (!chart._hoverLineAnimating) {
+					chart._hoverLineAnimating = true;
+
+					requestAnimationFrame(() => {
+						chart._hoverLineAnimating = false;
+						chart.draw();
+					});
+				}
+			} else {
+				chart._hoverLineX = targetX;
+				chart._hoverLineAnimating = false;
+			}
+
+			// draw the line
+			ctx.save();
+			ctx.beginPath();
+			ctx.moveTo(chart._hoverLineX, top);
+			ctx.lineTo(chart._hoverLineX, bottom);
+
+			ctx.lineWidth = 1.5;
+			ctx.strokeStyle = dark ? bluegray400 : surface400;
+
+			ctx.stroke();
+			ctx.restore();
+		},
+	};
+
 	const chartData = computed(() => {
 		return {
 			labels: changes.value.map(({ label }) => label),
@@ -168,6 +233,10 @@
 		},
 		maintainAspectRatio: false,
 		aspectRatio: 0.6,
+		interaction: {
+			mode: 'index',
+			intersect: false,
+		},
 		plugins: {
 			legend: {
 				display: false,
@@ -181,8 +250,7 @@
 						const change = changes.value[dataIndex];
 
 						if (change) {
-							return `Gained: ${change.gained.toLocaleString('en-US')}
-Spent: ${change.spent.toLocaleString('en-US')}`;
+							return `Gained: ${change.gained.toLocaleString('en-US')}\nSpent: ${change.spent.toLocaleString('en-US')}`;
 						}
 
 						return '';
@@ -206,7 +274,7 @@ Spent: ${change.spent.toLocaleString('en-US')}`;
 					},
 				},
 				grid: {
-					color: dark ? bluegray700 : surface300,
+					display: false,
 				},
 				border: {
 					display: false,
@@ -226,7 +294,7 @@ Spent: ${change.spent.toLocaleString('en-US')}`;
 					color: dark ? bluegray700 : surface300,
 				},
 				border: {
-					display: false,
+					color: dark ? bluegray700 : surface300,
 				},
 			},
 		},
@@ -239,8 +307,6 @@ Spent: ${change.spent.toLocaleString('en-US')}`;
 			},
 			point: {
 				radius: 0,
-				hitRadius: 100,
-				hoverRadius: 5,
 			},
 		},
 	}));

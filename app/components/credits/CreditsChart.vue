@@ -57,6 +57,7 @@
 	const bluegray400 = documentStyle.getPropertyValue('--bluegray-400');
 	const bluegray700 = documentStyle.getPropertyValue('--bluegray-700');
 	const surface300 = documentStyle.getPropertyValue('--p-surface-300');
+	const surface500 = documentStyle.getPropertyValue('--p-surface-500');
 	const primary = documentStyle.getPropertyValue('--p-primary-color');
 	const red400 = documentStyle.getPropertyValue('--red-400');
 	const dark = document.documentElement.classList.contains('dark');
@@ -200,8 +201,8 @@
 			ctx.moveTo(chart._hoverLineX, top);
 			ctx.lineTo(chart._hoverLineX, bottom);
 
-			ctx.lineWidth = 1;
-			ctx.strokeStyle = bluegray400;
+			ctx.lineWidth = 1.5;
+			ctx.strokeStyle = dark ? bluegray400 : surface500;
 
 			ctx.stroke();
 			ctx.restore();
@@ -249,8 +250,7 @@
 						const change = changes.value[dataIndex];
 
 						if (change) {
-							return `Gained: ${change.gained.toLocaleString('en-US')}
-Spent: ${change.spent.toLocaleString('en-US')}`;
+							return `Gained: ${change.gained.toLocaleString('en-US')}\nSpent: ${change.spent.toLocaleString('en-US')}`;
 						}
 
 						return '';
@@ -274,7 +274,7 @@ Spent: ${change.spent.toLocaleString('en-US')}`;
 					},
 				},
 				grid: {
-					color: dark ? bluegray700 : surface300,
+					display: false,
 				},
 				border: {
 					display: false,
@@ -294,7 +294,7 @@ Spent: ${change.spent.toLocaleString('en-US')}`;
 					color: dark ? bluegray700 : surface300,
 				},
 				border: {
-					display: false,
+					color: dark ? bluegray700 : surface300,
 				},
 			},
 		},

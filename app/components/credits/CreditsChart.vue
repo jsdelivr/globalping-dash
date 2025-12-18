@@ -57,7 +57,7 @@
 	const bluegray400 = documentStyle.getPropertyValue('--bluegray-400');
 	const bluegray700 = documentStyle.getPropertyValue('--bluegray-700');
 	const surface300 = documentStyle.getPropertyValue('--p-surface-300');
-	const surface500 = documentStyle.getPropertyValue('--p-surface-500');
+	const surface400 = documentStyle.getPropertyValue('--p-surface-400');
 	const primary = documentStyle.getPropertyValue('--p-primary-color');
 	const red400 = documentStyle.getPropertyValue('--red-400');
 	const dark = document.documentElement.classList.contains('dark');
@@ -202,7 +202,7 @@
 			ctx.lineTo(chart._hoverLineX, bottom);
 
 			ctx.lineWidth = 1.5;
-			ctx.strokeStyle = dark ? bluegray400 : surface500;
+			ctx.strokeStyle = dark ? bluegray400 : surface400;
 
 			ctx.stroke();
 			ctx.restore();

@@ -93,7 +93,7 @@
 						<AdminPanel/>
 					</div>
 
-					<div class="mt-8 rounded-xl border bg-surface-0 p-6 dark:border-dark-400 dark:bg-dark-500">
+					<div v-if="!isSponsor" class="mt-8 rounded-xl border bg-surface-0 p-6 dark:border-dark-400 dark:bg-dark-500">
 						<p class="mb-2 font-bold">Sponsorship</p>
 						<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
 						<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank" rel="noopener">

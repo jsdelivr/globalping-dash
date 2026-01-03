@@ -93,7 +93,7 @@
 						<AdminPanel/>
 					</div>
 
-					<div class="mt-8 rounded-xl border bg-surface-0 p-6 dark:border-dark-400 dark:bg-dark-500">
+					<div v-if="!isSponsor" class="mt-8 rounded-xl border bg-surface-0 p-6 dark:border-dark-400 dark:bg-dark-500">
 						<p class="mb-2 font-bold">Sponsorship</p>
 						<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
 						<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank" rel="noopener">
@@ -191,7 +191,7 @@
 			<NuxtLink active-class="active" class="sidebar-link" :class="{'active': $route.path.startsWith('/probes')}" to="/probes"><NuxtIcon class="pi sidebar-link-icon" name="probe"/>Probes</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/credits"><NuxtIcon class="pi sidebar-link-icon" name="coin"/>Credits</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database sidebar-link-icon"/>Tokens</NuxtLink>
-			<div class="mt-auto rounded-xl border bg-surface-0 p-6 dark:border-dark-400 dark:bg-dark-500">
+			<div v-if="!isSponsor" class="mt-auto rounded-xl border bg-surface-0 p-6 dark:border-dark-400 dark:bg-dark-500">
 				<p class="mb-2 font-bold">Sponsorship</p>
 				<p class="mb-6">Support the development of our products by becoming a sponsor.</p>
 				<NuxtLink to="https://github.com/sponsors/jsdelivr" tabindex="-1" target="_blank" rel="noopener">
@@ -276,6 +276,8 @@
 	const toggleProfile = async (event: Event) => {
 		profilePanel.value.toggle(event);
 	};
+
+	const isSponsor = computed(() => user.value.user_type === 'sponsor' || user.value.user_type === 'special');
 
 	// PROFILE END
 

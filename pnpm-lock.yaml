@@ -6,10 +6,10 @@ settings:
 
 patchedDependencies:
   '@primevue/nuxt-module':
-    hash: oebuemwdkjsrr37cbm2jczsoxy
+    hash: cl3sw6uff2kel7zb3lkr2xzum4
     path: patches/@primevue__nuxt-module.patch
   primevue:
-    hash: ghnwnaapozvt6ljaa7sit4bkz4
+    hash: idjpoinkthwiw4vah3ajybbmae
     path: patches/primevue.patch
 
 importers:
@@ -33,7 +33,7 @@ importers:
         version: 4.5.4(vue@3.5.26(typescript@5.9.3))
       '@primevue/nuxt-module':
         specifier: 4.5.4
-        version: 4.5.4(patch_hash=oebuemwdkjsrr37cbm2jczsoxy)(@babel/parser@7.28.5)(magicast@0.5.1)(vue@3.5.26(typescript@5.9.3))
+        version: 4.5.4(patch_hash=cl3sw6uff2kel7zb3lkr2xzum4)(@babel/parser@7.28.5)(magicast@0.5.1)(vue@3.5.26(typescript@5.9.3))
       '@primevue/themes':
         specifier: 4.5.4
         version: 4.5.4
@@ -63,7 +63,7 @@ importers:
         version: 7.0.0
       primevue:
         specifier: 4.5.4
-        version: 4.5.4(patch_hash=ghnwnaapozvt6ljaa7sit4bkz4)(vue@3.5.26(typescript@5.9.3))
+        version: 4.5.4(patch_hash=idjpoinkthwiw4vah3ajybbmae)(vue@3.5.26(typescript@5.9.3))
       relative-day-utc:
         specifier: ^1.3.0
         version: 1.3.0
@@ -6704,7 +6704,7 @@ snapshots:
 
   '@primevue/metadata@4.5.4': {}
 
-  '@primevue/nuxt-module@4.5.4(patch_hash=oebuemwdkjsrr37cbm2jczsoxy)(@babel/parser@7.28.5)(magicast@0.5.1)(vue@3.5.26(typescript@5.9.3))':
+  '@primevue/nuxt-module@4.5.4(patch_hash=cl3sw6uff2kel7zb3lkr2xzum4)(@babel/parser@7.28.5)(magicast@0.5.1)(vue@3.5.26(typescript@5.9.3))':
     dependencies:
       '@nuxt/kit': 3.20.2(magicast@0.5.1)
       '@primeuix/styled': 0.7.4
@@ -6713,7 +6713,7 @@ snapshots:
       '@primevue/forms': 4.5.4(vue@3.5.26(typescript@5.9.3))
       '@primevue/metadata': 4.5.4
       pathe: 1.1.2
-      primevue: 4.5.4(patch_hash=ghnwnaapozvt6ljaa7sit4bkz4)(vue@3.5.26(typescript@5.9.3))
+      primevue: 4.5.4(patch_hash=idjpoinkthwiw4vah3ajybbmae)(vue@3.5.26(typescript@5.9.3))
       unplugin-vue-components: 28.4.1(@babel/parser@7.28.5)(@nuxt/kit@3.20.2(magicast@0.5.1))(vue@3.5.26(typescript@5.9.3))
     transitivePeerDependencies:
       - '@babel/parser'
@@ -9994,7 +9994,7 @@ snapshots:
 
   primeicons@7.0.0: {}
 
-  primevue@4.5.4(patch_hash=ghnwnaapozvt6ljaa7sit4bkz4)(vue@3.5.26(typescript@5.9.3)):
+  primevue@4.5.4(patch_hash=idjpoinkthwiw4vah3ajybbmae)(vue@3.5.26(typescript@5.9.3)):
     dependencies:
       '@primeuix/styled': 0.7.4
       '@primeuix/styles': 2.0.2

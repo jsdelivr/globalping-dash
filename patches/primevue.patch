@@ -1,5 +1,5 @@
 diff --git a/tooltip/index.mjs b/tooltip/index.mjs
-index abae48ec6e71927f2f026857f1c909ff2ec4deaa..87d00511b8462c20aca0466a1a1e2c9f64b2e3e5 100644
+index abae48ec6e71927f2f026857f1c909ff2ec4deaa..04576687ebd4e809d1e6e37a652b3689dc1f07ea 100644
 --- a/tooltip/index.mjs
 +++ b/tooltip/index.mjs
 @@ -182,12 +182,12 @@ var Tooltip = BaseTooltip.extend('tooltip', {
@@ -7,13 +7,13 @@ index abae48ec6e71927f2f026857f1c909ff2ec4deaa..87d00511b8462c20aca0466a1a1e2c9f
        var el = event.currentTarget;
        var hideDelay = el.$_ptooltipHideDelay;
 -      this.hide(el, hideDelay);
-+	  this.getTooltipElement(el) && this.hide(el, hideDelay);
++      this.getTooltipElement(el) && this.hide(el, hideDelay);
      },
      onClick: function onClick(event) {
        var el = event.currentTarget;
        var hideDelay = el.$_ptooltipHideDelay;
 -      this.hide(el, hideDelay);
-+	  this.getTooltipElement(el) && this.hide(el, hideDelay);
++      this.getTooltipElement(el) && this.hide(el, hideDelay);
      },
      onKeydown: function onKeydown(event) {
        var el = event.currentTarget;
@@ -22,7 +22,7 @@ index abae48ec6e71927f2f026857f1c909ff2ec4deaa..87d00511b8462c20aca0466a1a1e2c9f
        var arrowElement = this.getArrowElement(el);
        var hostOffset = this.getHostOffset(el);
 -      var left = hostOffset.left - getOuterWidth(tooltipElement);
-+	  var left = Math.max(hostOffset.left + (getOuterWidth(el) - getOuterWidth(tooltipElement)) / 2, 0);
++      var left = Math.max(hostOffset.left + (getOuterWidth(el) - getOuterWidth(tooltipElement)) / 2, 0);
        var top = hostOffset.top + (getOuterHeight(el) - getOuterHeight(tooltipElement)) / 2;
        tooltipElement.style.left = left + 'px';
        tooltipElement.style.top = top + 'px';

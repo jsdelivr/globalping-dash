@@ -1,14 +1,14 @@
 diff --git a/dist/module.mjs b/dist/module.mjs
-index e99943185cac5c443cc9c9effc6625db7f16b93c..a1a556757cfc6f784e689f1c48a7f75a5a05d444 100644
+index e99943185cac5c443cc9c9effc6625db7f16b93c..c8e185307304c8e1dea24bdd39bae49d014abe7d 100644
 --- a/dist/module.mjs
 +++ b/dist/module.mjs
 @@ -227,6 +227,9 @@ const module = defineNuxtModule({
        );
      }
      const styleContent = () => {
-+	  if (options?.unstyled) {
-+	    return `const styles = [], stylesToTop = [], themes = []; export { styles, stylesToTop, themes }`;
-+	  }
++      if (options?.unstyled) {
++        return `const styles = [], stylesToTop = [], themes = []; export { styles, stylesToTop, themes }`;
++      }
        if (!loadStyles)
          return `export const styles = [], stylesToTop = [], themes = [];`;
        const uniqueRegisteredStyles = Array.from(new Map(registeredStyles?.map((m) => [m.name, m])).values());

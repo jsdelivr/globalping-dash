@@ -90,7 +90,7 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0(stylelint@14.16.1)
       '@nuxt/eslint-config':
-        specifier: ^1.9.0
+        specifier: ^1.12.1
         version: 1.12.1(@typescript-eslint/utils@8.51.0(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(@vue/compiler-sfc@3.5.26)(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3)
       '@types/google.maps':
         specifier: ^3.58.1

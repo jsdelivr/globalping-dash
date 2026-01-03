@@ -44,6 +44,15 @@
 		>
 			<GpDialogContentAddCredits @cancel="addCreditsDialog = false"/>
 		</GPDialog>
+
+		<GPDialog
+			v-model:visible="startAProbeDialog"
+			header="Start a probe"
+			content-class="!p-0"
+			size="w-[700px]"
+		>
+			<GpDialogContentStartProbeLogin @cancel="startAProbeDialog = false"/>
+		</GPDialog>
 	</section>
 </template>
 
@@ -61,13 +70,16 @@
 	const auth = useAuth();
 	const route = useRoute();
 	let redirectHasCreditsView = false;
+	let redirectHasProbeView = false;
 
 	const redirect = Array.isArray(route.query.redirect) ? route.query.redirect[0] : route.query.redirect;
 
 	if (redirect) {
 		const redirectUrl = new URL(redirect);
 		redirectHasCreditsView = redirectUrl.searchParams.get('view') === 'add-credits';
+		redirectHasProbeView = redirectUrl.searchParams.get('view') === 'start-a-probe';
 	}
 
 	const addCreditsDialog = ref(route.query.view === 'add-credits' || redirectHasCreditsView);
+	const startAProbeDialog = ref(route.query.view === 'start-a-probe' || redirectHasProbeView);
 </script>

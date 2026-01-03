@@ -1,5 +1,5 @@
 diff --git a/tooltip/index.mjs b/tooltip/index.mjs
-index 24447138fea2bdd7b58b1e9bac6786e016740605..9fe9e71059dd2674f507fd8ca8931ff01f00807d 100644
+index abae48ec6e71927f2f026857f1c909ff2ec4deaa..04576687ebd4e809d1e6e37a652b3689dc1f07ea 100644
 --- a/tooltip/index.mjs
 +++ b/tooltip/index.mjs
 @@ -182,12 +182,12 @@ var Tooltip = BaseTooltip.extend('tooltip', {
@@ -17,7 +17,7 @@ index 24447138fea2bdd7b58b1e9bac6786e016740605..9fe9e71059dd2674f507fd8ca8931ff0
      },
      onKeydown: function onKeydown(event) {
        var el = event.currentTarget;
-@@ -376,7 +376,7 @@ var Tooltip = BaseTooltip.extend('tooltip', {
+@@ -380,7 +380,7 @@ var Tooltip = BaseTooltip.extend('tooltip', {
        var tooltipElement = this.getTooltipElement(el);
        var arrowElement = this.getArrowElement(el);
        var hostOffset = this.getHostOffset(el);

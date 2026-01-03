@@ -30,6 +30,9 @@ export default {
 
 			// Transition
 			'transition duration-200',
+
+			// Hide the loading mask when data is available and loading is false (leads to flicker / loading overlay resize)
+			'[&.p-overlay-mask-leave-active]:hidden',
 		],
 	},
 	loadingIcon: {

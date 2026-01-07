@@ -135,10 +135,10 @@
 	const router = useRouter();
 
 	const targetLocation = computed(() => {
-		let locationStr = `${probe.value.network}%${probe.value.city}`;
+		let locationStr = `${probe.value.city}%${probe.value.state ? `US-${probe.value.state}` : probe.value.country}%${probe.value.network}`;
 
-		const username = probe.value.systemTags.find(tag => USERNAME_TAG_PATTERN.test(tag));
-		username && (locationStr += `%${username}`);
+		const userTag = probe.value.systemTags.find(tag => USERNAME_TAG_PATTERN.test(tag));
+		userTag && (locationStr += `%${userTag}`);
 
 		return locationStr;
 	});

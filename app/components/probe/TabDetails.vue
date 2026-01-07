@@ -137,7 +137,7 @@
 	const targetLocation = computed(() => {
 		let locationStr = `${probe.value.network}%${probe.value.city}`;
 
-		const username = probe.value.systemTags.find(tag => USERNAME_TAG_PATTERN.test(tag))?.slice(2);
+		const username = probe.value.systemTags.find(tag => USERNAME_TAG_PATTERN.test(tag));
 		username && (locationStr += `%${username}`);
 
 		return locationStr;

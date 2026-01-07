@@ -2,9 +2,19 @@
 	<div class="flex flex-col gap-6">
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-2">
 			<div class="col-span-1 flex flex-col rounded-xl border border-surface-300 bg-white md:col-span-1 lg:col-span-1 dark:border-dark-600 dark:bg-dark-800">
-				<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600 dark:text-bluegray-0">
-					Location
-				</h3>
+				<div class="flex h-10 items-center justify-between border-b border-surface-300 px-6 dark:border-dark-600">
+					<h3 class="font-bold text-dark-800 dark:text-bluegray-0">
+						Location
+					</h3>
+					<a
+						v-tooltip.top="'Target probe location'"
+						target="_blank"
+						:href="`${config.public.gpSiteUrl}/?location=${encodeURIComponent(targetLocation)}`"
+						class="-mr-4 flex items-center rounded-md p-1.5 duration-300 hover:bg-surface-100 dark:hover:bg-dark-600"
+						aria-label="Target this probe">
+						<span class="inline-block size-4 bg-[url('~/assets/icons/target.svg')] bg-cover dark:bg-[url('~/assets/icons/target-light.svg')]"/>
+					</a>
+				</div>
 
 				<div class="flex grow flex-col gap-3 p-6">
 					<p class="text-sm leading-[125%] text-bluegray-600 dark:text-bluegray-0">
@@ -106,9 +116,11 @@
 
 <script setup lang="ts">
 	import { useGoogleMaps } from '~/composables/maps';
+	import { USERNAME_TAG_PATTERN } from '~/constants/users';
 	import { initGoogleMap } from '~/utils/init-google-map';
 	const MAP_CENTER_Y_OFFSET_PX = 36;
 	const deleteDialog = ref(false);
+	const config = useRuntimeConfig();
 
 	const probe = defineModel('probe', {
 		type: Object as PropType<Probe>,
@@ -121,6 +133,15 @@
 	});
 
 	const router = useRouter();
+
+	const targetLocation = computed(() => {
+		let locationStr = `${probe.value.network}%${probe.value.city}`;
+
+		const username = probe.value.systemTags.find(tag => USERNAME_TAG_PATTERN.test(tag))?.slice(2);
+		username && (locationStr += `%${username}`);
+
+		return locationStr;
+	});
 
 	// HANDLE GOOGLE MAP UPDATING
 	let removeWatcher: (() => void) | undefined;

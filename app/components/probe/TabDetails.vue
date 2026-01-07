@@ -7,7 +7,7 @@
 						Location
 					</h3>
 					<a
-						v-tooltip.top="'Target probe location'"
+						v-tooltip.top="'Target this location in a measurement'"
 						target="_blank"
 						:href="`${config.public.gpSiteUrl}/?location=${encodeURIComponent(targetLocation)}`"
 						class="-mr-4 flex items-center rounded-md p-1.5 duration-300 hover:bg-surface-100 dark:hover:bg-dark-600"

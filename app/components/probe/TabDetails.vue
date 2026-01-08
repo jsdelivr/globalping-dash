@@ -10,19 +10,11 @@
 						v-tooltip.top="'Target this location in a measurement'"
 						target="_blank"
 						:href="`${config.public.gpSiteUrl}/?location=${encodeURIComponent(targetLocation)}`"
-						class="-mr-4 flex items-center gap-1.5 rounded-md bg-surface-100 px-2 py-1 text-sm duration-300 hover:bg-surface-300 dark:bg-dark-600 dark:hover:bg-dark-400"
+						class="-mr-4 flex items-center gap-1.5 rounded-md bg-surface-100 px-2 py-1 text-xs duration-300 hover:bg-surface-300 dark:bg-dark-600 dark:hover:bg-dark-400"
 						aria-label="Target this location in a measurement">
 						<span class="inline-block size-4 bg-[url('~/assets/icons/target.svg')] bg-cover dark:bg-[url('~/assets/icons/target-light.svg')]"/>
 						Target this location
 					</a>
-					<!--					<a-->
-					<!--						v-tooltip.top="'Target this location in a measurement'"-->
-					<!--						target="_blank"-->
-					<!--						:href="`${config.public.gpSiteUrl}/?location=${encodeURIComponent(targetLocation)}`"-->
-					<!--						class="mr-[-1.35rem] flex items-center rounded-md border bg-surface-100 p-1.5 duration-300 hover:bg-surface-300 dark:bg-dark-600 dark:hover:bg-dark-400"-->
-					<!--						aria-label="Target this location in a measurement">-->
-					<!--						<span class="inline-block size-4 bg-[url('~/assets/icons/target.svg')] bg-cover dark:bg-[url('~/assets/icons/target-light.svg')]"/>-->
-					<!--					</a>-->
 				</div>
 
 				<div class="flex grow flex-col gap-3 p-6">

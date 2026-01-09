@@ -109,10 +109,12 @@
 	const enablePublicProbe = async () => {
 		syncingProbeData.value = true;
 
-		return $directus.request(updateUser(auth.user.id, { public_probes: true })).catch((e) => {
-			useErrorToast(e);
-			syncingProbeData.value = false;
-		}).then(startRefreshingProbeData);
+		return $directus.request(updateUser(auth.user.id, { public_probes: true }))
+			.then(startRefreshingProbeData)
+			.catch((e) => {
+				useErrorToast(e);
+				syncingProbeData.value = false;
+			});
 	};
 
 	watch([ isProbePrivate, () => auth.user.public_probes ], ([ isProbePrivate, userPublicProbes ]) => {

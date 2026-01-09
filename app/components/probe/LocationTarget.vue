@@ -110,7 +110,10 @@
 		syncingProbeData.value = true;
 
 		return $directus.request(updateUser(auth.user.id, { public_probes: true }))
-			.then(startRefreshingProbeData)
+			.then(() => {
+				auth.refresh();
+				startRefreshingProbeData();
+			})
 			.catch((e) => {
 				useErrorToast(e);
 				syncingProbeData.value = false;

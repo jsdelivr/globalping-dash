@@ -6,15 +6,7 @@
 					<h3 class="font-bold text-dark-800 dark:text-bluegray-0">
 						Location
 					</h3>
-					<a
-						v-tooltip.top="'Target this location in a measurement'"
-						target="_blank"
-						:href="`${config.public.gpSiteUrl}/?location=${encodeURIComponent(targetLocation)}`"
-						class="-mr-4 flex items-center gap-1.5 rounded-md bg-surface-100 px-2 py-1 text-xs duration-300 hover:bg-surface-300 dark:bg-dark-600 dark:hover:bg-dark-400"
-						aria-label="Target this location in a measurement">
-						<span class="inline-block size-4 bg-[url('~/assets/icons/target.svg')] bg-cover dark:bg-[url('~/assets/icons/target-light.svg')]"/>
-						Target this location
-					</a>
+					<ProbeLocationTarget/>
 				</div>
 
 				<div class="flex grow flex-col gap-3 p-6">
@@ -117,11 +109,9 @@
 
 <script setup lang="ts">
 	import { useGoogleMaps } from '~/composables/maps';
-	import { USERNAME_TAG_PATTERN } from '~/constants/users';
 	import { initGoogleMap } from '~/utils/init-google-map';
 	const MAP_CENTER_Y_OFFSET_PX = 36;
 	const deleteDialog = ref(false);
-	const config = useRuntimeConfig();
 
 	const probe = defineModel('probe', {
 		type: Object as PropType<Probe>,
@@ -134,15 +124,6 @@
 	});
 
 	const router = useRouter();
-
-	const targetLocation = computed(() => {
-		let locationStr = `${probe.value.city}%${probe.value.state ? `US-${probe.value.state}` : probe.value.country}%${probe.value.network}`;
-
-		const userTag = probe.value.systemTags.find(tag => USERNAME_TAG_PATTERN.test(tag));
-		userTag && (locationStr += `%${userTag}`);
-
-		return locationStr;
-	});
 
 	// HANDLE GOOGLE MAP UPDATING
 	let removeWatcher: (() => void) | undefined;

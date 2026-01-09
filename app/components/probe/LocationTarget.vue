@@ -24,7 +24,7 @@
 			<p v-if="isProbePrivate">
 				<b>This probe is not public</b>, so you cannot target it in a measurement. Instead, probes at this location will be targeted.
 				<br><br>
-				To target this probe specifically, set it's visibility to <b>public.</b> The change should take effect within a minute.
+				To target this probe specifically, set its visibility to <b>public.</b> The change should take effect within a minute.
 			</p>
 			<p v-else>
 				Your probe is now <b>public</b> and can be targeted in a measurement.

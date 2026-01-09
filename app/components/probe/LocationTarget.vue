@@ -98,7 +98,6 @@
 	const startRefreshingProbeData = async () => {
 		clearTimeout(refreshTimeout.value);
 		await refresh();
-		await nextTick();
 
 		if (isProbePrivate.value) {
 			refreshTimeout.value = setTimeout(startRefreshingProbeData, 5000);

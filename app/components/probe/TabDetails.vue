@@ -2,9 +2,12 @@
 	<div class="flex flex-col gap-6">
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-2">
 			<div class="col-span-1 flex flex-col rounded-xl border border-surface-300 bg-white md:col-span-1 lg:col-span-1 dark:border-dark-600 dark:bg-dark-800">
-				<h3 class="flex h-10 items-center border-b border-surface-300 px-6 font-bold text-dark-800 dark:border-dark-600 dark:text-bluegray-0">
-					Location
-				</h3>
+				<div class="flex h-10 items-center justify-between border-b border-surface-300 px-6 dark:border-dark-600">
+					<h3 class="font-bold text-dark-800 dark:text-bluegray-0">
+						Location
+					</h3>
+					<ProbeLocationTarget/>
+				</div>
 
 				<div class="flex grow flex-col gap-3 p-6">
 					<p class="text-sm leading-[125%] text-bluegray-600 dark:text-bluegray-0">

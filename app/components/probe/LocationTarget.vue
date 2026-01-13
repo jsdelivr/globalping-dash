@@ -20,29 +20,31 @@
 		Target this location
 	</button>
 	<Popover ref="popoverRef">
-		<div class="flex max-w-72 flex-col gap-5 rounded-xl bg-surface-0 p-5 shadow-md dark:bg-dark-900">
+		<div class="flex max-w-80 flex-col gap-5 rounded-xl bg-surface-0 p-5 shadow-md dark:bg-dark-900">
 			<p v-if="isProbePrivate">
-				<b>This probe is not public</b>, so you cannot target it in a measurement. Instead, probes at this location will be targeted.
-				<br><br>
-				To target this probe specifically, set its visibility to <b>public.</b> The change should take effect within a minute.
+				To target this specific probe, it must be <strong>tagged by your username</strong>.
 			</p>
+			<Button
+				v-if="isProbePrivate"
+				:pt="{
+					loadingIcon: { class: 'absolute right-4 inset-y-0 size-4 my-auto animate-spin' },
+				}"
+				:loading="syncingProbeData"
+				label="Tag all my probes and proceed"
+				class="flex-1"
+				@click="enablePublicProbe"
+			/>
 			<p v-else>
 				Your probe is now <b>public</b> and can be targeted in a measurement.
 			</p>
+			<p v-if="isProbePrivate">
+				Alternatively, you can target a random probe at this location (including probes from other users).
+			</p>
 			<div v-if="isProbePrivate" class="flex flex-col items-stretch gap-2">
-				<Button
-					:pt="{
-						loadingIcon: { class: 'absolute right-4 inset-y-0 size-4 my-auto animate-spin' },
-					}"
-					:loading="syncingProbeData"
-					label="Switch to public"
-					class="flex-1"
-					@click="enablePublicProbe"
-				/>
 				<Button
 					severity="secondary"
 					as="a"
-					label="Proceed anyway"
+					label="Target a random probe at this location"
 					class="flex-1"
 					target="_blank"
 					:href="targetLocationLink"/>

@@ -13,34 +13,28 @@
 		v-else
 		v-tooltip.top="!popoverRef?.visible && 'Target this location in a measurement'"
 		aria-label="Target this location in a measurement"
-		class="-mr-4 flex items-center gap-1.5 rounded-md bg-surface-100 px-2 py-1 text-xs duration-300 hover:bg-surface-300 dark:bg-dark-600 dark:hover:bg-dark-400"
+		class="-mr-4 flex select-none items-center gap-1.5 rounded-md bg-surface-100 px-2 py-1 text-xs duration-300 hover:bg-surface-300 dark:bg-dark-600 dark:hover:bg-dark-400"
 		@click="(e) => popoverRef?.toggle(e)"
 	>
 		<span class="inline-block size-4 bg-[url('~/assets/icons/target.svg')] bg-cover dark:bg-[url('~/assets/icons/target-light.svg')]"/>
 		Target this location
 	</button>
 	<Popover ref="popoverRef">
-		<div class="flex max-w-80 flex-col gap-5 rounded-xl bg-surface-0 p-5 shadow-md dark:bg-dark-900">
-			<p v-if="isProbePrivate">
-				To target this specific probe, it must be <strong>tagged by your username</strong>.
-			</p>
-			<Button
-				v-if="isProbePrivate"
-				:pt="{
-					loadingIcon: { class: 'absolute right-4 inset-y-0 size-4 my-auto animate-spin' },
-				}"
-				:loading="syncingProbeData"
-				label="Tag all my probes and proceed"
-				class="flex-1"
-				@click="enablePublicProbe"
-			/>
-			<p v-else>
-				Your probe is now <b>public</b> and can be targeted in a measurement.
-			</p>
-			<p v-if="isProbePrivate">
-				Alternatively, you can target a random probe at this location (including probes from other users).
-			</p>
-			<div v-if="isProbePrivate" class="flex flex-col items-stretch gap-2">
+		<div
+			class="rounded-xl bg-surface-0 p-5 shadow-md dark:bg-dark-900"
+		>
+			<div v-if="isProbePrivate && !syncingProbeData" class="flex max-w-80 flex-col gap-5">
+				<p>
+					To target this specific probe, it must be <strong>tagged by your username</strong>.
+				</p>
+				<Button
+					label="Tag all my probes and proceed"
+					class="flex-1"
+					@click="enablePublicProbe"
+				/>
+				<p>
+					Alternatively, you can target a random probe at this location (including probes from other users).
+				</p>
 				<Button
 					severity="secondary"
 					as="a"
@@ -49,13 +43,23 @@
 					target="_blank"
 					:href="targetLocationLink"/>
 			</div>
-			<Button
-				v-else
-				as="a"
-				label="Target"
-				class="flex-1"
-				target="_blank"
-				:href="targetLocationLink"/>
+			<div v-else-if="syncingProbeData" class="flex w-full max-w-72 flex-col gap-2">
+				<div class="flex items-center justify-between gap-3 font-bold">
+					Synchronizing <ProbeDotLoader/>
+				</div>
+				Waiting for the probes to be tagged by your username, this can take up to 1 minute.
+			</div>
+			<div v-else class="flex max-w-72 flex-col gap-5">
+				<p>
+					Your probe is now <strong>public</strong> and can be targeted in a measurement.
+				</p>
+				<Button
+					as="a"
+					label="Target"
+					class="flex-1"
+					target="_blank"
+					:href="targetLocationLink"/>
+			</div>
 		</div>
 	</Popover>
 </template>

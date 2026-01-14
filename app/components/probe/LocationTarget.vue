@@ -11,7 +11,7 @@
 	</a>
 	<button
 		v-else
-		v-tooltip.top="!popoverRef?.visible && 'Target this location in a measurement'"
+		v-tooltip.top="!popoverRef?.visible && !isTouchDevice && 'Target this location in a measurement'"
 		aria-label="Target this location in a measurement"
 		class="-mr-4 flex select-none items-center gap-1.5 rounded-md bg-surface-100 px-2 py-1 text-xs duration-300 hover:bg-surface-300 dark:bg-dark-600 dark:hover:bg-dark-400"
 		@click="(e) => popoverRef?.toggle(e)"
@@ -19,7 +19,7 @@
 		<span class="inline-block size-4 bg-[url('~/assets/icons/target.svg')] bg-cover dark:bg-[url('~/assets/icons/target-light.svg')]"/>
 		Target this location
 	</button>
-	<Popover ref="popoverRef">
+	<Popover ref="popoverRef" class="w-fit max-sm:inset-x-0 max-sm:mx-auto max-sm:max-w-[95vw]">
 		<div
 			class="rounded-xl bg-surface-0 p-5 shadow-md dark:bg-dark-900"
 		>
@@ -87,6 +87,7 @@
 
 	const isProbePrivate = computed(() => probe.value?.systemTags.every(tag => !USERNAME_TAG_PATTERN.test(tag)));
 	const shouldDisplayPopover = computed(() => (probe.value && isProbePrivate.value) || popoverRef.value?.visible);
+	const isTouchDevice = useMediaQuery('(hover: none)');
 
 	const targetLocationLink = computed(() => {
 		if (!probe.value) {

@@ -30,6 +30,7 @@
 				<Button
 					label="Tag all my probes and proceed"
 					class="flex-1"
+					:disabled="auth.adminMode || !!auth.impersonation"
 					@click="enablePublicProbe"
 				/>
 				<p>

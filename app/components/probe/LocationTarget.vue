@@ -48,11 +48,11 @@
 				<div class="flex items-center justify-between gap-3 font-bold">
 					Synchronizing <ProbeDotLoader/>
 				</div>
-				Waiting for the probes to be tagged by your username, this can take up to 1 minute.
+				Waiting for the probes to be tagged by your username. This can take up to 1 minute.
 			</div>
 			<div v-else class="flex max-w-72 flex-col gap-5">
 				<p>
-					Your probe is now <strong>public</strong> and can be targeted in a measurement.
+					Your probe is now tagged and can be targeted.
 				</p>
 				<Button
 					as="a"

@@ -5,7 +5,7 @@
 				<span v-if="logs.length" class="font-bold">
 					Showing {{logs.length}} <span class="hidden sm:inline">most recent</span> {{pluralize('log', logs.length)}}.
 				</span>
-				<ProbeLogLoader v-else-if="enabled && !showLargeLoader"/>
+				<ProbeDotLoader v-else-if="enabled && !showLargeLoader"/>
 				<label
 					class="ml-auto flex cursor-pointer select-none items-center justify-end gap-2 whitespace-nowrap rounded-md border border-gray-500 px-2 py-1 duration-200 dark:border-gray-400"
 					:class="{
@@ -52,7 +52,7 @@
 					</span>
 				</span>
 				<div v-if="logs.length" class="h-fit px-1 py-2">
-					<ProbeLogLoader v-if="enabled"/>
+					<ProbeDotLoader v-if="enabled"/>
 					<span v-else class="block size-1.5"/>
 				</div>
 			</div>

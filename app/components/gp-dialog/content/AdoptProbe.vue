@@ -33,7 +33,7 @@
 				/>
 			</Step>
 		</StepList>
-		<StepList v-else>
+		<StepList v-else-if="isManualHwAdoption">
 			<Step v-slot="{ active }" as-child value="0">
 				<StepHeader
 					:button-text="'0'"
@@ -71,6 +71,35 @@
 				/>
 			</Step>
 		</StepList>
+		<StepList v-else>
+			<Step v-slot="{ active }" as-child value="0">
+				<StepHeader
+					:button-text="'0'"
+					header-text="Select the probe type"
+					:active="active"
+					:highlighted="Number(activeStep) > 0"
+					:is-success="isSuccess"
+				/>
+			</Step>
+			<Step v-slot="{ active }" as-child value="3">
+				<StepHeader
+					:button-text="'1'"
+					header-text="Set up your probe"
+					:active="active"
+					:highlighted="Number(activeStep) > 3"
+					:is-success="isSuccess"
+				/>
+			</Step>
+			<Step v-slot="{ active }" as-child value="4">
+				<StepHeader
+					:button-text="'2'"
+					header-text="Find the probe"
+					:active="active"
+					:highlighted="Number(activeStep) > 4"
+					:is-success="isSuccess"
+				/>
+			</Step>
+		</StepList>
 		<StepPanels ref="stepPanels" class="box-content overflow-hidden transition-[height] duration-500">
 			<StepPanel v-slot="{ activateCallback }" value="0">
 				<div class="flex justify-evenly gap-4 p-5 pt-7 max-sm:flex-col">
@@ -96,6 +125,7 @@
 					</button>
 				</div>
 			</StepPanel>
+
 			<StepPanel v-slot="{ activateCallback }" value="1">
 				<Tabs v-model:value="activeTab" :pt="{ inkbar: {class: 'hidden'}}" class="border-t dark:border-dark-400" @update:value="onChangeTab">
 					<TabList>
@@ -120,6 +150,7 @@
 					<Button label="Next step" icon="pi pi-arrow-right" icon-pos="right" @click="searchNewProbes(activateCallback)"/>
 				</div>
 			</StepPanel>
+
 			<StepPanel v-slot="{ activateCallback }" value="2">
 				<div v-if="!isSuccess && !isFailed" class="px-5 py-7">
 					<div class="rounded-xl bg-surface-50 p-7 text-center dark:bg-dark-600">
@@ -149,6 +180,7 @@
 					</div>
 				</div>
 			</StepPanel>
+
 			<StepPanel v-slot="{ activateCallback }" value="3">
 				<div class="p-5">
 					<p class="mb-4 mt-2 text-lg font-bold">Set up your probe</p>
@@ -168,24 +200,81 @@
 					</div>
 				</div>
 			</StepPanel>
+
 			<StepPanel v-slot="{ activateCallback }" value="4">
-				<div class="p-5">
-					<p class="mb-4 mt-2 text-lg font-bold">Send adoption code</p>
-					<p>Enter your probe's public IP address and we will send it a verification code.</p>
-					<p class="font-semibold">Your probe will have the same IP address as the network it's connected to.</p>
+				<div v-if="!isManualHwAdoption">
+					<div v-if="!isSuccess">
+						<div v-if="!activeProbe" class="px-5 py-7">
+							<div class="rounded-xl bg-surface-50 p-7 text-center dark:bg-dark-600">
+								<p class="text-lg font-bold">Waiting for your probe to boot...</p>
+								<p class="mt-2">If it's in the same network, it will automatically appear here.</p>
+								<p class="mt-1 text-sm text-surface-500 dark:text-bluegray-200">We recommend waiting for 1-2 minutes for the probe to boot for an automated adoption process.</p>
+								<div class="mt-6">
+									<span class="pi pi-spinner animate-spin text-4xl text-primary-500"/>
+								</div>
+
+								<div v-if="showManualAdoptionBtn" class="mt-6 flex flex-col items-center gap-3 border-t pt-4 dark:border-dark-400">
+									If the automated adoption doesn't work, you may also adopt the probe manually.
+									<Button label="Adopt the probe manually" severity="contrast" text class="w-fit !bg-surface-200 hover:!bg-surface-300 dark:!bg-dark-700 dark:hover:!bg-dark-800" @click="isManualHwAdoption = true"/>
+								</div>
+							</div>
+						</div>
+
+						<div v-else class="p-5">
+							<div class="relative flex flex-col items-center gap-2 rounded-xl bg-surface-50 p-7 text-center dark:bg-dark-600">
+								<p class="text-lg font-bold">Probe found!</p>
+								<p class="mb-2">We have detected a hardware probe on your network.</p>
+
+								<div class="flex w-full max-w-md items-center gap-6 rounded-lg border bg-surface-0 px-6 py-4 text-start dark:bg-dark-800">
+									<BigIcon class="size-14" name="docker" :filled="true" :border="true"/>
+									<div class="flex flex-col justify-start">
+										<p class="flex items-center font-bold"><CountryFlag :country="activeProbe.country" size="small"/><span class="ml-2">{{ activeProbe.city }}</span></p>
+										<p>{{ activeProbe.network }}</p>
+										<p class="font-mono text-sm text-surface-500">{{ activeProbe.ip }}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="p-5 pt-2 text-right">
+							<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('3')"/>
+							<Button v-if="activeProbe" class="mr-2" label="Adopt" @click="confirmHardwareAdoption"/>
+						</div>
+					</div>
+
+					<ProbeAdoptedContent v-else :probes="newProbes" @cancel="$emit('cancel')"/>
+				</div>
+				<div v-else class="flex flex-col gap-3 p-5">
+					<p class="mt-2 text-lg font-bold">Send adoption code</p>
+					<p>
+						Enter your probe's public IP address and we will send it a verification code.
+					</p>
+
+					<div class="rounded-lg bg-surface-50 p-4 dark:bg-dark-600">
+						<p v-if="userPublicIp" class="flex items-center gap-2 text-sm font-semibold text-surface-800 dark:text-bluegray-100">
+							Your Public IP Address:
+							<span class="font-mono font-normal">{{ userPublicIp }}</span>
+						</p>
+						<p class="mt-1 text-xs text-surface-500 dark:text-bluegray-200">Your probe will have the same IP address as the network it's connected to.</p>
+					</div>
+
 					<div class="relative">
 						<InputText
 							v-model="ip"
 							placeholder="Enter IP address of your probe"
-							class="mt-6 w-full"
+							class="w-full"
 							:invalid="!isIpValid"
 							@keyup.enter="sendAdoptionCode(activateCallback)"
 							@update:model-value="resetIsIpValid"
 						/>
 						<p v-if="!isIpValid" class="absolute text-red-500">{{ invalidIpMessage }}</p>
 					</div>
-					<div class="mt-6 text-right">
-						<Button class="mr-2" label="Back" severity="secondary" text @click="probeType === 'software' ? activateCallback('0') : activateCallback('3')"/>
+					<p class="my-2 text-sm text-surface-500 dark:text-bluegray-200">
+						<span class="pi pi-spinner mr-1 animate-spin text-xs"/>
+						We are still looking for your probe in the background. If we find it, this step will be skipped automatically.
+					</p>
+					<div class="text-right">
+						<Button class="mr-2" label="Back" severity="secondary" text @click="isManualHwAdoption = false"/>
 						<Button :label="isResendingCode ? 'Resend code' : 'Send adoption code'" :loading="sendAdoptionCodeLoading" :disabled="!ip.length" @click="sendAdoptionCode(activateCallback)"/>
 					</div>
 				</div>
@@ -225,27 +314,61 @@
 
 <script setup lang="ts">
 	import { customEndpoint, readItems } from '@directus/sdk';
+	import CountryFlag from 'vue-country-flag-next';
+	import { usePublicIp } from '~/composables/usePublicIp';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
+	import { useHardwareProbeAdoption } from '~/store/local-adoption';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 	import { smoothResize } from '~/utils/smooth-resize';
 	import { validateIp } from '~/utils/validate-ip';
 
+	const store = useHardwareProbeAdoption();
+	const { activeProbe } = storeToRefs(store);
 	const { $directus } = useNuxtApp();
 	const { getUserFilter } = useUserFilter();
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
+	const userPublicIp = usePublicIp();
 
 	const activeStep = ref('0');
 	const probeType = ref<'software' | 'hardware'>('software');
 	const newProbes = ref<Probe[]>([]);
 	const isSuccess = ref(false);
 	const isFailed = ref(false);
+	const isManualHwAdoption = ref(false);
+	const showManualAdoptionBtn = ref(false);
 
 	const stepPanels = ref();
 	let prevStep = '0';
 	watchEffect(() => { prevStep = activeStep.value; });
+
+	let manualBtnTimer: NodeJS.Timeout | null = null;
+
+	watch(userPublicIp, (userIp) => {
+		if (userIp) {
+			ip.value = userIp;
+		}
+	}, { immediate: true });
+
+	watch(activeStep, (newStep) => {
+		manualBtnTimer && clearTimeout(manualBtnTimer);
+
+		if (newStep === '4' && !isManualHwAdoption.value) {
+			showManualAdoptionBtn.value = false;
+
+			manualBtnTimer = setTimeout(() => {
+				showManualAdoptionBtn.value = true;
+			}, 5000);
+		}
+	});
+
+	watch(activeProbe, (newProbe) => {
+		if (newProbe && activeStep.value === '4') {
+			isManualHwAdoption.value = false;
+		}
+	});
 
 	const onChangeStep = (i: string | number) => {
 		const wrapper = stepPanels.value.$el;
@@ -330,6 +453,32 @@
 		const currentChild = wrapper.children[Number(activeStep.value)];
 		smoothResize(wrapper, currentChild, currentChild);
 	};
+
+	// STEP 3
+
+	const confirmHardwareAdoption = async () => {
+		try {
+			const newProbe = await store.onConfirmAdoption(activeProbe.value!.token);
+
+			newProbes.value = [ newProbe ];
+			isSuccess.value = true;
+			emit('adopted');
+
+			nextTick(() => {
+				const wrapper = stepPanels.value.$el;
+				const currentChild = wrapper.children[Number(activeStep.value)];
+				smoothResize(wrapper, currentChild, currentChild);
+			});
+		} catch (e) {
+			sendErrorToast(e);
+		}
+	};
+
+	watch([ showManualAdoptionBtn, isManualHwAdoption ], () => {
+		const wrapper = stepPanels.value.$el;
+		const currentChild = wrapper.children[Number(activeStep.value)];
+		smoothResize(wrapper, currentChild, currentChild);
+	});
 
 	// STEP 4
 
@@ -445,4 +594,13 @@
 			await verifyCode();
 		}
 	};
+
+	onMounted(() => {
+		store.onAdoptionModalChange(true);
+	});
+
+	onUnmounted(() => {
+		store.onAdoptionModalChange(false);
+		manualBtnTimer && clearTimeout(manualBtnTimer);
+	});
 </script>

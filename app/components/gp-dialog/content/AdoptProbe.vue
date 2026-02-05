@@ -33,44 +33,6 @@
 				/>
 			</Step>
 		</StepList>
-		<StepList v-else-if="isManualHwAdoption">
-			<Step v-slot="{ active }" as-child value="0">
-				<StepHeader
-					:button-text="'0'"
-					header-text="Select the probe type"
-					:active="active"
-					:highlighted="Number(activeStep) > 0"
-					:is-success="isSuccess"
-				/>
-			</Step>
-			<Step v-slot="{ active }" as-child value="3">
-				<StepHeader
-					:button-text="'1'"
-					header-text="Set up your probe"
-					:active="active"
-					:highlighted="Number(activeStep) > 3"
-					:is-success="isSuccess"
-				/>
-			</Step>
-			<Step v-slot="{ active }" as-child value="4">
-				<StepHeader
-					:button-text="'2'"
-					header-text="Send adoption code"
-					:active="active"
-					:highlighted="Number(activeStep) > 4"
-					:is-success="isSuccess"
-				/>
-			</Step>
-			<Step v-slot="{ active }" as-child value="5">
-				<StepHeader
-					:button-text="'3'"
-					header-text="Verify"
-					:active="active"
-					:highlighted="Number(activeStep) > 5"
-					:is-success="isSuccess"
-				/>
-			</Step>
-		</StepList>
 		<StepList v-else>
 			<Step v-slot="{ active }" as-child value="0">
 				<StepHeader
@@ -90,12 +52,30 @@
 					:is-success="isSuccess"
 				/>
 			</Step>
-			<Step v-slot="{ active }" as-child value="4">
+			<Step v-if="Number(activeStep) <= 4" v-slot="{ active }" as-child value="4">
 				<StepHeader
 					:button-text="'2'"
 					header-text="Find the probe"
 					:active="active"
 					:highlighted="Number(activeStep) > 4"
+					:is-success="isSuccess"
+				/>
+			</Step>
+			<Step v-if="Number(activeStep) > 4" v-slot="{ active }" as-child value="5">
+				<StepHeader
+					:button-text="'2'"
+					header-text="Send adoption code"
+					:active="active"
+					:highlighted="Number(activeStep) > 5"
+					:is-success="isSuccess"
+				/>
+			</Step>
+			<Step v-if="Number(activeStep) > 4" v-slot="{ active }" as-child value="6">
+				<StepHeader
+					:button-text="'3'"
+					header-text="Verify"
+					:active="active"
+					:highlighted="Number(activeStep) > 6"
 					:is-success="isSuccess"
 				/>
 			</Step>
@@ -174,7 +154,7 @@
 						</p>
 
 						<div class="mt-4 flex flex-wrap justify-center gap-2">
-							<Button label="Adopt the probe manually" severity="contrast" @click="() => { activateCallback('4'); isFailed = false; }"/>
+							<Button label="Adopt the probe manually" severity="contrast" @click="() => { activateCallback('5'); isFailed = false; }"/>
 							<Button label="Retry automated adoption" severity="secondary" @click="() => { activateCallback('1'); isFailed = false; }"/>
 						</div>
 					</div>
@@ -202,49 +182,55 @@
 			</StepPanel>
 
 			<StepPanel v-slot="{ activateCallback }" value="4">
-				<div v-if="!isManualHwAdoption">
-					<div v-if="!isSuccess">
-						<div v-if="!activeProbe" class="px-5 py-7">
-							<div class="rounded-xl bg-surface-50 p-7 text-center dark:bg-dark-600">
-								<p class="text-lg font-bold">Waiting for your probe to boot...</p>
-								<p class="mt-2">If it's in the same network, it will automatically appear here.</p>
-								<p class="mt-1 text-sm text-surface-500 dark:text-bluegray-200">We recommend waiting for 1-2 minutes for the probe to boot for an automated adoption process.</p>
-								<div class="mt-6">
-									<span class="pi pi-spinner animate-spin text-4xl text-primary-500"/>
-								</div>
-
-								<div v-if="showManualAdoptionBtn" class="mt-6 flex flex-col items-center gap-3 border-t pt-4 dark:border-dark-400">
-									If the automated adoption doesn't work, you may also adopt the probe manually.
-									<Button label="Adopt the probe manually" severity="contrast" text class="w-fit !bg-surface-200 hover:!bg-surface-300 dark:!bg-dark-700 dark:hover:!bg-dark-800" @click="isManualHwAdoption = true"/>
-								</div>
+				<div v-if="!isSuccess">
+					<div v-if="!activeProbe" class="px-5 py-7">
+						<div class="rounded-xl bg-surface-50 p-7 text-center dark:bg-dark-600">
+							<p class="text-lg font-bold">Waiting for your probe to boot...</p>
+							<p class="mt-2">If it's in the same network, it will automatically appear here.</p>
+							<p class="mt-1 text-sm text-surface-500 dark:text-bluegray-200">We recommend waiting for 1-2 minutes for the probe to boot for an automated adoption process.</p>
+							<div class="mt-6">
+								<span class="pi pi-spinner animate-spin text-4xl text-primary-500"/>
 							</div>
-						</div>
 
-						<div v-else class="p-5">
-							<div class="relative flex flex-col items-center gap-2 rounded-xl bg-surface-50 p-7 text-center dark:bg-dark-600">
-								<p class="text-lg font-bold">Probe found!</p>
-								<p class="mb-2">We have detected a hardware probe on your network.</p>
-
-								<div class="flex w-full max-w-md items-center gap-6 rounded-lg border bg-surface-0 px-6 py-4 text-start dark:bg-dark-800">
-									<BigIcon class="size-14" name="docker" :filled="true" :border="true"/>
-									<div class="flex flex-col justify-start">
-										<p class="flex items-center font-bold"><CountryFlag :country="activeProbe.country" size="small"/><span class="ml-2">{{ activeProbe.city }}</span></p>
-										<p>{{ activeProbe.network }}</p>
-										<p class="font-mono text-sm text-surface-500">{{ activeProbe.ip }}</p>
-									</div>
-								</div>
+							<div v-if="showManualAdoptionBtn" class="mt-6 flex flex-col items-center gap-3 border-t pt-4 dark:border-dark-400">
+								If the automated adoption doesn't work, you may also adopt the probe manually.
+								<Button
+									label="Adopt the probe manually"
+									severity="contrast"
+									text
+									class="w-fit !bg-surface-200 hover:!bg-surface-300 dark:!bg-dark-700 dark:hover:!bg-dark-800"
+									@click="activateCallback('5');"
+								/>
 							</div>
-						</div>
-
-						<div class="p-5 pt-2 text-right">
-							<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('3')"/>
-							<Button v-if="activeProbe" class="mr-2" label="Adopt" @click="confirmHardwareAdoption"/>
 						</div>
 					</div>
 
-					<ProbeAdoptedContent v-else :probes="newProbes" @cancel="$emit('cancel')"/>
+					<div v-else class="p-5">
+						<div class="relative flex flex-col items-center gap-2 rounded-xl bg-surface-50 p-7 text-center dark:bg-dark-600">
+							<p class="text-lg font-bold">Probe found!</p>
+							<p class="mb-2">We have detected a hardware probe on your network.</p>
+
+							<div class="flex w-full max-w-md items-center gap-6 rounded-lg border bg-surface-0 px-6 py-4 text-start dark:bg-dark-800">
+								<BigIcon class="size-14" name="docker" :filled="true" :border="true"/>
+								<div class="flex flex-col justify-start">
+									<p class="flex items-center font-bold"><CountryFlag :country="activeProbe.country" size="small"/><span class="ml-2">{{ activeProbe.city }}</span></p>
+									<p>{{ activeProbe.network }}</p>
+									<p class="font-mono text-sm text-surface-500">{{ activeProbe.ip }}</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="p-5 pt-2 text-right">
+						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('3')"/>
+						<Button v-if="activeProbe" class="mr-2" label="Adopt" @click="confirmHardwareAdoption"/>
+					</div>
 				</div>
-				<div v-else class="flex flex-col gap-3 p-5">
+
+				<ProbeAdoptedContent v-else :probes="newProbes" @cancel="$emit('cancel')"/>
+			</StepPanel>
+			<StepPanel v-slot="{ activateCallback }" value="5">
+				<div  class="flex flex-col gap-3 p-5">
 					<p class="mt-2 text-lg font-bold">Send adoption code</p>
 					<p>
 						Enter your probe's public IP address and we will send it a verification code.
@@ -258,7 +244,7 @@
 						<p class="mt-1 text-xs text-surface-500 dark:text-bluegray-200">Your probe will have the same IP address as the network it's connected to.</p>
 					</div>
 
-					<div class="relative">
+					<div :class="{ 'pb-2': invalidIpMessage }" class="relative">
 						<InputText
 							v-model="ip"
 							placeholder="Enter IP address of your probe"
@@ -269,17 +255,17 @@
 						/>
 						<p v-if="!isIpValid" class="absolute text-red-500">{{ invalidIpMessage }}</p>
 					</div>
-					<p class="my-2 text-sm text-surface-500 dark:text-bluegray-200">
+					<p v-if="probeType === 'hardware'" class="my-2 text-sm text-surface-500 dark:text-bluegray-200">
 						<span class="pi pi-spinner mr-1 animate-spin text-xs"/>
 						We are still looking for your probe in the background. If we find it, this step will be skipped automatically.
 					</p>
 					<div class="text-right">
-						<Button class="mr-2" label="Back" severity="secondary" text @click="isManualHwAdoption = false"/>
+						<Button class="mr-2" label="Back" severity="secondary" text @click="probeType === 'software' ? activateCallback('0') : activateCallback('4')"/>
 						<Button :label="isResendingCode ? 'Resend code' : 'Send adoption code'" :loading="sendAdoptionCodeLoading" :disabled="!ip.length" @click="sendAdoptionCode(activateCallback)"/>
 					</div>
 				</div>
 			</StepPanel>
-			<StepPanel v-slot="{ activateCallback }" value="5">
+			<StepPanel v-slot="{ activateCallback }" value="6">
 				<div v-if="!isSuccess" class="p-5">
 					<p class="mb-4 mt-2 text-lg font-bold">Verify</p>
 					<p>The adoption code has been sent to <span class="font-semibold">your probe with IP address {{ ip }}</span>.</p>
@@ -337,7 +323,6 @@
 	const newProbes = ref<Probe[]>([]);
 	const isSuccess = ref(false);
 	const isFailed = ref(false);
-	const isManualHwAdoption = ref(false);
 	const showManualAdoptionBtn = ref(false);
 
 	const stepPanels = ref();
@@ -352,10 +337,10 @@
 		}
 	}, { immediate: true });
 
-	watch(activeStep, (newStep) => {
+	watch(activeStep, (newStep, oldStep) => {
 		manualBtnTimer && clearTimeout(manualBtnTimer);
 
-		if (newStep === '4' && !isManualHwAdoption.value) {
+		if (newStep === '4' && oldStep !== '5') {
 			showManualAdoptionBtn.value = false;
 
 			manualBtnTimer = setTimeout(() => {
@@ -365,8 +350,8 @@
 	});
 
 	watch(activeProbe, (newProbe) => {
-		if (newProbe && activeStep.value === '4') {
-			isManualHwAdoption.value = false;
+		if (newProbe && probeType.value === 'hardware' && activeStep.value === '5') {
+			activeStep.value = '4';
 		}
 	});
 
@@ -474,7 +459,7 @@
 		}
 	};
 
-	watch([ showManualAdoptionBtn, isManualHwAdoption ], () => {
+	watch(showManualAdoptionBtn, () => {
 		const wrapper = stepPanels.value.$el;
 		const currentChild = wrapper.children[Number(activeStep.value)];
 		smoothResize(wrapper, currentChild, currentChild);

@@ -500,7 +500,7 @@
 				}),
 			}));
 
-			activateCallback('5');
+			activateCallback('6');
 		} catch (e: any) {
 			console.error(e);
 			const detail = e.errors ?? 'Request failed';

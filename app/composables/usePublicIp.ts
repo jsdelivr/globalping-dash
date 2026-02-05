@@ -1,14 +1,17 @@
 export const usePublicIp = () => {
-	const { data, error } = useFetch(
-		'https://api.ipify.org?format=json',
+	const config = useRuntimeConfig();
+
+	const { data, error } = useFetch<string | null>(
+		`${config.public.serverUrl}/api/client-ip`,
 		{
-			transform: (res: { ip: string }) => res?.ip || null,
 			default: () => null,
 		},
 	);
 
 	watch(error, () => {
-		console.error('Error fetching client ip', error.value);
+		if (error.value) {
+			console.error('Error fetching client ip', error.value);
+		}
 	});
 
 	return data;

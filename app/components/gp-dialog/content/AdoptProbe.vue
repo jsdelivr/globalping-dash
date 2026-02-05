@@ -234,10 +234,11 @@
 					<p class="mt-2 text-lg font-bold">Send adoption code</p>
 					<p>
 						Enter your probe's public IP address and we will send it a verification code.
+						<span v-if="!userPublicIp">Your probe will have the same IP address as the network it's connected to.</span>
 					</p>
 
-					<div class="rounded-lg bg-surface-50 p-4 dark:bg-dark-600">
-						<p v-if="userPublicIp" class="flex items-center gap-2 text-sm font-semibold text-surface-800 dark:text-bluegray-100">
+					<div v-if="userPublicIp" class="rounded-lg bg-surface-50 p-4 dark:bg-dark-600">
+						<p class="flex items-center gap-2 text-sm font-semibold text-surface-800 dark:text-bluegray-100">
 							Your Public IP Address:
 							<span class="font-mono font-normal">{{ userPublicIp }}</span>
 						</p>

@@ -1,8 +1,8 @@
 export default defineNuxtConfig({
 	compatibilityDate: '2024-07-01',
 	runtimeConfig: {
-		serverUrl: process.env.DASH_URL || 'https://dash.globalping.io',
 		public: {
+			serverUrl: process.env.DASH_URL || 'https://dash.globalping.io',
 			gpAuthUrl: process.env.GP_AUTH_URL || 'https://auth.globalping.io',
 			directusUrl: process.env.DIRECTUS_URL || 'https://dash-directus.globalping.io',
 			gpApiUrl: process.env.GP_API_URL || 'https://api.globalping.io',
@@ -13,8 +13,8 @@ export default defineNuxtConfig({
 	},
 	$development: {
 		runtimeConfig: {
-			serverUrl: process.env.DASH_URL || 'http://localhost:13010',
 			public: {
+				serverUrl: process.env.DASH_URL || 'http://localhost:13010',
 				gpAuthUrl: process.env.GP_AUTH_URL || 'http://localhost:13110',
 				directusUrl: process.env.DIRECTUS_URL || 'http://localhost:18055',
 				gpApiUrl: process.env.GP_API_URL || 'http://localhost:3000',

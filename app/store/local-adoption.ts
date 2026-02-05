@@ -120,9 +120,9 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 
 		clearOldTokens () {
 			// first, clear local storage data
-			const storage = useLocalStorage<Record<string, string>>(TOKEN_STORAGE_KEY, {});
+			const storage = useLocalStorage<Record<string, string>>(TOKEN_STORAGE_KEY, Object.create(null));
 			const now = Date.now();
-			const validTokens: Record<string, string> = {};
+			const validTokens: Record<string, string> = Object.create(null);
 
 			for (const [ token, timestamp ] of Object.entries(storage.value)) {
 				if (now - Date.parse(timestamp) < 1000 * 60 * 60) {

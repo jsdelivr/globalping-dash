@@ -74,7 +74,6 @@
 			const newProbe = await store.onConfirmAdoption(tokenToAdopt);
 			newProbes.value = [ newProbe ];
 			successDialogOpen.value = true;
-			await store.updateCurrentProbe();
 		} catch (e) {
 			sendErrorToast(e);
 		} finally {
@@ -89,8 +88,6 @@
 
 		const tokenToIgnore = activeProbe.value.token;
 		store.onRejectAdoption(tokenToIgnore);
-
-		await store.updateCurrentProbe();
 	};
 
 	const onSuccessDialogClose = () => {

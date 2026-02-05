@@ -289,7 +289,7 @@
 						<Button class="mt-3" label="Resend code" severity="secondary" text @click="resendCode"/>
 					</div>
 					<div class="mt-6 text-right">
-						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('4')"/>
+						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('5')"/>
 						<Button label="Verify the code" :loading="verifyCodeLoading" :disabled="code.length < 6" @click="verifyCode"/>
 					</div>
 				</div>

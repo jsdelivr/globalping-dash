@@ -131,6 +131,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			}
 
 			storage.value = validTokens;
+			this.ignoredTokens = validTokens;
 
 			// next, clear local map data
 			const tokensToRemove: string[] = [];

@@ -136,7 +136,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			const tokensToRemove: string[] = [];
 
 			this.adoptableProbes.forEach((fetchedAt, key) => {
-				if (now - fetchedAt >= 1000 * 60) {
+				if (now - fetchedAt >= 1000 * 61) {
 					tokensToRemove.push(key);
 				}
 			});

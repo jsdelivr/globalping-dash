@@ -1,5 +1,6 @@
 <template>
 	<section class="grid grid-cols-[256px_auto] grid-rows-[56px_auto] max-lg:grid-cols-1">
+		<PopupUnadoptedProbeDetected/>
 		<Toast class="max-[440px]:left-5 max-[440px]:w-auto"/>
 
 		<header class="col-span-2 flex items-center border-b bg-dark-800 px-6 py-3 text-surface-0 max-lg:pr-3 max-sm:pl-4 max-sm:pr-2">

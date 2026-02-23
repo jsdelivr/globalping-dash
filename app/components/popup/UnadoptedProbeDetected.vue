@@ -2,7 +2,7 @@
 	<Dialog
 		v-model:visible="isVisible"
 		modal
-		:header="successDialogOpen ? 'Probe Adopted' : 'New Hardware Probe Detected'"
+		:header="successDialogOpen ? 'Probe adopted' : 'New hardware probe detected'"
 		class="w-[80vw] md:w-[45rem]"
 		:draggable="false"
 		:closable="false"
@@ -38,7 +38,7 @@
 					@click="onIgnoreClick"
 				/>
 				<Button
-					label="Adopt Probe"
+					label="Adopt probe"
 					class="flex-1"
 					:loading="loading"
 					@click="onAdoptClick"

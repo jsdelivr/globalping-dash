@@ -185,9 +185,9 @@
 				<div v-if="!isSuccess">
 					<div v-if="!activeProbe" class="px-5 py-7">
 						<div class="rounded-xl bg-surface-50 p-7 text-center dark:bg-dark-600">
-							<p class="text-lg font-bold">Waiting for your probe to boot...</p>
+							<p class="text-lg font-bold">Waiting for the probe to boot...</p>
 							<p class="mt-2">If it's in the same network, it will automatically appear here.</p>
-							<p class="mt-1 text-sm text-surface-500 dark:text-bluegray-200">We recommend waiting for 1-2 minutes for the probe to boot for an automated adoption process.</p>
+							<p class="mt-1 text-sm text-surface-500 dark:text-bluegray-200">We recommend waiting 1-2 minutes for the probe to be adopted automatically.</p>
 							<div class="mt-6">
 								<span class="pi pi-spinner animate-spin text-4xl text-primary-500"/>
 							</div>
@@ -208,7 +208,7 @@
 					<div v-else class="p-5">
 						<div class="relative flex flex-col items-center gap-2 rounded-xl bg-surface-50 p-7 text-center dark:bg-dark-600">
 							<p class="text-lg font-bold">Probe found!</p>
-							<p class="mb-2">We have detected a hardware probe on your network.</p>
+							<p class="mb-2">We have detected a new hardware probe on your network.</p>
 
 							<div class="flex w-full max-w-md items-center gap-6 rounded-lg border bg-surface-0 px-6 py-4 text-start dark:bg-dark-800">
 								<BigIcon class="size-14" name="docker" :filled="true" :border="true"/>
@@ -232,23 +232,17 @@
 			<StepPanel v-slot="{ activateCallback }" value="5">
 				<div  class="flex flex-col gap-3 p-5">
 					<p class="mt-2 text-lg font-bold">Send adoption code</p>
+
 					<p>
 						Enter your probe's public IP address and we will send it a verification code.
-						<span v-if="!userPublicIp">Your probe will have the same IP address as the network it's connected to.</span>
+						The probe will have the same IP address as the network it's connected to.
+						<span v-if="userPublicIp">Your current IP address is <span class="font-semibold">{{ userPublicIp }}</span></span>
 					</p>
-
-					<div v-if="userPublicIp" class="rounded-lg bg-surface-50 p-4 dark:bg-dark-600">
-						<p class="flex items-center gap-2 text-sm font-semibold text-surface-800 dark:text-bluegray-100">
-							Your Public IP Address:
-							<span class="font-mono font-normal">{{ userPublicIp }}</span>
-						</p>
-						<p class="mt-1 text-xs text-surface-500 dark:text-bluegray-200">Your probe will have the same IP address as the network it's connected to.</p>
-					</div>
 
 					<div :class="{ 'pb-2': invalidIpMessage }" class="relative">
 						<InputText
 							v-model="ip"
-							placeholder="Enter IP address of your probe"
+							placeholder="Enter the IP address of your probe"
 							class="w-full"
 							:invalid="!isIpValid"
 							@keyup.enter="sendAdoptionCode(activateCallback)"
@@ -258,7 +252,7 @@
 					</div>
 					<p v-if="probeType === 'hardware'" class="my-2 text-sm text-surface-500 dark:text-bluegray-200">
 						<span class="pi pi-spinner mr-1 animate-spin text-xs"/>
-						We are still looking for your probe in the background. If we find it, this step will be skipped automatically.
+						We’re still searching for your probe in the background. If we find it, we’ll automatically move you to the next step.
 					</p>
 					<div class="text-right">
 						<Button class="mr-2" label="Back" severity="secondary" text @click="probeType === 'software' ? activateCallback('0') : activateCallback('4')"/>

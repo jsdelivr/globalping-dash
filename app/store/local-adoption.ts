@@ -12,7 +12,7 @@ interface HardwareProbeAdoptionState {
 	fetchTimeoutLength: typeof SHORT_REFRESH_MS | typeof LONG_REFRESH_MS;
 	adoptableProbes: Map<string, number>;
 	ignoredTokens: Record<string, string>;
-	adoptionModalOpen: boolean;
+	isIdlePolling: boolean;
 	activeProbe: Pick<Probe, 'ip' | 'city' | 'country' | 'network'> & { token: string } | null;
 }
 
@@ -22,7 +22,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 		fetchTimeoutLength: LONG_REFRESH_MS,
 		adoptableProbes: new Map(),
 		ignoredTokens: useLocalStorage<Record<string, string>>(TOKEN_STORAGE_KEY, Object.create(null)).value,
-		adoptionModalOpen: false,
+		isIdlePolling: true,
 		activeProbe: null,
 	}),
 
@@ -41,7 +41,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			try {
 				const localProbeIps = await $directus.request(customEndpoint<string[]>({
 					method: 'GET',
-					path: '/unadopted-probes/',
+					path: '/local-adoption/',
 				}));
 
 				await Promise.all(localProbeIps.map(async (probeIp) => {
@@ -71,7 +71,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 
 			const probe = await $directus.request<Probe>(customEndpoint({
 				method: 'POST',
-				path: '/unadopted-probes/adopt',
+				path: '/local-adoption/adopt',
 				body: JSON.stringify({ token }),
 			}));
 
@@ -83,7 +83,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			const newProbe = await this.adoptProbe(token);
 			this.adoptableProbes.delete(token);
 			this.ignoreToken(token);
-			this.updateCurrentProbe();
+			void this.updateCurrentProbe();
 
 			return newProbe;
 		},
@@ -91,7 +91,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 		onRejectAdoption (token: string) {
 			this.adoptableProbes.delete(token);
 			this.ignoreToken(token);
-			this.updateCurrentProbe();
+			void this.updateCurrentProbe();
 		},
 
 		ignoreToken (token: string) {
@@ -100,9 +100,15 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			storage.value = this.ignoredTokens;
 		},
 
-		onAdoptionModalChange (isOpen: boolean) {
-			this.fetchTimeoutLength = isOpen ? SHORT_REFRESH_MS : LONG_REFRESH_MS;
-			this.adoptionModalOpen = isOpen;
+		enableIdlePolling () {
+			this.fetchTimeoutLength = LONG_REFRESH_MS;
+			this.isIdlePolling = true;
+			this.startPolling();
+		},
+
+		disableIdlePolling () {
+			this.fetchTimeoutLength = SHORT_REFRESH_MS;
+			this.isIdlePolling = false;
 			this.startPolling();
 		},
 
@@ -159,7 +165,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			const token = this.adoptableProbes.keys().next().value!;
 
 			try {
-				const probe = await $directus.request<Pick<Probe, 'ip' | 'city' | 'country' | 'network'>>(customEndpoint({ path: `/unadopted-probes/${token}` }));
+				const probe = await $directus.request<Pick<Probe, 'ip' | 'city' | 'country' | 'network'>>(customEndpoint({ path: `/local-adoption/${token}` }));
 				this.activeProbe = { ...probe, token };
 			} catch (e) {
 				console.error('Error fetching probe details:', e);

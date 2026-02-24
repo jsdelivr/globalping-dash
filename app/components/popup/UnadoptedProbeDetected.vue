@@ -62,13 +62,13 @@
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const store = useHardwareProbeAdoption();
-	const { activeProbe, adoptionModalOpen } = storeToRefs(store);
+	const { activeProbe, isIdlePolling } = storeToRefs(store);
 
 	const loading = ref(false);
 	const successDialogOpen = ref(false);
 	const newProbes = ref<Probe[]>([]);
 
-	const isVisible = computed(() => (!!activeProbe.value || successDialogOpen.value) && !adoptionModalOpen.value);
+	const isVisible = computed(() => (!!activeProbe.value || successDialogOpen.value) && isIdlePolling.value);
 
 	const onAdoptClick = async () => {
 		if (!activeProbe.value) {

@@ -582,11 +582,11 @@
 	};
 
 	onMounted(() => {
-		store.onAdoptionModalChange(true);
+		store.disableIdlePolling();
 	});
 
 	onUnmounted(() => {
-		store.onAdoptionModalChange(false);
+		store.enableIdlePolling();
 		manualBtnTimer && clearTimeout(manualBtnTimer);
 	});
 </script>

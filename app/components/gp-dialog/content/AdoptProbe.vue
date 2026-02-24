@@ -141,7 +141,9 @@
 						</div>
 					</div>
 				</div>
-				<ProbeAdoptedContent v-else-if="isSuccess" :probes="newProbes" @cancel="$emit('cancel')"/>
+				<div v-else-if="isSuccess" class="p-5">
+					<ProbeAdoptedContent :probes="newProbes" @cancel="$emit('cancel')"/>
+				</div>
 				<div v-else class="p-5">
 					<div class="rounded-xl bg-red-100/70 px-24 py-6 text-center max-sm:px-4 dark:bg-red-500/20">
 						<p class="flex items-center justify-center text-center text-lg font-bold">
@@ -227,7 +229,9 @@
 					</div>
 				</div>
 
-				<ProbeAdoptedContent v-else :probes="newProbes" @cancel="$emit('cancel')"/>
+				<div v-else class="p-5">
+					<ProbeAdoptedContent :probes="newProbes" @cancel="$emit('cancel')"/>
+				</div>
 			</StepPanel>
 			<StepPanel v-slot="{ activateCallback }" value="5">
 				<div  class="flex flex-col gap-3 p-5">
@@ -287,7 +291,9 @@
 						<Button label="Verify the code" :loading="verifyCodeLoading" :disabled="code.length < 6" @click="verifyCode"/>
 					</div>
 				</div>
-				<ProbeAdoptedContent v-else :probes="newProbes" @cancel="$emit('cancel')"/>
+				<div v-else class="p-5">
+					<ProbeAdoptedContent :probes="newProbes" @cancel="$emit('cancel')"/>
+				</div>
 			</StepPanel>
 		</StepPanels>
 	</Stepper>

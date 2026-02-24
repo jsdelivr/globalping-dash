@@ -2,11 +2,21 @@
 	<Dialog
 		v-model:visible="isVisible"
 		modal
-		:header="successDialogOpen ? 'Probe adopted' : 'New hardware probe detected'"
 		class="w-[80vw] md:w-[45rem]"
 		:draggable="false"
 		:closable="false"
+		:pt="{
+			header: {
+				class: successDialogOpen ? 'py-3' : undefined
+			}
+		}"
 	>
+		<template #header>
+			<span v-if="!successDialogOpen" class="mx-auto pt-2 text-xl font-bold">
+				New hardware probe detected
+			</span>
+		</template>
+
 		<ProbeAdoptedContent
 			v-if="successDialogOpen"
 			:probes="newProbes"
@@ -14,10 +24,8 @@
 		/>
 
 		<div v-else-if="activeProbe" class="flex flex-col items-center gap-4 text-center">
-			<BigIcon class="size-16 bg-surface-50 [&_*]:text-2xl" name="docker" :filled="true" :border="true"/>
-
 			<div class="mb-2 flex w-full flex-col gap-3">
-				<p class="md:text-lg md:font-bold">
+				<p>
 					A new Globalping hardware probe is available on your network.
 				</p>
 				<div class="rounded-xl border bg-surface-0 p-3 dark:border-dark-500 dark:bg-dark-800">

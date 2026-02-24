@@ -225,7 +225,7 @@
 
 					<div class="p-5 pt-2 text-right">
 						<Button class="mr-2" label="Back" severity="secondary" text @click="activateCallback('3')"/>
-						<Button v-if="activeProbe" class="mr-2" label="Adopt" @click="confirmHardwareAdoption"/>
+						<Button v-if="activeProbe" class="mr-2" label="Adopt" :loading="hardwareAdoptionLoading" @click="confirmHardwareAdoption"/>
 					</div>
 				</div>
 
@@ -441,9 +441,11 @@
 	};
 
 	// STEP 3
+	const hardwareAdoptionLoading = ref(false);
 
 	const confirmHardwareAdoption = async () => {
 		try {
+			hardwareAdoptionLoading.value = true;
 			const newProbe = await store.onConfirmAdoption(activeProbe.value!.token);
 
 			newProbes.value = [ newProbe ];
@@ -457,6 +459,8 @@
 			});
 		} catch (e) {
 			sendErrorToast(e);
+		} finally {
+			hardwareAdoptionLoading.value = false;
 		}
 	};
 

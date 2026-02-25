@@ -14,6 +14,7 @@ interface HardwareProbeAdoptionState {
 	ignoredTokens: Record<string, string>;
 	isIdlePolling: boolean;
 	activeProbe: Pick<Probe, 'ip' | 'city' | 'country' | 'network'> & { token: string } | null;
+	isFetchingProbes: boolean;
 }
 
 export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
@@ -24,6 +25,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 		ignoredTokens: useLocalStorage<Record<string, string>>(TOKEN_STORAGE_KEY, Object.create(null)).value,
 		isIdlePolling: true,
 		activeProbe: null,
+		isFetchingProbes: false,
 	}),
 
 	actions: {
@@ -117,7 +119,16 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 				clearTimeout(this.fetchTimeout);
 			}
 
+			// let checkProbes finish, it will set a new timeout
+			if (this.isFetchingProbes) {
+				return;
+			}
+
+			this.isFetchingProbes = true;
+
 			this.checkProbes().finally(() => {
+				this.isFetchingProbes = false;
+
 				this.fetchTimeout = setTimeout(() => {
 					this.startPolling();
 				}, this.fetchTimeoutLength);

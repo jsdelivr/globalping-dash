@@ -34,7 +34,7 @@
 						<span class="ml-2">{{ activeProbe.city }}</span>
 					</p>
 					<p>{{ activeProbe.network }}</p>
-					<p class="font-mono">{{ activeProbe.ip }}</p>
+					<p class="break-words font-mono">{{ activeProbe.ip }}</p>
 				</div>
 			</div>
 

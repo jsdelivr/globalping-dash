@@ -181,6 +181,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			} catch (e) {
 				console.error('Error fetching probe details:', e);
 				this.activeProbe = null;
+				this.adoptableProbes.delete(token);
 			}
 		},
 	},

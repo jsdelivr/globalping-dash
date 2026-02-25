@@ -12,7 +12,7 @@
 		}"
 	>
 		<template #header>
-			<span v-if="!successDialogOpen" class="mx-auto pt-2 text-xl font-bold">
+			<span v-if="!successDialogOpen" class="mx-auto pt-2 text-center text-xl font-bold">
 				New hardware probe detected
 			</span>
 		</template>

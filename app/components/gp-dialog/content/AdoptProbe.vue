@@ -213,7 +213,7 @@
 							<p class="mb-2">We have detected a new hardware probe on your network.</p>
 
 							<div class="flex w-full max-w-md items-center gap-6 rounded-lg border bg-surface-0 px-6 py-4 text-start dark:bg-dark-800">
-								<BigIcon class="size-14" name="docker" :filled="true" :border="true"/>
+								<BigIcon class="size-14" name="probe" :filled="true" :border="true"/>
 								<div class="flex flex-col justify-start overflow-hidden">
 									<p class="flex items-center font-bold"><CountryFlag :country="activeProbe.country" size="small"/><span class="ml-2">{{ activeProbe.city }}</span></p>
 									<p>{{ activeProbe.network }}</p>

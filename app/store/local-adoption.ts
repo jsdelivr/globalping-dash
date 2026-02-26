@@ -107,15 +107,16 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 				return;
 			}
 
-			if (this.activeProbe && Object.hasOwn(this.ignoredTokens, this.activeProbe.token)) {
-				this.activeProbe = null;
-			}
-
 			this.adoptableProbes.forEach((_, token) => {
 				if (Object.hasOwn(this.ignoredTokens, token)) {
 					this.adoptableProbes.delete(token);
 				}
 			});
+
+			if (this.activeProbe && Object.hasOwn(this.ignoredTokens, this.activeProbe.token)) {
+				this.activeProbe = null;
+				void this.updateCurrentProbe();
+			}
 		},
 
 		enableIdlePolling () {

@@ -54,7 +54,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 							timeout: 2000,
 						});
 
-						if (token && !Object.hasOwn(this.ignoredTokens, token)) {
+						if (token && (!Object.hasOwn(this.ignoredTokens, token) || !this.isIdlePolling)) {
 							this.adoptableProbes.set(token, Date.now());
 						}
 					} catch (e) {
@@ -102,9 +102,23 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			storage.value = this.ignoredTokens;
 		},
 
+		enforceIgnoredTokens () {
+			if (!this.isIdlePolling) {
+				return;
+			}
+
+			if (this.activeProbe && this.ignoredTokens[this.activeProbe.token]) {
+				this.activeProbe = null;
+			}
+
+			this.adoptableProbes = new Map(Object.entries(this.adoptableProbes).filter(([ probeToken ]) => !this.ignoredTokens[probeToken]));
+		},
+
 		enableIdlePolling () {
 			this.fetchTimeoutLength = LONG_REFRESH_MS;
 			this.isIdlePolling = true;
+
+			this.enforceIgnoredTokens();
 			this.startPolling();
 		},
 

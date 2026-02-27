@@ -1,9 +1,9 @@
 export default defineEventHandler(async (event) => {
 	const config = useRuntimeConfig();
-	const serverRootUrl = new URL(config.serverUrl);
+	const serverRootUrl = new URL(config.public.serverUrl);
 	const query = getQuery(event);
 	const redirect = query.redirect?.toString() || '/';
-	let redirectUrl = new URL(redirect, config.serverUrl);
+	let redirectUrl = new URL(redirect, config.public.serverUrl);
 
 	if (redirectUrl.origin !== serverRootUrl.origin) {
 		redirectUrl = serverRootUrl;

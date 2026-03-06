@@ -65,7 +65,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 							timeout: 2000,
 						});
 
-						if (token && (!Object.hasOwn(this.ignoredTokens, token) || !this.isIdlePolling)) {
+						if (token && !Object.hasOwn(this.acceptedTokens, token) && (!Object.hasOwn(this.ignoredTokens, token) || !this.isIdlePolling)) {
 							this.adoptableProbes.set(token, Date.now());
 						}
 					} catch (e) {

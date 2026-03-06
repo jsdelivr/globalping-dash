@@ -293,6 +293,10 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			this.showLocalNetworkAccessPopup = false;
 			this.ignoredTokens = Object.create(null);
 			this.acceptedTokens = Object.create(null);
+			this.isIdlePolling = true;
+			this.localNetworkAccessPopupShown = false;
+			this.isFetchingProbes = false;
+			this.fetchTimeoutLength = LONG_REFRESH_MS;
 		},
 	},
 });

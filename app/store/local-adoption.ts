@@ -250,6 +250,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			}
 		},
 
+		// https://wicg.github.io/local-network-access/
 		async setupLocalNetworkAccess () {
 			// https://www.reddit.com/r/webdev/comments/1qiz2p1/fun_fact_running_navigatorpermissionsquery_name/
 			const match = navigator.userAgent.match(/Chrome\/(\d+)/);

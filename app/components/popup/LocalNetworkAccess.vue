@@ -7,34 +7,42 @@
 	>
 		<template #header>
 			<div class="flex items-center gap-3">
-				<i class="pi pi-info-circle text-2xl text-primary"/>
+				<i class="pi pi-info-circle text-xl text-primary"/>
 				<span class="text-xl font-bold">
 					New hardware probe detected
 				</span>
 			</div>
 		</template>
 
-		<div class="flex flex-col gap-5 pt-2">
+		<div class="flex flex-col gap-5">
 			<p>
-				A new Globalping hardware probe is available on your network. To initiate the adoption process, this application requires direct communication with the device via your local area network (LAN).
+				A new Globalping hardware probe is available on your network.<br>
+				To initiate an automated adoption process, we need permission to communicate with the probe via your local area network (LAN).
 			</p>
 
 			<div class="flex flex-col gap-3 rounded-lg border border-surface-200 bg-surface-50 p-4">
 				<ul class="flex flex-col gap-3 text-sm">
-					<li class="flex items-start gap-2">
+					<li class="flex items-start gap-2 border-b pb-2">
 						<i class="pi pi-check mt-1 text-primary"/>
 						<span>
-							<strong>To enable automatic adoption:</strong> Click <strong>Allow</strong> on the browser or system permission prompt.
+							<strong>To enable automated adoption</strong><br>
+							Click <strong>Allow</strong> in the browser or system permission prompt.
 						</span>
 					</li>
 					<li class="flex items-start gap-2">
 						<i class="pi pi-times mt-1 text-surface-500"/>
 						<span>
-							<strong>To disable this feature:</strong> Click <strong>Block</strong> or <strong>Disable</strong> in the prompt. You can change this later in your browser settings.
+							<strong>To disable automated adoption</strong><br>
+							Click <strong>Block</strong> or <strong>Disable</strong>.
+							You can always adopt the probe manually.
 						</span>
 					</li>
 				</ul>
 			</div>
+
+			<p>
+				You can change this later in your browser settings.
+			</p>
 		</div>
 	</Dialog>
 </template>

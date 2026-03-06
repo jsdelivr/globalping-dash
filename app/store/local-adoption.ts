@@ -285,5 +285,14 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			});
 		},
 
+		reset () {
+			clearTimeout(this.fetchTimeout);
+			clearInterval(this.tokenValidityCheckInterval);
+			this.adoptableProbes.clear();
+			this.activeProbe = null;
+			this.showLocalNetworkAccessPopup = false;
+			this.ignoredTokens = Object.create(null);
+			this.acceptedTokens = Object.create(null);
+		},
 	},
 });

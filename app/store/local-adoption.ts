@@ -253,8 +253,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 		async setupLocalNetworkAccess () {
 			// https://www.reddit.com/r/webdev/comments/1qiz2p1/fun_fact_running_navigatorpermissionsquery_name/
 			const match = navigator.userAgent.match(/Chrome\/(\d+)/);
-
-			const version = match ? parseInt(match[1]!) : 0;
+			const version = match ? Number.parseInt(match[1]!) : 0;
 
 			if (match && version < 137) {
 				this.localNetworkAccess = 'granted';

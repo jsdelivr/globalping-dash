@@ -5,7 +5,7 @@ import { useUserFilter } from '~/composables/useUserFilter';
 import { ONLINE_STATUSES, OFFLINE_STATUSES } from '~/constants/probes';
 import { useAuth } from '~/store/auth';
 
-export type StatusCode = 'all' | 'online' | 'ping-test-failed' | 'offline' | 'online-outdated';
+export type StatusCode = 'all' | 'online' | 'unstable-network' | 'offline' | 'online-outdated';
 export type AdoptionOption = 'all' | 'adopted' | 'non-adopted';
 export type ProbeTypeOption = 'all' | 'hardware' | 'software';
 
@@ -32,7 +32,7 @@ export const STATUS_MAP: Record<StatusCode, StatusOption> = {
 	'all': { name: 'All', options: [ ...ONLINE_STATUSES, ...OFFLINE_STATUSES ] },
 	'online': { name: 'Online', options: ONLINE_STATUSES },
 	'online-outdated': { name: 'Online - outdated', options: ONLINE_STATUSES, outdatedOnly: true },
-	'ping-test-failed': { name: 'Online - ping test failed', options: [ 'ping-test-failed' ] },
+	'unstable-network': { name: 'Online - unstable network', options: [ 'ping-test-failed', 'too-many-disconnects' ] },
 	'offline': { name: 'Offline', options: OFFLINE_STATUSES },
 } as const;
 

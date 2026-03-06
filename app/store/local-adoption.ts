@@ -271,7 +271,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 				status.onchange = () => {
 					this.localNetworkAccess = status.state;
 
-					if (status.state !== 'denied') {
+					if (status.state === 'granted') {
 						this.startPolling();
 					}
 

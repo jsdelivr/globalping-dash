@@ -1,5 +1,6 @@
 import { readMe, readRolesMe, deleteUser } from '@directus/sdk';
 import { defineStore } from 'pinia';
+import { useHardwareProbeAdoption } from '~/store/local-adoption';
 
 interface AuthState {
 	isLoggedIn: boolean;
@@ -135,9 +136,11 @@ export const useAuth = defineStore('auth', {
 		},
 		async logout () {
 			const { $directus } = useNuxtApp();
+			const probeStore = useHardwareProbeAdoption();
 
 			this.clearAdminConfig();
 			await $directus.logout();
+			probeStore.reset();
 			this.$reset();
 			navigateTo('/login');
 		},

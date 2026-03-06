@@ -20,6 +20,7 @@ export const getProbeStatusColor = (probe: Probe) => {
 			return 'text-bluegray-500';
 
 		case 'ping-test-failed':
+		case 'too-many-disconnects':
 			return 'text-red-500';
 
 		default:

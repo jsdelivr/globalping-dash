@@ -62,13 +62,21 @@
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const store = useHardwareProbeAdoption();
-	const { activeProbe, isIdlePolling } = storeToRefs(store);
+	const { activeProbe, isIdlePolling, showLocalNetworkAccessPopup } = storeToRefs(store);
 
 	const loading = ref(false);
 	const successDialogOpen = ref(false);
 	const newProbes = ref<Probe[]>([]);
 
-	const isVisible = computed(() => (!!activeProbe.value || successDialogOpen.value) && isIdlePolling.value);
+	const isVisible = computed(() => (!!activeProbe.value || successDialogOpen.value) && isIdlePolling.value && !showLocalNetworkAccessPopup.value);
+
+	watch(isVisible, () => {
+		if (isVisible.value) {
+			store.startBackgroundTokenCheck();
+		} else {
+			store.stopBackgroundTokenCheck();
+		}
+	}, { immediate: true });
 
 	const onAdoptClick = async () => {
 		if (!activeProbe.value) {

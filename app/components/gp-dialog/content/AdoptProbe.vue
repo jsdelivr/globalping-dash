@@ -489,7 +489,8 @@
 		});
 
 		adoptionTimeout = setTimeout(() => {
-			throw new Error('Adoption timed out. No token received within 5 seconds.');
+			hardwareAdoptionLoading.value = false;
+			sendErrorToast(new Error('Adoption timed out. No token received within 5 seconds.'));
 		}, 5000);
 	};
 

@@ -34,7 +34,7 @@
 						<span class="ml-2">{{ activeProbe.city }}</span>
 					</p>
 					<p>{{ activeProbe.network }}</p>
-					<p class="break-words font-mono">{{ activeProbe.ip }}</p>
+					<p class="break-words font-mono">{{ activeProbe.publicIp }}</p>
 				</div>
 			</div>
 
@@ -58,15 +58,17 @@
 
 <script setup lang="ts">
 	import CountryFlag from 'vue-country-flag-next';
-	import { useHardwareProbeAdoption } from '~/store/local-adoption';
+	import { LINK_TOKEN_STORAGE_KEY, useHardwareProbeAdoption } from '~/store/local-adoption';
 	import { sendErrorToast } from '~/utils/send-toast';
 
+	const config = useRuntimeConfig().public;
 	const store = useHardwareProbeAdoption();
 	const { activeProbe, isIdlePolling, showLocalNetworkAccessPopup } = storeToRefs(store);
 
 	const loading = ref(false);
 	const successDialogOpen = ref(false);
 	const newProbes = ref<Probe[]>([]);
+	const incomingToken = useLocalStorage<string | null>(LINK_TOKEN_STORAGE_KEY, null);
 
 	const isVisible = computed(() => (!!activeProbe.value || successDialogOpen.value) && isIdlePolling.value && !showLocalNetworkAccessPopup.value);
 
@@ -84,26 +86,56 @@
 		}
 
 		loading.value = true;
-		const tokenToAdopt = activeProbe.value.token;
 
+		if (!activeProbe.value.token) {
+			return adoptWithoutToken();
+		}
+
+		await proceedWithAdoption(activeProbe.value.token);
+		loading.value = false;
+	};
+
+	let adoptionTimeout: ReturnType<typeof setTimeout> | undefined;
+
+	const adoptWithoutToken = async () => {
+		await navigateTo(`http://${activeProbe.value!.localIp}:${config.probeAdoptionPort}/adopt`, {
+			external: true,
+			open: {
+				target: '_blank',
+			},
+		});
+
+		adoptionTimeout = setTimeout(() => {
+			loading.value = false;
+			sendErrorToast(new Error('Adoption timed out. No token received within 5 seconds.'));
+		}, 5000);
+	};
+
+	const proceedWithAdoption = async (token: string) => {
 		try {
-			const newProbe = await store.onConfirmAdoption(tokenToAdopt);
+			const newProbe = await store.onConfirmAdoption(token, activeProbe.value!.localIp);
 			newProbes.value = [ newProbe ];
 			successDialogOpen.value = true;
 		} catch (e) {
 			sendErrorToast(e);
-		} finally {
-			loading.value = false;
 		}
 	};
+
+	watch(incomingToken, (newToken) => {
+		if (newToken && adoptionTimeout) {
+			clearTimeout(adoptionTimeout);
+			adoptionTimeout = undefined;
+			localStorage.removeItem(LINK_TOKEN_STORAGE_KEY);
+			proceedWithAdoption(newToken);
+		}
+	});
 
 	const onIgnoreClick = async () => {
 		if (!activeProbe.value) {
 			return;
 		}
 
-		const tokenToIgnore = activeProbe.value.token;
-		store.onRejectAdoption(tokenToIgnore);
+		store.onRejectAdoption(activeProbe.value.token, activeProbe.value.localIp);
 	};
 
 	const onSuccessDialogClose = () => {

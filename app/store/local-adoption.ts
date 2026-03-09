@@ -2,21 +2,39 @@ import { customEndpoint } from '@directus/sdk';
 import { defineStore } from 'pinia';
 import { useAuth } from '~/store/auth';
 
-const REJECTED_TOKEN_STORAGE_KEY = 'rejected-probe-tokens';
-const ACCEPTED_TOKEN_STORAGE_KEY = 'accepted-probe-tokens';
+export const LINK_TOKEN_STORAGE_KEY = 'token-from-link';
+const REJECTED_PROBES_STORAGE_KEY = 'rejected-probes';
+const ACCEPTED_PROBES_STORAGE_KEY = 'accepted-probes';
 
 const SHORT_REFRESH_MS = 5000 as const;
 const LONG_REFRESH_MS = 60000 as const;
+
+type UnadoptedProbe = {
+	city: string;
+	country: string;
+	network: string;
+	publicIp: string;
+	localIps: string[];
+};
+
+type AdoptableProbe = {
+	city: string;
+	country: string;
+	network: string;
+	publicIp: string;
+	localIp: string;
+};
 
 interface HardwareProbeAdoptionState {
 	fetchTimeout: ReturnType<typeof setTimeout> | undefined;
 	tokenValidityCheckInterval: ReturnType<typeof setTimeout> | undefined;
 	fetchTimeoutLength: typeof SHORT_REFRESH_MS | typeof LONG_REFRESH_MS;
-	adoptableProbes: Map<string, number>;
-	ignoredTokens: Record<string, string>;
-	acceptedTokens: Record<string, string>;
+	adoptableProbes: Map<string, { fetchedAt: number; probe: AdoptableProbe }>; // key == token
+	tokenlessProbes: Map<string, { fetchedAt: number; probe: AdoptableProbe }>; // key == ip
+	rejectedProbes: Record<string, string>;
+	acceptedProbes: Record<string, string>;
 	isIdlePolling: boolean;
-	activeProbe: Pick<Probe, 'ip' | 'city' | 'country' | 'network'> & { token: string } | null;
+	activeProbe: AdoptableProbe & { token: string | null } | null;
 	isFetchingProbes: boolean;
 	localNetworkAccess: 'granted' | 'denied' | 'prompt' | undefined;
 	showLocalNetworkAccessPopup: boolean;
@@ -29,8 +47,9 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 		tokenValidityCheckInterval: undefined,
 		fetchTimeoutLength: LONG_REFRESH_MS,
 		adoptableProbes: new Map(),
-		ignoredTokens: useLocalStorage<Record<string, string>>(REJECTED_TOKEN_STORAGE_KEY, Object.create(null)) as unknown as Record<string, string>,
-		acceptedTokens: useLocalStorage<Record<string, string>>(ACCEPTED_TOKEN_STORAGE_KEY, Object.create(null)) as unknown as Record<string, string>,
+		tokenlessProbes: new Map(),
+		rejectedProbes: useLocalStorage<Record<string, string>>(REJECTED_PROBES_STORAGE_KEY, Object.create(null)) as unknown as Record<string, string>,
+		acceptedProbes: useLocalStorage<Record<string, string>>(ACCEPTED_PROBES_STORAGE_KEY, Object.create(null)) as unknown as Record<string, string>,
 		isIdlePolling: true,
 		activeProbe: null,
 		isFetchingProbes: false,
@@ -40,43 +59,78 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 	}),
 
 	actions: {
-		async checkProbes () {
+		async findLocalProbes () {
 			const { $directus } = useNuxtApp();
 			const config = useRuntimeConfig().public;
 
-			this.clearOldTokens();
+			this.clearExpiredData();
 
 			try {
-				const localProbeIps = await $directus.request(customEndpoint<string[]>({
-					method: 'GET',
+				let localProbes = await $directus.request(customEndpoint<UnadoptedProbe[]>({
 					path: '/local-adoption/',
 				}));
 
-				if (localProbeIps.length > 0 && this.localNetworkAccess === 'prompt' && !this.localNetworkAccessPopupShown) {
+				localProbes = localProbes
+					.filter(probe => probe.localIps.length > 1 || (probe.localIps.length === 1 && !this.isKnownIdentifier(probe.localIps[0])));
+
+				if (localProbes.length > 0 && this.localNetworkAccess === 'prompt' && !this.localNetworkAccessPopupShown) {
 					this.localNetworkAccessPopupShown = true;
 					this.showLocalNetworkAccessPopup = true;
 				}
 
-				await Promise.all(localProbeIps.map(async (probeIp) => {
-					try {
-						const safeIp = probeIp.includes(':') ? `[${probeIp}]` : probeIp;
+				// for each probe, try to get its token directly, if we cannot make background HTTP requests in the LAN and the probe only has
+				// one private IP, save it -- its token can be accessed via a redirect in the browser
+				await Promise.all(localProbes.map(async (probe) => {
+					let tokenFound = false;
 
-						const { token } = await $fetch<{ token: string }>(`http://${safeIp}:${config.probeAdoptionPort}/`, {
-							timeout: 2000,
+					try {
+						const fetchPromises = probe.localIps.map(async (probeIp) => {
+							const safeIp = probeIp.includes(':') ? `[${probeIp}]` : probeIp;
+
+							const { token } = await $fetch<{ token: string }>(`http://${safeIp}:${config.probeAdoptionPort}/`, {
+								timeout: 2000,
+							});
+
+							return { token, ip: safeIp };
 						});
 
-						if (token && !Object.hasOwn(this.acceptedTokens, token) && (!Object.hasOwn(this.ignoredTokens, token) || !this.isIdlePolling)) {
-							this.adoptableProbes.set(token, Date.now());
+						const { token, ip } = await Promise.any(fetchPromises);
+
+						if (!Object.hasOwn(this.acceptedProbes, token) && (!Object.hasOwn(this.rejectedProbes, token) || !this.isIdlePolling)) {
+							const probeDetails = {
+								localIp: ip,
+								city: probe.city,
+								country: probe.country,
+								network: probe.network,
+								publicIp: probe.publicIp,
+							};
+
+							this.adoptableProbes.set(token, { fetchedAt: Date.now(), probe: probeDetails });
 						}
+
+						tokenFound = true;
 					} catch (e) {
-						console.error('Error fetching probe token:', e);
+						console.error('Failed to fetch probe token from all local IPs:', e);
+					}
+
+					if (!tokenFound && probe.localIps.length === 1) {
+						const probeDetails = {
+							localIp: probe.localIps[0]!,
+							city: probe.city,
+							country: probe.country,
+							network: probe.network,
+							publicIp: probe.publicIp,
+							token: null,
+						};
+
+						this.tokenlessProbes.set(probeDetails.localIp, { fetchedAt: Date.now(), probe: probeDetails });
 					}
 				}));
 			} catch (e) {
 				console.error('Error fetching unadopted probes:', e);
 			}
 
-			await this.updateCurrentProbe();
+			await this.updateActiveProbe();
 		},
 
 		async adoptProbe (token: string) {
@@ -92,43 +146,51 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			return probe;
 		},
 
-		async onConfirmAdoption (token: string) {
+		async onConfirmAdoption (token: string, ip: string) {
 			const newProbe = await this.adoptProbe(token);
 			this.adoptableProbes.delete(token);
-			this.acceptToken(token);
-			void this.updateCurrentProbe();
+			this.tokenlessProbes.delete(ip);
+			this.acceptProbe(token, ip);
+			void this.updateActiveProbe();
 
 			return newProbe;
 		},
 
-		onRejectAdoption (token: string) {
-			this.adoptableProbes.delete(token);
-			this.ignoreToken(token);
-			void this.updateCurrentProbe();
+		onRejectAdoption (token: string | null, ip: string) {
+			token && this.adoptableProbes.delete(token);
+			this.tokenlessProbes.delete(ip);
+			this.rejectProbe(token, ip);
+			void this.updateActiveProbe();
 		},
 
-		ignoreToken (token: string) {
-			this.ignoredTokens[token] = new Date().toISOString();
+		rejectProbe (...identifiers: (string | null)[]) {
+			identifiers.forEach(id => id && (this.rejectedProbes[id] = new Date().toISOString()));
 		},
 
-		acceptToken (token: string) {
-			this.acceptedTokens[token] = new Date().toISOString();
+		acceptProbe (...identifiers: (string | null)[]) {
+			identifiers.forEach(id => id && (this.acceptedProbes[id] = new Date().toISOString()));
 		},
 
-		enforceIgnoredTokens () {
+		enforceRejectedProbes () {
 			if (!this.isIdlePolling) {
 				return;
 			}
 
 			this.adoptableProbes.forEach((_, token) => {
-				if (Object.hasOwn(this.ignoredTokens, token) || Object.hasOwn(this.acceptedTokens, token)) {
+				if (this.isKnownIdentifier(token)) {
 					this.adoptableProbes.delete(token);
 				}
 			});
 
-			if (this.activeProbe && (Object.hasOwn(this.ignoredTokens, this.activeProbe.token) || Object.hasOwn(this.acceptedTokens, this.activeProbe.token))) {
+			this.tokenlessProbes.forEach((_, ip) => {
+				if (this.isKnownIdentifier(ip)) {
+					this.tokenlessProbes.delete(ip);
+				}
+			});
+
+			if (!this.isActiveProbeValid()) {
 				this.activeProbe = null;
-				void this.updateCurrentProbe();
+				void this.updateActiveProbe();
 			}
 		},
 
@@ -136,7 +198,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			this.fetchTimeoutLength = LONG_REFRESH_MS;
 			this.isIdlePolling = true;
 
-			this.enforceIgnoredTokens();
+			this.enforceRejectedProbes();
 			this.startPolling();
 			this.stopBackgroundTokenCheck();
 		},
@@ -151,15 +213,17 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 		startBackgroundTokenCheck () {
 			clearInterval(this.tokenValidityCheckInterval);
 
-			// regularly check if accepted tokens changed (e.g., via another browser tab)
+			// regularly check if accepted tokens/ips changed (e.g., via another browser tab)
 			this.tokenValidityCheckInterval = setInterval(() => {
-				this.adoptableProbes.forEach((_, token) => {
-					if (Object.hasOwn(this.acceptedTokens, token)) {
-						this.adoptableProbes.delete(token);
-					}
-				});
+				for (const map of [ this.adoptableProbes, this.tokenlessProbes ]) {
+					map.forEach((_, key) => {
+						if (Object.hasOwn(this.acceptedProbes, key)) {
+							map.delete(key);
+						}
+					});
+				}
 
-				if (this.activeProbe && !this.adoptableProbes.has(this.activeProbe.token)) {
+				if (!this.isActiveProbeValid()) {
 					this.activeProbe = null;
 				}
 			}, 1000);
@@ -185,7 +249,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 
 			this.isFetchingProbes = true;
 
-			this.checkProbes().finally(() => {
+			this.findLocalProbes().finally(() => {
 				this.isFetchingProbes = false;
 
 				this.fetchTimeout = setTimeout(() => {
@@ -194,60 +258,62 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			}).catch(console.error);
 		},
 
-		clearOldTokens () {
+		clearExpiredData () {
 			const now = Date.now();
 
 			// first, clear local storage data
-			for (const [ token, timestamp ] of Object.entries(this.ignoredTokens)) {
+			for (const [ token, timestamp ] of Object.entries(this.rejectedProbes)) {
 				if (now - Date.parse(timestamp) >= 1000 * 60 * 60) {
-					Reflect.deleteProperty(this.ignoredTokens, token);
+					Reflect.deleteProperty(this.rejectedProbes, token);
 				}
 			}
 
-			for (const [ token, timestamp ] of Object.entries(this.acceptedTokens)) {
-				if (now - Date.parse(timestamp) >= 1000 * 60 * 60) {
-					Reflect.deleteProperty(this.acceptedTokens, token);
+			for (const [ token, timestamp ] of Object.entries(this.acceptedProbes)) {
+				if (now - Date.parse(timestamp) >= 1000 * 60 * 10) {
+					Reflect.deleteProperty(this.acceptedProbes, token);
 				}
 			}
 
 			// next, clear local map data
-			const tokensToRemove: string[] = [];
-
-			this.adoptableProbes.forEach((fetchedAt, key) => {
-				if (now - fetchedAt >= 1000 * 61) {
-					tokensToRemove.push(key);
-				}
-			});
-
-			tokensToRemove.forEach(t => this.adoptableProbes.delete(t));
+			for (const map of [ this.adoptableProbes, this.tokenlessProbes ]) {
+				map.forEach((entry, key) => {
+					if (now - entry.fetchedAt >= 1000 * 61) {
+						map.delete(key);
+					}
+				});
+			}
 
 			// check if the active probe is still valid
-			if (this.activeProbe && !this.adoptableProbes.has(this.activeProbe.token)) {
+			if (!this.isActiveProbeValid()) {
 				this.activeProbe = null;
 			}
 		},
 
-		async updateCurrentProbe () {
-			if (this.activeProbe && this.adoptableProbes.has(this.activeProbe.token)) {
+		async updateActiveProbe () {
+			if (this.isActiveProbeValid()) {
 				return;
 			}
 
-			if (!this.adoptableProbes.size) {
+			if (!this.adoptableProbes.size && !this.tokenlessProbes.size) {
 				this.activeProbe = null;
 				return;
 			}
 
-			const { $directus } = useNuxtApp();
-			const token = this.adoptableProbes.keys().next().value!;
-
-			try {
-				const probe = await $directus.request<Pick<Probe, 'ip' | 'city' | 'country' | 'network'>>(customEndpoint({ path: `/local-adoption/${token}` }));
-				this.activeProbe = { ...probe, token };
-			} catch (e) {
-				console.error('Error fetching probe details:', e);
-				this.activeProbe = null;
-				this.adoptableProbes.delete(token);
+			if (this.adoptableProbes.size) {
+				const [ token, entry ] = this.adoptableProbes.entries().next().value!;
+				this.activeProbe = { ...entry.probe, token };
+			} else {
+				const probeDetails = this.tokenlessProbes.values().next().value!;
+				this.activeProbe = { ...probeDetails.probe, token: null };
 			}
+		},
+
+		isKnownIdentifier (id: string | null | undefined) {
+			return id && (this.rejectedProbes[id] || this.acceptedProbes[id]);
+		},
+
+		isActiveProbeValid () {
+			return this.activeProbe && !this.isKnownIdentifier(this.activeProbe?.token) && !this.isKnownIdentifier(this.activeProbe?.localIp);
 		},
 
 		// https://wicg.github.io/local-network-access/
@@ -291,12 +357,22 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			this.adoptableProbes.clear();
 			this.activeProbe = null;
 			this.showLocalNetworkAccessPopup = false;
-			this.ignoredTokens = Object.create(null);
-			this.acceptedTokens = Object.create(null);
+			this.rejectedProbes = Object.create(null);
+			this.acceptedProbes = Object.create(null);
 			this.isIdlePolling = true;
 			this.localNetworkAccessPopupShown = false;
 			this.isFetchingProbes = false;
 			this.fetchTimeoutLength = LONG_REFRESH_MS;
+		},
+
+		// When we receive a token via a probe redirect, save it into localStorage and continue in the original window
+		setTokenFromLink () {
+			const token = useRoute().query.adopt as string | undefined;
+
+			if (token) {
+				localStorage.setItem(LINK_TOKEN_STORAGE_KEY, token);
+				window.close();
+			}
 		},
 	},
 });

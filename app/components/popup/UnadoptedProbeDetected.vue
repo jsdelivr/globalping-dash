@@ -92,7 +92,6 @@
 		}
 
 		await proceedWithAdoption(activeProbe.value.token);
-		loading.value = false;
 	};
 
 	let adoptionTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -118,6 +117,8 @@
 			successDialogOpen.value = true;
 		} catch (e) {
 			sendErrorToast(e);
+		} finally {
+			loading.value = false;
 		}
 	};
 

@@ -29,8 +29,7 @@ interface HardwareProbeAdoptionState {
 	fetchTimeout: ReturnType<typeof setTimeout> | undefined;
 	tokenValidityCheckInterval: ReturnType<typeof setTimeout> | undefined;
 	fetchTimeoutLength: typeof SHORT_REFRESH_MS | typeof LONG_REFRESH_MS;
-	adoptableProbes: Map<string, { fetchedAt: number; probe: AdoptableProbe }>; // key == token
-	tokenlessProbes: Map<string, { fetchedAt: number; probe: AdoptableProbe }>; // key == ip
+	adoptableProbes: Map<string, { fetchedAt: number; probe: AdoptableProbe; token: string | null }>; // key == token or ip
 	rejectedProbes: Record<string, string>;
 	acceptedProbes: Record<string, string>;
 	isIdlePolling: boolean;
@@ -47,7 +46,6 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 		tokenValidityCheckInterval: undefined,
 		fetchTimeoutLength: LONG_REFRESH_MS,
 		adoptableProbes: new Map(),
-		tokenlessProbes: new Map(),
 		rejectedProbes: useLocalStorage<Record<string, string>>(REJECTED_PROBES_STORAGE_KEY, Object.create(null)) as unknown as Record<string, string>,
 		acceptedProbes: useLocalStorage<Record<string, string>>(ACCEPTED_PROBES_STORAGE_KEY, Object.create(null)) as unknown as Record<string, string>,
 		isIdlePolling: true,
@@ -96,7 +94,10 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 
 						const { token, ip } = await Promise.any(fetchPromises);
 
-						if (!Object.hasOwn(this.acceptedProbes, token) && (!Object.hasOwn(this.rejectedProbes, token) || !this.isIdlePolling)) {
+						if (!Object.hasOwn(this.acceptedProbes, token)
+							&& !Object.hasOwn(this.acceptedProbes, ip)
+							&& ((!Object.hasOwn(this.rejectedProbes, token) && !Object.hasOwn(this.rejectedProbes, ip)) || !this.isIdlePolling)
+						) {
 							const probeDetails = {
 								localIp: ip,
 								city: probe.city,
@@ -105,7 +106,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 								publicIp: probe.publicIp,
 							};
 
-							this.adoptableProbes.set(token, { fetchedAt: Date.now(), probe: probeDetails });
+							this.adoptableProbes.set(token, { fetchedAt: Date.now(), probe: probeDetails, token });
 						}
 
 						tokenFound = true;
@@ -114,16 +115,20 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 					}
 
 					if (!tokenFound && probe.localIps.length === 1) {
-						const probeDetails = {
-							localIp: probe.localIps[0]!,
-							city: probe.city,
-							country: probe.country,
-							network: probe.network,
-							publicIp: probe.publicIp,
-							token: null,
-						};
+						const localIp = probe.localIps[0]!;
 
-						this.tokenlessProbes.set(probeDetails.localIp, { fetchedAt: Date.now(), probe: probeDetails });
+						if (!Object.hasOwn(this.acceptedProbes, localIp) && (!Object.hasOwn(this.rejectedProbes, localIp) || !this.isIdlePolling)) {
+							const probeDetails = {
+								localIp,
+								city: probe.city,
+								country: probe.country,
+								network: probe.network,
+								publicIp: probe.publicIp,
+								token: null,
+							};
+
+							this.adoptableProbes.set(localIp, { fetchedAt: Date.now(), probe: probeDetails, token: null });
+						}
 					}
 				}));
 			} catch (e) {
@@ -149,7 +154,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 		async onConfirmAdoption (token: string, ip: string) {
 			const newProbe = await this.adoptProbe(token);
 			this.adoptableProbes.delete(token);
-			this.tokenlessProbes.delete(ip);
+			this.adoptableProbes.delete(ip);
 			this.acceptProbe(token, ip);
 			void this.updateActiveProbe();
 
@@ -158,7 +163,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 
 		onRejectAdoption (token: string | null, ip: string) {
 			token && this.adoptableProbes.delete(token);
-			this.tokenlessProbes.delete(ip);
+			this.adoptableProbes.delete(ip);
 			this.rejectProbe(token, ip);
 			void this.updateActiveProbe();
 		},
@@ -176,15 +181,9 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 				return;
 			}
 
-			this.adoptableProbes.forEach((_, token) => {
-				if (this.isKnownIdentifier(token)) {
-					this.adoptableProbes.delete(token);
-				}
-			});
-
-			this.tokenlessProbes.forEach((_, ip) => {
-				if (this.isKnownIdentifier(ip)) {
-					this.tokenlessProbes.delete(ip);
+			this.adoptableProbes.forEach((_, id) => {
+				if (this.isKnownIdentifier(id)) {
+					this.adoptableProbes.delete(id);
 				}
 			});
 
@@ -215,13 +214,11 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 
 			// regularly check if accepted tokens/ips changed (e.g., via another browser tab)
 			this.tokenValidityCheckInterval = setInterval(() => {
-				for (const map of [ this.adoptableProbes, this.tokenlessProbes ]) {
-					map.forEach((_, key) => {
-						if (Object.hasOwn(this.acceptedProbes, key)) {
-							map.delete(key);
-						}
-					});
-				}
+				this.adoptableProbes.forEach((_, id) => {
+					if (Object.hasOwn(this.acceptedProbes, id)) {
+						this.adoptableProbes.delete(id);
+					}
+				});
 
 				if (!this.isActiveProbeValid()) {
 					this.activeProbe = null;
@@ -275,13 +272,11 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			}
 
 			// next, clear local map data
-			for (const map of [ this.adoptableProbes, this.tokenlessProbes ]) {
-				map.forEach((entry, key) => {
-					if (now - entry.fetchedAt >= 1000 * 61) {
-						map.delete(key);
-					}
-				});
-			}
+			this.adoptableProbes.forEach((entry, key) => {
+				if (now - entry.fetchedAt >= 1000 * 61) {
+					this.adoptableProbes.delete(key);
+				}
+			});
 
 			// check if the active probe is still valid
 			if (!this.isActiveProbeValid()) {
@@ -294,22 +289,17 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 				return;
 			}
 
-			if (!this.adoptableProbes.size && !this.tokenlessProbes.size) {
+			if (!this.adoptableProbes.size) {
 				this.activeProbe = null;
 				return;
 			}
 
-			if (this.adoptableProbes.size) {
-				const [ token, entry ] = this.adoptableProbes.entries().next().value!;
-				this.activeProbe = { ...entry.probe, token };
-			} else {
-				const probeDetails = this.tokenlessProbes.values().next().value!;
-				this.activeProbe = { ...probeDetails.probe, token: null };
-			}
+			const { probe, token } = this.adoptableProbes.values().next().value!;
+			this.activeProbe = { ...probe, token };
 		},
 
 		isKnownIdentifier (id: string | null | undefined) {
-			return id && (this.rejectedProbes[id] || this.acceptedProbes[id]);
+			return id && ((this.rejectedProbes[id] && this.isIdlePolling) || this.acceptedProbes[id]);
 		},
 
 		isActiveProbeValid () {

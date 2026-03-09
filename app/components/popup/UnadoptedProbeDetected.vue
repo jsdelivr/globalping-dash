@@ -142,4 +142,8 @@
 		successDialogOpen.value = false;
 		newProbes.value = [];
 	};
+
+	onUnmounted(() => {
+		adoptionTimeout && clearTimeout(adoptionTimeout);
+	});
 </script>

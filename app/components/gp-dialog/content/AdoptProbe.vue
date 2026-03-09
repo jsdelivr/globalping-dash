@@ -631,5 +631,6 @@
 	onUnmounted(() => {
 		store.enableIdlePolling();
 		manualBtnTimer && clearTimeout(manualBtnTimer);
+		adoptionTimeout && clearTimeout(adoptionTimeout);
 	});
 </script>

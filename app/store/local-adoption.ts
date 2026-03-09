@@ -71,7 +71,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 				localProbes = localProbes
 					.filter(probe => probe.localIps.length > 1 || (probe.localIps.length === 1 && !this.isKnownIdentifier(probe.localIps[0])));
 
-				if (localProbes.length > 0 && this.localNetworkAccess === 'prompt' && !this.localNetworkAccessPopupShown) {
+				if (localProbes.length > 0 && this.localNetworkAccess === 'prompt' && !this.localNetworkAccessPopupShown && this.isIdlePolling) {
 					this.localNetworkAccessPopupShown = true;
 					this.showLocalNetworkAccessPopup = true;
 				}

@@ -317,28 +317,35 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 				return;
 			}
 
-			return navigator.permissions.query({ name: 'local-network' as PermissionName }).then((status) => {
-				this.localNetworkAccess = status.state;
-
-				if (status.state !== 'prompt') {
-					this.showLocalNetworkAccessPopup = false;
-				}
-
-				status.onchange = () => {
+			// https://wicg.github.io/local-network-access/#integration-with-permissions
+			const setNetworkAccessWithPermission = async (name: string) => {
+				return navigator.permissions.query({ name: name as PermissionName }).then((status) => {
 					this.localNetworkAccess = status.state;
-
-					if (status.state === 'granted') {
-						this.startPolling();
-					}
 
 					if (status.state !== 'prompt') {
 						this.showLocalNetworkAccessPopup = false;
 					}
-				};
-			}).catch(() => {
-				this.localNetworkAccess = 'granted';
-				this.showLocalNetworkAccessPopup = false;
-			});
+
+					status.onchange = () => {
+						this.localNetworkAccess = status.state;
+
+						if (status.state === 'granted') {
+							this.startPolling();
+						}
+
+						if (status.state !== 'prompt') {
+							this.showLocalNetworkAccessPopup = false;
+						}
+					};
+				});
+			};
+
+			return setNetworkAccessWithPermission('local-network')
+				.catch(() => setNetworkAccessWithPermission('local-network-access'))
+				.catch(() => {
+					this.localNetworkAccess = 'granted';
+					this.showLocalNetworkAccessPopup = false;
+				});
 		},
 
 		reset () {

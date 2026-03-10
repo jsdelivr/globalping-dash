@@ -217,7 +217,7 @@
 								<div class="flex flex-col justify-start overflow-hidden">
 									<p class="flex items-center font-bold"><CountryFlag :country="activeProbe.country" size="small"/><span class="ml-2">{{ activeProbe.city }}</span></p>
 									<p>{{ activeProbe.network }}</p>
-									<p class="break-words font-mono text-sm text-surface-500">{{ activeProbe.ip }}</p>
+									<p class="break-words font-mono text-sm text-surface-500">{{ activeProbe.publicIp }}</p>
 								</div>
 							</div>
 						</div>
@@ -305,11 +305,12 @@
 	import { usePublicIp } from '~/composables/usePublicIp';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
-	import { useHardwareProbeAdoption } from '~/store/local-adoption';
+	import { LINK_TOKEN_STORAGE_KEY, useHardwareProbeAdoption } from '~/store/local-adoption';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 	import { smoothResize } from '~/utils/smooth-resize';
 	import { validateIp } from '~/utils/validate-ip';
 
+	const config = useRuntimeConfig().public;
 	const store = useHardwareProbeAdoption();
 	const { activeProbe } = storeToRefs(store);
 	const { $directus } = useNuxtApp();
@@ -441,16 +442,18 @@
 	};
 
 	// STEP 3
+	let adoptionTimeout: ReturnType<typeof setTimeout> | undefined;
+	const incomingToken = useLocalStorage<string | null>(LINK_TOKEN_STORAGE_KEY, null);
 	const hardwareAdoptionLoading = ref(false);
 
-	const confirmHardwareAdoption = async () => {
+	const proceedWithAdoption = async (token: string) => {
 		try {
-			hardwareAdoptionLoading.value = true;
-			const newProbe = await store.onConfirmAdoption(activeProbe.value!.token);
+			const newProbe = await store.onConfirmAdoption(token, activeProbe.value!.localIp);
 
 			newProbes.value = [ newProbe ];
 			isSuccess.value = true;
 			emit('adopted');
+			hardwareAdoptionLoading.value = false;
 
 			nextTick(() => {
 				const wrapper = stepPanels.value.$el;
@@ -459,10 +462,46 @@
 			});
 		} catch (e) {
 			sendErrorToast(e);
-		} finally {
+		}
+	};
+
+	const confirmHardwareAdoption = async () => {
+		try {
+			hardwareAdoptionLoading.value = true;
+
+			if (activeProbe.value?.token) {
+				await proceedWithAdoption(activeProbe.value.token);
+			} else {
+				await adoptWithoutToken();
+			}
+		} catch (e) {
+			sendErrorToast(e);
 			hardwareAdoptionLoading.value = false;
 		}
 	};
+
+	const adoptWithoutToken = async () => {
+		await navigateTo(`http://${activeProbe.value!.localIp}:${config.probeAdoptionPort}/adopt`, {
+			external: true,
+			open: {
+				target: '_blank',
+			},
+		});
+
+		adoptionTimeout = setTimeout(() => {
+			hardwareAdoptionLoading.value = false;
+			sendErrorToast(new Error('Adoption timed out. No token received within 5 seconds.'));
+		}, 5000);
+	};
+
+	watch(incomingToken, (newToken) => {
+		if (newToken && adoptionTimeout) {
+			clearTimeout(adoptionTimeout);
+			adoptionTimeout = undefined;
+			localStorage.removeItem(LINK_TOKEN_STORAGE_KEY);
+			proceedWithAdoption(newToken);
+		}
+	});
 
 	watch(showManualAdoptionBtn, () => {
 		const wrapper = stepPanels.value.$el;
@@ -592,5 +631,6 @@
 	onUnmounted(() => {
 		store.enableIdlePolling();
 		manualBtnTimer && clearTimeout(manualBtnTimer);
+		adoptionTimeout && clearTimeout(adoptionTimeout);
 	});
 </script>

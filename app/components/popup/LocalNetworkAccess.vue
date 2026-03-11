@@ -20,7 +20,7 @@
 				To initiate an automated adoption process, we need permission to communicate with the probe via your local area network (LAN).
 			</p>
 
-			<div class="flex flex-col gap-3 rounded-lg border border-surface-200 bg-surface-50 p-4">
+			<div class="flex flex-col gap-3 rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-dark-500 dark:bg-dark-800">
 				<ul class="flex flex-col gap-3 text-sm">
 					<li class="flex items-start gap-2 border-b pb-2">
 						<i class="pi pi-check mt-1 text-primary"/>

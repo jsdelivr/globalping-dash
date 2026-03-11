@@ -135,9 +135,18 @@ declare global {
 		user_type: 'member' | 'special' | 'sponsor';
 		appearance: null | 'light' | 'dark';
 		public_probes: boolean;
+		notification_preferences: Record<string, {
+			enabled: boolean;
+		}> | null;
 		adoption_token: string;
 		default_prefix: string;
 		date_created: string;
+	};
+
+	type NotificationTypeMetadata = {
+		allowEmail: boolean;
+		hasParameter: boolean;
+		description: string;
 	};
 
 	type Token = {

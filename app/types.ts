@@ -137,17 +137,18 @@ declare global {
 		public_probes: boolean;
 		notification_preferences: Record<string, {
 			enabled: boolean;
+			emailEnabled?: boolean;
 		}> | null;
 		adoption_token: string;
 		default_prefix: string;
 		date_created: string;
 	};
 
-	type NotificationTypeMetadata = {
+	type NotificationTypes = Record<string, {
 		allowEmail: boolean;
 		hasParameter: boolean;
 		description: string;
-	};
+	}>;
 
 	type Token = {
 		id: number;

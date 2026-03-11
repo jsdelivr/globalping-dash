@@ -213,7 +213,7 @@
 							<p class="mb-2">We have detected a new hardware probe on your network.</p>
 
 							<div class="flex w-full max-w-md items-center gap-6 rounded-lg border bg-surface-0 px-6 py-4 text-start dark:bg-dark-800">
-								<BigIcon class="size-14" name="probe" :filled="true" :border="true"/>
+								<BigIcon class="size-14" name="probe" :filled="false" :border="true"/>
 								<div class="flex flex-col justify-start overflow-hidden">
 									<p class="flex items-center font-bold"><CountryFlag :country="activeProbe.country" size="small"/><span class="ml-2">{{ activeProbe.city }}</span></p>
 									<p>{{ activeProbe.network }}</p>
@@ -254,7 +254,7 @@
 						/>
 						<p v-if="!isIpValid" class="absolute text-red-500">{{ invalidIpMessage }}</p>
 					</div>
-					<p v-if="probeType === 'hardware'" class="my-2 text-sm text-surface-500 dark:text-bluegray-200">
+					<p v-if="probeType === 'hardware' && !props.manualHwAdoption" class="my-2 text-sm text-surface-500 dark:text-bluegray-200">
 						<span class="pi pi-spinner mr-1 animate-spin text-xs"/>
 						We’re still searching for your probe in the background. If we find it, we’ll automatically move you to the next step.
 					</p>
@@ -310,6 +310,10 @@
 	import { smoothResize } from '~/utils/smooth-resize';
 	import { validateIp } from '~/utils/validate-ip';
 
+	const props = defineProps({
+		manualHwAdoption: Boolean,
+	});
+
 	const config = useRuntimeConfig().public;
 	const store = useHardwareProbeAdoption();
 	const { activeProbe } = storeToRefs(store);
@@ -320,8 +324,8 @@
 	const { user } = storeToRefs(auth);
 	const userPublicIp = usePublicIp();
 
-	const activeStep = ref('0');
-	const probeType = ref<'software' | 'hardware'>('software');
+	const activeStep = ref(props.manualHwAdoption ? '5' : '0');
+	const probeType = ref<'software' | 'hardware'>(props.manualHwAdoption ? 'hardware' : 'software');
 	const newProbes = ref<Probe[]>([]);
 	const isSuccess = ref(false);
 	const isFailed = ref(false);

@@ -117,7 +117,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 						console.error('Failed to fetch probe token from all local IPs:', e);
 					}
 
-					if (!tokenFound && probe.localIps.length === 1) {
+					if (!tokenFound && probe.localIps.length === 1 && this.localNetworkAccess === 'granted') {
 						const localIp = probe.localIps[0]!;
 
 						if (!this.isFailedProbe(localIp)

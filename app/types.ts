@@ -138,6 +138,7 @@ declare global {
 		notification_preferences: Record<string, {
 			enabled: boolean;
 			emailEnabled?: boolean;
+			parameter?: number;
 		}> | null;
 		adoption_token: string;
 		default_prefix: string;

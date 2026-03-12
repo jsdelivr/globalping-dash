@@ -166,7 +166,7 @@
 				<div
 					v-for="(notificationType, notificationTypeId, index) in notificationTypes"
 					:key="notificationTypeId"
-					:class="{ 'mt-4': index > 0 }"
+					:class="{ 'mt-6': index > 0 }"
 				>
 					<p class="font-bold">{{ notificationType.description }}</p>
 					<div class="mt-2 flex items-center gap-4">
@@ -175,6 +175,7 @@
 								v-if="notificationPreferences[notificationTypeId]"
 								v-model="notificationPreferences[notificationTypeId].enabled"
 								:disabled="!!auth.impersonation"
+								@update:model-value="(enabled) => setEmailDisabled(notificationTypeId, enabled)"
 							/>
 							<label class="cursor-text text-nowrap">App</label>
 						</div>
@@ -182,10 +183,23 @@
 							<ToggleSwitch
 								v-if="notificationPreferences[notificationTypeId]"
 								v-model="notificationPreferences[notificationTypeId].emailEnabled"
-								:disabled="!!auth.impersonation"
+								:disabled="!!auth.impersonation || !notificationPreferences[notificationTypeId].enabled"
 							/>
 							<label class="cursor-text text-nowrap">Email</label>
 						</div>
+					</div>
+					<div v-if="notificationType.hasParameter" class="mt-3 flex items-center gap-2">
+						<label class="cursor-text text-nowrap">Threshold:</label>
+						<InputText
+							v-if="notificationPreferences[notificationTypeId]"
+							:model-value="notificationPreferences[notificationTypeId].parameter"
+							:disabled="!!auth.impersonation || !notificationPreferences[notificationTypeId].enabled"
+							inputmode="numeric"
+							pattern="[0-9]*"
+							class="max-w-48"
+							@beforeinput="restrictToDigits"
+							@update:model-value="(value) => setIntegerParameter(notificationTypeId, value)"
+						/>
 					</div>
 				</div>
 			</div>
@@ -247,7 +261,7 @@
 	const adoptionToken = ref(user.value.adoption_token);
 	const notificationTypes = ref<NotificationTypes>({});
 
-	const notificationPreferences = ref<Record<string, { enabled: boolean; emailEnabled?: boolean }>>({});
+	const notificationPreferences = ref<Record<string, { enabled: boolean; emailEnabled?: boolean; parameter?: string }>>({});
 	const showOrgsInfoMessage = ref(false);
 	let initialNotificationPreferences = '{}';
 
@@ -386,10 +400,18 @@
 
 	function normalizeNotificationPreferences () {
 		return Object.fromEntries(Object.keys(notificationTypes.value).sort().map((type) => {
-			const normalizedPreference: { enabled: boolean; emailEnabled?: boolean } = { enabled: notificationPreferences.value[type]?.enabled !== false };
+			const normalizedPreference: { enabled: boolean; emailEnabled?: boolean; parameter?: number } = { enabled: notificationPreferences.value[type]?.enabled !== false };
 
 			if (notificationTypes.value[type]?.allowEmail) {
 				normalizedPreference.emailEnabled = notificationPreferences.value[type]?.emailEnabled !== false;
+			}
+
+			if (notificationTypes.value[type]?.hasParameter) {
+				const parameter = notificationPreferences.value[type]?.parameter?.trim();
+
+				if (parameter && /^\d+$/.test(parameter)) {
+					normalizedPreference.parameter = Number.parseInt(parameter, 10);
+				}
 			}
 
 			return [ type, normalizedPreference ];
@@ -400,6 +422,30 @@
 		return JSON.stringify(normalizeNotificationPreferences());
 	}
 
+	function setEmailDisabled (notificationTypeId: string, enabled: boolean) {
+		if (!enabled && notificationPreferences.value[notificationTypeId]) {
+			notificationPreferences.value[notificationTypeId].emailEnabled = false;
+		}
+	}
+
+	function setIntegerParameter (notificationTypeId: string, value: string | number | undefined | null) {
+		const raw = value === undefined || value === null ? '' : String(value);
+
+		if (notificationPreferences.value[notificationTypeId]) {
+			notificationPreferences.value[notificationTypeId].parameter = raw.replace(/\D+/g, '');
+		}
+	}
+
+	function restrictToDigits (event: InputEvent) {
+		if (event.inputType.startsWith('delete')) {
+			return;
+		}
+
+		if (event.data && /\D/.test(event.data)) {
+			event.preventDefault();
+		}
+	}
+
 	function buildNotificationPreferences () {
 		const userPreferences = user.value.notification_preferences || {};
 		const userHasDisabledTypes = Object.keys(userPreferences)
@@ -407,19 +453,20 @@
 		const userHasDisabledEmailTypes = Object.keys(userPreferences)
 			.some(key => notificationTypes.value[key]?.allowEmail && userPreferences[key]?.emailEnabled === false);
 
-		// Here we are fulfilling default values.
 		const preferences = Object.fromEntries(Object.keys(notificationTypes.value)
 			.map(type => [ type, {
 				enabled: !userHasDisabledTypes,
 				emailEnabled: notificationTypes.value[type]?.allowEmail ? !userHasDisabledEmailTypes && !userHasDisabledTypes : undefined,
-			}]));
+			}])) as Record<string, { enabled: boolean; emailEnabled?: boolean; parameter?: string }>;
 
-		// Here we are overriding default values with user preferences.
 		for (const [ type, preference ] of Object.entries(userPreferences)) {
 			if (type in preferences) {
 				preferences[type] = {
 					enabled: preference?.enabled !== false,
 					emailEnabled: notificationTypes.value[type]?.allowEmail ? preference?.emailEnabled !== false : undefined,
+					parameter: notificationTypes.value[type]?.hasParameter && Number.isInteger(preference?.parameter)
+						? String(preference?.parameter)
+						: undefined,
 				};
 			}
 		}

@@ -175,7 +175,7 @@
 								v-if="notificationPreferences[notificationTypeId]"
 								v-model="notificationPreferences[notificationTypeId].enabled"
 								:disabled="!!auth.impersonation"
-								@update:model-value="(enabled) => setEmailDisabled(notificationTypeId, enabled)"
+								@update:model-value="(enabled) => notificationPreferences[notificationTypeId]!.emailEnabled = enabled"
 							/>
 							<label class="cursor-text text-nowrap">App</label>
 						</div>
@@ -198,7 +198,7 @@
 							pattern="[0-9]*"
 							class="max-w-48"
 							@beforeinput="restrictToDigits"
-							@update:model-value="(value) => setIntegerParameter(notificationTypeId, value)"
+							@update:model-value="(value) => notificationPreferences[notificationTypeId]!.parameter = String(value ?? '').replace(/\D+/g, '')"
 						/>
 					</div>
 				</div>
@@ -400,13 +400,13 @@
 
 	function normalizeNotificationPreferences () {
 		return Object.fromEntries(Object.keys(notificationTypes.value).sort().map((type) => {
-			const normalizedPreference: { enabled: boolean; emailEnabled?: boolean; parameter?: number } = { enabled: notificationPreferences.value[type]?.enabled !== false };
+			const normalizedPreference: NotificationPreference = { enabled: notificationPreferences.value[type]?.enabled !== false };
 
-			if (notificationTypes.value[type]?.allowEmail) {
+			if (notificationTypes.value[type]!.allowEmail) {
 				normalizedPreference.emailEnabled = notificationPreferences.value[type]?.emailEnabled !== false;
 			}
 
-			if (notificationTypes.value[type]?.hasParameter) {
+			if (notificationTypes.value[type]!.hasParameter) {
 				const parameter = notificationPreferences.value[type]?.parameter?.trim();
 
 				if (parameter && /^\d+$/.test(parameter)) {
@@ -420,20 +420,6 @@
 
 	function serializeNotificationPreferences () {
 		return JSON.stringify(normalizeNotificationPreferences());
-	}
-
-	function setEmailDisabled (notificationTypeId: string, enabled: boolean) {
-		if (!enabled && notificationPreferences.value[notificationTypeId]) {
-			notificationPreferences.value[notificationTypeId].emailEnabled = false;
-		}
-	}
-
-	function setIntegerParameter (notificationTypeId: string, value: string | number | undefined | null) {
-		const raw = value === undefined || value === null ? '' : String(value);
-
-		if (notificationPreferences.value[notificationTypeId]) {
-			notificationPreferences.value[notificationTypeId].parameter = raw.replace(/\D+/g, '');
-		}
 	}
 
 	function restrictToDigits (event: InputEvent) {

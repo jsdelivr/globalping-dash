@@ -453,12 +453,15 @@
 		const userHasDisabledEmailTypes = Object.keys(userPreferences)
 			.some(key => notificationTypes.value[key]?.allowEmail && userPreferences[key]?.emailEnabled === false);
 
+		// Here we are fulfilling default values.
 		const preferences = Object.fromEntries(Object.keys(notificationTypes.value)
 			.map(type => [ type, {
 				enabled: !userHasDisabledTypes,
 				emailEnabled: notificationTypes.value[type]?.allowEmail ? !userHasDisabledEmailTypes && !userHasDisabledTypes : undefined,
+				parameter: notificationTypes.value[type]?.hasParameter ? String(notificationTypes.value[type]?.defaultParameter) : undefined,
 			}])) as Record<string, { enabled: boolean; emailEnabled?: boolean; parameter?: string }>;
 
+		// Here we are overriding default values with user preferences.
 		for (const [ type, preference ] of Object.entries(userPreferences)) {
 			if (type in preferences) {
 				preferences[type] = {

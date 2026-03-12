@@ -148,6 +148,7 @@ declare global {
 	type NotificationTypes = Record<string, {
 		allowEmail: boolean;
 		hasParameter: boolean;
+		defaultParameter?: number;
 		description: string;
 	}>;
 

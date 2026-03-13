@@ -398,6 +398,7 @@
 
 	// NOTIFICATION PREFERENCES
 
+	// This builds an object to send to the backend.
 	function normalizeNotificationPreferences () {
 		return Object.fromEntries(Object.keys(notificationTypes.value).sort().map((type) => {
 			const normalizedPreference: NotificationPreference = { enabled: notificationPreferences.value[type]?.enabled !== false };
@@ -432,6 +433,7 @@
 		}
 	}
 
+	// This builds an object to use and edit by the form UI.
 	function buildNotificationPreferences () {
 		const userPreferences = user.value.notification_preferences || {};
 		const userHasDisabledTypes = Object.keys(userPreferences)

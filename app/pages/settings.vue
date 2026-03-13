@@ -175,7 +175,7 @@
 								v-if="notificationPreferences[notificationTypeId]"
 								v-model="notificationPreferences[notificationTypeId].enabled"
 								:disabled="!!auth.impersonation"
-								@update:model-value="(enabled) => notificationPreferences[notificationTypeId]!.emailEnabled = enabled"
+								@update:model-value="(enabled) => enabled === false && (notificationPreferences[notificationTypeId]!.emailEnabled = false)"
 							/>
 							<label class="cursor-text text-nowrap">App</label>
 						</div>

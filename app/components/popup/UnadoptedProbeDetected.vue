@@ -42,7 +42,8 @@
 				<div v-if="hasError" class="rounded-md bg-red-100 p-3 text-center text-red-700 dark:bg-red-900/30 dark:text-red-400">
 					<p class="mb-1 font-semibold">Automatic adoption failed.</p>
 					<p class="text-sm">
-						We recommend trying the manual adoption flow using the button below. You can also do this later via an "Adopt a probe" button.
+						We recommend trying to adopt the probe manually.
+						You may also do this later via the "Adopt a probe" button on the Overview page.
 					</p>
 				</div>
 			</div>

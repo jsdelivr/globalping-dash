@@ -177,7 +177,7 @@
 		showManualFlow.value = true;
 	};
 
-	const onIgnoreClick = async () => {
+	const onIgnoreClick = () => {
 		if (!activeProbe.value) {
 			return;
 		}

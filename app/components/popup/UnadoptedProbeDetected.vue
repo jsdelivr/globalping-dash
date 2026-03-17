@@ -184,6 +184,7 @@
 
 		clearTimeout(adoptionTimeout);
 		adoptionTimeout = undefined;
+		loading.value = false;
 
 		if (hasError.value) {
 			hasError.value = false;

@@ -79,7 +79,7 @@
 		content-class="!p-0"
 		size="large"
 	>
-		<GpDialogContentAdoptProbe manual-hw-adoption @cancel="showManualFlow = false" @adopted="refreshNuxtData"/>
+		<GpDialogContentAdoptProbe manual-hw-adoption :probe-ip="manualAdoptionProbeIp" @cancel="showManualFlow = false" @adopted="refreshNuxtData"/>
 	</GPDialog>
 </template>
 
@@ -98,6 +98,7 @@
 	const successDialogOpen = ref(false);
 	const newProbes = ref<Probe[]>([]);
 	const incomingToken = useLocalStorage<string | null>(LINK_TOKEN_STORAGE_KEY, null);
+	const manualAdoptionProbeIp = ref('');
 
 	const isVisible = computed(() => showManualFlow.value
 		|| (
@@ -168,6 +169,7 @@
 	});
 
 	const onManualAdoptionClick = () => {
+		manualAdoptionProbeIp.value = activeProbe.value?.publicIp ?? '';
 		activeProbe.value && store.onFailedAdoption(activeProbe.value.token, activeProbe.value.localIp);
 		hasError.value = false;
 		showManualFlow.value = true;

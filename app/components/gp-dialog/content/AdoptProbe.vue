@@ -312,6 +312,10 @@
 
 	const props = defineProps({
 		manualHwAdoption: Boolean,
+		probeIp: {
+			type: String,
+			default: '',
+		},
 	});
 
 	const config = useRuntimeConfig().public;
@@ -324,7 +328,7 @@
 	const { user } = storeToRefs(auth);
 	const userPublicIp = usePublicIp();
 
-	const activeStep = ref(props.manualHwAdoption ? '5' : '0');
+	const activeStep = ref(props.manualHwAdoption ? '6' : '0');
 	const probeType = ref<'software' | 'hardware'>(props.manualHwAdoption ? 'hardware' : 'software');
 	const newProbes = ref<Probe[]>([]);
 	const isSuccess = ref(false);
@@ -515,7 +519,7 @@
 
 	// STEP 4
 
-	const ip = ref('');
+	const ip = ref(props.probeIp);
 	const isIpValid = ref(true);
 	const invalidIpMessage = ref('');
 	const isResendingCode = ref(false);
@@ -628,8 +632,18 @@
 		}
 	};
 
-	onMounted(() => {
+	onMounted(async () => {
 		store.disableIdlePolling();
+
+		if (props.manualHwAdoption && props.probeIp) {
+			await sendAdoptionCode((step: string | number) => {
+				activeStep.value = String(step);
+			});
+
+			if (!isIpValid.value) {
+				activeStep.value = '5';
+			}
+		}
 	});
 
 	onUnmounted(() => {

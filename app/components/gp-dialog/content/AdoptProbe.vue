@@ -342,7 +342,7 @@
 	let manualBtnTimer: NodeJS.Timeout | null = null;
 
 	watch(userPublicIp, (userIp) => {
-		if (userIp) {
+		if (userIp && !props.probeIp) {
 			ip.value = userIp;
 		}
 	}, { immediate: true });

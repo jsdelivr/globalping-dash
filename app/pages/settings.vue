@@ -435,30 +435,33 @@
 
 	// This builds an object to use and edit by the form UI.
 	function buildNotificationPreferences () {
-		const userPreferences = user.value.notification_preferences || {};
-		const userHasDisabledTypes = Object.keys(userPreferences)
-			.some(key => userPreferences[key]?.enabled === false);
-		const userHasDisabledEmailTypes = Object.keys(userPreferences)
-			.some(key => notificationTypes.value[key]?.allowEmail && userPreferences[key]?.emailEnabled === false);
+		const userPreferences = user.value.notification_preferences ?? {};
+		const configuredTypes = Object.keys(userPreferences);
+		const configuredEmailTypes = configuredTypes.filter(type => typeof userPreferences[type]?.emailEnabled === 'boolean');
+		const allDisabled = configuredTypes.length > 0 && configuredTypes.every(type => userPreferences[type]?.enabled === false);
+		const allEmailDisabled = configuredEmailTypes.length > 0 && configuredEmailTypes.every(type => userPreferences[type]?.emailEnabled === false);
 
 		// Here we are fulfilling default values.
 		const preferences = Object.fromEntries(Object.keys(notificationTypes.value)
 			.map(type => [ type, {
-				enabled: !userHasDisabledTypes,
-				emailEnabled: notificationTypes.value[type]?.allowEmail ? !userHasDisabledEmailTypes && !userHasDisabledTypes : undefined,
+				enabled: !allDisabled,
+				emailEnabled: notificationTypes.value[type]?.allowEmail ? !(allDisabled || allEmailDisabled) : undefined,
 				parameter: notificationTypes.value[type]?.hasParameter ? String(notificationTypes.value[type]?.defaultParameter) : undefined,
 			}])) as Record<string, { enabled: boolean; emailEnabled?: boolean; parameter?: string }>;
 
 		// Here we are overriding default values with user preferences.
-		for (const [ type, preference ] of Object.entries(userPreferences)) {
-			if (type in preferences) {
-				preferences[type] = {
-					enabled: preference?.enabled !== false,
-					emailEnabled: notificationTypes.value[type]?.allowEmail ? preference?.emailEnabled !== false : undefined,
-					parameter: notificationTypes.value[type]?.hasParameter && Number.isInteger(preference?.parameter)
-						? String(preference?.parameter)
-						: undefined,
-				};
+		for (const [ type, preference ] of Object.entries(userPreferences).filter(([ type ]) => type in preferences)) {
+			if (typeof preference?.enabled === 'boolean') {
+				preferences[type]!.enabled = preference.enabled;
+				preferences[type]!.emailEnabled = preference.enabled;
+			}
+
+			if (typeof preference?.emailEnabled === 'boolean') {
+				preferences[type]!.emailEnabled = preference.emailEnabled;
+			}
+
+			if (notificationTypes.value[type]?.hasParameter && Number.isInteger(preference?.parameter)) {
+				preferences[type]!.parameter = String(preference.parameter);
 			}
 		}
 

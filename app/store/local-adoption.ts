@@ -5,6 +5,7 @@ import { useAuth } from '~/store/auth';
 export const LINK_TOKEN_STORAGE_KEY = 'token-from-link';
 const REJECTED_PROBES_STORAGE_KEY = 'rejected-probes';
 const ACCEPTED_PROBES_STORAGE_KEY = 'accepted-probes';
+const FAILED_PROBES_STORAGE_KEY = 'failed-probes';
 
 const SHORT_REFRESH_MS = 5000 as const;
 const LONG_REFRESH_MS = 60000 as const;
@@ -32,6 +33,7 @@ interface HardwareProbeAdoptionState {
 	adoptableProbes: Map<string, { fetchedAt: number; probe: AdoptableProbe; token: string | null }>; // key == token or ip
 	rejectedProbes: Record<string, string>;
 	acceptedProbes: Record<string, string>;
+	failedProbes: Record<string, string>; // probe-origin/adopt or adoption request failed
 	isIdlePolling: boolean;
 	activeProbe: AdoptableProbe & { token: string | null } | null;
 	isFetchingProbes: boolean;
@@ -48,6 +50,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 		adoptableProbes: new Map(),
 		rejectedProbes: useLocalStorage<Record<string, string>>(REJECTED_PROBES_STORAGE_KEY, Object.create(null)) as unknown as Record<string, string>,
 		acceptedProbes: useLocalStorage<Record<string, string>>(ACCEPTED_PROBES_STORAGE_KEY, Object.create(null)) as unknown as Record<string, string>,
+		failedProbes: useLocalStorage<Record<string, string>>(FAILED_PROBES_STORAGE_KEY, Object.create(null)) as unknown as Record<string, string>,
 		isIdlePolling: true,
 		activeProbe: null,
 		isFetchingProbes: false,
@@ -94,9 +97,9 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 
 						const { token, ip } = await Promise.any(fetchPromises);
 
-						if (!Object.hasOwn(this.acceptedProbes, token)
-							&& !Object.hasOwn(this.acceptedProbes, ip)
-							&& ((!Object.hasOwn(this.rejectedProbes, token) && !Object.hasOwn(this.rejectedProbes, ip)) || !this.isIdlePolling)
+						if (!this.isAcceptedProbe(token, ip)
+							&& !this.isFailedProbe(token, ip)
+							&& (!this.isRejectedProbe(token, ip) || !this.isIdlePolling)
 						) {
 							const probeDetails = {
 								localIp: ip,
@@ -117,7 +120,9 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 					if (!tokenFound && probe.localIps.length === 1 && this.localNetworkAccess === 'granted') {
 						const localIp = probe.localIps[0]!;
 
-						if (!Object.hasOwn(this.acceptedProbes, localIp) && (!Object.hasOwn(this.rejectedProbes, localIp) || !this.isIdlePolling)) {
+						if (!this.isFailedProbe(localIp)
+							&& !this.isAcceptedProbe(localIp)
+							&& (!this.isRejectedProbe(localIp) || !this.isIdlePolling)) {
 							const probeDetails = {
 								localIp,
 								city: probe.city,
@@ -168,12 +173,23 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			void this.updateActiveProbe();
 		},
 
+		onFailedAdoption (token: string | null, ip: string) {
+			this.setFailedProbe(token, ip);
+			token && this.adoptableProbes.delete(token);
+			this.adoptableProbes.delete(ip);
+			void this.updateActiveProbe();
+		},
+
 		rejectProbe (...identifiers: (string | null)[]) {
 			identifiers.forEach(id => id && (this.rejectedProbes[id] = new Date().toISOString()));
 		},
 
 		acceptProbe (...identifiers: (string | null)[]) {
 			identifiers.forEach(id => id && (this.acceptedProbes[id] = new Date().toISOString()));
+		},
+
+		setFailedProbe (...identifiers: (string | null)[]) {
+			identifiers.forEach(id => id && (this.failedProbes[id] = new Date().toISOString()));
 		},
 
 		enforceRejectedProbes () {
@@ -212,10 +228,10 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 		startBackgroundTokenCheck () {
 			clearInterval(this.tokenValidityCheckInterval);
 
-			// regularly check if accepted tokens/ips changed (e.g., via another browser tab)
+			// regularly check if accepted/failed tokens/ips changed (e.g., via another browser tab)
 			this.tokenValidityCheckInterval = setInterval(() => {
 				this.adoptableProbes.forEach((_, id) => {
-					if (Object.hasOwn(this.acceptedProbes, id)) {
+					if (this.isAcceptedProbe(id) || this.isFailedProbe(id)) {
 						this.adoptableProbes.delete(id);
 					}
 				});
@@ -259,15 +275,21 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 			const now = Date.now();
 
 			// first, clear local storage data
-			for (const [ token, timestamp ] of Object.entries(this.rejectedProbes)) {
+			for (const [ id, timestamp ] of Object.entries(this.rejectedProbes)) {
 				if (now - Date.parse(timestamp) >= 1000 * 60 * 60) {
-					Reflect.deleteProperty(this.rejectedProbes, token);
+					Reflect.deleteProperty(this.rejectedProbes, id);
 				}
 			}
 
-			for (const [ token, timestamp ] of Object.entries(this.acceptedProbes)) {
+			for (const [ id, timestamp ] of Object.entries(this.failedProbes)) {
+				if (now - Date.parse(timestamp) >= 1000 * 60 * 60) {
+					Reflect.deleteProperty(this.failedProbes, id);
+				}
+			}
+
+			for (const [ id, timestamp ] of Object.entries(this.acceptedProbes)) {
 				if (now - Date.parse(timestamp) >= 1000 * 60 * 10) {
-					Reflect.deleteProperty(this.acceptedProbes, token);
+					Reflect.deleteProperty(this.acceptedProbes, id);
 				}
 			}
 
@@ -299,7 +321,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 		},
 
 		isKnownIdentifier (id: string | null | undefined) {
-			return id && ((this.rejectedProbes[id] && this.isIdlePolling) || this.acceptedProbes[id]);
+			return id && ((this.rejectedProbes[id] && this.isIdlePolling) || this.acceptedProbes[id] || this.failedProbes[id]);
 		},
 
 		isActiveProbeValid () {
@@ -348,6 +370,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 				});
 		},
 
+		// we do not reset failedProbes as they indicate probe-side failures, not user rejections
 		reset () {
 			clearTimeout(this.fetchTimeout);
 			clearInterval(this.tokenValidityCheckInterval);
@@ -370,6 +393,18 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 				localStorage.setItem(LINK_TOKEN_STORAGE_KEY, token);
 				window.close();
 			}
+		},
+
+		isAcceptedProbe (...identifiers: (string | null | undefined)[]) {
+			return identifiers.some(id => id && Object.hasOwn(this.acceptedProbes, id));
+		},
+
+		isRejectedProbe (...identifiers: (string | null | undefined)[]) {
+			return identifiers.some(id => id && Object.hasOwn(this.rejectedProbes, id));
+		},
+
+		isFailedProbe (...identifiers: (string | null | undefined)[]) {
+			return identifiers.some(id => id && Object.hasOwn(this.failedProbes, id));
 		},
 	},
 });

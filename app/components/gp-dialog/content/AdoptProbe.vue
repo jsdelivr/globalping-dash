@@ -328,12 +328,7 @@
 	const { user } = storeToRefs(auth);
 	const userPublicIp = usePublicIp();
 
-	const activeStep = ref(props.manualHwAdoption
-		? props.probeIp
-			? '6'
-			: '5'
-		: '0');
-
+	const activeStep = ref(props.manualHwAdoption ? '5' : '0');
 	const probeType = ref<'software' | 'hardware'>(props.manualHwAdoption ? 'hardware' : 'software');
 	const newProbes = ref<Probe[]>([]);
 	const isSuccess = ref(false);
@@ -644,10 +639,6 @@
 			await sendAdoptionCode((step: string | number) => {
 				activeStep.value = String(step);
 			});
-
-			if (!isIpValid.value) {
-				activeStep.value = '5';
-			}
 		}
 	});
 

@@ -152,7 +152,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 				body: JSON.stringify({ token }),
 			}));
 
-			refreshNuxtData('gp_probes');
+			refreshNuxtData();
 			return probe;
 		},
 

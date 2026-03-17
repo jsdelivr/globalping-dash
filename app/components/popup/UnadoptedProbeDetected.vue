@@ -140,6 +140,7 @@
 		});
 
 		adoptionTimeout = setTimeout(() => {
+			adoptionTimeout = undefined;
 			loading.value = false;
 			hasError.value = true;
 			sendErrorToast(new Error('Adoption timed out. No token received within 5 seconds.'));
@@ -179,6 +180,9 @@
 		if (!activeProbe.value) {
 			return;
 		}
+
+		clearTimeout(adoptionTimeout);
+		adoptionTimeout = undefined;
 
 		if (hasError.value) {
 			hasError.value = false;

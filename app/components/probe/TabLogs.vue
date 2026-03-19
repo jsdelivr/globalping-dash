@@ -63,7 +63,6 @@
 
 <script setup lang="ts">
 	import throttle from 'lodash/throttle';
-	import { useErrorToast } from '~/composables/useErrorToast';
 	import { formatTechnicalDateTime } from '~/utils/date-formatters';
 	import { pluralize } from '~/utils/pluralize';
 
@@ -98,8 +97,6 @@
 			immediate: false,
 		},
 	);
-
-	useErrorToast(error);
 
 	const refreshLogs = async () => {
 		return refresh().then(() => {

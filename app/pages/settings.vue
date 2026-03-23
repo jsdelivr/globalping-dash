@@ -174,12 +174,12 @@
 							<ToggleSwitch
 								v-if="notificationPreferences[notificationTypeId]"
 								v-model="notificationPreferences[notificationTypeId].enabled"
-								:disabled="!!auth.impersonation"
+								:disabled="!!auth.impersonation || notificationType.readOnly"
 								@update:model-value="(enabled) => enabled === false && (notificationPreferences[notificationTypeId]!.emailEnabled = false)"
 							/>
 							<label class="cursor-text text-nowrap">App</label>
 						</div>
-						<div v-if="notificationType.allowEmail" class="flex items-center gap-2">
+						<div v-if="notificationType.sendEmail" class="flex items-center gap-2">
 							<ToggleSwitch
 								v-if="notificationPreferences[notificationTypeId]"
 								v-model="notificationPreferences[notificationTypeId].emailEnabled"
@@ -401,9 +401,9 @@
 	// This builds an object to send to the backend.
 	function normalizeNotificationPreferences () {
 		return Object.fromEntries(Object.keys(notificationTypes.value).sort().map((type) => {
-			const normalizedPreference: NotificationPreference = { enabled: notificationPreferences.value[type]?.enabled !== false };
+			const normalizedPreference: NotificationPreference = { enabled: notificationTypes.value[type]!.readOnly || notificationPreferences.value[type]?.enabled !== false };
 
-			if (notificationTypes.value[type]!.allowEmail) {
+			if (notificationTypes.value[type]!.sendEmail) {
 				normalizedPreference.emailEnabled = notificationPreferences.value[type]?.emailEnabled !== false;
 			}
 
@@ -444,15 +444,15 @@
 		// Here we are fulfilling default values.
 		const preferences = Object.fromEntries(Object.keys(notificationTypes.value)
 			.map(type => [ type, {
-				enabled: !allDisabled,
-				emailEnabled: notificationTypes.value[type]?.allowEmail ? !(allDisabled || allEmailDisabled) : undefined,
+				enabled: notificationTypes.value[type]!.readOnly || !allDisabled,
+				emailEnabled: notificationTypes.value[type]?.sendEmail ? !(allDisabled || allEmailDisabled) : undefined,
 				parameter: notificationTypes.value[type]?.hasParameter ? String(notificationTypes.value[type]?.defaultParameter) : undefined,
 			}])) as Record<string, { enabled: boolean; emailEnabled?: boolean; parameter?: string }>;
 
 		// Here we are overriding default values with user preferences.
 		for (const [ type, preference ] of Object.entries(userPreferences).filter(([ type ]) => type in preferences)) {
 			if (typeof preference?.enabled === 'boolean') {
-				preferences[type]!.enabled = preference.enabled;
+				preferences[type]!.enabled = notificationTypes.value[type]!.readOnly || preference.enabled;
 				preferences[type]!.emailEnabled = preference.enabled;
 			}
 

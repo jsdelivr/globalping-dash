@@ -148,7 +148,8 @@ declare global {
 	};
 
 	type NotificationTypes = Record<string, {
-		allowEmail: boolean;
+		readOnly: boolean;
+		sendEmail: boolean;
 		hasParameter: boolean;
 		defaultParameter?: number;
 		description: string;

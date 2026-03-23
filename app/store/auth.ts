@@ -39,6 +39,7 @@ export const useAuth = defineStore('auth', {
 			user_type: 'member',
 			appearance: null,
 			public_probes: false,
+			notification_preferences: null,
 			adoption_token: '',
 			default_prefix: '',
 			last_page: '',

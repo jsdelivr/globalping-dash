@@ -215,7 +215,7 @@
 			</div>
 		</div>
 		<div class="mt-6 text-right">
-			<Button label="Apply settings" :loading="saveLoading" :disabled="!!auth.impersonation" @click="save"/>
+			<Button label="Apply settings" :loading="saveLoading" :disabled="!!auth.impersonation || Object.keys(notificationTypes).length === 0" @click="save"/>
 		</div>
 		<GPDialog
 			v-model:visible="deleteDialog"

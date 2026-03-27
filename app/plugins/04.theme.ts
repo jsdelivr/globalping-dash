@@ -28,7 +28,6 @@ export default defineNuxtPlugin(() => {
 		}
 	};
 
-	updateTheme();
 	window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
-	watch(userTheme, updateTheme);
+	watch([ userTheme, () => auth.isLoggedIn ], updateTheme, { immediate: true });
 });

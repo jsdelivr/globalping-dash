@@ -118,12 +118,12 @@
 									<p class="col-start-2 col-end-3 row-start-2 row-end-3 max-w-[185px] overflow-hidden text-ellipsis text-[13px] text-bluegray-400">{{ probe.ip }}</p>
 								</div>
 								<div>
-									<div class="mb-2 flex items-center text-nowrap">
+									<div class="mb-2 flex items-center text-nowrap md:max-w-80">
 										<span class="mr-6 font-semibold">Location:</span>
-										<span class="ml-auto mr-2 flex items-center justify-end">
+										<span class="ml-auto mr-2 min-w-0 truncate text-right">
 											{{ probe.city }}, {{ probe.country }}
 										</span>
-										<CountryFlag :country="probe.country" size="small"/>
+										<CountryFlag class="shrink-0" :country="probe.country" size="small"/>
 									</div>
 									<div class="mb-2 flex items-center justify-between text-nowrap">
 										<span class="mr-6 font-semibold">Version:</span>

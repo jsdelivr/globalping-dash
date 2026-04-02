@@ -453,7 +453,7 @@
 		for (const [ type, preference ] of Object.entries(userPreferences).filter(([ type ]) => type in preferences)) {
 			if (typeof preference?.enabled === 'boolean') {
 				preferences[type]!.enabled = notificationTypes.value[type]!.readOnly || preference.enabled;
-				preferences[type]!.emailEnabled = preference.enabled;
+				preferences[type]!.enabled === false && (preferences[type]!.emailEnabled = false);
 			}
 
 			if (typeof preference?.emailEnabled === 'boolean') {

@@ -438,7 +438,7 @@
 		const userPreferences = user.value.notification_preferences ?? {};
 		const configuredTypes = Object.keys(userPreferences);
 		const configuredEmailTypes = configuredTypes.filter(type => typeof userPreferences[type]?.emailEnabled === 'boolean');
-		const allDisabled = configuredTypes.length > 0 && configuredTypes.every(type => userPreferences[type]?.enabled === false);
+		const allDisabled = configuredTypes.length > 0 && configuredTypes.every(type => userPreferences[type]?.enabled === false || notificationTypes.value[type]?.readOnly);
 		const allEmailDisabled = configuredEmailTypes.length > 0 && configuredEmailTypes.every(type => userPreferences[type]?.emailEnabled === false);
 
 		// Here we are fulfilling default values.

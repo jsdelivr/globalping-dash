@@ -436,10 +436,8 @@
 	// This builds an object to use and edit by the form UI.
 	function buildNotificationPreferences () {
 		const userPreferences = user.value.notification_preferences ?? {};
-		const configuredTypes = Object.keys(userPreferences);
-		const configuredEmailTypes = configuredTypes.filter(type => typeof userPreferences[type]?.emailEnabled === 'boolean');
-		const allDisabled = configuredTypes.length > 0 && configuredTypes.every(type => userPreferences[type]?.enabled === false || notificationTypes.value[type]?.readOnly);
-		const allEmailDisabled = configuredEmailTypes.length > 0 && configuredEmailTypes.every(type => userPreferences[type]?.emailEnabled === false);
+		const allDisabled = getAllDisabled(userPreferences);
+		const allEmailDisabled = getAllEmailsDisabled(userPreferences);
 
 		// Here we are fulfilling default values.
 		const preferences = Object.fromEntries(Object.keys(notificationTypes.value)
@@ -466,6 +464,16 @@
 		}
 
 		return preferences;
+	}
+
+	function getAllDisabled (notificationPreferences: Record<string, NotificationPreference>): boolean {
+		const configuredTypes = Object.keys(notificationPreferences).filter(type => notificationTypes.value[type]!.readOnly === false);
+		return configuredTypes.length > 0 && configuredTypes.every(type => notificationPreferences[type]!.enabled === false);
+	}
+
+	function getAllEmailsDisabled (notificationPreferences: Record<string, NotificationPreference>): boolean {
+		const configuredTypes = Object.values(notificationPreferences).filter(preference => typeof preference.emailEnabled === 'boolean');
+		return configuredTypes.length > 0 && configuredTypes.every(preference => preference.emailEnabled === false);
 	}
 
 	async function loadNotificationTypes () {

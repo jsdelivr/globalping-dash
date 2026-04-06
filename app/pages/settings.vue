@@ -443,14 +443,14 @@
 		const preferences = Object.fromEntries(Object.keys(notificationTypes.value)
 			.map(type => [ type, {
 				enabled: notificationTypes.value[type]!.readOnly || !allDisabled,
-				emailEnabled: notificationTypes.value[type]?.sendEmail ? !(allDisabled || allEmailDisabled) : undefined,
-				parameter: notificationTypes.value[type]?.hasParameter ? String(notificationTypes.value[type]?.defaultParameter) : undefined,
+				emailEnabled: notificationTypes.value[type]!.sendEmail ? !(allDisabled || allEmailDisabled) : undefined,
+				parameter: notificationTypes.value[type]!.hasParameter ? String(notificationTypes.value[type]!.defaultParameter) : undefined,
 			}])) as Record<string, { enabled: boolean; emailEnabled?: boolean; parameter?: string }>;
 
 		// Here we are overriding default values with user preferences.
 		for (const [ type, preference ] of Object.entries(userPreferences).filter(([ type ]) => type in preferences)) {
-			if (typeof preference?.enabled === 'boolean') {
-				preferences[type]!.enabled = notificationTypes.value[type]!.readOnly || preference.enabled;
+			if (typeof preference.enabled === 'boolean') {
+				preferences[type]!.enabled = notificationTypes.value[type]?.readOnly || preference.enabled;
 				preferences[type]!.enabled === false && (preferences[type]!.emailEnabled = false);
 			}
 
@@ -458,7 +458,7 @@
 				preferences[type]!.emailEnabled = preference.emailEnabled;
 			}
 
-			if (notificationTypes.value[type]?.hasParameter && Number.isInteger(preference?.parameter)) {
+			if (notificationTypes.value[type]?.hasParameter && Number.isInteger(preference.parameter)) {
 				preferences[type]!.parameter = String(preference.parameter);
 			}
 		}
@@ -467,7 +467,7 @@
 	}
 
 	function getAllDisabled (notificationPreferences: Record<string, NotificationPreference>): boolean {
-		const configuredTypes = Object.keys(notificationPreferences).filter(type => notificationTypes.value[type]!.readOnly === false);
+		const configuredTypes = Object.keys(notificationPreferences).filter(type => notificationTypes.value[type]?.readOnly === false);
 		return configuredTypes.length > 0 && configuredTypes.every(type => notificationPreferences[type]!.enabled === false);
 	}
 

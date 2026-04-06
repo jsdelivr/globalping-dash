@@ -467,7 +467,7 @@
 	}
 
 	function getAllDisabled (notificationPreferences: Record<string, NotificationPreference>): boolean {
-		const configuredTypes = Object.keys(notificationPreferences).filter(type => notificationTypes.value[type]?.readOnly === false);
+		const configuredTypes = Object.keys(notificationPreferences).filter(type => notificationTypes.value[type]?.readOnly !== true);
 		return configuredTypes.length > 0 && configuredTypes.every(type => notificationPreferences[type]!.enabled === false);
 	}
 

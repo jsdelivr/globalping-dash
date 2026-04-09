@@ -26,6 +26,7 @@
 
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
+	import { sendErrorToast } from '~/utils/send-toast';
 
 	definePageMeta({
 		layout: 'info',
@@ -53,6 +54,8 @@
 		try {
 			await $directus.request(customEndpoint({ method: 'POST', path: '/email-unsubscribe/unsubscribe', params: { data: unsubscribeData.value } }));
 			isUnsubscribed.value = true;
+		} catch (err) {
+			sendErrorToast(err);
 		} finally {
 			isSubmitting.value = false;
 		}

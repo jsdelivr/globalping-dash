@@ -1,7 +1,7 @@
 import { useAuth } from '~/store/auth';
 
 const PUBLIC_ROUTES = [
-	'/emails/success',
+	'/emails/confirmation',
 ];
 
 export default defineNuxtRouteMiddleware(async (to) => {

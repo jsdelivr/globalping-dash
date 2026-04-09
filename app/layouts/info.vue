@@ -31,7 +31,7 @@
 
 	useHead({
 		meta: [
-			{ name: 'theme-color', content: appearance.theme === 'light' ? '#ffffff' : '#17233a' },
+			{ name: 'theme-color', content: () => appearance.theme === 'light' ? '#ffffff' : '#17233a' },
 		],
 	});
 </script>

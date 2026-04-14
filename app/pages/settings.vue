@@ -240,6 +240,7 @@
 
 <script setup lang="ts">
 	import { customEndpoint, updateMe } from '@directus/sdk';
+	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useFormDirty } from '~/composables/useFormDirty';
 	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
@@ -259,7 +260,17 @@
 	const publicProbes = ref(user.value.public_probes);
 	const defaultPrefix = ref(user.value.default_prefix);
 	const adoptionToken = ref(user.value.adoption_token);
-	const notificationTypes = ref<NotificationTypes>({});
+
+	const { data: notificationTypes, error: notificationTypesError, status: notificationTypesStatus } = useLazyAsyncData(
+		'settings-notification-types',
+		() => $directus.request<NotificationTypes>(customEndpoint({
+			method: 'GET',
+			path: '/metadata/notification-types',
+		})),
+		{ default: () => ({}) as NotificationTypes },
+	);
+
+	useErrorToast(notificationTypesError);
 
 	const notificationPreferences = ref<Record<string, { enabled: boolean; emailEnabled?: boolean; parameter?: string }>>({});
 	const showOrgsInfoMessage = ref(false);
@@ -329,14 +340,6 @@
 	let lastSavedAppearance = user.value.appearance;
 	onUnmounted(() => auth.setAppearance(lastSavedAppearance));
 
-	onMounted(async () => {
-		try {
-			await loadNotificationTypes();
-		} catch (e) {
-			sendErrorToast(e);
-		}
-	});
-
 	// SYNC WITH GITHUB
 
 	const loadingIconId = ref<number | null>(null);
@@ -397,6 +400,13 @@
 	};
 
 	// NOTIFICATION PREFERENCES
+
+	watch(notificationTypesStatus, (s) => {
+		if (s !== 'success') { return; }
+
+		notificationPreferences.value = buildNotificationPreferences();
+		initialNotificationPreferences = serializeNotificationPreferences();
+	}, { immediate: true });
 
 	// This builds an object to send to the backend.
 	function normalizeNotificationPreferences () {
@@ -474,16 +484,5 @@
 	function getAllEmailsDisabled (notificationPreferences: Record<string, NotificationPreference>): boolean {
 		const configuredTypes = Object.values(notificationPreferences).filter(preference => typeof preference.emailEnabled === 'boolean');
 		return configuredTypes.length > 0 && configuredTypes.every(preference => preference.emailEnabled === false);
-	}
-
-	async function loadNotificationTypes () {
-		const types = await $directus.request<NotificationTypes>(customEndpoint({
-			method: 'GET',
-			path: '/metadata/notification-types',
-		}));
-
-		notificationTypes.value = types;
-		notificationPreferences.value = buildNotificationPreferences();
-		initialNotificationPreferences = serializeNotificationPreferences();
 	}
 </script>

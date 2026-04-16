@@ -49,5 +49,7 @@ export const getProbeStatusText = (probe: Probe, showOfflineDuration = false) =>
 		return getOfflineDurationText(probe) ?? 'Offline';
 	}
 
+	if (probe.status === 'icmp-tcp-test-failed') { return 'ICMP/TCP test failed'; }
+
 	return capitalize(getExtendedProbeStatus(probe).replaceAll('-', ' '));
 };

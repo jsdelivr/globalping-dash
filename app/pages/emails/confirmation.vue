@@ -2,17 +2,26 @@
 	<div>
 		<div v-if="isUnsubscribed">
 			<Message severity="success" class="font-normal">
-				<p>Successfully unsubscribed from <b>{{ type }}</b> probe emails.</p>
-				<p class="mt-4">You can configure your notifications on the <NuxtLink to="/settings" class="underline">settings page</NuxtLink>.</p>
+				<p>Successfully unsubscribed from <strong>{{ type }}</strong> emails.</p>
 			</Message>
+			<p class="mt-4">You can also configure all notification types on the <NuxtLink to="/settings" class="underline">settings page</NuxtLink>.</p>
 		</div>
 		<div v-else>
-			<h3>Do you want to unsubscribe from <b>{{ type }}</b> probe emails?</h3>
-			<p class="mt-4">You can configure your notifications on the <NuxtLink to="/settings" class="underline">settings page</NuxtLink>.</p>
+			<h3>Do you want to unsubscribe from <strong>{{ type }}</strong> emails?</h3>
+			<p class="mt-4">You can also configure all notification types on the <NuxtLink to="/settings" class="underline">settings page</NuxtLink>.</p>
 			<Divider class="h-2 before:border-t-2"/>
-			<div class="mt-8 flex justify-center">
+
+			<div class="flex gap-2">
+				<NuxtLink to="/settings" class="w-1/2">
+					<Button
+						class="h-12 w-full bg-black"
+						severity="secondary"
+						label="Configure"
+					/>
+				</NuxtLink>
+
 				<Button
-					class="h-12 min-w-40 bg-black"
+					class="h-12 w-1/2 bg-black"
 					severity="contrast"
 					label="Unsubscribe"
 					:loading="isSubmitting"
@@ -42,7 +51,7 @@
 	const isUnsubscribed = ref(false);
 	const unsubscribeData = computed(() => typeof route.query.data === 'string' ? route.query.data.trim() : '');
 	const typeFromData = computed(() => formatEmailTypeLabel(getTypeFromJwt(unsubscribeData.value)));
-	const type = computed(() => typeFromData.value ? `"${typeFromData.value}"` : 'all');
+	const type = computed(() => typeFromData.value ? `${typeFromData.value}` : 'all');
 
 	async function unsubscribe () {
 		if (!unsubscribeData.value || isSubmitting.value || isUnsubscribed.value) {

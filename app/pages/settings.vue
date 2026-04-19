@@ -183,7 +183,8 @@
 							<ToggleSwitch
 								v-if="notificationPreferences[notificationTypeId]"
 								v-model="notificationPreferences[notificationTypeId].emailEnabled"
-								:disabled="!!auth.impersonation || !notificationPreferences[notificationTypeId].enabled"
+								:disabled="!!auth.impersonation"
+								@update:model-value="(enabled) => enabled === true && (notificationPreferences[notificationTypeId]!.enabled = true)"
 							/>
 							<label class="cursor-text text-nowrap">Email</label>
 						</div>

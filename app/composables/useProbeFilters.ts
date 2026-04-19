@@ -32,7 +32,7 @@ export const STATUS_MAP: Record<StatusCode, StatusOption> = {
 	'all': { name: 'All', options: [ ...ONLINE_STATUSES, ...OFFLINE_STATUSES ] },
 	'online': { name: 'Online', options: ONLINE_STATUSES },
 	'online-outdated': { name: 'Online - outdated', options: ONLINE_STATUSES, outdatedOnly: true },
-	'unstable-network': { name: 'Online - unstable network', options: [ 'ping-test-failed', 'too-many-disconnects' ] },
+	'unstable-network': { name: 'Online - unstable network', options: [ 'ping-test-failed', 'icmp-tcp-test-failed', 'too-many-disconnects' ] },
 	'offline': { name: 'Offline', options: OFFLINE_STATUSES },
 } as const;
 

@@ -76,7 +76,7 @@ declare global {
 		};
 	};
 
-	type Status = 'initializing' | 'ready' | 'unbuffer-missing' | 'ping-test-failed' | 'too-many-disconnects' | 'sigterm' | 'offline';
+	type Status = 'initializing' | 'ready' | 'unbuffer-missing' | 'ping-test-failed' | 'icmp-tcp-test-failed' | 'too-many-disconnects' | 'sigterm' | 'offline';
 
 	type CustomLocation<TCountry extends string = string> = null | {
 		country: TCountry;

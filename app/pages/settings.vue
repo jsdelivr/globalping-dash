@@ -175,7 +175,7 @@
 								v-if="notificationPreferences[notificationTypeId]"
 								v-model="notificationPreferences[notificationTypeId].enabled"
 								:disabled="!!auth.impersonation || notificationType.readOnly"
-								@update:model-value="(enabled) => enabled === false && (notificationPreferences[notificationTypeId]!.emailEnabled = false)"
+								@update:model-value="(enabled) => !enabled && (notificationPreferences[notificationTypeId]!.emailEnabled = false)"
 							/>
 							<label class="cursor-text text-nowrap">App</label>
 						</div>
@@ -184,7 +184,7 @@
 								v-if="notificationPreferences[notificationTypeId]"
 								v-model="notificationPreferences[notificationTypeId].emailEnabled"
 								:disabled="!!auth.impersonation"
-								@update:model-value="(enabled) => enabled === true && (notificationPreferences[notificationTypeId]!.enabled = true)"
+								@update:model-value="(enabled) => enabled && (notificationPreferences[notificationTypeId]!.enabled = true)"
 							/>
 							<label class="cursor-text text-nowrap">Email</label>
 						</div>
@@ -447,8 +447,8 @@
 	// This builds an object to use and edit by the form UI.
 	function buildNotificationPreferences () {
 		const userPreferences = user.value.notification_preferences ?? {};
-		const allDisabled = getAllDisabled(userPreferences);
-		const allEmailDisabled = getAllEmailsDisabled(userPreferences);
+		const allDisabled = areAllDisabled(userPreferences);
+		const allEmailDisabled = areAllEmailsDisabled(userPreferences);
 
 		// Here we are fulfilling default values.
 		const preferences = Object.fromEntries(Object.keys(notificationTypes.value)
@@ -460,10 +460,8 @@
 
 		// Here we are overriding default values with user preferences.
 		for (const [ type, preference ] of Object.entries(userPreferences).filter(([ type ]) => type in preferences)) {
-			if (typeof preference.enabled === 'boolean') {
-				preferences[type]!.enabled = notificationTypes.value[type]?.readOnly || preference.enabled;
-				preferences[type]!.enabled === false && (preferences[type]!.emailEnabled = false);
-			}
+			preferences[type]!.enabled = notificationTypes.value[type]?.readOnly || preference.enabled;
+			!preferences[type]!.enabled && (preferences[type]!.emailEnabled = false);
 
 			if (typeof preference?.emailEnabled === 'boolean') {
 				preferences[type]!.emailEnabled = preference.emailEnabled;
@@ -477,13 +475,13 @@
 		return preferences;
 	}
 
-	function getAllDisabled (notificationPreferences: Record<string, NotificationPreference>): boolean {
-		const configuredTypes = Object.keys(notificationPreferences).filter(type => notificationTypes.value[type]?.readOnly !== true);
-		return configuredTypes.length > 0 && configuredTypes.every(type => notificationPreferences[type]!.enabled === false);
+	function areAllDisabled (notificationPreferences: Record<string, NotificationPreference>): boolean {
+		const configurable = Object.keys(notificationPreferences).filter(type => notificationTypes.value[type]?.readOnly !== true);
+		return configurable.length > 0 && configurable.every(type => !notificationPreferences[type]!.enabled);
 	}
 
-	function getAllEmailsDisabled (notificationPreferences: Record<string, NotificationPreference>): boolean {
-		const configuredTypes = Object.values(notificationPreferences).filter(preference => typeof preference.emailEnabled === 'boolean');
-		return configuredTypes.length > 0 && configuredTypes.every(preference => preference.emailEnabled === false);
+	function areAllEmailsDisabled (notificationPreferences: Record<string, NotificationPreference>): boolean {
+		const configured = Object.values(notificationPreferences).filter(preference => typeof preference.emailEnabled === 'boolean');
+		return configured.length > 0 && configured.every(preference => preference.emailEnabled === false);
 	}
 </script>

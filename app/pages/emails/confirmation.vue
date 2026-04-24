@@ -35,6 +35,7 @@
 
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
+	import { useErrorToast } from '~/composables/useErrorToast';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	definePageMeta({
@@ -50,8 +51,20 @@
 	const isSubmitting = ref(false);
 	const isUnsubscribed = ref(false);
 	const unsubscribeData = computed(() => typeof route.query.data === 'string' ? route.query.data.trim() : '');
-	const typeFromData = computed(() => formatEmailTypeLabel(getTypeFromJwt(unsubscribeData.value)));
-	const type = computed(() => typeFromData.value ? `${typeFromData.value}` : 'all');
+
+	const { data: notificationTypes, error: notificationTypesError } = useLazyAsyncData(
+		'settings-notification-types',
+		() => $directus.request<NotificationTypes>(customEndpoint({
+			method: 'GET',
+			path: '/metadata/notification-types',
+		})),
+		{ default: () => ({}) as NotificationTypes },
+	);
+	useErrorToast(notificationTypesError);
+	const type = computed(() => {
+		const jwtType = getTypeFromJwt(unsubscribeData.value) || 'all';
+		return notificationTypes.value[jwtType]?.description ?? jwtType;
+	});
 
 	async function unsubscribe () {
 		if (!unsubscribeData.value || isSubmitting.value || isUnsubscribed.value) {
@@ -88,16 +101,5 @@
 	function decodeBase64Url (value: string) {
 		const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
 		return atob(normalized.padEnd(normalized.length + ((4 - normalized.length % 4) % 4), '='));
-	}
-
-	function formatEmailTypeLabel (type: string) {
-		type = type.trim();
-
-		if (type === '') {
-			return '';
-		}
-
-		const normalized = type.split(/[_-]+/).filter(Boolean).map(word => word.toLowerCase()).join('\u00A0');
-		return normalized ? normalized.charAt(0).toUpperCase() + normalized.slice(1) : '';
 	}
 </script>

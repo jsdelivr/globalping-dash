@@ -20,6 +20,7 @@ export const getProbeStatusColor = (probe: Probe) => {
 			return 'text-bluegray-500';
 
 		case 'ping-test-failed':
+		case 'icmp-tcp-test-failed':
 		case 'too-many-disconnects':
 			return 'text-red-500';
 
@@ -47,6 +48,8 @@ export const getProbeStatusText = (probe: Probe, showOfflineDuration = false) =>
 	if (showOfflineDuration && probe.status === 'offline') {
 		return getOfflineDurationText(probe) ?? 'Offline';
 	}
+
+	if (probe.status === 'icmp-tcp-test-failed') { return 'ICMP/TCP test failed'; }
 
 	return capitalize(getExtendedProbeStatus(probe).replaceAll('-', ' '));
 };

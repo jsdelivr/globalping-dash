@@ -175,7 +175,7 @@
 								v-if="notificationPreferences[notificationTypeId]"
 								v-model="notificationPreferences[notificationTypeId].enabled"
 								:disabled="!!auth.impersonation || notificationType.readOnly"
-								@update:model-value="(enabled) => enabled === false && (notificationPreferences[notificationTypeId]!.emailEnabled = false)"
+								@update:model-value="(enabled) => !enabled && (notificationPreferences[notificationTypeId]!.emailEnabled = false)"
 							/>
 							<label class="cursor-text text-nowrap">App</label>
 						</div>
@@ -183,7 +183,8 @@
 							<ToggleSwitch
 								v-if="notificationPreferences[notificationTypeId]"
 								v-model="notificationPreferences[notificationTypeId].emailEnabled"
-								:disabled="!!auth.impersonation || !notificationPreferences[notificationTypeId].enabled"
+								:disabled="!!auth.impersonation"
+								@update:model-value="(enabled) => enabled && (notificationPreferences[notificationTypeId]!.enabled = true)"
 							/>
 							<label class="cursor-text text-nowrap">Email</label>
 						</div>
@@ -240,6 +241,7 @@
 
 <script setup lang="ts">
 	import { customEndpoint, updateMe } from '@directus/sdk';
+	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useFormDirty } from '~/composables/useFormDirty';
 	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
@@ -259,7 +261,17 @@
 	const publicProbes = ref(user.value.public_probes);
 	const defaultPrefix = ref(user.value.default_prefix);
 	const adoptionToken = ref(user.value.adoption_token);
-	const notificationTypes = ref<NotificationTypes>({});
+
+	const { data: notificationTypes, error: notificationTypesError, status: notificationTypesStatus } = useLazyAsyncData(
+		'settings-notification-types',
+		() => $directus.request<NotificationTypes>(customEndpoint({
+			method: 'GET',
+			path: '/metadata/notification-types',
+		})),
+		{ default: () => ({}) as NotificationTypes },
+	);
+
+	useErrorToast(notificationTypesError);
 
 	const notificationPreferences = ref<Record<string, { enabled: boolean; emailEnabled?: boolean; parameter?: string }>>({});
 	const showOrgsInfoMessage = ref(false);
@@ -329,14 +341,6 @@
 	let lastSavedAppearance = user.value.appearance;
 	onUnmounted(() => auth.setAppearance(lastSavedAppearance));
 
-	onMounted(async () => {
-		try {
-			await loadNotificationTypes();
-		} catch (e) {
-			sendErrorToast(e);
-		}
-	});
-
 	// SYNC WITH GITHUB
 
 	const loadingIconId = ref<number | null>(null);
@@ -398,6 +402,13 @@
 
 	// NOTIFICATION PREFERENCES
 
+	watch(notificationTypesStatus, (s) => {
+		if (s !== 'success') { return; }
+
+		notificationPreferences.value = buildNotificationPreferences();
+		initialNotificationPreferences = serializeNotificationPreferences();
+	}, { immediate: true });
+
 	// This builds an object to send to the backend.
 	function normalizeNotificationPreferences () {
 		return Object.fromEntries(Object.keys(notificationTypes.value).sort().map((type) => {
@@ -436,31 +447,27 @@
 	// This builds an object to use and edit by the form UI.
 	function buildNotificationPreferences () {
 		const userPreferences = user.value.notification_preferences ?? {};
-		const configuredTypes = Object.keys(userPreferences);
-		const configuredEmailTypes = configuredTypes.filter(type => typeof userPreferences[type]?.emailEnabled === 'boolean');
-		const allDisabled = configuredTypes.length > 0 && configuredTypes.every(type => userPreferences[type]?.enabled === false);
-		const allEmailDisabled = configuredEmailTypes.length > 0 && configuredEmailTypes.every(type => userPreferences[type]?.emailEnabled === false);
+		const allDisabled = areAllDisabled(userPreferences);
+		const allEmailDisabled = areAllEmailsDisabled(userPreferences);
 
 		// Here we are fulfilling default values.
 		const preferences = Object.fromEntries(Object.keys(notificationTypes.value)
 			.map(type => [ type, {
 				enabled: notificationTypes.value[type]!.readOnly || !allDisabled,
-				emailEnabled: notificationTypes.value[type]?.sendEmail ? !(allDisabled || allEmailDisabled) : undefined,
-				parameter: notificationTypes.value[type]?.hasParameter ? String(notificationTypes.value[type]?.defaultParameter) : undefined,
+				emailEnabled: notificationTypes.value[type]!.sendEmail ? !(allDisabled || allEmailDisabled) : undefined,
+				parameter: notificationTypes.value[type]!.hasParameter ? String(notificationTypes.value[type]!.defaultParameter) : undefined,
 			}])) as Record<string, { enabled: boolean; emailEnabled?: boolean; parameter?: string }>;
 
 		// Here we are overriding default values with user preferences.
 		for (const [ type, preference ] of Object.entries(userPreferences).filter(([ type ]) => type in preferences)) {
-			if (typeof preference?.enabled === 'boolean') {
-				preferences[type]!.enabled = notificationTypes.value[type]!.readOnly || preference.enabled;
-				preferences[type]!.enabled === false && (preferences[type]!.emailEnabled = false);
-			}
+			preferences[type]!.enabled = notificationTypes.value[type]?.readOnly || preference.enabled;
+			!preferences[type]!.enabled && (preferences[type]!.emailEnabled = false);
 
 			if (typeof preference?.emailEnabled === 'boolean') {
 				preferences[type]!.emailEnabled = preference.emailEnabled;
 			}
 
-			if (notificationTypes.value[type]?.hasParameter && Number.isInteger(preference?.parameter)) {
+			if (notificationTypes.value[type]?.hasParameter && Number.isInteger(preference.parameter)) {
 				preferences[type]!.parameter = String(preference.parameter);
 			}
 		}
@@ -468,14 +475,13 @@
 		return preferences;
 	}
 
-	async function loadNotificationTypes () {
-		const types = await $directus.request<NotificationTypes>(customEndpoint({
-			method: 'GET',
-			path: '/metadata/notification-types',
-		}));
+	function areAllDisabled (notificationPreferences: Record<string, NotificationPreference>): boolean {
+		const configurable = Object.keys(notificationPreferences).filter(type => notificationTypes.value[type]?.readOnly !== true);
+		return configurable.length > 0 && configurable.every(type => !notificationPreferences[type]!.enabled);
+	}
 
-		notificationTypes.value = types;
-		notificationPreferences.value = buildNotificationPreferences();
-		initialNotificationPreferences = serializeNotificationPreferences();
+	function areAllEmailsDisabled (notificationPreferences: Record<string, NotificationPreference>): boolean {
+		const configured = Object.values(notificationPreferences).filter(preference => typeof preference.emailEnabled === 'boolean');
+		return configured.length > 0 && configured.every(preference => preference.emailEnabled === false);
 	}
 </script>

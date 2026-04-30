@@ -52,7 +52,7 @@
 
 				<div class="overflow-hidden px-4 pb-6 text-sm font-normal leading-[18px] text-bluegray-900 sm:px-6 dark:text-bluegray-0">
 					<!-- eslint-disable-next-line vue/no-v-html -->
-					<span v-if="notification.message" v-interpolation class="[&_a]:font-semibold [&_a]:text-primary [&_p:last-child]:mb-0 [&_p]:mb-[18px] [&_p_strong]:break-all" v-html="notification.message"/>
+					<span v-if="notification.message" v-interpolation class="[&_a]:font-semibold [&_a]:text-primary [&_p:last-child]:mb-0 [&_p]:mb-[18px] [&_p_strong]:break-all [&_ul:last-child]:mb-0 [&_ul]:my-[18px] [&_ul]:list-disc [&_ul]:pl-6" v-html="notification.message"/>
 				</div>
 			</div>
 		</div>

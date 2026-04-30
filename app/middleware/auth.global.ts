@@ -1,7 +1,12 @@
 import { useAuth } from '~/store/auth';
 
+const PUBLIC_ROUTES = [
+	'/emails/unsubscribe',
+];
+
 export default defineNuxtRouteMiddleware(async (to) => {
 	const auth = useAuth();
+	const isPublicRoute = PUBLIC_ROUTES.includes(to.path);
 
 	if (!auth.isLoggedIn) {
 		await auth.refresh();
@@ -12,9 +17,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
 		return navigateTo(auth.getRedirectUrl(), { external: true });
 	}
 
-	if (!auth.isLoggedIn && to?.name !== 'login') {
+	if (!auth.isLoggedIn && to?.name !== 'login' && !isPublicRoute) {
 		auth.clearAdminConfig();
 		abortNavigation();
-		return navigateTo(`/login?redirect=${encodeURIComponent(location.href)}`);
+		return navigateTo(`/login?redirect=${encodeURIComponent(new URL(to.fullPath, location.origin).toString())}`);
 	}
 });

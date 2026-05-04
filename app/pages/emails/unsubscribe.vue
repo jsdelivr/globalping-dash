@@ -36,6 +36,7 @@
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
 	import { useErrorToast } from '~/composables/useErrorToast';
+	import { useAuth } from '~/store/auth';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	definePageMeta({
@@ -47,6 +48,7 @@
 	});
 
 	const { $directus } = useNuxtApp();
+	const auth = useAuth();
 	const route = useRoute();
 	const isSubmitting = ref(false);
 	const isUnsubscribed = ref(false);
@@ -76,6 +78,7 @@
 		try {
 			await $directus.request(customEndpoint({ method: 'POST', path: '/email-unsubscribe/unsubscribe', params: { data: unsubscribeData.value } }));
 			isUnsubscribed.value = true;
+			await auth.refresh();
 		} catch (err) {
 			sendErrorToast(err);
 		} finally {

@@ -160,6 +160,54 @@
 
 		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
+				<h5 class="text-lg font-bold">Notifications</h5>
+			</div>
+			<div class="grow sm:w-3/5">
+				<div
+					v-for="(notificationType, notificationTypeId, index) in notificationTypes"
+					:key="notificationTypeId"
+					:class="{ 'mt-6': index > 0 }"
+				>
+					<p class="font-bold">{{ notificationType.description }}</p>
+					<div class="mt-2 flex items-center gap-4">
+						<div class="flex items-center gap-2">
+							<ToggleSwitch
+								v-if="notificationPreferences[notificationTypeId]"
+								v-model="notificationPreferences[notificationTypeId].enabled"
+								:disabled="!!auth.impersonation || notificationType.readOnly"
+								@update:model-value="(enabled) => !enabled && (notificationPreferences[notificationTypeId]!.emailEnabled = false)"
+							/>
+							<label class="cursor-text text-nowrap">App</label>
+						</div>
+						<div v-if="notificationType.sendEmail" class="flex items-center gap-2">
+							<ToggleSwitch
+								v-if="notificationPreferences[notificationTypeId]"
+								v-model="notificationPreferences[notificationTypeId].emailEnabled"
+								:disabled="!!auth.impersonation"
+								@update:model-value="(enabled) => enabled && (notificationPreferences[notificationTypeId]!.enabled = true)"
+							/>
+							<label class="cursor-text text-nowrap">Email</label>
+						</div>
+					</div>
+					<div v-if="notificationType.hasParameter" class="mt-3 flex items-center gap-2">
+						<label class="cursor-text text-nowrap">Threshold:</label>
+						<InputText
+							v-if="notificationPreferences[notificationTypeId]"
+							:model-value="notificationPreferences[notificationTypeId].parameter"
+							:disabled="!!auth.impersonation || !notificationPreferences[notificationTypeId].enabled"
+							inputmode="numeric"
+							pattern="[0-9]*"
+							class="max-w-48"
+							@beforeinput="restrictToDigits"
+							@update:model-value="(value) => notificationPreferences[notificationTypeId]!.parameter = String(value ?? '').replace(/\D+/g, '')"
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
+			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Data removal</h5>
 			</div>
 			<div class="grow sm:w-3/5">
@@ -168,7 +216,7 @@
 			</div>
 		</div>
 		<div class="mt-6 text-right">
-			<Button label="Apply settings" :loading="saveLoading" :disabled="!!auth.impersonation" @click="save"/>
+			<Button label="Apply settings" :loading="saveLoading" :disabled="!!auth.impersonation || Object.keys(notificationTypes).length === 0" @click="save"/>
 		</div>
 		<GPDialog
 			v-model:visible="deleteDialog"
@@ -193,6 +241,7 @@
 
 <script setup lang="ts">
 	import { customEndpoint, updateMe } from '@directus/sdk';
+	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useFormDirty } from '~/composables/useFormDirty';
 	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
@@ -212,7 +261,21 @@
 	const publicProbes = ref(user.value.public_probes);
 	const defaultPrefix = ref(user.value.default_prefix);
 	const adoptionToken = ref(user.value.adoption_token);
+
+	const { data: notificationTypes, error: notificationTypesError, status: notificationTypesStatus } = useLazyAsyncData(
+		'settings-notification-types',
+		() => $directus.request<NotificationTypes>(customEndpoint({
+			method: 'GET',
+			path: '/metadata/notification-types',
+		})),
+		{ default: () => ({}) as NotificationTypes },
+	);
+
+	useErrorToast(notificationTypesError);
+
+	const notificationPreferences = ref<Record<string, { enabled: boolean; emailEnabled?: boolean; parameter?: string }>>({});
 	const showOrgsInfoMessage = ref(false);
+	let initialNotificationPreferences = '{}';
 
 	const resetFormDirty = useFormDirty({
 		firstName: user.value.first_name,
@@ -222,6 +285,7 @@
 		publicProbes: user.value.public_probes,
 		defaultPrefix: user.value.default_prefix,
 		adoptionToken: user.value.adoption_token,
+		notificationPreferences: serializeNotificationPreferences(),
 	}, (current) => {
 		return firstName.value !== current.firstName
 			|| lastName.value !== current.lastName
@@ -229,7 +293,8 @@
 			|| email.value !== current.email
 			|| publicProbes.value !== current.publicProbes
 			|| defaultPrefix.value !== current.defaultPrefix
-			|| adoptionToken.value !== current.adoptionToken;
+			|| adoptionToken.value !== current.adoptionToken
+			|| serializeNotificationPreferences() !== initialNotificationPreferences;
 	});
 
 	const themeOptions = [
@@ -252,11 +317,13 @@
 				email: email.value,
 				public_probes: publicProbes.value,
 				default_prefix: defaultPrefix.value,
+				notification_preferences: normalizeNotificationPreferences(),
 				// Adoption token values are generated on BE and stored there for a limited time. So we are sending 'adoption_token' only if it is really changed.
 				...user.value.adoption_token !== adoptionToken.value ? { adoption_token: adoptionToken.value } : {},
 			}));
 
 			lastSavedAppearance = appearance.value;
+			initialNotificationPreferences = serializeNotificationPreferences();
 
 			await auth.refresh();
 
@@ -332,4 +399,89 @@
 			sendErrorToast(e);
 		}
 	};
+
+	// NOTIFICATION PREFERENCES
+
+	watch(notificationTypesStatus, (s) => {
+		if (s !== 'success') { return; }
+
+		notificationPreferences.value = buildNotificationPreferences();
+		initialNotificationPreferences = serializeNotificationPreferences();
+	}, { immediate: true });
+
+	// This builds an object to send to the backend.
+	function normalizeNotificationPreferences () {
+		return Object.fromEntries(Object.keys(notificationTypes.value).sort().map((type) => {
+			const normalizedPreference: NotificationPreference = { enabled: notificationTypes.value[type]!.readOnly || notificationPreferences.value[type]?.enabled !== false };
+
+			if (notificationTypes.value[type]!.sendEmail) {
+				normalizedPreference.emailEnabled = notificationPreferences.value[type]?.emailEnabled !== false;
+			}
+
+			if (notificationTypes.value[type]!.hasParameter) {
+				const parameter = notificationPreferences.value[type]?.parameter?.trim();
+
+				if (parameter && /^\d+$/.test(parameter)) {
+					normalizedPreference.parameter = Number.parseInt(parameter, 10);
+				}
+			}
+
+			return [ type, normalizedPreference ];
+		}));
+	}
+
+	function serializeNotificationPreferences () {
+		return JSON.stringify(normalizeNotificationPreferences());
+	}
+
+	function restrictToDigits (event: InputEvent) {
+		if (event.inputType.startsWith('delete')) {
+			return;
+		}
+
+		if (event.data && /\D/.test(event.data)) {
+			event.preventDefault();
+		}
+	}
+
+	// This builds an object to use and edit by the form UI.
+	function buildNotificationPreferences () {
+		const userPreferences = user.value.notification_preferences ?? {};
+		const allDisabled = areAllDisabled(userPreferences);
+		const allEmailDisabled = areAllEmailsDisabled(userPreferences);
+
+		// Here we are fulfilling default values.
+		const preferences = Object.fromEntries(Object.keys(notificationTypes.value)
+			.map(type => [ type, {
+				enabled: notificationTypes.value[type]!.readOnly || !allDisabled,
+				emailEnabled: notificationTypes.value[type]!.sendEmail ? !(allDisabled || allEmailDisabled) : undefined,
+				parameter: notificationTypes.value[type]!.hasParameter ? String(notificationTypes.value[type]!.defaultParameter) : undefined,
+			}])) as Record<string, { enabled: boolean; emailEnabled?: boolean; parameter?: string }>;
+
+		// Here we are overriding default values with user preferences.
+		for (const [ type, preference ] of Object.entries(userPreferences).filter(([ type ]) => type in preferences)) {
+			preferences[type]!.enabled = notificationTypes.value[type]?.readOnly || preference.enabled;
+			!preferences[type]!.enabled && (preferences[type]!.emailEnabled = false);
+
+			if (typeof preference?.emailEnabled === 'boolean') {
+				preferences[type]!.emailEnabled = preference.emailEnabled;
+			}
+
+			if (notificationTypes.value[type]?.hasParameter && Number.isInteger(preference.parameter)) {
+				preferences[type]!.parameter = String(preference.parameter);
+			}
+		}
+
+		return preferences;
+	}
+
+	function areAllDisabled (notificationPreferences: Record<string, NotificationPreference>): boolean {
+		const configurable = Object.keys(notificationPreferences).filter(type => notificationTypes.value[type]?.readOnly !== true);
+		return configurable.length > 0 && configurable.every(type => !notificationPreferences[type]!.enabled);
+	}
+
+	function areAllEmailsDisabled (notificationPreferences: Record<string, NotificationPreference>): boolean {
+		const configured = Object.values(notificationPreferences).filter(preference => typeof preference.emailEnabled === 'boolean');
+		return configured.length > 0 && configured.every(preference => preference.emailEnabled === false);
+	}
 </script>

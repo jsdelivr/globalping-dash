@@ -124,6 +124,12 @@ declare global {
 
 	type ProbeWithUser<TCountry extends string = string> = Probe<TCountry> & { user: Partial<User> };
 
+	type NotificationPreference = {
+		enabled: boolean;
+		emailEnabled?: boolean;
+		parameter?: number;
+	};
+
 	type User = {
 		id: string;
 		first_name: string | null;
@@ -135,10 +141,19 @@ declare global {
 		user_type: 'member' | 'special' | 'sponsor';
 		appearance: null | 'light' | 'dark';
 		public_probes: boolean;
+		notification_preferences: Record<string, NotificationPreference> | null;
 		adoption_token: string;
 		default_prefix: string;
 		date_created: string;
 	};
+
+	type NotificationTypes = Record<string, {
+		readOnly: boolean;
+		sendEmail: boolean;
+		hasParameter: boolean;
+		defaultParameter?: number;
+		description: string;
+	}>;
 
 	type Token = {
 		id: number;

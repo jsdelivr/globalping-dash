@@ -9,3 +9,5 @@ config/local*
 .output/
 dist
 test/e2e/globalping-dash-directus/
+.claude/
+CLAUDE.md

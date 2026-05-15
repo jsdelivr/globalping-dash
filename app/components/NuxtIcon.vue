@@ -41,19 +41,19 @@
   </script>
 
   <style>
-	.nuxt-icon svg {
-		width: 1em;
-		height: 1em;
-		vertical-align: middle;
-	}
+		.nuxt-icon svg {
+			width: 1em;
+			height: 1em;
+			vertical-align: middle;
+		}
 
-	.nuxt-icon.nuxt-icon--fill,
-	.nuxt-icon.nuxt-icon--fill * {
-		fill: currentColor !important;
-	}
+		.nuxt-icon.nuxt-icon--fill,
+		.nuxt-icon.nuxt-icon--fill * {
+			fill: currentColor !important;
+		}
 
-	.nuxt-icon.nuxt-icon--stroke,
-	.nuxt-icon.nuxt-icon--stroke * {
-		stroke: currentColor !important;
-	}
+		.nuxt-icon.nuxt-icon--stroke,
+		.nuxt-icon.nuxt-icon--stroke * {
+			stroke: currentColor !important;
+		}
   </style>

@@ -24,6 +24,10 @@ export default defineNuxtConfig({
 		},
 		devtools: { enabled: true },
 		ignore: [ 'node_modules' ],
+		// https://github.com/nuxt/nuxt/issues/34957#issuecomment-4388270459
+		experimental: {
+			viteEnvironmentApi: true,
+		},
 	},
 	app: {
 		head: {

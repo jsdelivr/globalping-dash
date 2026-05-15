@@ -14,7 +14,7 @@
 		"lint:js": "eslint --cache --max-warnings=0 .",
 		"lint:js:fix": "eslint --cache --max-warnings=0 --fix .",
 		"preview": "nuxt preview",
-		"preview:workers": "pnpm build:workers && wrangler dev .output/server/index.mjs --assets .output/public",
+		"preview:workers": "pnpm build:workers && wrangler dev",
 		"postinstall": "nuxt prepare",
 		"prepare": "husky || echo 'Failed to install husky'",
 		"test:e2e": "pnpm run test:e2e:build:directus && pnpm run test:e2e:build:dash && pnpm run test:e2e:run",

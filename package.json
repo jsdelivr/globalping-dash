@@ -4,6 +4,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "nuxt build",
+		"build:workers": "NITRO_PRESET=cloudflare_module nuxt build",
 		"dev": "nuxt dev",
 		"generate": "nuxt generate",
 		"lint": "pnpm lint:css && pnpm lint:js",
@@ -13,6 +14,7 @@
 		"lint:js": "eslint --cache --max-warnings=0 .",
 		"lint:js:fix": "eslint --cache --max-warnings=0 --fix .",
 		"preview": "nuxt preview",
+		"preview:workers": "pnpm build:workers && wrangler dev .output/server/index.mjs --assets .output/public",
 		"postinstall": "nuxt prepare",
 		"prepare": "husky || echo 'Failed to install husky'",
 		"test:e2e": "pnpm run test:e2e:build:directus && pnpm run test:e2e:build:dash && pnpm run test:e2e:run",
@@ -41,7 +43,7 @@
 		"tailwindcss-primeui": "^0.6.1",
 		"vue": "^3.5.34",
 		"vue-country-flag-next": "^2.3.2",
-		"vue-router": "^4.6.4"
+		"vue-router": "^5.0.7"
 	},
 	"devDependencies": {
 		"@martin-kolarik/eslint-config": "^8.1.1",
@@ -60,7 +62,8 @@
 		"stylelint-config-tailwindcss": "^1.0.1",
 		"typescript": "^5.9.3",
 		"vite": "^7.3.3",
-		"vue-tsc": "^3.2.9"
+		"vue-tsc": "^3.2.9",
+		"wrangler": "^4.92.0"
 	},
 	"lint-staged": {
 		"*.{css,less,vue}": "stylelint --fix --config .stylelintrc",

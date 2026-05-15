@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-	compatibilityDate: '2024-07-01',
+	compatibilityDate: '2026-05-15',
 	runtimeConfig: {
 		public: {
 			serverUrl: process.env.DASH_URL || 'https://dash.globalping.io',

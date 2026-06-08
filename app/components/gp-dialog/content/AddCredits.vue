@@ -173,6 +173,7 @@
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
 	const metadata = useMetadata();
+	const { creditsPerAdoptedProbe, creditsPerDollar } = storeToRefs(metadata);
 	const { getUserFilter } = useUserFilter();
 
 	defineEmits([ 'cancel', 'adopt-a-probe' ]);
@@ -198,9 +199,6 @@
 			: Promise.resolve({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }),
 		{ default: () => ({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }) },
 	);
-
-	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
-	const creditsPerDollar = metadata.creditsPerDollar;
 
 	const step1Completed = computed(() => auth.isLoggedIn);
 	const step2Completed = computed(() => adoptionsExists.value);

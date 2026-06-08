@@ -1,5 +1,5 @@
 import { customEndpoint } from '@directus/sdk';
-import { PUBLIC_ROUTES } from '~/middleware/auth.global';
+import { PUBLIC_ROUTES } from '~/constants/routes';
 import { useAuth } from '~/store/auth';
 import { useMetadata } from '~/store/metadata';
 

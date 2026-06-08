@@ -1,6 +1,6 @@
 import { useAuth } from '~/store/auth';
 
-const PUBLIC_ROUTES = [
+export const PUBLIC_ROUTES = [
 	'/emails/unsubscribe',
 ];
 

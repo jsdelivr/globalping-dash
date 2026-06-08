@@ -1,8 +1,7 @@
 import { customEndpoint } from '@directus/sdk';
+import { PUBLIC_ROUTES } from '~/middleware/auth.global';
 import { useAuth } from '~/store/auth';
 import { useMetadata } from '~/store/metadata';
-
-const INFO_PAGES = [ 'emails', 'authorize' ];
 
 export default defineNuxtPlugin(async () => {
 	const auth = useAuth();
@@ -14,7 +13,8 @@ export default defineNuxtPlugin(async () => {
 		const response = await $directus.request<Metadata>(customEndpoint({ method: 'GET', path: '/metadata' }));
 		metadata.setMetadata(response);
 	} catch (error) {
-		if (!auth.isLoggedIn && !INFO_PAGES.some(page => (route.name as string).startsWith(page))) {
+		// avoid throwing on login redirects to prevent Google from indexing an "error 500" page
+		if (!auth.isLoggedIn && !PUBLIC_ROUTES.includes(route.path)) {
 			return;
 		}
 

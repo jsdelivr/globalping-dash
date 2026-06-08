@@ -13,11 +13,11 @@
 				</div>
 			</div>
 
-			<div class="mb-auto mt-4">
+			<div class="max-[480px]:mb-auto max-[480px]:mt-4">
 				<slot/>
 			</div>
 
-			<NuxtLink to="https://globalping.io/" class="mt-16 text-bluegray-400 hover:underline max-[480px]:mt-4" target="_blank" rel="noopener noreferrer">
+			<NuxtLink to="https://globalping.io/" class="mt-12 text-bluegray-400 hover:underline max-[480px]:mt-4" target="_blank" rel="noopener noreferrer">
 				Learn more about Globalping <i class="pi pi-external-link text-2xs"/>
 			</NuxtLink>
 		</div>

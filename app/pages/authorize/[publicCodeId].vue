@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="my-4">
 		<BlockLoading v-if="status === 'pending'"/>
 
 		<div v-else-if="status === 'success' && code">

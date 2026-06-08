@@ -59,7 +59,7 @@
 		isSubmitting.value = true;
 
 		try {
-			await $directus.request(customEndpoint({ method: 'POST', path: '/sync-github-data/default-tag-change', params: { data: confirmData.value } }));
+			await $directus.request(customEndpoint({ method: 'POST', path: '/sync-github-data/default-tag/confirm', params: { data: confirmData.value } }));
 			isConfirmed.value = true;
 		} catch (err) {
 			sendErrorToast(err);

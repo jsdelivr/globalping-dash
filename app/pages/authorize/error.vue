@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="my-4">
 		<div>
 			<Message severity="error" class="font-normal">
 				Authentication failed! Please return to your application for more details.

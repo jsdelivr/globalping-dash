@@ -1,3 +1,14 @@
+const productionBranch = process.env.CLOUDFLARE_PRODUCTION_BRANCH || 'master';
+const cloudflareDeploymentBranch = process.env.WORKERS_CI_BRANCH;
+const isCloudflarePreview = process.env.ROBOTS_DISALLOW_ALL === '1'
+	|| Boolean(cloudflareDeploymentBranch && cloudflareDeploymentBranch !== productionBranch);
+
+const robotsDisallowedRoutes = [
+	'/authorize',
+	'/default-tag',
+	'/emails',
+];
+
 export default defineNuxtConfig({
 	compatibilityDate: '2026-05-15',
 	runtimeConfig: {
@@ -56,7 +67,17 @@ export default defineNuxtConfig({
 		'@pinia/nuxt',
 		'@vueuse/nuxt',
 		'nuxt3-interpolation',
+		'@nuxtjs/robots',
 	],
+	robots: {
+		credits: false,
+		groups: [
+			{
+				userAgent: '*',
+				disallow: isCloudflarePreview ? [ '/' ] : robotsDisallowedRoutes,
+			},
+		],
+	},
 	css: [ 'primeicons/primeicons.css', '~/assets/css/base.css', '~/assets/css/global.css' ],
 	primevue: {
 		options: {

@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="my-4">
 		<div>
 			<Message severity="success" class="font-normal">
 				Success! You may close this tab and return to your application.

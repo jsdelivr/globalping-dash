@@ -25,6 +25,7 @@
 	"dependencies": {
 		"@directus/sdk": "^19.1.0",
 		"@nuxtjs/google-fonts": "^3.2.0",
+		"@nuxtjs/robots": "6.0.9",
 		"@nuxtjs/tailwindcss": "^6.14.0",
 		"@pinia/nuxt": "^0.11.3",
 		"@primevue/forms": "4.5.5",

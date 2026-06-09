@@ -95,7 +95,6 @@ import tieredmenu from './tieredmenu';
 import toast from './toast';
 import togglebutton from './togglebutton';
 import toggleswitch from './toggleswitch';
-// import toolbar from './toolbar';
 import tooltip from './tooltip';
 import tree from './tree';
 import treeselect from './treeselect';
@@ -167,7 +166,7 @@ export default {
 	// card,
 	tabview,
 	divider,
-	toolbar,
+	// toolbar,
 	// scrollpanel,
 	// splitter,
 	// splitterpanel,
@@ -189,7 +188,7 @@ export default {
 	// menu
 	// contextmenu,
 	// menu,
-	menubar,
+	// menubar,
 	steps,
 	tieredmenu,
 	// breadcrumb,

@@ -4,7 +4,6 @@
 	"type": "module",
 	"scripts": {
 		"build": "nuxt build",
-		"build:workers": "NITRO_PRESET=cloudflare_module nuxt build",
 		"dev": "nuxt dev",
 		"generate": "nuxt generate",
 		"lint": "pnpm lint:css && pnpm lint:js",
@@ -14,9 +13,9 @@
 		"lint:js": "eslint --cache --max-warnings=0 .",
 		"lint:js:fix": "eslint --cache --max-warnings=0 --fix .",
 		"preview": "nuxt preview",
-		"preview:workers": "pnpm build:workers && wrangler dev",
 		"postinstall": "nuxt prepare",
 		"prepare": "husky || echo 'Failed to install husky'",
+		"start": "node --experimental-loader elastic-apm-node/loader.mjs -r ./elastic-apm-utils.cjs -r elastic-apm-node/start.js .output/server/index.mjs",
 		"test:e2e": "pnpm run test:e2e:build:directus && pnpm run test:e2e:build:dash && pnpm run test:e2e:run",
 		"test:e2e:build:directus": "./scripts/build-directus.sh",
 		"test:e2e:build:dash": "dotenv -e test/e2e/globalping-dash-directus/.env.scripts.e2e -- pnpm build",
@@ -33,6 +32,8 @@
 		"@vueuse/core": "^14.3.0",
 		"@vueuse/nuxt": "^14.3.0",
 		"chart.js": "^4.5.1",
+		"elastic-apm-node": "^4.15.0",
+		"elastic-apm-utils": "^4.4.0",
 		"lodash": "^4.18.1",
 		"nuxt": "^4.4.5",
 		"nuxt3-interpolation": "^1.0.16",
@@ -63,8 +64,7 @@
 		"stylelint-config-tailwindcss": "^1.0.1",
 		"typescript": "^5.9.3",
 		"vite": "^7.3.3",
-		"vue-tsc": "^3.2.9",
-		"wrangler": "^4.92.0"
+		"vue-tsc": "^3.2.9"
 	},
 	"lint-staged": {
 		"*.{css,less,vue}": "stylelint --fix --config .stylelintrc",

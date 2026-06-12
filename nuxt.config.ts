@@ -1,7 +1,7 @@
-const productionBranch = process.env.CLOUDFLARE_PRODUCTION_BRANCH || 'master';
-const cloudflareDeploymentBranch = process.env.WORKERS_CI_BRANCH;
-const isCloudflarePreview = process.env.ROBOTS_DISALLOW_ALL === '1'
-	|| Boolean(cloudflareDeploymentBranch && cloudflareDeploymentBranch !== productionBranch);
+const productionBranch = process.env.COOLIFY_PRODUCTION_BRANCH || 'master';
+const coolifyDeploymentBranch = process.env.COOLIFY_BRANCH;
+const isCoolifyPreview = process.env.ROBOTS_DISALLOW_ALL === '1'
+	|| Boolean(coolifyDeploymentBranch && coolifyDeploymentBranch !== productionBranch);
 
 const robotsDisallowedRoutes = [
 	'/authorize',
@@ -74,7 +74,7 @@ export default defineNuxtConfig({
 		groups: [
 			{
 				userAgent: '*',
-				disallow: isCloudflarePreview ? [ '/' ] : robotsDisallowedRoutes,
+				disallow: isCoolifyPreview ? [ '/' ] : robotsDisallowedRoutes,
 			},
 		],
 	},

@@ -1,0 +1,14 @@
+node_modules/
+.nuxt/
+.output/
+.wrangler/
+dist/
+.git/
+.github/
+.idea/
+.eslintcache
+.env
+.env.*
+!.env*.example
+coverage/
+test/

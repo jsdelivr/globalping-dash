@@ -12,6 +12,7 @@ const robotsDisallowedRoutes = [
 export default defineNuxtConfig({
 	compatibilityDate: '2026-05-15',
 	runtimeConfig: {
+		isCoolifyPreview,
 		public: {
 			serverUrl: process.env.DASH_URL || 'https://dash.globalping.io',
 			gpAuthUrl: process.env.GP_AUTH_URL || 'https://auth.globalping.io',

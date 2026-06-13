@@ -6,8 +6,6 @@ module.exports = {
 	serviceVersion: process.env.SOURCE_COMMIT || version,
 	logLevel: 'fatal',
 	centralConfig: false,
-	captureExceptions: false,
-	captureSpanStackTraces: false,
 	captureErrorLogStackTraces: 'always',
 	ignoreUrls: [ '/favicon.ico' ],
 	transactionSampleRate: .1,

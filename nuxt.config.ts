@@ -49,7 +49,7 @@ export default defineNuxtConfig({
 			meta: [
 				{ charset: 'utf-8' },
 				{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
-				{ name: 'description', content: 'Manage your Globalping probes, credits, and access tokens' },
+				{ name: 'description', content: 'Manage your Globalping probes, credits, and access tokens. Globalping allows anyone to run networking commands such as ping, traceroute, dig, curl and mtr on probes distributed all around the world.' },
 			],
 		},
 	},

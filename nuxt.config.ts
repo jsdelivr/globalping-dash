@@ -78,6 +78,14 @@ export default defineNuxtConfig({
 			},
 		],
 	},
+	routeRules: {
+		'/favicon.ico': {
+			headers: { 'cache-control': 'public, max-age=3600' },
+		},
+		'/**': {
+			headers: { 'cache-control': 'no-cache, no-store' },
+		},
+	},
 	css: [ 'primeicons/primeicons.css', '~/assets/css/base.css', '~/assets/css/global.css' ],
 	primevue: {
 		options: {

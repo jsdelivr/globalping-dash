@@ -118,9 +118,26 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 	const getDirectusFilter = (filter: MaybeRefOrGetter<Filter>, ignoredFields: Array<keyof Filter> = []) => {
 		const filterValue = toValue(filter);
 
+		const searchAlternatives = filterValue.search
+			.split(',')
+			.map(alternative => alternative
+				.split('+')
+				.map(term => term.trim())
+				.filter(Boolean))
+			.filter(terms => terms.length)
+			.map(terms => terms.length === 1
+				? { searchIndex: { _icontains: terms[0] } }
+				: { _and: terms.map(term => ({ searchIndex: { _icontains: term } })) });
+
+		const searchFilter = searchAlternatives.length === 1
+			? searchAlternatives[0]
+			: searchAlternatives.length > 1
+				? { _or: searchAlternatives }
+				: {};
+
 		return {
 			...getUserFilter('userId'),
-			...filterValue.search && { searchIndex: { _icontains: filterValue.search } },
+			...searchFilter,
 			...!ignoredFields.includes('status') && !isDefault('status', filter) && { status: { _in: STATUS_MAP[filterValue.status].options } },
 			...!ignoredFields.includes('status') && filterValue.status === 'online-outdated' && { isOutdated: { _eq: true } },
 			...!ignoredFields.includes('adoption') && auth.adminMode && !isDefault('adoption', filter) && {

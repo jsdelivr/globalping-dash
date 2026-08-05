@@ -80,9 +80,22 @@
 			</div>
 		</div>
 
-		<div class="flex flex-col gap-4 border-t py-4 sm:flex-row sm:items-center sm:justify-end">
+		<div class="flex flex-col gap-2 border-t py-4 sm:flex-row sm:items-center sm:justify-end">
 			<Button
+				v-if="probe.status !== 'offline'"
 				class="!h-9"
+				severity="secondary"
+				outlined
+				label="Restart"
+				icon="pi pi-refresh"
+				aria-label="Restart probe"
+				:loading="restartLoading"
+				:aria-disabled="restartLoading"
+				@click="restartProbe"
+			/>
+
+			<Button
+				class="!h-9 text-red-500"
 				severity="secondary"
 				outlined
 				label="Delete probe"
@@ -110,8 +123,16 @@
 <script setup lang="ts">
 	import { useGoogleMaps } from '~/composables/maps';
 	import { initGoogleMap } from '~/utils/init-google-map';
+	import { sendErrorToast } from '~/utils/send-toast';
+
 	const MAP_CENTER_Y_OFFSET_PX = 36;
 	const deleteDialog = ref(false);
+	const restartLoading = ref(false);
+	const config = useRuntimeConfig();
+
+	const emit = defineEmits<{
+		restart: [];
+	}>();
 
 	const probe = defineModel('probe', {
 		type: Object as PropType<Probe>,
@@ -124,6 +145,23 @@
 	});
 
 	const router = useRouter();
+
+	const restartProbe = async () => {
+		restartLoading.value = true;
+
+		try {
+			await $fetch(`${config.public.gpApiUrl}/v1/probes/${probe.value.id}/restart`, {
+				method: 'POST',
+				credentials: 'include',
+			});
+
+			emit('restart');
+		} catch (e) {
+			sendErrorToast(e);
+		} finally {
+			restartLoading.value = false;
+		}
+	};
 
 	// HANDLE GOOGLE MAP UPDATING
 	let removeWatcher: (() => void) | undefined;

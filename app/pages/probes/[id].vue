@@ -104,7 +104,11 @@
 
 				<TabPanels class="mt-6 flex min-h-0 flex-1 flex-col !bg-transparent !p-0">
 					<TabPanel value="details" tabindex="-1">
-						<ProbeTabDetails v-model:probe-details-updating="probeDetailsUpdating" v-model:probe="probeDetails"/>
+						<ProbeTabDetails
+							v-model:probe-details-updating="probeDetailsUpdating"
+							v-model:probe="probeDetails"
+							@restart="activeTab = 'logs'"
+						/>
 					</TabPanel>
 
 					<TabPanel class="flex min-h-0 flex-1 flex-col" value="logs" tabindex="-1">

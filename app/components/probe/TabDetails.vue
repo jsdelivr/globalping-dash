@@ -80,7 +80,7 @@
 			</div>
 		</div>
 
-		<div class="flex flex-col gap-4 border-t py-4 sm:flex-row sm:items-center sm:justify-end">
+		<div class="flex flex-col gap-2 border-t py-4 sm:flex-row sm:items-center sm:justify-end">
 			<Button
 				v-if="probe.status !== 'offline'"
 				class="!h-9"
@@ -95,7 +95,7 @@
 			/>
 
 			<Button
-				class="!h-9"
+				class="!h-9 text-red-500"
 				severity="secondary"
 				outlined
 				label="Delete probe"

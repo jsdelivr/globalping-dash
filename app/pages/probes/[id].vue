@@ -98,8 +98,9 @@
 
 			<Tabs v-if="probeDetails" v-model:value="activeTab" lazy class="flex min-h-0 flex-1 flex-col">
 				<TabList ref="tabListRef" class="!border-b !border-surface-300 dark:!border-dark-600 [&_[data-pc-section='tablist']]:!border-none">
-					<Tab value="details" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Details</Tab>
-					<Tab value="logs" tabindex="0" class="!w-1/2 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Logs</Tab>
+					<Tab value="details" tabindex="0" class="!w-1/3 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Details</Tab>
+					<Tab value="logs" tabindex="0" class="!w-1/3 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Logs</Tab>
+					<Tab value="settings" tabindex="0" class="!w-1/3 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Settings</Tab>
 				</TabList>
 
 				<TabPanels class="mt-6 flex min-h-0 flex-1 flex-col !bg-transparent !p-0">
@@ -113,6 +114,13 @@
 
 					<TabPanel class="flex min-h-0 flex-1 flex-col" value="logs" tabindex="-1">
 						<ProbeTabLogs :probe-id="probeDetails.id"/>
+					</TabPanel>
+
+					<TabPanel class="flex min-h-0 flex-1 flex-col" value="settings" tabindex="-1">
+						<ProbeTabSettings
+							v-model:probe-details-updating="probeDetailsUpdating"
+							v-model:probe="probeDetails"
+						/>
 					</TabPanel>
 				</TabPanels>
 			</Tabs>

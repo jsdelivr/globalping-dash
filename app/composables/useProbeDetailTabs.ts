@@ -2,8 +2,8 @@ export const useProbeDetailTabs = () => {
 	const route = useRoute();
 	const router = useRouter();
 
-	type TabName = 'details' | 'logs';
-	const TAB_NAMES = [ 'details', 'logs' ];
+	type TabName = 'details' | 'logs' | 'settings';
+	const TAB_NAMES = [ 'details', 'logs', 'settings' ];
 	const DEFAULT_TAB = 'details';
 
 	const activeTab = ref<TabName>(DEFAULT_TAB);

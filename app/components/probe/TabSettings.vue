@@ -65,7 +65,7 @@
 
 	const buildFormSettings = (): FormSettings => Object.fromEntries(SETTINGS_SCHEMA.map(field => [
 		field.key,
-		probe.value.settings?.[field.key] ?? field.default,
+		probe.value.settings[field.key] ?? field.default,
 	])) as FormSettings;
 
 	const initialSettings = ref(buildFormSettings());

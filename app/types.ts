@@ -86,10 +86,6 @@ declare global {
 		latitude: number;
 	};
 
-	type ProbeSettings = {
-		meteredConnection: boolean;
-	};
-
 	type Probe<TCountry extends string = string> = {
 		id: string;
 		asn: number;
@@ -124,7 +120,9 @@ declare global {
 		searchIndex: string;
 		isOutdated: boolean;
 		customLocation: CustomLocation<TCountry>;
-		settings: ProbeSettings;
+		settings: {
+			meteredConnection: boolean;
+		};
 	};
 
 	type ProbeWithUser<TCountry extends string = string> = Probe<TCountry> & { user: Partial<User> };

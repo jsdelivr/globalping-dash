@@ -3,7 +3,7 @@
 		<div class="relative flex min-h-[300px] flex-1 flex-col overflow-hidden rounded-md border bg-surface-0 dark:bg-dark-950">
 			<div class="flex w-full flex-nowrap items-center justify-between gap-4 border-b bg-surface-0 px-3 py-1.5 text-gray-700 dark:bg-dark-800 dark:text-gray-300">
 				<span v-if="logs.length" class="font-bold">
-					Showing {{logs.length}} <span class="hidden sm:inline">most recent</span> {{pluralize('log', logs.length)}}.
+					Showing {{ formatNumber(logs.length) }} <span class="hidden sm:inline">most recent</span> {{pluralize('log', logs.length)}}.
 				</span>
 				<ProbeDotLoader v-else-if="enabled && !showLargeLoader"/>
 				<label
@@ -64,6 +64,7 @@
 <script setup lang="ts">
 	import throttle from 'lodash/throttle';
 	import { formatTechnicalDateTime } from '~/utils/date-formatters';
+	import { formatNumber } from '~/utils/format-number';
 	import { pluralize } from '~/utils/pluralize';
 
 	const REFRESH_INTERVAL = 2000; // ms

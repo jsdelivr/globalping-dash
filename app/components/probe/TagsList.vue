@@ -7,12 +7,14 @@
 			v-tooltip.top="tags.slice(numberOfTagsToShow).join(', ')"
 			class="my-0.5 mr-1 flex text-nowrap bg-surface-0 py-0.5 font-normal dark:bg-dark-800"
 			severity="secondary"
-			:value="`+${tags.length - numberOfTagsToShow}`"
+			:value="`+${formatNumber(tags.length - numberOfTagsToShow)}`"
 		/>
 	</div>
 </template>
 
 <script setup lang="ts">
+	import { formatNumber } from '~/utils/format-number';
+
 	const props = defineProps({
 		tags: {
 			type: Array as PropType<string[]>,

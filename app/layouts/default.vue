@@ -116,7 +116,7 @@
 							v-if="inboxNotificationIds.length"
 							class="rounded-full bg-primary px-2 py-1 text-sm font-bold leading-[17px] text-bluegray-0 sm:ml-2 sm:mr-auto"
 						>
-							{{ inboxNotificationIds.length }} unread
+							{{ formatNumber(inboxNotificationIds.length) }} unread
 						</span>
 						<Button
 							v-if="inboxNotificationIds.length"
@@ -225,6 +225,7 @@
 	import { useAppearance } from '~/store/appearance';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
+	import { formatNumber } from '~/utils/format-number';
 
 	const auth = useAuth();
 	const appearance = useAppearance();

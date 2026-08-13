@@ -20,6 +20,7 @@
 	});
 
 	const chartOptions = computed(() => ({
+		locale: 'en-US',
 		animation: {
 			duration: 0,
 		},

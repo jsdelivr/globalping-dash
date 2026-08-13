@@ -13,10 +13,10 @@
 		<div class="flex justify-between gap-6">
 			<b>Amount</b>
 			<Tag v-if="creditChange.type === 'addition'" class="flex items-center !text-sm" severity="success">
-				<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ (creditChange.amount || 0).toLocaleString('en-US') }}
+				<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ formatNumber(creditChange.amount || 0) }}
 			</Tag>
 			<Tag v-else class="flex items-center !text-sm" severity="danger">
-				<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>-{{ (creditChange.amount || 0).toLocaleString('en-US') }}
+				<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>-{{ formatNumber(creditChange.amount || 0) }}
 			</Tag>
 		</div>
 	</div>
@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 	import { formatCreditComment } from '~/utils/format-credit-comment';
+	import { formatNumber } from '~/utils/format-number';
 
 	const { creditChange } = defineProps({
 		creditChange: {

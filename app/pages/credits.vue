@@ -7,7 +7,7 @@
 					<b class="text-lg">Total credits</b>
 					<span class="inline-flex items-center gap-3 text-4xl font-bold">
 						<NuxtIcon class="text-3xl" name="coin" aria-hidden="true"/>
-						<span data-testid="total-credits">{{ credits.toLocaleString('en-US') }}</span>
+						<span data-testid="total-credits">{{ formatNumber(credits) }}</span>
 					</span>
 				</h2>
 			</div>
@@ -45,6 +45,7 @@
 	import { readItems } from '@directus/sdk';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { formatNumber } from '~/utils/format-number';
 
 	useHead({
 		title: 'Credits -',

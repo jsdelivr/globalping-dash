@@ -73,7 +73,7 @@
 					}"
 				>
 					<div class="flex items-center justify-between max-sm:flex-col max-sm:text-center">
-						<div class="ml-2">You get <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="font-bold" :class="{'text-primary': step2Completed}">+{{ creditsPerAdoptedProbe }} credits</span> / probe / day</span></div>
+						<div class="ml-2">You get <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="font-bold" :class="{'text-primary': step2Completed}">+{{ formatNumber(creditsPerAdoptedProbe) }} credits</span> / probe / day</span></div>
 						<Button
 							v-if="!step1Completed"
 							disabled
@@ -113,6 +113,7 @@
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
+	import { formatNumber } from '~/utils/format-number';
 	const { $directus } = useNuxtApp();
 
 	const auth = useAuth();

@@ -1,4 +1,5 @@
 import capitalize from 'lodash/capitalize';
+import { formatNumber } from '~/utils/format-number';
 import { pluralize } from '~/utils/pluralize';
 
 export const getExtendedProbeStatus = (probe: Probe) => {
@@ -41,7 +42,7 @@ export const getOfflineDurationText = (probe: Probe) => {
 		return 'Offline for less than a day';
 	}
 
-	return `Offline for ${dayDiff} ${pluralize('day', dayDiff)}`;
+	return `Offline for ${formatNumber(dayDiff)} ${pluralize('day', dayDiff)}`;
 };
 
 export const getProbeStatusText = (probe: Probe, showOfflineDuration = false) => {

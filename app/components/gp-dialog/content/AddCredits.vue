@@ -76,7 +76,7 @@
 					}"
 				>
 					<div class="flex items-center justify-between max-sm:flex-col max-sm:text-center">
-						<div class="ml-2">You get <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="font-bold" :class="{'text-primary': step2Completed}">+{{ creditsPerAdoptedProbe }} credits</span> / probe / day</span></div>
+						<div class="ml-2">You get <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="font-bold" :class="{'text-primary': step2Completed}">+{{ formatNumber(creditsPerAdoptedProbe) }} credits</span> / probe / day</span></div>
 						<Button
 							v-if="!step1Completed"
 							disabled
@@ -126,7 +126,7 @@
 					}"
 				>
 					<div class="flex items-center justify-between max-sm:flex-col max-sm:text-center">
-						<div class="ml-2">You get <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="font-bold" :class="{'text-primary': step3Completed}">+{{ (creditsPerDollar * (1 + sponsorshipDetails.bonus/100)).toFixed() }} credits</span> / $1</span></div>
+						<div class="ml-2">You get <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="font-bold" :class="{'text-primary': step3Completed}">+{{ formatNumber(Math.round(creditsPerDollar * (1 + sponsorshipDetails.bonus/100))) }} credits</span> / $1</span></div>
 						<Button
 							v-if="!step1Completed"
 							disabled
@@ -148,8 +148,8 @@
 						</NuxtLink>
 					</div>
 					<div class="ml-1.5 border-l-2 border-l-primary bg-white p-3 pl-4 dark:bg-dark-700">
-						The base reward is {{creditsPerDollar}} credits per $1 donated, with up to a 1500% bonus based on your donation history.
-						<span v-if="sponsorshipDetails.bonus">You currently receive a {{sponsorshipDetails.bonus}}% bonus.</span>
+						The base reward is {{ formatNumber(creditsPerDollar) }} credits per $1 donated, with up to a 1,500% bonus based on your donation history.
+						<span v-if="sponsorshipDetails.bonus">You currently receive a {{ formatNumber(sponsorshipDetails.bonus) }}% bonus.</span>
 					</div>
 				</div>
 			</div>
@@ -168,6 +168,7 @@
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
+	import { formatNumber } from '~/utils/format-number';
 	const { $directus } = useNuxtApp();
 
 	const auth = useAuth();

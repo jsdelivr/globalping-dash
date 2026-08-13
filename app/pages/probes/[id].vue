@@ -50,7 +50,7 @@
 
 					<span class="flex h-[30px] items-center gap-2 rounded-md border border-surface-300 px-2 dark:border-dark-600">
 						<NuxtIcon class="text-green-500" name="coin" aria-hidden="true"/>
-						<span class="font-bold text-green-500">+{{ probeCreditsPerMonth }}</span>
+						<span class="font-bold text-green-500">+{{ formatNumber(probeCreditsPerMonth) }}</span>
 					</span>
 				</div>
 			</div>
@@ -133,6 +133,7 @@
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useProbeDetailTabs } from '~/composables/useProbeDetailTabs';
 	import { useAuth } from '~/store/auth';
+	import { formatNumber } from '~/utils/format-number';
 	import { getOfflineDurationText, getProbeStatusColor, getProbeStatusText } from '~/utils/probe-status';
 	import { sendErrorToast } from '~/utils/send-toast';
 

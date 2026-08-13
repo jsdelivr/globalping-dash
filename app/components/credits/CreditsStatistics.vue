@@ -11,7 +11,7 @@
 				<h4 class="flex items-center gap-2 border-b px-4 py-2 font-bold">
 					From sponsorship
 					<i
-						v-tooltip.top="'The base reward is 4000 credits per $1 donated, with up to a 1500% bonus based on your donation history.'"
+						v-tooltip.top="'The base reward is 4,000 credits per $1 donated, with up to a 1,500% bonus based on your donation history.'"
 						class="pi pi-info-circle"
 					/>
 				</h4>
@@ -19,7 +19,7 @@
 					<div class="relative flex h-full flex-1 flex-col justify-between gap-1.5 rounded-lg bg-surface-50 p-3 dark:bg-dark-700">
 						Donated
 						<b class="text-2xl">
-							${{credits.totalDonated.toLocaleString('en-US')}}
+							${{ formatNumber(credits.totalDonated) }}
 						</b>
 					</div>
 					<div class="relative flex h-full flex-1 flex-col justify-between gap-1.5 rounded-lg bg-surface-50 p-3 dark:bg-dark-700">
@@ -30,13 +30,13 @@
 							Bonus
 						</span>
 						<b class="text-2xl">
-							{{credits.bonus > 0 ? `+${credits.bonus}%` : '0%'}}
+							{{ credits.bonus > 0 ? `+${formatNumber(credits.bonus)}%` : '0%' }}
 						</b>
 					</div>
 					<div class="bg-gradient-highlight relative flex h-full flex-1 flex-col justify-between gap-1.5 rounded-lg p-3">
 						Credits gained
 						<b class="inline-flex items-center gap-2 text-2xl">
-							<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>{{ (sponsorshipAdditions).toLocaleString('en-US') }}
+							<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>{{ formatNumber(sponsorshipAdditions) }}
 						</b>
 					</div>
 				</AsyncBlock>
@@ -56,7 +56,7 @@
 							<span v-if="isRelativeFilter" class="size-4 shrink-0 rounded-full border-4 border-green-200 bg-green-500 dark:size-2.5 dark:border-[0.2rem] dark:border-green-500 dark:bg-green-300"/>
 						</span>
 						<b class="text-2xl">
-							{{ credits.onlineProbes }}
+							{{ formatNumber(credits.onlineProbes) }}
 						</b>
 					</div>
 					<div class="relative flex h-full flex-1 flex-col justify-between gap-1.5 rounded-lg bg-surface-50 p-3 dark:bg-dark-700">
@@ -68,14 +68,14 @@
 						</span>
 						<b class="inline-flex items-center gap-2 text-2xl">
 							<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>
-							<span data-testid="estimated-credits">{{ dailyAdditions.toLocaleString('en-US') }}</span>
+							<span data-testid="estimated-credits">{{ formatNumber(dailyAdditions) }}</span>
 						</b>
 
 					</div>
 					<div class="bg-gradient-highlight relative flex h-full flex-1 flex-col justify-between gap-1.5 rounded-lg p-3">
 						Credits gained
 						<b class="inline-flex items-center gap-2 text-2xl">
-							<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>{{ probeAdditions.toLocaleString('en-US') }}
+							<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>{{ formatNumber(probeAdditions) }}
 						</b>
 					</div>
 				</AsyncBlock>
@@ -96,6 +96,7 @@
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
+	import { formatNumber } from '~/utils/format-number';
 	import { isLeapYear } from '~/utils/is-leap-year';
 	import { minDelay } from '~/utils/min-delay';
 

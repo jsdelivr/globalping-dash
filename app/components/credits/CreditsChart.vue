@@ -10,7 +10,7 @@
 						</div>
 						<div class="flex items-center gap-2 text-2xl font-bold">
 							<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>
-							<span data-testid="gained-credits">{{ totalAdditions.toLocaleString('en-US') }}</span>
+							<span data-testid="gained-credits">{{ formatNumber(totalAdditions) }}</span>
 						</div>
 					</div>
 				</div>
@@ -21,7 +21,7 @@
 						</div>
 						<div class="flex items-center gap-2 text-2xl font-bold">
 							<NuxtIcon class="text-xl" name="coin" aria-hidden="true"/>
-							<span data-testid="spent-credits">{{ totalDeductions.toLocaleString('en-US') }}</span>
+							<span data-testid="spent-credits">{{ formatNumber(totalDeductions) }}</span>
 						</div>
 					</div>
 				</div>
@@ -37,6 +37,7 @@
 	import Chart from 'primevue/chart';
 	import { useCreditsFilters } from '~/composables/useCreditsFilters';
 	import { formatUtcDate } from '~/utils/date-formatters';
+	import { formatNumber } from '~/utils/format-number';
 
 	const props = defineProps({
 		additions: {
@@ -228,6 +229,7 @@
 	});
 
 	const chartOptions = computed(() => ({
+		locale: 'en-US',
 		animation: {
 			duration: 0,
 		},
@@ -250,7 +252,7 @@
 						const change = changes.value[dataIndex];
 
 						if (change) {
-							return `Gained: ${change.gained.toLocaleString('en-US')}\nSpent: ${change.spent.toLocaleString('en-US')}`;
+							return `Gained: ${formatNumber(change.gained)}\nSpent: ${formatNumber(change.spent)}`;
 						}
 
 						return '';

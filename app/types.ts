@@ -87,7 +87,7 @@ declare global {
 	};
 
 	type ProbeSettings = {
-		meteredConnection?: boolean;
+		meteredConnection: boolean;
 	};
 
 	type Probe<TCountry extends string = string> = {

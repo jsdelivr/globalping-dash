@@ -109,7 +109,7 @@
 							<div class="flex items-center">
 								<span>Credits gained past month:</span>
 								<Tag v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">
-									<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ totalCredits.toLocaleString('en-US') }}
+									<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ formatNumber(totalCredits) }}
 								</Tag>
 							</div>
 
@@ -192,12 +192,12 @@
 								<div class="flex items-center justify-between">
 									<span class="text-xs font-bold">Credits gained past month:</span>
 									<Tag v-tooltip.top="'Credits are assigned once a day for probes that have been up for at least 20 hours.'" class="flex items-center border bg-surface-0 !text-sm" severity="success">
-										<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ totalCredits.toLocaleString('en-US') }}
+										<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ formatNumber(totalCredits) }}
 									</Tag>
 								</div>
 								<div class="mt-2 flex items-center justify-between">
 									<span class="text-xs font-bold">Number of probes:</span>
-									<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ filteredProbeCount }}</Tag>
+									<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ formatNumber(filteredProbeCount) }}</Tag>
 								</div>
 								<Button
 									class="mt-2 w-full"
@@ -280,6 +280,7 @@
 	import { useProbeFilters } from '~/composables/useProbeFilters';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
+	import { formatNumber } from '~/utils/format-number';
 	import { minDelay } from '~/utils/min-delay';
 	import { pluralize } from '~/utils/pluralize';
 

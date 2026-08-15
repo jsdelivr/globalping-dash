@@ -122,6 +122,7 @@
 
 <script setup lang="ts">
 	import { useGoogleMaps } from '~/composables/maps';
+	import { formatNumber } from '~/utils/format-number';
 	import { initGoogleMap } from '~/utils/init-google-map';
 	import { sendErrorToast } from '~/utils/send-toast';
 
@@ -190,6 +191,6 @@
 
 	// HANDLE CHART
 	const testsCount = ref(347530);
-	const testsCountDisplayed = testsCount.value?.toLocaleString();
+	const testsCountDisplayed = formatNumber(testsCount.value);
 	const showChart = ref(false);
 </script>

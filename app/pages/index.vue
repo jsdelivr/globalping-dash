@@ -10,15 +10,15 @@
 					<div class="flex max-sm:flex-wrap sm:h-14">
 						<div class="flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:bg-surface-50 max-sm:p-4 max-sm:dark:bg-dark-700">
 							<BigIcon name="gp" border/>
-							<div><span data-testid="probes-count" class="mx-2 text-3xl font-bold">{{ adoptedProbes.length }}</span>{{ pluralize('Probe', adoptedProbes.length) }}</div>
+							<div><span data-testid="probes-count" class="mx-2 text-3xl font-bold">{{ formatNumber(adoptedProbes.length) }}</span>{{ pluralize('Probe', adoptedProbes.length) }}</div>
 						</div>
 						<NuxtLink to="/probes?status=online" class="group ml-auto mr-6 flex items-center gap-2 max-sm:ml-0 max-sm:mt-3">
 							<BigIcon name="point-online" filled/>
-							<p class="group-hover:underline"><span data-testid="online-probes-count" class="text-3xl font-bold">{{ onlineProbes.length }}</span>&nbsp;&nbsp;Online</p>
+							<p class="group-hover:underline"><span data-testid="online-probes-count" class="text-3xl font-bold">{{ formatNumber(onlineProbes.length) }}</span>&nbsp;&nbsp;Online</p>
 						</NuxtLink>
 						<NuxtLink to="/probes?status=offline" class="group flex items-center gap-2 max-sm:mt-3">
 							<BigIcon name="point-offline" filled/>
-							<p class="group-hover:underline"><span data-testid="offline-probes-count" class="text-3xl font-bold">{{ offlineProbes.length }}</span>&nbsp;&nbsp;Offline</p>
+							<p class="group-hover:underline"><span data-testid="offline-probes-count" class="text-3xl font-bold">{{ formatNumber(offlineProbes.length) }}</span>&nbsp;&nbsp;Offline</p>
 						</NuxtLink>
 					</div>
 					<div class="mt-6 flex items-center text-nowrap max-sm:flex-wrap">
@@ -30,7 +30,7 @@
 								:to="`/probes?filter=${encodeURIComponent(city)}`"
 								class="ml-3 rounded-full border px-3 py-2 duration-200 hover:bg-bluegray-50 dark:border-dark-600 dark:hover:bg-dark-700"
 							>
-								{{ city }}<span class="ml-1.5 text-bluegray-500 dark:text-bluegray-400">{{ count }}</span>
+								{{ city }}<span class="ml-1.5 text-bluegray-500 dark:text-bluegray-400">{{ formatNumber(count) }}</span>
 							</NuxtLink>
 							<div v-if="isEmpty(cities)" class="ml-2">No locations to show</div>
 						</div>
@@ -61,22 +61,22 @@
 					<div class="flex gap-2 max-sm:flex-wrap sm:h-14">
 						<div class="flex items-center max-sm:basis-full max-sm:rounded-xl max-sm:bg-surface-50 max-sm:p-4 max-sm:dark:bg-dark-700">
 							<BigIcon name="coin" border/>
-							<div><span data-testid="total-credits" class="mx-2 text-3xl font-bold">{{ total.toLocaleString('en-US') }}</span>Total</div>
+							<div><span data-testid="total-credits" class="mx-2 text-3xl font-bold">{{ formatNumber(total) }}</span>Total</div>
 						</div>
 						<div class="ml-auto flex flex-col items-center rounded-md border px-4 py-2 max-sm:ml-0 max-sm:mt-3 max-sm:py-2">
 							<div>
-								<span data-testid="credits-from-probes" class="p-button-label font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500 dark:text-bluegray-400': !perDay }">+{{ perDay.toLocaleString('en-US') }}</span>
+								<span data-testid="credits-from-probes" class="p-button-label font-bold" :class="{ 'text-green-500': perDay, 'text-bluegray-500 dark:text-bluegray-400': !perDay }">+{{ formatNumber(perDay) }}</span>
 								<span>&nbsp;/ day</span>
 							</div>
 							<div class="text-xs font-semibold text-bluegray-500">from probes</div>
 						</div>
 						<div :class="{ 'border-yellow-200 bg-yellow-50/80 dark:border-yellow-500/20 dark:bg-yellow-500/10': credits?.fromSponsorship }" class="relative ml-0 flex flex-col items-center rounded-md border px-4 py-2 max-sm:mt-3 max-sm:py-2">
 							<div>
-								<span data-testid="credits-from-sponsorship" class="p-button-label font-bold" :class="{ 'text-green-500': credits?.fromSponsorship, 'text-bluegray-500 dark:text-bluegray-400': !credits?.fromSponsorship }">+{{ credits?.fromSponsorship.toLocaleString('en-US') }}</span>
+								<span data-testid="credits-from-sponsorship" class="p-button-label font-bold" :class="{ 'text-green-500': credits?.fromSponsorship, 'text-bluegray-500 dark:text-bluegray-400': !credits?.fromSponsorship }">+{{ formatNumber(credits?.fromSponsorship ?? 0) }}</span>
 								<span>&nbsp;/ month</span>
 							</div>
 							<div :class="{'!text-yellow-500 dark:!text-yellow-500/90': credits?.fromSponsorship}" class="text-xs font-semibold text-bluegray-500">from sponsorship</div>
-							<span v-if="sponsorshipDetails.bonus" class="absolute -top-3 right-0 translate-x-[min(calc(50%),1rem)] rounded-full bg-primary p-1 text-[0.75rem] font-semibold text-white">+{{sponsorshipDetails.bonus}}%</span>
+							<span v-if="sponsorshipDetails.bonus" class="absolute -top-3 right-0 translate-x-[min(calc(50%),1rem)] rounded-full bg-primary p-1 text-[0.75rem] font-semibold text-white">+{{ formatNumber(sponsorshipDetails.bonus) }}%</span>
 						</div>
 					</div>
 					<div class="mt-6 flex items-center text-nowrap">
@@ -183,6 +183,7 @@
 	import { ONLINE_STATUSES, OFFLINE_STATUSES } from '~/constants/probes';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
+	import { formatNumber } from '~/utils/format-number';
 	import { pluralize } from '~/utils/pluralize';
 
 	useHead({

@@ -24,7 +24,7 @@
 								'bg-primary text-white dark:bg-white dark:text-bluegray-900 ': option === draftFilter.status,
 								'border border-surface-300 bg-surface-0 text-bluegray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-surface-0': option !== draftFilter.status
 							}">
-							{{ statusCounts[option] }}
+							{{ formatNumber(statusCounts[option] ?? 0) }}
 						</Tag>
 					</span>
 				</template>
@@ -32,7 +32,7 @@
 				<template #value="{value}: {value: StatusCode}">
 					<span class="flex h-full items-center gap-2">
 						<span class="text-bluegray-400">{{ STATUS_MAP[value].name }}</span>
-						<Tag class="-my-1 border ">{{ statusCounts[value] }}</Tag>
+						<Tag class="-my-1 border ">{{ formatNumber(statusCounts[value] ?? 0) }}</Tag>
 					</span>
 				</template>
 			</Select>
@@ -100,6 +100,7 @@
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { type StatusCode, SORTABLE_FIELDS, STATUS_MAP, useProbeFilters } from '~/composables/useProbeFilters';
 	import { useAuth } from '~/store/auth';
+	import { formatNumber } from '~/utils/format-number';
 
 	const auth = useAuth();
 	const { $directus } = useNuxtApp();

@@ -36,10 +36,10 @@
 						<div class="flex min-h-7 items-center">
 							<AsyncCell :loading="loading" size="small">
 								<Tag v-if="slotProps.data.type === 'addition'" class="flex items-center !text-sm" severity="success">
-									<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ (slotProps.data.amount || 0).toLocaleString('en-US') }}
+									<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>+{{ formatNumber(slotProps.data.amount || 0) }}
 								</Tag>
 								<Tag v-else class="flex items-center !text-sm" severity="danger">
-									<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>-{{ (slotProps.data.amount || 0).toLocaleString('en-US') }}
+									<NuxtIcon class="mr-2" name="coin" aria-hidden="true"/>-{{ formatNumber(slotProps.data.amount || 0) }}
 								</Tag>
 							</AsyncCell>
 						</div>
@@ -88,6 +88,7 @@
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { formatUtcDateForTable } from '~/utils/date-formatters';
 	import { formatCreditComment } from '~/utils/format-credit-comment';
+	import { formatNumber } from '~/utils/format-number';
 	import { minDelay } from '~/utils/min-delay';
 
 	const emit = defineEmits([ 'addCredits' ]);

@@ -1,27 +1,112 @@
 <template>
 	<div class="flex min-h-[400px] flex-1 flex-col pb-6">
 		<div class="relative flex min-h-[300px] flex-1 flex-col overflow-hidden rounded-md border bg-surface-0 dark:bg-dark-950">
-			<div class="flex w-full flex-nowrap items-center justify-between gap-4 border-b bg-surface-0 px-3 py-1.5 text-gray-700 dark:bg-dark-800 dark:text-gray-300">
-				<span v-if="logs.length" class="font-bold">
-					Showing {{ formatNumber(logs.length) }} <span class="hidden sm:inline">most recent</span> {{pluralize('log', logs.length)}}.
-				</span>
-				<ProbeDotLoader v-else-if="enabled && !showLargeLoader"/>
-				<label
-					class="ml-auto flex cursor-pointer select-none items-center justify-end gap-2 whitespace-nowrap rounded-md border border-gray-500 px-2 py-1 duration-200 dark:border-gray-400"
-					:class="{
-						'border-primary text-primary dark:border-primary': enabled,
-					}"
-				>
-					<input v-model="enabled" type="checkbox" class="peer sr-only">
-					<i v-if="enabled" class="pi pi-pause-circle text-[16px]"/>
-					<i v-else class="pi pi-play-circle text-[16px]"/>
-					Live tail
-				</label>
+			<div class="flex w-full flex-col gap-2 border-b bg-surface-0 px-3 py-2 text-gray-700 sm:flex-row sm:flex-wrap sm:items-start dark:bg-dark-800 dark:text-gray-300">
+				<div v-if="logs.length" class="flex min-h-9 items-center sm:mr-auto">
+					<span v-if="filterReplacementPending && pending && enabled && !showLargeLoader" class="flex" role="status" aria-live="polite">
+						<ProbeDotLoader/>
+						<span class="sr-only">Loading filtered logs</span>
+					</span>
+					<span v-else-if="filterReplacementPending && logsLoadFailed && enabled">
+						Unable to load filtered logs. Retrying…
+					</span>
+					<span v-else-if="filterReplacementPending && !enabled">
+						{{ emptyStateText }}
+					</span>
+					<span v-else-if="!filterReplacementPending" class="font-bold">
+						<template v-if="filtersActive">
+							Showing {{ formatNumber(logs.length) }} matching {{ pluralize('log', logs.length) }}.
+						</template>
+						<template v-else>
+							Showing {{ formatNumber(logs.length) }} <span class="hidden sm:inline">most recent</span> {{ pluralize('log', logs.length) }}.
+						</template>
+					</span>
+				</div>
+
+				<div class="flex w-full flex-col gap-2 sm:ml-auto sm:w-auto sm:flex-row sm:flex-wrap sm:items-start sm:justify-end">
+					<div class="w-full sm:w-56">
+						<label for="probe-log-search" class="sr-only">Search log messages</label>
+						<IconField class="h-9 w-full">
+							<InputIcon class="pi pi-search !mt-0 -translate-y-1/2 text-sm"/>
+							<InputText
+								id="probe-log-search"
+								v-model="searchInput"
+								autocomplete="off"
+								class="size-full text-sm"
+								placeholder="Search logs"
+								:maxlength="SEARCH_MAX_LENGTH"
+								@input="onSearchInput"
+							/>
+						</IconField>
+					</div>
+
+					<div ref="scopeControl" class="w-full sm:w-64">
+						<label for="probe-log-scopes" class="sr-only">Filter logs by scope</label>
+						<MultiSelect
+							v-model="scopeInput"
+							input-id="probe-log-scopes"
+							class="w-full"
+							placeholder="Filter by scopes"
+							filter-placeholder="Find a scope"
+							chip-icon="pi pi-times"
+							display="chip"
+							filter
+							reset-filter-on-hide
+							:options="SCOPE_OPTIONS"
+							:show-toggle-all="false"
+							:pt="{
+								root: { class: 'h-9 text-sm' },
+								labelContainer: {
+									class: [
+										'relative',
+										scopeValuesOverflowing && 'after:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:z-10 after:w-8 after:bg-gradient-to-r after:from-transparent after:to-surface-0 dark:after:to-dark-900',
+									],
+								},
+								label: {
+									class: [
+										'!py-0 !pr-2 !text-sm !leading-none',
+										scopeInput.length
+											? '!pl-1 !text-bluegray-900 dark:!text-surface-0'
+											: '!pl-2 !text-bluegray-400 dark:!text-bluegray-400',
+									],
+								},
+								chipItem: { class: 'max-w-44' },
+								pcChip: {
+									root: { class: 'min-w-0 max-w-full w-full justify-between !h-7 !gap-1 !py-0 !text-sm' },
+									label: { class: 'min-w-0 flex-1 truncate pb-px pr-0.5 !leading-5' },
+									removeIcon: { class: 'order-first !flex !size-4 shrink-0 items-center justify-center !leading-none' },
+								},
+								dropdown: { class: 'h-full !w-9' },
+							}"
+							:pt-options="{ mergeProps: true }"
+							@update:model-value="onScopesUpdated"
+						>
+							<template #option="{ option }">
+								<span class="min-w-0 flex-1 truncate font-mono text-xs" :title="option">{{ option }}</span>
+							</template>
+						</MultiSelect>
+					</div>
+
+					<label
+						class="flex h-9 cursor-pointer select-none items-center justify-center gap-2 whitespace-nowrap rounded-md border border-gray-500 px-2 duration-200 focus-within:outline-none focus-within:ring-1 focus-within:ring-primary focus-within:ring-offset-2 sm:justify-end dark:border-gray-400"
+						:class="{
+							'border-primary text-primary dark:border-primary': enabled,
+						}"
+					>
+						<input v-model="enabled" type="checkbox" class="peer sr-only">
+						<i v-if="enabled" class="pi pi-pause-circle text-[16px]"/>
+						<i v-else class="pi pi-play-circle text-[16px]"/>
+						Live tail
+					</label>
+				</div>
 			</div>
 			<div v-if="logs.length" class="h-4 max-lg:h-2"/>
 			<div
 				ref="logContainer"
 				class="relative flex flex-1 flex-col overflow-y-auto p-4 pt-0 font-mono max-lg:p-2 max-lg:pt-0"
+				role="region"
+				aria-label="Probe logs"
+				:aria-busy="pending"
 				@scroll="onScrollThrottled"
 			>
 				<div
@@ -43,13 +128,13 @@
 						<span class="whitespace-pre">{{ log.message }}</span>
 					</span>
 				</div>
-				<span v-if="logs.length === 0" class="inset-0 m-auto p-2 text-center text-gray-600 dark:text-gray-400">
-					<span v-if="pending && showLargeLoader">
-						<span class="pi pi-spinner animate-spin text-2xl dark:text-gray-500"/>
+				<span v-if="logs.length === 0" class="inset-0 m-auto max-w-lg p-2 text-center text-gray-600 dark:text-gray-400">
+					<span v-if="pending && (showLargeLoader || filterReplacementPending)" role="status" aria-live="polite">
+						<span class="pi pi-spinner animate-spin text-2xl dark:text-gray-500" aria-hidden="true"/>
+						<span class="sr-only">{{ 'Loading logs' }}</span>
 					</span>
-					<span v-else>
-						No logs available. A newly adopted probe may take a few minutes to sync the logs.
-					</span>
+					<span v-else-if="logsLoadFailed && enabled">Unable to load logs. Retrying…</span>
+					<span v-else>{{ emptyStateText }}</span>
 				</span>
 				<div v-if="logs.length" class="h-fit px-1 py-2">
 					<ProbeDotLoader v-if="enabled"/>
@@ -62,7 +147,9 @@
 </template>
 
 <script setup lang="ts">
+	import { useResizeObserver } from '@vueuse/core';
 	import throttle from 'lodash/throttle';
+	import { SCOPE_OPTIONS, SEARCH_MAX_LENGTH, useProbeLogFilters } from '~/composables/useProbeLogFilters';
 	import { formatTechnicalDateTime } from '~/utils/date-formatters';
 	import { formatNumber } from '~/utils/format-number';
 	import { pluralize } from '~/utils/pluralize';
@@ -78,45 +165,161 @@
 	});
 
 	const config = useRuntimeConfig();
-	const refreshTimeout = ref<NodeJS.Timeout>();
+	const refreshTimeout = ref<ReturnType<typeof setTimeout>>();
 	const logContainer = ref<HTMLDivElement | null>(null);
+	const scopeControl = ref<HTMLDivElement | null>(null);
 	const autoScroll = ref(true);
 	const logs = ref<ProbeLog[]>([]);
-	const lastFetchedId = ref('-'); // redis ID
+	const lastFetchedId = ref<string | null>(null);
 	const showLargeLoader = ref(true);
 	const enabled = ref(true);
+	const pending = ref(false);
+	const logsLoadFailed = ref(false);
+	const filterReplacementPending = ref(false);
+	let activeRequest: AbortController | undefined;
+	let needsInitialFetch = true;
 
-	const { data, refresh, pending, error } = await useLazyAsyncData<{ logs: ProbeLog[]; lastId: string }>(
-		() => $fetch(`${config.public.gpApiUrl}/v1/probes/${props.probeId}/logs`, {
-			params: {
-				after: lastFetchedId.value,
-			},
-			credentials: 'include',
-		}),
-		{
-			default: () => { return { logs: [], lastId: '-' }; },
-			immediate: false,
-		},
-	);
+	const onFiltersApplied = (changed: boolean) => {
+		if (changed) {
+			resetLogStream();
+		}
 
-	const refreshLogs = async () => {
-		return refresh().then(() => {
-			if (!error.value && enabled.value && data.value.lastId) {
-				lastFetchedId.value = data.value.lastId;
-			}
-		}).finally(() => {
-			// do not show the large loader on further refetches
-			showLargeLoader.value = false;
-
-			if (enabled.value) {
-				refreshTimeout.value = setTimeout(() => {
-					refreshLogs();
-				}, REFRESH_INTERVAL);
-			}
-		});
+		if (enabled.value && (changed || needsInitialFetch)) {
+			void refreshLogs();
+		}
 	};
 
-	const onScroll = () => {
+	const {
+		filter,
+		searchInput,
+		scopeInput,
+		filterUpdatePending,
+		filtersActive,
+		onSearchInput,
+		onScopesUpdated,
+	} = useProbeLogFilters(onFiltersApplied);
+
+	const scopeValuesOverflowing = ref(false);
+
+	const emptyStateText = computed(() => {
+		if (!enabled.value && (showLargeLoader.value || filterReplacementPending.value)) {
+			return 'Live tail is paused. Resume it to load logs.';
+		}
+
+		if (filtersActive.value) {
+			return 'No logs match the active filters.';
+		}
+
+		return 'No logs available. A newly adopted probe may take a few minutes to sync the logs.';
+	});
+
+	const abortActiveRequest = () => {
+		activeRequest?.abort();
+		activeRequest = undefined;
+	};
+
+	const scheduleRefresh = () => {
+		clearTimeout(refreshTimeout.value);
+
+		refreshTimeout.value = setTimeout(() => {
+			void refreshLogs();
+		}, REFRESH_INTERVAL);
+	};
+
+	const refreshLogs = async () => {
+		if (!enabled.value) {
+			return;
+		}
+
+		abortActiveRequest();
+		const request = new AbortController();
+		activeRequest = request;
+		needsInitialFetch = false;
+		pending.value = true;
+		const params: Record<string, string> = {};
+
+		if (lastFetchedId.value !== null) {
+			params.after = lastFetchedId.value;
+		}
+
+		if (filter.value.scopes.length) {
+			params.scopes = filter.value.scopes.join(',');
+		}
+
+		if (filter.value.search) {
+			params.search = filter.value.search;
+		}
+
+		try {
+			const response = await $fetch<ProbeLogsResponse>(`${config.public.gpApiUrl}/v1/probes/${props.probeId}/logs`, {
+				params,
+				credentials: 'include',
+				signal: request.signal,
+			});
+
+			if (request.signal.aborted || !enabled.value) {
+				return;
+			}
+
+			logsLoadFailed.value = false;
+
+			if (filterReplacementPending.value) {
+				logs.value = response.logs;
+				filterReplacementPending.value = false;
+			} else {
+				logs.value.push(...response.logs);
+			}
+
+			if (logs.value.length > MAX_DISPLAYED_LOGS) {
+				logs.value = logs.value.slice(-MAX_DISPLAYED_LOGS);
+			}
+
+			if (response.logs.length && response.lastId !== null) {
+				lastFetchedId.value = response.lastId;
+			}
+
+			scrollToBottom();
+		} catch {
+			if (!request.signal.aborted && enabled.value) {
+				logsLoadFailed.value = true;
+			}
+		} finally {
+			if (activeRequest === request) {
+				activeRequest = undefined;
+				pending.value = false;
+				showLargeLoader.value = false;
+
+				if (enabled.value) {
+					scheduleRefresh();
+				}
+			}
+		}
+	};
+
+	const resetLogStream = () => {
+		abortActiveRequest();
+		clearTimeout(refreshTimeout.value);
+		pending.value = false;
+		logsLoadFailed.value = false;
+		lastFetchedId.value = null;
+		filterReplacementPending.value = true;
+		autoScroll.value = true;
+		needsInitialFetch = true;
+	};
+
+	const updateScopeValuesOverflowing = () => {
+		const label = scopeControl.value?.querySelector<HTMLElement>('[data-pc-section="label"]');
+
+		scopeValuesOverflowing.value = Boolean(label && label.scrollWidth > label.clientWidth);
+	};
+
+	useResizeObserver(scopeControl, updateScopeValuesOverflowing);
+
+	watch(scopeInput, () => {
+		void nextTick(updateScopeValuesOverflowing);
+	});
+
+	const onScrollThrottled = throttle(() => {
 		const scrollHeight = logContainer.value?.scrollHeight ?? 0;
 		const scrollTop = logContainer.value?.scrollTop ?? 0;
 		const containerHeight = logContainer.value?.clientHeight ?? 0;
@@ -124,9 +327,7 @@
 
 		// if the user scrolled down enough, enable autoscroll
 		autoScroll.value = scrollHeight - scrolledTo < 10;
-	};
-
-	const onScrollThrottled = throttle(() => onScroll(), 10);
+	}, 10);
 
 	const scrollToBottom = () => {
 		nextTick(() => {
@@ -136,31 +337,20 @@
 		});
 	};
 
-	// append new logs to the already stored ones
-	watch(data, () => {
-		if (!enabled.value) {
-			return;
-		}
-
-		logs.value.push(...data.value.logs);
-
-		if (logs.value.length > MAX_DISPLAYED_LOGS) {
-			logs.value = logs.value.slice(-MAX_DISPLAYED_LOGS);
-		}
-
-		scrollToBottom();
-	});
-
-
 	watch(enabled, (isEnabled) => {
 		if (isEnabled) {
-			refreshLogs();
+			if (!filterUpdatePending.value) {
+				void refreshLogs();
+			}
 		} else {
+			abortActiveRequest();
 			clearTimeout(refreshTimeout.value);
+			pending.value = false;
 		}
 	}, { immediate: true });
 
 	onUnmounted(() => {
+		abortActiveRequest();
 		clearTimeout(refreshTimeout.value);
 		onScrollThrottled.cancel();
 	});

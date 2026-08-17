@@ -232,9 +232,14 @@ declare global {
 
 	type ProbeLog = {
 		message: string;
-		scope?: string;
-		level?: string;
-		timestamp?: string;
+		scope: string | null;
+		level: string | null;
+		timestamp: string | null;
+	};
+
+	type ProbeLogsResponse = {
+		logs: ProbeLog[];
+		lastId: string | null;
 	};
 
 	type SponsorshipDetails = {

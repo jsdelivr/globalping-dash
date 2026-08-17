@@ -1,20 +1,22 @@
 export default {
-	root: ({ props, state }) => ({
+	root: ({ props }) => ({
 		class: [
 			// Font
 			'leading-none',
 
 			// Display and Position
-			'inline-flex',
+			'inline-flex items-center',
 			'relative',
+			'max-w-full overflow-hidden',
 
 			// Shape
 			'rounded-md',
+			'outline-none outline-offset-0',
 
 			// Color and Background
-			{ 'bg-surface-0 dark:bg-surface-950': !props.disabled },
+			{ 'bg-surface-0 dark:bg-dark-900': !props.disabled },
 			'border',
-			{ 'border-surface-300 dark:border-surface-600': !props.invalid },
+			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
 
 			// Invalid State
 			'invalid:focus:ring-red-200',
@@ -22,23 +24,26 @@ export default {
 			{ 'border-red-500 dark:border-red-400': props.invalid },
 
 			// Transitions
-			'transition-all',
+			'transition-[border-color,box-shadow]',
 			'duration-200',
 
 			// States
-			{ 'hover:border-surface-400 dark:hover:border-surface-700': !props.invalid },
-			{ 'outline-none outline-offset-0 z-10 ring-1 ring-primary-500 dark:ring-primary-400': state.focused },
+			{ 'hover:border-surface-400 dark:hover:border-dark-400': !props.invalid },
+			'active:z-10 active:ring-1 active:ring-primary-500 dark:active:ring-primary-400',
+			'focus-within:z-10 focus-within:ring-1 focus-within:ring-primary-500 dark:focus-within:ring-primary-400',
+			'has-[[aria-expanded=true]]:z-10 has-[[aria-expanded=true]]:ring-1 has-[[aria-expanded=true]]:ring-primary-500 dark:has-[[aria-expanded=true]]:ring-primary-400',
 
 			// Misc
 			'cursor-pointer',
 			'select-none',
-			{ 'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default': props.disabled },
+			{ 'bg-surface-200 dark:bg-dark-500 select-none pointer-events-none cursor-default': props.disabled },
 		],
 	}),
-	labelContainer: 'overflow-hidden flex flex-auto cursor-pointer',
+	labelContainer: 'min-w-0 overflow-hidden flex flex-auto items-center cursor-pointer',
 	label: ({ props }) => ({
 		class: [
 			'text-base leading-2',
+			{ 'flex h-full min-h-0 items-center gap-1': props.display === 'chip' },
 
 			// Spacing
 			{
@@ -57,6 +62,7 @@ export default {
 			'overflow-hidden whitespace-nowrap cursor-pointer overflow-ellipsis',
 		],
 	}),
+	chipItem: 'shrink-0',
 	dropdown: {
 		class: [
 			// Flexbox
@@ -76,12 +82,15 @@ export default {
 	},
 	overlay: {
 		class: [
+			// Size
+			'max-w-[calc(100vw-2rem)]',
+
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-white/80',
 
 			// Shape
-			'border border-surface-300 dark:border-surface-700',
+			'border border-surface-300 dark:border-dark-600',
 			'rounded-md',
 			'shadow-md',
 			'mt-[2px]',
@@ -103,8 +112,8 @@ export default {
 
 			// Color
 			'text-surface-700 dark:text-white/80',
-			'bg-surface-0 dark:bg-surface-900',
-			'border-surface-300 dark:border-surface-700',
+			'bg-surface-0 dark:bg-dark-700',
+			'border-surface-300 dark:border-dark-600',
 
 			'[&_[data-pc-name=pcfiltercontainer]]:!flex-auto',
 			'[&_[data-pc-name=pcfilter]]:w-full',
@@ -137,18 +146,12 @@ export default {
 			// Shape
 			'border-0 rounded',
 
-			// Colors
+			// Colors and States
 			{
-				'text-surface-700 dark:text-white/80': (!context.focused && !context.selected) || (context.focused && !context.selected),
-				'bg-surface-200 dark:bg-surface-600/60': context.focused && !context.selected,
-				// 'text-surface-700 dark:text-white/80': context.focused && !context.selected,
-				'bg-highlight': context.selected,
+				'bg-surface-100 dark:bg-dark-600': context.focused && !context.selected,
+				'text-bluegray-900 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-dark-600': !context.selected,
+				'text-bluegray-900 dark:text-surface-0': context.selected,
 			},
-
-			// States
-			{ 'hover:bg-surface-100 dark:hover:bg-[rgba(255,255,255,0.03)]': !context.focused && !context.selected },
-			{ 'hover:bg-highlight-emphasis': context.selected },
-			{ 'hover:text-surface-700 hover:bg-surface-100 dark:hover:text-white dark:hover:bg-[rgba(255,255,255,0.03)]': context.focused && !context.selected },
 
 			// Transition
 			'transition-shadow duration-200',

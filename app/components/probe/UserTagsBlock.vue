@@ -87,6 +87,7 @@
 										v-model="tag.uPrefix"
 										:options="uPrefixes"
 										:scroll-height="'200px'"
+										append-to="self"
 										aria-label="Tag prefix"
 										aria-required="true"
 									/>

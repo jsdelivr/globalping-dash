@@ -109,7 +109,7 @@
 				class="absolute !ml-4 !mt-2 !overflow-hidden !rounded-xl bg-surface-0 dark:bg-main-bg"
 				:pt:content="{ class: 'flex items-center !rounded-xl border dark:border-table-border'}"
 			>
-				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-4 sm:w-[37rem] sm:p-6">
+				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-4 sm:w-[38rem] sm:p-6">
 					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
 						<span
@@ -162,7 +162,7 @@
 									</span>
 								</div>
 
-								<i class="pi pi-chevron-right duration-400 absolute right-4 top-4 text-bluegray-900 transition-all ease-in-out dark:!text-dark-0"/>
+								<i class="pi pi-chevron-right duration-400 absolute right-4 top-[19px] text-bluegray-900 transition-all ease-in-out dark:!text-dark-0"/>
 							</AccordionHeader>
 
 							<AccordionContent

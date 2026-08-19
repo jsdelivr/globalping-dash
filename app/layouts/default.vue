@@ -11,11 +11,11 @@
 			<NuxtLink to="https://www.jsdelivr.com/" class="m-2 mr-auto text-xs text-bluegray-600 no-underline hover:underline">by jsDelivr</NuxtLink>
 
 			<div class="flex items-center max-lg:hidden">
-				<NuxtLink class="ml-6 text-surface-0 no-underline hover:underline" to="https://www.jsdelivr.com/" target="_blank">
+				<NuxtLink v-if="!auth.adminMode && !auth.impersonation" class="ml-6 text-surface-0 no-underline hover:underline" to="https://www.jsdelivr.com/" target="_blank">
 					<i class="pi pi-external-link text-bluegray-300"/>
 					<span class="m-2">jsDelivr</span>
 				</NuxtLink>
-				<NuxtLink class="ml-6 text-surface-0 no-underline hover:underline" to="https://globalping.io" target="_blank">
+				<NuxtLink v-if="!auth.adminMode && !auth.impersonation" class="ml-6 text-surface-0 no-underline hover:underline" to="https://globalping.io" target="_blank">
 					<i class="pi pi-external-link text-bluegray-300"/>
 					<span class="m-2">Globalping</span>
 				</NuxtLink>
@@ -109,7 +109,7 @@
 				class="absolute !ml-4 !mt-2 !overflow-hidden !rounded-xl bg-surface-0 dark:bg-main-bg"
 				:pt:content="{ class: 'flex items-center !rounded-xl border dark:border-table-border'}"
 			>
-				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-4 sm:w-[37rem] sm:p-6">
+				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-4 sm:w-[38rem] sm:p-6">
 					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
 						<span
@@ -162,7 +162,7 @@
 									</span>
 								</div>
 
-								<i class="pi pi-chevron-right duration-400 absolute right-4 top-4 text-bluegray-900 transition-all ease-in-out dark:!text-dark-0"/>
+								<i class="pi pi-chevron-right duration-400 absolute right-4 top-[19px] text-bluegray-900 transition-all ease-in-out dark:!text-dark-0"/>
 							</AccordionHeader>
 
 							<AccordionContent

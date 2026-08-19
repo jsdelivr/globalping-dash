@@ -242,4 +242,86 @@ declare global {
 		donatedInLastYear: number;
 		donatedByMonth: number[];
 	};
+
+	type SponsorsPeriod = 'past-year' | `${number}`;
+	type SponsorshipReason = 'recurring_sponsorship' | 'one_time_sponsorship' | 'tier_changed';
+	type ManualAdditionType = 'payment' | 'other';
+	type SponsorStatus = 'active' | 'former' | 'one-time';
+	type SponsorshipEventSort = 'date' | 'sponsor' | 'type' | 'sponsorshipValue';
+	type SponsorAccountSort = 'sponsor' | 'status' | 'currentMonthly' | 'periodValue' | 'events' | 'latestEvent';
+	type ManualAdditionSort = 'date' | 'sponsor' | 'type' | 'credits' | 'addedBy';
+
+	type SponsorsChartPoint = {
+		month: string;
+		recurringValue: number;
+		oneTimeValue: number;
+		events: number;
+	};
+
+	type SponsorsSummary = {
+		overview: {
+			activeSponsors: number;
+			previousMonth: {
+				totalValue: number;
+				recurringValue: number;
+				oneTimeValue: number;
+			};
+			estimatedNextMonthValue: number;
+		};
+		period: {
+			sponsors: number;
+			sponsorshipValue: number;
+			recurringValue: number;
+			oneTimeValue: number;
+		};
+		allTime: {
+			sponsors: number;
+		};
+		chart: SponsorsChartPoint[];
+	};
+
+	type SponsorshipEvent = {
+		id: number;
+		date: string;
+		githubId: string;
+		githubLogin: string | null;
+		dashboardUserId: string | null;
+		dashboardUsername: string | null;
+		reason: SponsorshipReason;
+		manual: boolean;
+		amountInDollars: number;
+		monthsCovered: number;
+		sponsorshipValue: number;
+	};
+
+	type ManualAddition = {
+		id: number;
+		date: string;
+		githubId: string;
+		githubLogin: string | null;
+		dashboardUserId: string | null;
+		dashboardUsername: string | null;
+		addedBy: string | null;
+		type: ManualAdditionType;
+		credits: number;
+		amountInDollars: number | null;
+		comment: string | null;
+	};
+
+	type SponsorAccount = {
+		githubId: string;
+		githubLogin: string | null;
+		dashboardUserId: string | null;
+		dashboardUsername: string | null;
+		status: SponsorStatus;
+		currentMonthlyAmount: number | null;
+		periodSponsorshipValue: number;
+		periodEvents: number;
+		latestEvent: string;
+	};
+
+	type PageResult<T> = {
+		items: T[];
+		total: number;
+	};
 }

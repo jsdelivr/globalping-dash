@@ -78,6 +78,9 @@
 					<NuxtLink active-class="active" class="sidebar-link" :class="{'active': $route.path.startsWith('/probes')}" to="/probes" @click="mobileSidebar = false"><NuxtIcon class="pi sidebar-link-icon" name="probe"/>Probes</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/credits" @click="mobileSidebar = false"><NuxtIcon class="pi sidebar-link-icon" name="coin"/>Credits</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/tokens" @click="mobileSidebar = false"><i class="pi pi-database sidebar-link-icon"/>Tokens</NuxtLink>
+					<NuxtLink v-if="auth.isAdmin && auth.adminMode" active-class="active" class="sidebar-link" to="/sponsors" @click="mobileSidebar = false">
+						<i class="pi pi-users sidebar-link-icon"/>Sponsors<i class="pi pi-shield ml-auto pr-4 text-xs text-bluegray-400" aria-hidden="true"/>
+					</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/settings" @click="mobileSidebar = false"><i class="pi pi-cog sidebar-link-icon"/>Settings</NuxtLink>
 					<button active-class="active" class="sidebar-link" @click="auth.logout"><i class="pi pi-power-off sidebar-link-icon"/>Sign out</button>
 					<div class="flex flex-col border-t">
@@ -193,6 +196,9 @@
 			<NuxtLink active-class="active" class="sidebar-link" :class="{'active': $route.path.startsWith('/probes')}" to="/probes"><NuxtIcon class="pi sidebar-link-icon" name="probe"/>Probes</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/credits"><NuxtIcon class="pi sidebar-link-icon" name="coin"/>Credits</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database sidebar-link-icon"/>Tokens</NuxtLink>
+			<NuxtLink v-if="auth.isAdmin && auth.adminMode" active-class="active" class="sidebar-link" to="/sponsors">
+				<i class="pi pi-users sidebar-link-icon"/>Sponsors<i class="pi pi-shield ml-auto pr-4 text-xs text-bluegray-400" aria-hidden="true"/>
+			</NuxtLink>
 			<div v-if="!isSponsor" class="mt-auto rounded-xl border bg-surface-0 p-6 dark:border-dark-400 dark:bg-dark-500">
 				<p class="mb-2 font-bold">Sponsorship</p>
 				<p class="mb-6">Support the development of our products by becoming a sponsor.</p>

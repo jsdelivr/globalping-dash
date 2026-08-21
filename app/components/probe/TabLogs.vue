@@ -358,6 +358,7 @@
 			abortActiveRequest();
 			clearTimeout(refreshTimeout.value);
 			pending.value = false;
+			initialLoadPending.value = logs.value.length === 0;
 			needsInitialFetch = true;
 		}
 	}, { immediate: true });

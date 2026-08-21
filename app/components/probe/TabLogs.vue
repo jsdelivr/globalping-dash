@@ -274,7 +274,7 @@
 				logs.value = logs.value.slice(-MAX_DISPLAYED_LOGS);
 			}
 
-			if (response.logs.length && response.lastId !== null) {
+			if (response.lastId !== null) {
 				lastFetchedId.value = response.lastId;
 			}
 

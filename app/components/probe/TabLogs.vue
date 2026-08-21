@@ -63,6 +63,7 @@
 									],
 								},
 								label: {
+									'scope-label': '',
 									class: [
 										'!py-0 !pr-2 !text-sm !leading-none',
 										scopeInput.length
@@ -308,7 +309,7 @@
 	};
 
 	const updateScopeValuesOverflowing = () => {
-		const label = scopeControl.value?.querySelector<HTMLElement>('[data-pc-section="label"]');
+		const label = scopeControl.value?.querySelector<HTMLElement>('[scope-label]');
 
 		scopeValuesOverflowing.value = Boolean(label && label.scrollWidth > label.clientWidth);
 	};

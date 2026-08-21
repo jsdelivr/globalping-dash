@@ -69,6 +69,7 @@ export const useProbeLogFilters = (onFiltersApplied: (changed: boolean) => void)
 	const scopeInput = ref([ ...initialFilter.scopes ]);
 	const filterUpdatePending = ref(false);
 	const filtersActive = computed(() => Boolean(filter.value.search || filter.value.scopes.length));
+	const pendingQueryUpdates = new Set<string>();
 
 	const filtersEqual = (search: string, scopes: string[]) => {
 		return filter.value.search === search
@@ -76,14 +77,28 @@ export const useProbeLogFilters = (onFiltersApplied: (changed: boolean) => void)
 			&& filter.value.scopes.every(scope => scopes.includes(scope));
 	};
 
+	const getQueryUpdateKey = (search: string, scopes: string[]) => JSON.stringify([ search, scopes.join(',') ]);
+
+	const queryMatchesFilters = (search: string, scopes: string[]) => {
+		return route.query[SEARCH_QUERY_KEY] === (search || undefined)
+			&& route.query[SCOPES_QUERY_KEY] === (scopes.length ? scopes.join(',') : undefined);
+	};
+
 	const updateQuery = (search: string, scopes: string[]) => {
-		void navigateTo({
+		const queryUpdateKey = getQueryUpdateKey(search, scopes);
+		pendingQueryUpdates.add(queryUpdateKey);
+
+		const navigation = navigateTo({
 			query: {
 				...route.query,
 				[SEARCH_QUERY_KEY]: search || undefined,
 				[SCOPES_QUERY_KEY]: scopes.length ? scopes.join(',') : undefined,
 			},
 		}, { replace: true });
+
+		void Promise.resolve(navigation).finally(() => {
+			pendingQueryUpdates.delete(queryUpdateKey);
+		});
 	};
 
 	const applyFilters = (search: string, scopes: string[], updateRoute: boolean) => {
@@ -98,7 +113,7 @@ export const useProbeLogFilters = (onFiltersApplied: (changed: boolean) => void)
 			};
 		}
 
-		if (updateRoute) {
+		if (updateRoute && !queryMatchesFilters(normalizedSearch, normalizedScopes)) {
 			updateQuery(normalizedSearch, normalizedScopes);
 		}
 
@@ -129,6 +144,10 @@ export const useProbeLogFilters = (onFiltersApplied: (changed: boolean) => void)
 		[ () => route.query[SEARCH_QUERY_KEY], () => route.query[SCOPES_QUERY_KEY] ],
 		([ searchQuery, scopesQuery ]) => {
 			const { search, scopes } = getFilterFromQuery(searchQuery, scopesQuery);
+
+			if (pendingQueryUpdates.delete(getQueryUpdateKey(search, scopes))) {
+				return;
+			}
 
 			applyFiltersDebounced.cancel();
 			filterUpdatePending.value = false;

@@ -3,7 +3,7 @@
 		<div class="relative flex min-h-[300px] flex-1 flex-col overflow-hidden rounded-md border bg-surface-0 dark:bg-dark-950">
 			<div class="flex w-full flex-col gap-2 border-b bg-surface-0 px-3 py-2 text-gray-700 sm:flex-row sm:flex-wrap sm:items-start dark:bg-dark-800 dark:text-gray-300">
 				<div v-if="logs.length" class="flex min-h-9 items-center sm:mr-auto">
-					<span v-if="filterReplacementPending && pending && enabled && !showLargeLoader" class="flex" role="status" aria-live="polite">
+					<span v-if="filterReplacementPending && pending && enabled && !initialLoadPending" class="flex" role="status" aria-live="polite">
 						<ProbeDotLoader/>
 						<span class="sr-only">Loading filtered logs</span>
 					</span>
@@ -129,9 +129,9 @@
 					</span>
 				</div>
 				<span v-if="logs.length === 0" class="inset-0 m-auto max-w-lg p-2 text-center text-gray-600 dark:text-gray-400">
-					<span v-if="pending && (showLargeLoader || filterReplacementPending)" role="status" aria-live="polite">
+					<span v-if="pending && (initialLoadPending || filterReplacementPending)" role="status" aria-live="polite">
 						<span class="pi pi-spinner animate-spin text-2xl dark:text-gray-500" aria-hidden="true"/>
-						<span class="sr-only">{{ 'Loading logs' }}</span>
+						<span class="sr-only">Loading logs</span>
 					</span>
 					<span v-else-if="logsLoadFailed && enabled">Unable to load logs. Retrying…</span>
 					<span v-else>{{ emptyStateText }}</span>
@@ -171,7 +171,7 @@
 	const autoScroll = ref(true);
 	const logs = ref<ProbeLog[]>([]);
 	const lastFetchedId = ref<string | null>(null);
-	const showLargeLoader = ref(true);
+	const initialLoadPending = ref(true);
 	const enabled = ref(true);
 	const pending = ref(false);
 	const logsLoadFailed = ref(false);
@@ -202,7 +202,7 @@
 	const scopeValuesOverflowing = ref(false);
 
 	const emptyStateText = computed(() => {
-		if (!enabled.value && (showLargeLoader.value || filterReplacementPending.value)) {
+		if (!enabled.value) {
 			return 'Live tail is paused. Resume it to load logs.';
 		}
 
@@ -287,7 +287,7 @@
 			if (activeRequest === request) {
 				activeRequest = undefined;
 				pending.value = false;
-				showLargeLoader.value = false;
+				initialLoadPending.value = false;
 
 				if (enabled.value) {
 					scheduleRefresh();

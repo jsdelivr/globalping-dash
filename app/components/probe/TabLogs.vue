@@ -7,10 +7,10 @@
 						<ProbeDotLoader/>
 						<span class="sr-only">Loading filtered logs</span>
 					</span>
-					<span v-else-if="filterReplacementPending && logsLoadFailed && enabled">
+					<span v-else-if="filterReplacementPending && logsLoadFailed && enabled" role="status" aria-live="polite">
 						Unable to load filtered logs. Retrying…
 					</span>
-					<span v-else-if="filterReplacementPending && !enabled">
+					<span v-else-if="filterReplacementPending && !enabled" role="status" aria-live="polite">
 						{{ emptyStateText }}
 					</span>
 					<span v-else-if="!filterReplacementPending" class="font-bold">
@@ -93,9 +93,9 @@
 							'border-primary text-primary dark:border-primary': enabled,
 						}"
 					>
-						<input v-model="enabled" type="checkbox" class="peer sr-only">
-						<i v-if="enabled" class="pi pi-pause-circle text-[16px]"/>
-						<i v-else class="pi pi-play-circle text-[16px]"/>
+						<input v-model="enabled" type="checkbox" class="sr-only">
+						<i v-if="enabled" class="pi pi-pause-circle text-[16px]" aria-hidden="true"/>
+						<i v-else class="pi pi-play-circle text-[16px]" aria-hidden="true"/>
 						Live tail
 					</label>
 				</div>

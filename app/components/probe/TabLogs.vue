@@ -346,6 +346,7 @@
 			abortActiveRequest();
 			clearTimeout(refreshTimeout.value);
 			pending.value = false;
+			needsInitialFetch = true;
 		}
 	}, { immediate: true });
 

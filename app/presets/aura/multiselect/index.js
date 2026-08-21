@@ -148,7 +148,7 @@ export default {
 
 			// Colors and States
 			{
-				'bg-surface-100 dark:bg-dark-600': context.focused && !context.selected,
+				'bg-surface-100 dark:bg-dark-600': context.focused,
 				'text-bluegray-900 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-dark-600': !context.selected,
 				'text-bluegray-900 dark:text-surface-0': context.selected,
 			},

@@ -154,6 +154,7 @@
 	import { formatTechnicalDateTime } from '~/utils/date-formatters';
 	import { formatNumber } from '~/utils/format-number';
 	import { pluralize } from '~/utils/pluralize';
+	import { sendToast } from '~/utils/send-toast';
 
 	const REFRESH_INTERVAL = 2000; // ms
 	const MAX_DISPLAYED_LOGS = 5000;
@@ -282,6 +283,10 @@
 			scrollToBottom();
 		} catch {
 			if (!request.signal.aborted && enabled.value) {
+				if (logs.value.length && !filterReplacementPending.value && !logsLoadFailed.value) {
+					sendToast('error', 'Unable to load new logs', 'Live tail will retry automatically.');
+				}
+
 				logsLoadFailed.value = true;
 			}
 		} finally {

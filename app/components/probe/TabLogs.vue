@@ -224,6 +224,12 @@
 		clearTimeout(refreshTimeout.value);
 
 		refreshTimeout.value = setTimeout(() => {
+			// avoid polling with stale filters; reschedule in case the debounced update applies no change.
+			if (filterUpdatePending.value) {
+				scheduleRefresh();
+				return;
+			}
+
 			void refreshLogs();
 		}, REFRESH_INTERVAL);
 	};

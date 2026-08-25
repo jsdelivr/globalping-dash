@@ -39,6 +39,7 @@
 
 <script setup lang="ts">
 	import { updateItem } from '@directus/sdk';
+	import { useFormDirty } from '~/composables/useFormDirty';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const SETTINGS_SCHEMA = [
@@ -82,6 +83,7 @@
 		.map(field => [ field.key, formSettings.value[field.key] ])) as Partial<FormSettings>);
 
 	const hasChanges = computed(() => Object.keys(changedSettings.value).length > 0);
+	const resetFormDirty = useFormDirty(initialSettings.value, () => hasChanges.value);
 
 	const saveSettings = async () => {
 		if (!hasChanges.value) {
@@ -98,6 +100,7 @@
 			formSettings.value = buildFormSettings();
 
 			sendToast('success', 'Done', 'Probe settings have been successfully updated');
+			resetFormDirty();
 		} catch (e) {
 			sendErrorToast(e);
 		} finally {

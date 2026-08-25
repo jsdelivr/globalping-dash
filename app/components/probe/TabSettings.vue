@@ -6,9 +6,14 @@
 				:key="field.key"
 				class="flex min-h-16 items-center justify-between gap-6 rounded-xl border border-surface-300 bg-white px-6 py-4 dark:border-dark-600 dark:bg-dark-800"
 			>
-				<span class="font-bold text-dark-800 dark:text-bluegray-0">
-					{{ field.label }}
-				</span>
+				<div>
+					<span class="block font-bold text-dark-800 dark:text-bluegray-0">
+						{{ field.label }}
+					</span>
+					<span class="mt-1 block text-sm text-bluegray-500 dark:text-bluegray-300">
+						{{ field.description }}
+					</span>
+				</div>
 
 				<ToggleSwitch
 					v-if="field.type === 'boolean'"
@@ -41,6 +46,7 @@
 			key: 'meteredConnection',
 			type: 'boolean',
 			label: 'Metered connection',
+			description: 'Reduces the number of measurements processed by this probe.',
 			default: false,
 		},
 	] as const;

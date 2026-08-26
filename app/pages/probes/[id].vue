@@ -27,7 +27,7 @@
 			</div>
 
 			<div v-if="probeDetails" class="flex w-full flex-col items-center gap-4 sm:flex-row sm:flex-wrap">
-				<ProbeNameInput v-model:probe-details-updating="probeDetailsUpdating" v-model:probe="probeDetails"/>
+				<ProbeNameInput :key="probeDetails.id" v-model:probe-details-updating="probeDetailsUpdating" v-model:probe="probeDetails"/>
 
 				<div class="hidden items-center gap-1 rounded-full border border-surface-300 py-1 md:flex dark:border-dark-600">
 					<span v-tooltip.top="getOfflineDurationText(probeDetails)" class="flex items-center gap-2 pl-3">
@@ -96,11 +96,19 @@
 				Your probe container is running an outdated software and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="#" @click="updateProbeDialog = true">our guide</NuxtLink> to update it manually.
 			</Message>
 
-			<Tabs v-if="probeDetails" v-model:value="activeTab" lazy class="flex min-h-0 flex-1 flex-col">
+			<Tabs v-if="probeDetails" :key="probeDetails.id" :value="activeTab" lazy class="flex min-h-0 flex-1 flex-col">
 				<TabList ref="tabListRef" class="!border-b !border-surface-300 dark:!border-dark-600 [&_[data-pc-section='tablist']]:!border-none">
-					<Tab value="details" tabindex="0" class="!w-1/3 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Details</Tab>
-					<Tab value="logs" tabindex="0" class="!w-1/3 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Logs</Tab>
-					<Tab value="settings" tabindex="0" class="!w-1/3 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto">Settings</Tab>
+					<Tab
+						v-for="tab in probeTabs"
+						:key="tab.value"
+						:value="tab.value"
+						tabindex="0"
+						class="!w-1/3 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto"
+						@click.capture="selectTab($event, tab.value)"
+						@keydown.capture="selectTabWithKeyboard($event, tab.value)"
+					>
+						{{ tab.label }}
+					</Tab>
 				</TabList>
 
 				<TabPanels class="mt-6 flex min-h-0 flex-1 flex-col !bg-transparent !p-0">
@@ -108,7 +116,7 @@
 						<ProbeTabDetails
 							v-model:probe-details-updating="probeDetailsUpdating"
 							v-model:probe="probeDetails"
-							@restart="activeTab = 'logs'"
+							@restart="setActiveTab('logs')"
 						/>
 					</TabPanel>
 
@@ -156,8 +164,27 @@
 	const showMoreIps = ref(false);
 	const windowSize = useWindowSize();
 	const tabListRef = useTemplateRef('tabListRef');
-	const activeTab = useProbeDetailTabs();
+	const { activeTab, setActiveTab } = useProbeDetailTabs();
 	const probePageLink = ref('/probes');
+	const probeTabs = [
+		{ value: 'details', label: 'Details' },
+		{ value: 'logs', label: 'Logs' },
+		{ value: 'settings', label: 'Settings' },
+	];
+
+	const selectTab = (event: Event, value: string) => {
+		event.stopImmediatePropagation();
+		setActiveTab(value);
+	};
+
+	const selectTabWithKeyboard = (event: KeyboardEvent, value: string) => {
+		if (![ 'Enter', 'NumpadEnter', 'Space' ].includes(event.code)) {
+			return;
+		}
+
+		event.preventDefault();
+		selectTab(event, value);
+	};
 
 	const { data: probeDetails, error: probeDetailsError } = await useAsyncData(
 		probeId,

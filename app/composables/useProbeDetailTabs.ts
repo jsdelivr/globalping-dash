@@ -8,15 +8,19 @@ export const useProbeDetailTabs = () => {
 
 	const activeTab = ref<TabName>(DEFAULT_TAB);
 
-	watch(activeTab, (val) => {
-		if (val === DEFAULT_TAB) {
+	const setActiveTab = (value: string | number) => {
+		if (typeof value !== 'string' || !TAB_NAMES.includes(value) || value === activeTab.value) {
+			return;
+		}
+
+		if (value === DEFAULT_TAB) {
 			const { tab, ...rest } = route.query;
 			router.push({ query: { ...rest } });
 			return;
 		}
 
-		router.push({ query: { ...route.query, tab: val } });
-	});
+		router.push({ query: { ...route.query, tab: value } });
+	};
 
 	watch(() => route.query.tab, (newTab) => {
 		if (typeof newTab === 'string' && TAB_NAMES.includes(newTab)) {
@@ -29,5 +33,5 @@ export const useProbeDetailTabs = () => {
 		activeTab.value = DEFAULT_TAB;
 	}, { immediate: true });
 
-	return activeTab;
+	return { activeTab, setActiveTab };
 };

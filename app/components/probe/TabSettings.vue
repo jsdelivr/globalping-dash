@@ -21,6 +21,7 @@
 					:input-id="getInputId(field.key)"
 					:aria-label="field.label"
 					:disabled="probeDetailsUpdating"
+					class="shrink-0"
 				/>
 			</div>
 		</div>

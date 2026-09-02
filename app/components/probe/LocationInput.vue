@@ -14,7 +14,7 @@
 				id="country"
 				v-model="selectedCountry"
 				:options="[ ...probe.allowedCountries, OTHER_COUNTRY_OPTION ]"
-				class="size-full rounded-md border-0 !border-[#D1D5DB] hover:!border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-primary sm:!rounded-r-none sm:!border-r dark:!border-dark-600 dark:!bg-dark-800 hover:dark:!border-dark-600"
+				class="flex size-full items-center rounded-md border-0 !border-[#D1D5DB] hover:!border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-primary sm:!rounded-r-none sm:!border-r dark:!border-dark-600 dark:!bg-dark-800 hover:dark:!border-dark-600"
 				:pt="{ dropdown: 'w-8', root: { tabindex: '-1' } }"
 				overlay-class="w-full"
 				:pt-options="{ mergeProps: true }"

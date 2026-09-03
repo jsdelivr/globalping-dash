@@ -1,28 +1,17 @@
+import { createEventHook } from '@vueuse/core';
 import debounce from 'lodash/debounce';
 
 export const SEARCH_MAX_LENGTH = 128;
-export const SCOPE_OPTIONS = [
-	'adoption-code',
-	'adoption-server',
-	'api-logs-transport',
-	'api:connect:adoption',
-	'api:connect:alt-ips-handler',
-	'api:connect:location',
-	'api:error',
-	'dns-command',
-	'general',
-	'health-restart',
-	'mtr-command',
-	'ping-command',
-	'probe-settings',
-	'probe:stats:report',
-	'self-update',
-	'status-manager',
-	'test-error-handler',
-	'traceroute-command',
-];
+export const SCOPE_MAX_LENGTH = 64;
+export const SCOPES_MAX_SERIALIZED_LENGTH = 1024;
 
-interface ProbeLogFilter {
+export const canAppendProbeLogScope = (scopes: string[], scope: string) => {
+	const separatorLength = scopes.length ? 1 : 0;
+
+	return scopes.join(',').length + separatorLength + scope.length <= SCOPES_MAX_SERIALIZED_LENGTH;
+};
+
+export interface ProbeLogFilter {
 	search: string;
 	scopes: string[];
 }
@@ -46,7 +35,10 @@ const normalizeScopes = (values: string[]) => {
 	for (const value of values.flatMap(value => value.split(','))) {
 		const scope = value.trim();
 
-		if (!SCOPE_OPTIONS.includes(scope) || scopes.includes(scope)) {
+		if (!scope
+			|| scope.length > SCOPE_MAX_LENGTH
+			|| scopes.includes(scope)
+			|| !canAppendProbeLogScope(scopes, scope)) {
 			continue;
 		}
 
@@ -61,9 +53,10 @@ const getFilterFromQuery = (search: unknown, scopes: unknown): ProbeLogFilter =>
 	scopes: normalizeScopes(getQueryValues(scopes)),
 });
 
-export const useProbeLogFilters = (onFiltersApplied: (changed: boolean) => void) => {
+export const useProbeLogFilters = () => {
 	const route = useRoute();
 	const initialFilter = getFilterFromQuery(route.query[SEARCH_QUERY_KEY], route.query[SCOPES_QUERY_KEY]);
+	const filtersApplied = createEventHook<boolean>();
 	const filter = ref(initialFilter);
 	const searchInput = ref(initialFilter.search);
 	const scopeInput = ref([ ...initialFilter.scopes ]);
@@ -117,7 +110,7 @@ export const useProbeLogFilters = (onFiltersApplied: (changed: boolean) => void)
 			updateQuery(normalizedSearch, normalizedScopes);
 		}
 
-		onFiltersApplied(changed);
+		void filtersApplied.trigger(changed);
 	};
 
 	const applyFiltersDebounced = debounce(() => {
@@ -136,7 +129,7 @@ export const useProbeLogFilters = (onFiltersApplied: (changed: boolean) => void)
 	const onSearchInput = scheduleFilterUpdate;
 
 	const onScopesUpdated = (scopes: string[]) => {
-		scopeInput.value = scopes;
+		scopeInput.value = normalizeScopes(scopes);
 		scheduleFilterUpdate();
 	};
 
@@ -170,5 +163,6 @@ export const useProbeLogFilters = (onFiltersApplied: (changed: boolean) => void)
 		filtersActive,
 		onSearchInput,
 		onScopesUpdated,
+		onApplied: filtersApplied.on,
 	};
 };

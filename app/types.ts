@@ -243,6 +243,8 @@ declare global {
 	type ProbeLogsResponse = {
 		logs: ProbeLog[];
 		lastId: string | null;
+		firstId: string | null;
+		hasOlder: boolean;
 	};
 
 	type SponsorshipDetails = {

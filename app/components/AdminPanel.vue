@@ -60,7 +60,7 @@
 	const { adminMode, impersonation } = storeToRefs(auth);
 	const { $directus } = useNuxtApp();
 
-	const impersonateUsername = ref(impersonation.value?.github_username || '');
+	const impersonateUsername = ref(auth.impersonation?.github_username || '');
 	const impersonationError = ref('');
 	const impersonationLoading = ref(false);
 	const impersonationList = ref<User[]>([]);

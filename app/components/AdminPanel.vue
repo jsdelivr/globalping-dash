@@ -7,6 +7,22 @@
 		</div>
 		<Divider class="!my-0"/>
 		<p class="text-sm font-semibold">User impersonation</p>
+		<div v-if="auth.impersonation" class="rounded-lg border bg-surface-50 dark:border-table-border dark:bg-dark-800">
+			<div class="p-3">
+				<p class="mb-1 text-xs font-semibold text-surface-500">Directus ID</p>
+				<div class="relative min-h-7 pr-8">
+					<p class="break-all font-mono text-sm leading-7">{{ auth.impersonation.impersonatedUser?.id }}</p>
+					<CopyButton :content="auth.impersonation.impersonatedUser?.id || ''" class="!right-0 !top-0 size-7 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
+				</div>
+			</div>
+			<div class="border-t p-3 dark:border-table-border">
+				<p class="mb-1 text-xs font-semibold text-surface-500">GitHub ID</p>
+				<div class="relative min-h-7 pr-8">
+					<p class="break-all font-mono text-sm leading-7">{{ auth.impersonation.impersonatedUser?.external_identifier }}</p>
+					<CopyButton :content="auth.impersonation.impersonatedUser?.external_identifier || ''" class="!right-0 !top-0 size-7 cursor-pointer [&>button]:!size-full [&>button]:!border-none [&>button]:!p-0"/>
+				</div>
+			</div>
+		</div>
 		<div v-if="!auth.impersonation" class="flex items-center justify-between gap-2">
 			<InputText v-model="impersonateUsername" placeholder="Enter username" class="w-full" @keydown.enter="checkImpersonation"/>
 		</div>

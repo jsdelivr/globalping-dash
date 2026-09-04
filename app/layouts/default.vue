@@ -213,7 +213,7 @@
 			class="absolute !ml-4 !mt-2 !overflow-hidden !rounded-xl bg-[var(--p-surface-0)] dark:bg-[var(--main-bg)]"
 			:pt:content="{ class: 'flex items-center !rounded-xl border dark:border-[var(--table-border)]'}"
 		>
-			<AdminPanel/>
+			<AdminPanel class="max-w-[20rem]"/>
 		</Popover>
 	</section>
 </template>

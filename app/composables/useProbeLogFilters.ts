@@ -43,7 +43,7 @@ const normalizeScopeOptions = (values: unknown) => {
 
 		const scope = value.trim();
 
-		if (!scope || scope.length > SCOPE_MAX_LENGTH || scopes.includes(scope)) {
+		if (!scope || scope.includes(',') || scope.length > SCOPE_MAX_LENGTH || scopes.includes(scope)) {
 			continue;
 		}
 

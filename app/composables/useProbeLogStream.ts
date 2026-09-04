@@ -2,6 +2,7 @@ import type { ProbeLogFilter } from '~/composables/useProbeLogFilters';
 import { sendToast } from '~/utils/send-toast';
 
 const REFRESH_INTERVAL = 2000; // ms
+const REQUEST_TIMEOUT = 15_000; // ms
 const MAX_STORED_LOGS = 20_000;
 
 // The local key stays stable when API pages are added or removed.
@@ -258,12 +259,18 @@ export const useProbeLogStream = ({
 		return params;
 	};
 
-	const fetchLogs = (request: ActiveRequest, params: Record<string, string>) => {
-		return $fetch<ProbeLogsResponse>(`${config.public.gpApiUrl}/v1/probes/${toValue(probeId)}/logs`, {
-			params,
-			credentials: 'include',
-			signal: request.controller.signal,
-		});
+	const fetchLogs = async (request: ActiveRequest, params: Record<string, string>) => {
+		const requestTimeout = setTimeout(() => request.controller.abort(), REQUEST_TIMEOUT);
+
+		try {
+			return await $fetch<ProbeLogsResponse>(`${config.public.gpApiUrl}/v1/probes/${toValue(probeId)}/logs`, {
+				params,
+				credentials: 'include',
+				signal: request.controller.signal,
+			});
+		} finally {
+			clearTimeout(requestTimeout);
+		}
 	};
 
 	// Cursor values can be larger than JavaScript's safe integer range.
@@ -458,7 +465,7 @@ export const useProbeLogStream = ({
 				commitLive(response, collected);
 			}
 		} catch {
-			if (isRequestCurrent(request) && enabled.value) {
+			if (activeRequest === request && enabled.value) {
 				if (loadedLogCount.value && !filterReplacementPending.value && !logsLoadFailed.value) {
 					sendToast('error', 'Unable to load new logs', 'Live tail will retry automatically.');
 				}
@@ -546,7 +553,7 @@ export const useProbeLogStream = ({
 			lifecycle.onCommit({ prepended: Boolean(chunk) });
 			activeHistoryLifecycle = undefined;
 		} catch {
-			if (isRequestCurrent(request)) {
+			if (activeRequest === request) {
 				if (!historyLoadFailed.value) {
 					sendToast('error', 'Unable to load older logs', 'Scroll to the top to retry.');
 				}

@@ -7,12 +7,9 @@
 		:aria-busy="requestPending"
 		@scroll="onScrollThrottled"
 	>
-		<div v-if="historyLoadPending" class="h-fit px-1 py-2" role="status" aria-live="polite">
+		<div v-if="historyLoadPending" class="h-fit px-1 py-2">
 			<ProbeDotLoader/>
 		</div>
-		<span v-else-if="historyLoadFailed" class="mb-1 px-1 font-sans text-sm text-gray-600 dark:text-gray-400" role="status" aria-live="polite">
-			Unable to load older logs. Scroll to the top to retry.
-		</span>
 		<div
 			v-for="log in renderedLogs"
 			:key="log._key"
@@ -60,7 +57,6 @@
 		filterReplacementPending: boolean;
 		loadFailed: boolean;
 		historyLoadPending: boolean;
-		historyLoadFailed: boolean;
 		detachedFromLiveEdge: boolean;
 		emptyStateText: string;
 		enabled: boolean;

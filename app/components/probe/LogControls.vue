@@ -194,6 +194,7 @@
 	const scopeOptions = computed(() => normalizeScopeOptions([
 		...apiScopeOptions.value,
 		...customScopeOptions.value,
+		...scopeInput.value,
 	]));
 
 	const isScopeOptionDisabled = (scope: string) => !scopeInput.value.includes(scope) && !canAppendProbeLogScope(scopeInput.value, scope);

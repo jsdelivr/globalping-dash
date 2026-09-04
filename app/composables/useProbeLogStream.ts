@@ -184,7 +184,6 @@ export const useProbeLogStream = ({
 
 		if (kind === 'history') {
 			historyLoadPending.value = true;
-			historyLoadFailed.value = false;
 		}
 
 		return request;
@@ -208,18 +207,23 @@ export const useProbeLogStream = ({
 			initialLoadPending.value = false;
 		}
 
-		arbitrateNextRequest();
+		arbitrateNextRequest(request.kind);
 	}
 
 	// Pick the next queued action after the current request finishes.
-	function arbitrateNextRequest () {
+	function arbitrateNextRequest (completedRequestKind?: RequestKind) {
 		if (activeRequest) {
 			return;
 		}
 
 		if (returnToLiveRequested && enabled.value) {
-			// Returning to live wins because the user has moved back to the bottom.
-			void refreshLogs();
+			// A queued return starts immediately, while a failed return bootstrap retries on the normal interval.
+			if (completedRequestKind === 'bootstrap') {
+				scheduleRefresh();
+			} else {
+				void refreshLogs();
+			}
+
 			return;
 		}
 
@@ -543,6 +547,10 @@ export const useProbeLogStream = ({
 			activeHistoryLifecycle = undefined;
 		} catch {
 			if (isRequestCurrent(request)) {
+				if (!historyLoadFailed.value) {
+					sendToast('error', 'Unable to load older logs', 'Scroll to the top to retry.');
+				}
+
 				historyLoadFailed.value = true;
 			}
 		} finally {
@@ -674,7 +682,6 @@ export const useProbeLogStream = ({
 		logsLoadFailed,
 		filterReplacementPending,
 		historyLoadPending,
-		historyLoadFailed,
 		detachedFromLiveEdge,
 		canLoadOlderLogs,
 		tailRevision,

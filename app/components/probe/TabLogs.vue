@@ -25,7 +25,6 @@
 				:filter-replacement-pending="filterReplacementPending"
 				:load-failed="logsLoadFailed"
 				:history-load-pending="historyLoadPending"
-				:history-load-failed="historyLoadFailed"
 				:detached-from-live-edge="detachedFromLiveEdge"
 				:empty-state-text="emptyStateText"
 				:enabled="enabled"
@@ -85,7 +84,6 @@
 		logsLoadFailed,
 		filterReplacementPending,
 		historyLoadPending,
-		historyLoadFailed,
 		detachedFromLiveEdge,
 		canLoadOlderLogs,
 		tailRevision,

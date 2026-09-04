@@ -13,8 +13,10 @@
 				:initial-load-pending="initialLoadPending"
 				:load-failed="logsLoadFailed"
 				:empty-state-text="emptyStateText"
+				:scope-options="scopeOptions"
 				@search-input="onSearchInput"
 				@scopes-updated="onScopesUpdated"
+				@custom-scope-added="addCustomScope"
 			/>
 			<div v-if="loadedLogCount" class="h-4 max-lg:h-2"/>
 			<ProbeLogViewport
@@ -41,7 +43,7 @@
 <script setup lang="ts">
 	// This component coordinates the log controls, data stream, and viewport.
 	//
-	// useProbeLogFilters keeps the inputs, active filters, and URL query in sync.
+	// useProbeLogFilters keeps the inputs, scope options, active filters, and URL query in sync.
 	// Once the debounced filters are applied, TabLogs passes them to useProbeLogStream.
 	//
 	// useProbeLogStream loads the latest logs, polls for new ones, loads older history,
@@ -63,15 +65,17 @@
 	const enabled = ref(true);
 	const followingLiveTail = ref(true);
 
-	// Owns the filter inputs, validation, debounce, and URL query updates.
+	// Owns filter inputs, scope discovery, validation, debounce, and URL query updates.
 	const {
 		filter,
 		searchInput,
 		scopeInput,
+		scopeOptions,
 		filterUpdatePending,
 		filtersActive,
 		onSearchInput,
 		onScopesUpdated,
+		addCustomScope,
 		onApplied,
 	} = useProbeLogFilters();
 

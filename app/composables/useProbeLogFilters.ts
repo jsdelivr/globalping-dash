@@ -29,7 +29,31 @@ const getQueryValues = (value: unknown) => {
 
 const normalizeSearch = (value: string) => value.slice(0, SEARCH_MAX_LENGTH);
 
-const normalizeScopes = (values: string[]) => {
+const normalizeScopeOptions = (values: unknown) => {
+	const scopes: string[] = [];
+
+	if (!Array.isArray(values)) {
+		return scopes;
+	}
+
+	for (const value of values) {
+		if (typeof value !== 'string') {
+			continue;
+		}
+
+		const scope = value.trim();
+
+		if (!scope || scope.length > SCOPE_MAX_LENGTH || scopes.includes(scope)) {
+			continue;
+		}
+
+		scopes.push(scope);
+	}
+
+	return scopes;
+};
+
+const normalizeFilterScopes = (values: string[]) => {
 	const scopes: string[] = [];
 
 	for (const value of values.flatMap(value => value.split(','))) {
@@ -50,19 +74,35 @@ const normalizeScopes = (values: string[]) => {
 
 const getFilterFromQuery = (search: unknown, scopes: unknown): ProbeLogFilter => ({
 	search: normalizeSearch(getQueryValues(search)[0] ?? ''),
-	scopes: normalizeScopes(getQueryValues(scopes)),
+	scopes: normalizeFilterScopes(getQueryValues(scopes)),
 });
 
 export const useProbeLogFilters = () => {
+	const config = useRuntimeConfig();
 	const route = useRoute();
 	const initialFilter = getFilterFromQuery(route.query[SEARCH_QUERY_KEY], route.query[SCOPES_QUERY_KEY]);
 	const filtersApplied = createEventHook<boolean>();
+
 	const filter = ref(initialFilter);
 	const searchInput = ref(initialFilter.search);
 	const scopeInput = ref([ ...initialFilter.scopes ]);
 	const filterUpdatePending = ref(false);
 	const filtersActive = computed(() => Boolean(filter.value.search || filter.value.scopes.length));
+	const storedCustomScopes = useLocalStorage<unknown>('probe-log-custom-scopes', []);
+
 	const pendingQueryUpdates = new Set<string>();
+
+	const { data: scopeResponse } = useFetch<string[]>(`${config.public.gpApiUrl}/v1/probes/log-scopes`, {
+		server: false,
+	});
+
+	const customScopeOptions = computed(() => normalizeScopeOptions(storedCustomScopes.value));
+	const apiScopeOptions = computed(() => normalizeScopeOptions(scopeResponse.value ?? []));
+	const scopeOptions = computed(() => normalizeScopeOptions([
+		...apiScopeOptions.value,
+		...customScopeOptions.value,
+		...scopeInput.value,
+	]));
 
 	const filtersEqual = (search: string, scopes: string[]) => {
 		return filter.value.search === search
@@ -96,7 +136,7 @@ export const useProbeLogFilters = () => {
 
 	const applyFilters = (search: string, scopes: string[], updateRoute: boolean) => {
 		const normalizedSearch = normalizeSearch(search);
-		const normalizedScopes = normalizeScopes(scopes);
+		const normalizedScopes = normalizeFilterScopes(scopes);
 		const changed = !filtersEqual(normalizedSearch, normalizedScopes);
 
 		if (changed) {
@@ -116,7 +156,7 @@ export const useProbeLogFilters = () => {
 	const applyFiltersDebounced = debounce(() => {
 		filterUpdatePending.value = false;
 		const search = normalizeSearch(searchInput.value);
-		const scopes = normalizeScopes(scopeInput.value);
+		const scopes = normalizeFilterScopes(scopeInput.value);
 
 		applyFilters(search, scopes, true);
 	}, 300);
@@ -129,8 +169,16 @@ export const useProbeLogFilters = () => {
 	const onSearchInput = scheduleFilterUpdate;
 
 	const onScopesUpdated = (scopes: string[]) => {
-		scopeInput.value = normalizeScopes(scopes);
+		scopeInput.value = normalizeFilterScopes(scopes);
 		scheduleFilterUpdate();
+	};
+
+	const addCustomScope = (scope: string) => {
+		storedCustomScopes.value = [ ...customScopeOptions.value, scope ];
+
+		if (!scopeInput.value.includes(scope)) {
+			onScopesUpdated([ ...scopeInput.value, scope ]);
+		}
 	};
 
 	watch(
@@ -159,10 +207,12 @@ export const useProbeLogFilters = () => {
 		filter,
 		searchInput,
 		scopeInput,
+		scopeOptions,
 		filterUpdatePending,
 		filtersActive,
 		onSearchInput,
 		onScopesUpdated,
+		addCustomScope,
 		onApplied: filtersApplied.on,
 	};
 };

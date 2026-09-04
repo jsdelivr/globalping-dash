@@ -132,7 +132,7 @@
 	import { formatNumber } from '~/utils/format-number';
 	import { pluralize } from '~/utils/pluralize';
 
-	defineProps<{
+	const props = defineProps<{
 		renderedCount: number;
 		loadedCount: number;
 		filtersActive: boolean;
@@ -141,61 +141,23 @@
 		initialLoadPending: boolean;
 		loadFailed: boolean;
 		emptyStateText: string;
+		scopeOptions: string[];
 	}>();
 
 	const emit = defineEmits<{
 		'search-input': [];
 		'scopes-updated': [ scopes: string[] ];
+		'custom-scope-added': [ scope: string ];
 	}>();
 
 	const searchInput = defineModel<string>('searchInput', { required: true });
 	const scopeInput = defineModel<string[]>('scopeInput', { required: true });
 	const enabled = defineModel<boolean>('enabled', { required: true });
 
-	const config = useRuntimeConfig();
-
-	const storedCustomScopes = useLocalStorage<unknown>('probe-log-custom-scopes', []);
 	const scopeControl = ref<HTMLDivElement | null>(null);
 	const scopeSelector = ref<{ hide: (isFocus?: boolean) => void } | null>(null);
 	const scopeFilter = ref('');
 	const scopeValuesOverflowing = ref(false);
-
-	const { data: scopeResponse } = useFetch<string[]>(`${config.public.gpApiUrl}/v1/probes/log-scopes`, {
-		server: false,
-	});
-
-	const normalizeScopeOptions = (values: unknown) => {
-		const scopes: string[] = [];
-
-		if (!Array.isArray(values)) {
-			return scopes;
-		}
-
-		for (const value of values) {
-			if (typeof value !== 'string') {
-				continue;
-			}
-
-			const scope = value.trim();
-
-			if (!scope || scope.length > SCOPE_MAX_LENGTH || scopes.includes(scope)) {
-				continue;
-			}
-
-			scopes.push(scope);
-		}
-
-		return scopes;
-	};
-
-	const customScopeOptions = computed(() => normalizeScopeOptions(storedCustomScopes.value));
-	const apiScopeOptions = computed(() => normalizeScopeOptions(scopeResponse.value ?? []));
-
-	const scopeOptions = computed(() => normalizeScopeOptions([
-		...apiScopeOptions.value,
-		...customScopeOptions.value,
-		...scopeInput.value,
-	]));
 
 	const isScopeOptionDisabled = (scope: string) => !scopeInput.value.includes(scope) && !canAppendProbeLogScope(scopeInput.value, scope);
 
@@ -205,7 +167,7 @@
 		if (!scope
 			|| scope.length > SCOPE_MAX_LENGTH
 			|| scope.includes(',')
-			|| scopeOptions.value.includes(scope)
+			|| props.scopeOptions.includes(scope)
 			|| !canAppendProbeLogScope(scopeInput.value, scope)) {
 			return '';
 		}
@@ -228,12 +190,7 @@
 			return;
 		}
 
-		storedCustomScopes.value = [ ...customScopeOptions.value, scope ];
-
-		if (!scopeInput.value.includes(scope)) {
-			onScopesUpdated([ ...scopeInput.value, scope ]);
-		}
-
+		emit('custom-scope-added', scope);
 		scopeFilter.value = '';
 		scopeSelector.value?.hide(true);
 	};

@@ -3,14 +3,14 @@
 		<template v-if="!reviewing">
 			<section class="flex flex-col gap-2">
 				<label for="creditRecipient" class="font-bold">GitHub username or ID<i class="text-primary">*</i></label>
-				<p class="text-sm text-bluegray-500">Enter a GitHub username or numeric GitHub user ID.</p>
+				<p class="text-sm text-bluegray-500">Enter a GitHub username or numeric GitHub user ID. Prefix numeric-only usernames with @.</p>
 				<div class="flex gap-2 max-sm:flex-col">
 					<InputText
 						id="creditRecipient"
 						v-model="recipientInput"
 						class="min-w-0 grow"
 						:invalid="Boolean(errors.recipient)"
-						placeholder="jsDelivr or 6191378"
+						placeholder="jsDelivr, @123, or 6191378"
 						:disabled="lookupPending"
 						@keydown.enter.prevent="lookupRecipient"
 					/>
@@ -207,14 +207,16 @@
 
 	const lookupRecipient = async () => {
 		const input = recipientInput.value.trim();
+		const forceUsernameLookup = input.startsWith('@');
+		const lookupValue = forceUsernameLookup ? input.slice(1) : input;
 
 		if (!input) {
 			errors.recipient = 'Enter a GitHub username or ID.';
 			return;
 		}
 
-		if (input.startsWith('@')) {
-			errors.recipient = 'Enter GitHub usernames without @.';
+		if (!lookupValue) {
+			errors.recipient = 'Enter a GitHub username after @.';
 			return;
 		}
 
@@ -224,9 +226,9 @@
 
 		try {
 			recipient.value = await minDelay((async () => {
-				const endpoint = /^\d+$/.test(input)
-					? `https://api.github.com/user/${input}`
-					: `https://api.github.com/users/${encodeURIComponent(input)}`;
+				const endpoint = !forceUsernameLookup && /^\d+$/.test(lookupValue)
+					? `https://api.github.com/user/${lookupValue}`
+					: `https://api.github.com/users/${encodeURIComponent(lookupValue)}`;
 				const response = await fetch(endpoint, { headers: { Accept: 'application/vnd.github+json' } });
 
 				if (response.status === 404) {

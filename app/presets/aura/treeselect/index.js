@@ -11,7 +11,8 @@ export default {
 			// Color and Background
 			{ 'bg-surface-0 dark:bg-dark-900': !props.disabled },
 			'border outline-none',
-			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
+			{ 'border-surface-300 dark:border-dark-600': !props.invalid && !state.overlayVisible },
+			{ 'border-primary-500 dark:border-primary-400': !props.invalid && state.overlayVisible },
 
 			// Invalid State
 			'invalid:focus:ring-red-200',
@@ -23,8 +24,9 @@ export default {
 			'duration-200',
 
 			// States
-			{ 'hover:border-surface-400 dark:hover:border-dark-400': !props.invalid },
-			{ 'ring-1 ring-primary-500 dark:ring-primary-400 z-10': state.focused },
+			{ 'hover:[&:not(:focus-within)]:border-surface-400 dark:hover:[&:not(:focus-within)]:border-dark-400': !props.invalid && !state.focused && !state.overlayVisible },
+			{ 'focus-within:border-primary-500 dark:focus-within:border-primary-400': !props.invalid },
+			{ 'ring-1 ring-primary-500 dark:ring-primary-400 z-10': state.focused || state.overlayVisible },
 
 			// Misc
 			'cursor-pointer',

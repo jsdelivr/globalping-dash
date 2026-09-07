@@ -69,6 +69,7 @@
 	}>(), {
 		searchable: false,
 	});
+
 	const selectedOption = defineModel<PeriodPickerOption<T>>({ required: true });
 	const filterInput = ref('');
 

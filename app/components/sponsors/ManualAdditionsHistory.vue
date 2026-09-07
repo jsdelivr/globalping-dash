@@ -114,6 +114,7 @@
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUrlSort } from '~/composables/useUrlSort';
 	import { formatUtcDateForTable } from '~/utils/date-formatters';
+	import { formatMoney } from '~/utils/format-money';
 	import { formatNumber } from '~/utils/format-number';
 	import { minDelay } from '~/utils/min-delay';
 
@@ -125,6 +126,7 @@
 	};
 
 	const { $directus } = useNuxtApp();
+
 	const itemsPerPage = ref(10);
 	const { page, first, pageLinkSize, template } = usePagination({
 		defaultItemsPerPage: 10,
@@ -132,9 +134,11 @@
 		pageKey: 'manualAdditionsPage',
 		limitKey: 'manualAdditionsLimit',
 	});
+
 	const search = ref('');
 	const type = ref<'all' | ManualAdditionType>('all');
 	const filtersPanel = ref();
+
 	const additionSortFields = [ 'date', 'sponsor', 'type', 'credits', 'addedBy' ] as const;
 	const { sortField, sortOrder, setSort } = useUrlSort<ManualAdditionSort>({
 		defaultField: 'date',
@@ -144,14 +148,17 @@
 		fields: additionSortFields,
 		pageKey: 'manualAdditionsPage',
 	});
+
 	const debouncedSearch = computedDebounced(() => search.value.trim(), 350);
 	const typeOptions: Array<{ label: string; value: 'all' | ManualAdditionType }> = [
 		{ label: 'All', value: 'all' },
 		{ label: 'Manual one-time payment', value: 'payment' },
 		{ label: 'Other credits', value: 'other' },
 	];
+
 	const requestKey = computed(() => [ first.value, itemsPerPage.value, debouncedSearch.value, type.value, sortField.value, sortOrder.value ]);
 	const initialLoading = ref(true);
+
 	const { data: response, pending, error } = await useLazyAsyncData(
 		async () => {
 			const requestedFirst = first.value;
@@ -182,9 +189,7 @@
 		{ default: (): AdditionsTableData => ({ result: { items: [], total: 0 }, first: 0, rows: itemsPerPage.value, anyFilterApplied: false }), watch: [ requestKey ] },
 	);
 	const result = computed(() => response.value.result);
-
 	const displayedFirst = computed(() => response.value.first);
-
 	const displayedRows = computed(() => response.value.rows);
 
 	const emptyMessage = computed(() => response.value.anyFilterApplied ? 'No results match the current filters' : 'No manual additions yet');
@@ -197,8 +202,8 @@
 
 	useErrorToast(error);
 
-	const formatMoney = (value: number) => `$${formatNumber(value)}`;
 	const typeLabel = (value: ManualAdditionType) => typeOptions.find(option => option.value === value)?.label || value;
+
 	const onSort = (event: DataTableSortEvent) => {
 		if (typeof event.sortField !== 'string' || !additionSortFields.includes(event.sortField as ManualAdditionSort)) { return; }
 

@@ -38,8 +38,6 @@
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
 	// eslint-disable-next-line import/extensions
-	import GpDialogContentAdminAddCredits from '~/components/gp-dialog/content/AdminAddCredits.vue';
-	// eslint-disable-next-line import/extensions
 	import SponsorAccountsTable from '~/components/sponsors/SponsorAccountsTable.vue';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useSponsorsPeriod } from '~/composables/useSponsorsPeriod';
@@ -53,10 +51,12 @@
 	const { period } = useSponsorsPeriod();
 	const creditsDialog = ref(false);
 	const historyDialog = ref(false);
+
 	const onCreditsAdded = async () => {
 		creditsDialog.value = false;
 		await refreshNuxtData();
 	};
+
 	const { data: summary, pending, error } = await useLazyAsyncData(() => minDelay($directus.request<SponsorsSummary>(customEndpoint({
 		path: '/admin-sponsors/summary',
 		params: { period: period.value },

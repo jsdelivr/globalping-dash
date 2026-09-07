@@ -162,12 +162,14 @@
 
 <script setup lang="ts">
 	import { customEndpoint, readUsers } from '@directus/sdk';
+	import { formatMoney } from '~/utils/format-money';
 	import { formatNumber } from '~/utils/format-number';
 	import { minDelay } from '~/utils/min-delay';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	type AdditionType = 'payment' | 'other';
 	type GithubUser = { id: number; login: string; avatar_url: string; html_url: string };
+
 	type Recipient = {
 		githubId: string;
 		login: string;
@@ -179,7 +181,9 @@
 	const emit = defineEmits<{
 		(e: 'cancel' | 'success'): void;
 	}>();
+
 	const { $directus } = useNuxtApp();
+
 	const recipientInput = ref('');
 	const recipient = ref<Recipient | null>(null);
 	const lookupPending = ref(false);
@@ -311,6 +315,4 @@
 			submitting.value = false;
 		}
 	};
-
-	const formatMoney = (value: number) => `$${formatNumber(value)}`;
 </script>

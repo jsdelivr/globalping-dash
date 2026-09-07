@@ -144,6 +144,7 @@
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUrlSort } from '~/composables/useUrlSort';
 	import { formatUtcDateForTable } from '~/utils/date-formatters';
+	import { formatMoney } from '~/utils/format-money';
 	import { formatNumber } from '~/utils/format-number';
 	import { minDelay } from '~/utils/min-delay';
 
@@ -156,6 +157,7 @@
 
 	const props = defineProps<{ period: SponsorsPeriod }>();
 	const { $directus } = useNuxtApp();
+
 	const itemsPerPage = ref(10);
 	const { page, first, pageLinkSize, template } = usePagination({
 		defaultItemsPerPage: 10,
@@ -163,10 +165,12 @@
 		pageKey: 'accountsPage',
 		limitKey: 'accountsLimit',
 	});
+
 	const search = ref('');
 	const status = ref<'all' | SponsorStatus>('all');
 	const linked = ref<'all' | 'linked' | 'unlinked'>('all');
 	const filtersPanel = ref();
+
 	const accountSortFields = [ 'sponsor', 'status', 'currentMonthly', 'periodValue', 'events', 'latestEvent' ] as const;
 	const { sortField, sortOrder, setSort } = useUrlSort<SponsorAccountSort>({
 		defaultField: 'periodValue',
@@ -176,6 +180,7 @@
 		fields: accountSortFields,
 		pageKey: 'accountsPage',
 	});
+
 	const debouncedSearch = computedDebounced(() => search.value.trim(), 350);
 	const statusOptions: Array<{ label: string; value: 'all' | SponsorStatus }> = [
 		{ label: 'All', value: 'all' },
@@ -183,13 +188,16 @@
 		{ label: 'Former recurring', value: 'former' },
 		{ label: 'One-time only', value: 'one-time' },
 	];
+
 	const linkedOptions = [
 		{ label: 'All', value: 'all' },
 		{ label: 'Linked', value: 'linked' },
 		{ label: 'Not linked', value: 'unlinked' },
 	];
+
 	const requestKey = computed(() => [ props.period, first.value, itemsPerPage.value, debouncedSearch.value, status.value, linked.value, sortField.value, sortOrder.value ]);
 	const initialLoading = ref(true);
+
 	const { data: response, pending, error } = await useLazyAsyncData(
 		async () => {
 			const requestedPeriod = props.period;
@@ -224,9 +232,7 @@
 		{ default: (): AccountsTableData => ({ result: { items: [], total: 0 }, first: 0, rows: itemsPerPage.value, anyFilterApplied: false }), watch: [ requestKey ] },
 	);
 	const result = computed(() => response.value.result);
-
 	const displayedFirst = computed(() => response.value.first);
-
 	const displayedRows = computed(() => response.value.rows);
 
 	const anyCategoricalFilterApplied = computed(() => Boolean(status.value !== 'all' || linked.value !== 'all'));
@@ -240,13 +246,13 @@
 
 	useErrorToast(error);
 
-	const formatMoney = (value: number) => `$${formatNumber(value)}`;
 	const statusLabel = (status: SponsorStatus) => statusOptions.find(option => option.value === status)?.label || status;
 	const statusColor = (status: SponsorStatus) => status === 'active' ? 'text-blue-500' : status === 'one-time' ? 'text-orange-500' : 'text-bluegray-400';
 	const resetFilters = () => {
 		status.value = 'all';
 		linked.value = 'all';
 	};
+
 	const onSort = (event: DataTableSortEvent) => {
 		if (typeof event.sortField !== 'string' || !accountSortFields.includes(event.sortField as SponsorAccountSort)) { return; }
 

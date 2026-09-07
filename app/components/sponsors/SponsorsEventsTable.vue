@@ -128,6 +128,7 @@
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUrlSort } from '~/composables/useUrlSort';
 	import { formatUtcDateForTable } from '~/utils/date-formatters';
+	import { formatMoney } from '~/utils/format-money';
 	import { formatNumber } from '~/utils/format-number';
 	import { minDelay } from '~/utils/min-delay';
 
@@ -140,6 +141,7 @@
 
 	const props = defineProps<{ period: SponsorsPeriod }>();
 	const { $directus } = useNuxtApp();
+
 	const itemsPerPage = ref(10);
 	const { page, first, pageLinkSize, template } = usePagination({
 		defaultItemsPerPage: 10,
@@ -147,9 +149,11 @@
 		pageKey: 'eventsPage',
 		limitKey: 'eventsLimit',
 	});
+
 	const search = ref('');
 	const type = ref<'all' | SponsorshipReason>('all');
 	const filtersPanel = ref();
+
 	const eventSortFields = [ 'date', 'sponsor', 'type', 'sponsorshipValue' ] as const;
 	const { sortField, sortOrder, setSort } = useUrlSort<SponsorshipEventSort>({
 		defaultField: 'date',
@@ -159,6 +163,7 @@
 		fields: eventSortFields,
 		pageKey: 'eventsPage',
 	});
+
 	const debouncedSearch = computedDebounced(() => search.value.trim(), 350);
 	const typeOptions: Array<{ label: string; value: 'all' | SponsorshipReason }> = [
 		{ label: 'All', value: 'all' },
@@ -166,8 +171,10 @@
 		{ label: 'One-time sponsorship', value: 'one_time_sponsorship' },
 		{ label: 'Tier changed', value: 'tier_changed' },
 	];
+
 	const requestKey = computed(() => [ props.period, first.value, itemsPerPage.value, debouncedSearch.value, type.value, sortField.value, sortOrder.value ]);
 	const initialLoading = ref(true);
+
 	const { data: response, pending, error } = await useLazyAsyncData(
 		async () => {
 			const requestedPeriod = props.period;
@@ -200,9 +207,7 @@
 		{ default: (): EventsTableData => ({ result: { items: [], total: 0 }, first: 0, rows: itemsPerPage.value, anyFilterApplied: false }), watch: [ requestKey ] },
 	);
 	const result = computed(() => response.value.result);
-
 	const displayedFirst = computed(() => response.value.first);
-
 	const displayedRows = computed(() => response.value.rows);
 
 	const emptyMessage = computed(() => response.value.anyFilterApplied ? 'No results match the current filters' : 'No sponsorship events in this period');
@@ -215,9 +220,9 @@
 
 	useErrorToast(error);
 
-	const formatMoney = (value: number) => `$${formatNumber(value)}`;
 	const reasonLabel = (reason: SponsorshipReason) => typeOptions.find(option => option.value === reason)?.label || reason;
 	const reasonSeverity = (reason: SponsorshipReason) => reason === 'recurring_sponsorship' ? 'info' : reason === 'one_time_sponsorship' ? 'warn' : 'secondary';
+
 	const onSort = (event: DataTableSortEvent) => {
 		if (typeof event.sortField !== 'string' || !eventSortFields.includes(event.sortField as SponsorshipEventSort)) { return; }
 

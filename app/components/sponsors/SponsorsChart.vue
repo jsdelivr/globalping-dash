@@ -18,6 +18,7 @@
 
 <script setup lang="ts">
 	import Chart from 'primevue/chart';
+	import { formatMoney } from '~/utils/format-money';
 	import { formatNumber } from '~/utils/format-number';
 	import { SPONSOR_COLORS } from '~/utils/sponsor-colors';
 
@@ -33,7 +34,6 @@
 	const dark = document.documentElement.classList.contains('dark');
 
 	const hasEvents = computed(() => props.points.some(point => point.events > 0));
-	const formatMoney = (value: number) => `$${formatNumber(value)}`;
 
 	const chartData = computed(() => ({
 		labels: props.points.map(point => point.month),
@@ -122,7 +122,7 @@
 				ticks: {
 					color: bluegray400,
 					font: { size: 10, weight: 400 },
-					callback: (value: number | string) => `$${formatNumber(Number(value))}`,
+					callback: (value: number | string) => formatMoney(Number(value)),
 				},
 			},
 		},

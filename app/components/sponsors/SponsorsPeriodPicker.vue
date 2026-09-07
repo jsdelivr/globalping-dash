@@ -11,6 +11,7 @@
 	import { useSponsorsPeriod } from '~/composables/useSponsorsPeriod';
 
 	const { period, periodOptions, setPeriod } = useSponsorsPeriod();
+
 	const selectedOption = computed({
 		get: () => periodOptions.value.find(option => option.value === period.value) || periodOptions.value[0]!,
 		set: option => setPeriod(option.value),

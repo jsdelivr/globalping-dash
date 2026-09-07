@@ -54,12 +54,11 @@
 </template>
 
 <script setup lang="ts">
+	import { formatMoney } from '~/utils/format-money';
 	import { formatNumber } from '~/utils/format-number';
 
 	defineProps<{
 		summary: SponsorsSummary | null;
 		status: '' | 'pending' | 'error';
 	}>();
-
-	const formatMoney = (value: number) => `$${formatNumber(value)}`;
 </script>

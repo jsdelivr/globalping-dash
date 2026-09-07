@@ -28,7 +28,8 @@
 				<div v-if="recipient" class="mt-2 flex items-center gap-3 rounded-lg border bg-surface-50 p-3 dark:bg-dark-700">
 					<img :src="recipient.avatarUrl" class="size-12 rounded-full" alt="">
 					<div class="min-w-0 grow">
-						<a :href="recipient.profileUrl" target="_blank" rel="noopener" class="font-bold text-primary hover:underline">@{{ recipient.login }}</a>
+						<a v-if="recipient.dashboardAccount" :href="recipient.profileUrl" target="_blank" rel="noopener" class="font-bold text-inherit underline transition-none hover:text-inherit">@{{ recipient.login }}</a>
+						<span v-else class="font-bold">@{{ recipient.login }}</span>
 						<p class="text-sm text-bluegray-500">GitHub ID {{ recipient.githubId }}</p>
 					</div>
 					<Tag v-if="recipient.dashboardAccount" value="Dashboard account linked" severity="success"/>
@@ -162,6 +163,7 @@
 <script setup lang="ts">
 	import { customEndpoint, readUsers } from '@directus/sdk';
 	import { formatNumber } from '~/utils/format-number';
+	import { minDelay } from '~/utils/min-delay';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	type AdditionType = 'payment' | 'other';
@@ -217,36 +219,38 @@
 		recipient.value = null;
 
 		try {
-			const endpoint = /^\d+$/.test(input)
-				? `https://api.github.com/user/${input}`
-				: `https://api.github.com/users/${encodeURIComponent(input)}`;
-			const response = await fetch(endpoint, { headers: { Accept: 'application/vnd.github+json' } });
+			recipient.value = await minDelay((async () => {
+				const endpoint = /^\d+$/.test(input)
+					? `https://api.github.com/user/${input}`
+					: `https://api.github.com/users/${encodeURIComponent(input)}`;
+				const response = await fetch(endpoint, { headers: { Accept: 'application/vnd.github+json' } });
 
-			if (response.status === 404) {
-				throw new Error('GitHub account not found.');
-			}
+				if (response.status === 404) {
+					throw new Error('GitHub account not found.');
+				}
 
-			if (!response.ok) {
-				throw new Error(response.status === 403 || response.status === 429
-					? 'GitHub lookup is temporarily unavailable because its request limit was reached.'
-					: 'GitHub lookup failed.');
-			}
+				if (!response.ok) {
+					throw new Error(response.status === 403 || response.status === 429
+						? 'GitHub lookup is temporarily unavailable because its request limit was reached.'
+						: 'GitHub lookup failed.');
+				}
 
-			const githubUser = await response.json() as GithubUser;
-			const dashboardUsers = await $directus.request(readUsers({
-				filter: { external_identifier: { _eq: String(githubUser.id) } },
-				fields: [ 'id', 'github_username' ],
-				limit: 1,
-			})) as Array<{ id: string; github_username: string | null }>;
-			const dashboardUser = dashboardUsers[0];
+				const githubUser = await response.json() as GithubUser;
+				const dashboardUsers = await $directus.request(readUsers({
+					filter: { external_identifier: { _eq: String(githubUser.id) } },
+					fields: [ 'id', 'github_username' ],
+					limit: 1,
+				})) as Array<{ id: string; github_username: string | null }>;
+				const dashboardUser = dashboardUsers[0];
 
-			recipient.value = {
-				githubId: String(githubUser.id),
-				login: githubUser.login,
-				avatarUrl: githubUser.avatar_url,
-				profileUrl: githubUser.html_url,
-				dashboardAccount: dashboardUser?.github_username || dashboardUser?.id || null,
-			};
+				return {
+					githubId: String(githubUser.id),
+					login: githubUser.login,
+					avatarUrl: githubUser.avatar_url,
+					profileUrl: githubUser.html_url,
+					dashboardAccount: dashboardUser?.github_username || dashboardUser?.id || null,
+				};
+			})());
 		} catch (error) {
 			errors.recipient = error instanceof Error ? error.message : 'GitHub lookup failed.';
 		} finally {
@@ -298,7 +302,7 @@
 					comment: comment.value.trim(),
 				};
 
-			await $directus.request(customEndpoint({ method: 'POST', path: '/admin-sponsors/manual-additions', body: JSON.stringify(addition) }));
+			await minDelay($directus.request(customEndpoint({ method: 'POST', path: '/admin-sponsors/manual-additions', body: JSON.stringify(addition) })));
 			sendToast('success', 'Credits added', `${formatNumber(credits.value)} credits were added for @${recipient.value.login}.`);
 			emit('success');
 		} catch (error) {

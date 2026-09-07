@@ -44,6 +44,7 @@
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useSponsorsPeriod } from '~/composables/useSponsorsPeriod';
 	import adminModeMiddleware from '~/middleware/admin-mode';
+	import { minDelay } from '~/utils/min-delay';
 
 	definePageMeta({ middleware: adminModeMiddleware });
 	useHead({ title: 'Sponsors -' });
@@ -56,13 +57,10 @@
 		creditsDialog.value = false;
 		await refreshNuxtData();
 	};
-	const { data: summary, pending, error } = await useLazyAsyncData(
-		() => $directus.request<SponsorsSummary>(customEndpoint({
-			path: '/admin-sponsors/summary',
-			params: { period: period.value },
-		})),
-		{ watch: [ period ] },
-	);
+	const { data: summary, pending, error } = await useLazyAsyncData(() => minDelay($directus.request<SponsorsSummary>(customEndpoint({
+		path: '/admin-sponsors/summary',
+		params: { period: period.value },
+	}))), { watch: [ period ] });
 	const summaryStatus = computed<'' | 'pending' | 'error'>(() => error.value ? 'error' : pending.value ? 'pending' : '');
 
 	useErrorToast(error);

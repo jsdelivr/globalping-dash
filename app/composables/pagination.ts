@@ -1,21 +1,34 @@
 export interface PaginationOptions {
 	active?: MaybeRefOrGetter<boolean>;
+	defaultItemsPerPage?: number;
 	itemsPerPage: Ref<number>;
 	limitKey?: string;
 	pageKey?: string;
 }
 
-export const usePagination = ({ active = () => true, itemsPerPage, limitKey = 'limit', pageKey = 'page' }: PaginationOptions) => {
+const getPositiveInteger = (value: unknown) => {
+	if (typeof value !== 'string' || !/^[1-9]\d*$/.test(value)) { return null; }
+
+	const number = Number(value);
+
+	return Number.isSafeInteger(number) ? number : null;
+};
+
+export const usePagination = ({ active = () => true, defaultItemsPerPage, itemsPerPage, limitKey = 'limit', pageKey = 'page' }: PaginationOptions) => {
 	const page = ref(0);
 	const route = useRoute();
 	const windowSize = useWindowSize();
 
-	watch(() => route.query[pageKey], () => {
+	watch(() => [ route.query[pageKey], route.query[limitKey] ], ([ pageQuery, limitQuery ]) => {
 		if (toValue(active)) {
-			page.value = route.query[pageKey] ? Number(route.query[pageKey]) - 1 : 0;
+			page.value = (getPositiveInteger(pageQuery) || 1) - 1;
 
-			if (route.query[limitKey]) {
-				itemsPerPage.value = Number(route.query[limitKey]);
+			const limit = getPositiveInteger(limitQuery);
+
+			if (limit) {
+				itemsPerPage.value = limit;
+			} else if (defaultItemsPerPage !== undefined) {
+				itemsPerPage.value = defaultItemsPerPage;
 			}
 		}
 	}, { immediate: true });

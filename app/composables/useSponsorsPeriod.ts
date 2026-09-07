@@ -34,8 +34,10 @@ export const useSponsorsPeriod = () => {
 		query: {
 			...route.query,
 			period: value === 'past-year' ? undefined : value,
-			sponsorEventsPage: undefined,
-			sponsorAccountsPage: undefined,
+			eventsPage: undefined,
+			eventsLimit: undefined,
+			accountsPage: undefined,
+			accountsLimit: undefined,
 		},
 	});
 

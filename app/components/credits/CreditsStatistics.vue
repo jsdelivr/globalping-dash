@@ -166,7 +166,7 @@
 			$directus.request<Array<{ sum: { amount: number } } & DateGroupFields<'date'>>>(aggregate('gp_credits_deductions', {
 				query: {
 					filter: {
-						...getUserFilter('user_id'),
+						...getUserFilter('account_id'),
 						date: directusDateQuery.value,
 					},
 				},
@@ -191,7 +191,7 @@
 				? $directus.request<[{ count: number }]>(aggregate('gp_probes', {
 					query: {
 						filter: {
-							...getUserFilter('userId'),
+							...getUserFilter('account_id'),
 							onlineTimesToday: { _gt: 0 },
 						},
 					},

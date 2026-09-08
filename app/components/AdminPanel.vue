@@ -63,7 +63,7 @@
 	const impersonateUsername = ref(auth.impersonation?.github_username || '');
 	const impersonationError = ref('');
 	const impersonationLoading = ref(false);
-	const impersonationList = ref<User[]>([]);
+	const impersonationList = ref<DirectusUser[]>([]);
 
 	// ADMIN
 	watch([ adminMode ], () => {
@@ -90,10 +90,11 @@
 			}
 
 			impersonationLoading.value = true;
-			const users = await $directus.request<User[]>(customEndpoint({
+			const users = await $directus.request<DirectusUser[]>(customEndpoint({
 				method: 'GET',
 				path: '/users',
 				params: {
+					fields: [ '*', 'account' ],
 					filter: {
 						github_username: { _eq: impersonateUsername.value },
 					},
@@ -104,7 +105,7 @@
 				throw new Error('User not found');
 			}
 
-			impersonationList.value = users as (User & { github_username: string })[];
+			impersonationList.value = users as (DirectusUser & { github_username: string })[];
 
 			if (impersonationList.value.length === 1) {
 				applyImpersonation(impersonationList.value[0]!);
@@ -117,7 +118,7 @@
 		}
 	};
 
-	const applyImpersonation = (user: User) => {
+	const applyImpersonation = (user: DirectusUser) => {
 		auth.impersonate(user);
 	};
 

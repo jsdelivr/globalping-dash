@@ -200,7 +200,7 @@
 	// SUMMARY
 
 	const { data: adoptedProbes, status: statusProbes, error: probesError } = await useLazyAsyncData('gp_probes', () => $directus.request(readItems('gp_probes', {
-		filter: getUserFilter('userId'),
+		filter: getUserFilter('account_id'),
 		sort: [ 'status', 'name' ],
 	})), { default: () => [] });
 
@@ -215,7 +215,7 @@
 		let fromSponsorshipPromise = Promise.resolve(0);
 
 		const totalPromise = $directus.request(readItems('gp_credits', {
-			filter: getUserFilter('user_id'),
+			filter: getUserFilter('account_id'),
 		}));
 
 		if (user.value.user_type !== 'member') {
@@ -242,7 +242,7 @@
 	}, { default: () => {} });
 
 	const total = computed(() => {
-		const creditsObj = credits.value?.total.find(({ user_id }) => user_id === user.value.id);
+		const creditsObj = credits.value?.total.find(({ account_id }) => account_id === user.value.account);
 		return creditsObj ? creditsObj.amount : 0;
 	});
 

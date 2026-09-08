@@ -183,7 +183,7 @@
 		'gp_adopted_probes_exist',
 		() => auth.isLoggedIn
 			? $directus.request(readItems('gp_probes', {
-				filter: getUserFilter('userId'),
+				filter: getUserFilter('account_id'),
 				limit: 1,
 			}))
 			: Promise.resolve([]),

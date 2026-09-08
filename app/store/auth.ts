@@ -152,7 +152,7 @@ export const useAuth = defineStore('auth', {
 			try {
 				const { expires_at } = await $directus.refresh();
 				const [ user, roles ] = await Promise.all([
-					$directus.request(readMe({ fields: [ '*', 'account' ] })),
+					$directus.request(readMe()),
 					$directus.request(readRolesMe()),
 				]);
 				this.isLoggedIn = true;

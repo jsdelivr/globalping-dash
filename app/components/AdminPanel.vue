@@ -94,7 +94,6 @@
 				method: 'GET',
 				path: '/users',
 				params: {
-					fields: [ '*', 'account' ],
 					filter: {
 						github_username: { _eq: impersonateUsername.value },
 					},

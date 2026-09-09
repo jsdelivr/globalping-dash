@@ -36,7 +36,7 @@
 			:first="displayedFirst"
 			:rows="displayedRows"
 			:total-records="result.total"
-			:loading="initialLoading"
+			:loading="loadingWithoutRows"
 			:sort-field="sortField"
 			:sort-order="sortOrder"
 			data-key="id"
@@ -82,7 +82,7 @@
 		</DataTable>
 
 		<div class="relative flex w-full flex-col gap-2 md:hidden">
-			<div v-if="initialLoading" class="flex h-32 items-center justify-center"><i class="pi pi-spin pi-spinner text-xl"/></div>
+			<div v-if="loadingWithoutRows" class="flex h-32 items-center justify-center"><i class="pi pi-spin pi-spinner text-xl"/></div>
 			<template v-else-if="result.items.length">
 				<AsyncRow v-for="addition in result.items" :key="addition.id" :loading="pending">
 					<article class="rounded-xl border bg-white p-4 dark:bg-dark-800">
@@ -207,6 +207,7 @@
 	const result = computed(() => response.value.result);
 	const displayedFirst = computed(() => response.value.first);
 	const displayedRows = computed(() => response.value.rows);
+	const loadingWithoutRows = computed(() => initialLoading.value || (pending.value && !result.value.items.length));
 
 	const emptyMessage = computed(() => response.value.anyFilterApplied ? 'No results match the current filters' : 'No manual additions yet');
 

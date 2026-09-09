@@ -31,12 +31,13 @@
 						option-label="label"
 						option-value="value"
 						aria-label="Event types"
-						class="!w-full min-w-0"/>
+						class="!w-full min-w-56"/>
 				</div>
 			</Popover>
 		</div>
 		<DataTable
 			class="max-md:hidden"
+			table-class="table-fixed"
 			:value="result.items"
 			lazy
 			:first="displayedFirst"
@@ -48,30 +49,33 @@
 			data-key="id"
 			@sort="onSort"
 		>
-			<Column field="date" header="Date" sortable class="min-w-36">
+			<Column field="date" header="Date" sortable class="min-w-36" style="width: 18%;">
 				<template #body="{ data }"><AsyncCell :loading="pending" preserve-height>{{ formatUtcDateForTable(data.date) }}</AsyncCell></template>
 			</Column>
-			<Column field="sponsor" header="Sponsor" sortable class="min-w-40">
+			<Column field="sponsor" header="Sponsor" sortable class="min-w-40" style="width: 20%;">
 				<template #body="{ data }">
 					<AsyncCell :loading="pending" preserve-height>
-						<a v-if="data.githubLogin" class="font-semibold text-inherit underline transition-none hover:text-inherit" :href="`https://github.com/${data.githubLogin}`" target="_blank" rel="noopener">
-							{{ data.githubLogin }}
-						</a>
-						<span v-else>GitHub ID {{ data.githubId }}</span>
+						<span class="inline-flex items-center gap-1.5">
+							<a v-if="data.githubLogin" class="font-semibold text-inherit underline transition-none hover:text-inherit" :href="`https://github.com/${data.githubLogin}`" target="_blank" rel="noopener">
+								{{ data.githubLogin }}
+							</a>
+							<span v-else>GitHub ID {{ data.githubId }}</span>
+							<i v-if="data.dashboardUserId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
+						</span>
 					</AsyncCell>
 				</template>
 			</Column>
-			<Column field="type" header="Type" sortable class="min-w-44">
+			<Column field="type" header="Type" sortable class="min-w-44" style="width: 34%;">
 				<template #body="{ data }">
 					<AsyncCell :loading="pending" preserve-height>
-						<span class="flex flex-wrap gap-1.5">
+						<span class="flex h-[26px] flex-nowrap gap-1.5 whitespace-nowrap">
 							<Tag :value="reasonLabel(data.reason)" :severity="reasonSeverity(data.reason)"/>
 							<Tag v-if="data.manual" value="Manual" severity="secondary"/>
 						</span>
 					</AsyncCell>
 				</template>
 			</Column>
-			<Column field="sponsorshipValue" header="Sponsorship amount" sortable class="min-w-48">
+			<Column field="sponsorshipValue" header="Sponsorship amount" sortable class="min-w-48" style="width: 28%;">
 				<template #body="{ data }">
 					<AsyncCell :loading="pending" preserve-height>
 						<div>{{ formatMoney(data.sponsorshipValue) }}</div>
@@ -91,8 +95,11 @@
 						<div class="flex items-start justify-between gap-3">
 							<div>
 								<div class="text-sm text-bluegray-500">{{ formatUtcDateForTable(event.date) }}</div>
-								<a v-if="event.githubLogin" class="mt-1 inline-block font-semibold text-inherit underline transition-none hover:text-inherit" :href="`https://github.com/${event.githubLogin}`" target="_blank" rel="noopener">{{ event.githubLogin }}</a>
-								<span v-else class="mt-1 inline-block font-semibold">GitHub ID {{ event.githubId }}</span>
+								<span class="mt-1 inline-flex items-center gap-1.5">
+									<a v-if="event.githubLogin" class="font-semibold text-inherit underline transition-none hover:text-inherit" :href="`https://github.com/${event.githubLogin}`" target="_blank" rel="noopener">{{ event.githubLogin }}</a>
+									<span v-else class="font-semibold">GitHub ID {{ event.githubId }}</span>
+									<i v-if="event.dashboardUserId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
+								</span>
 							</div>
 							<div class="text-right">
 								<div class="font-semibold">{{ formatMoney(event.sponsorshipValue) }}</div>
@@ -110,7 +117,7 @@
 		</div>
 		<Paginator
 			v-if="result.total > displayedRows"
-			:first="displayedFirst"
+			:first="first"
 			:rows="displayedRows"
 			:total-records="result.total"
 			:page-link-size="pageLinkSize"
@@ -172,7 +179,7 @@
 		{ label: 'Tier changed', value: 'tier_changed' },
 	];
 
-	const requestKey = computed(() => [ props.period, first.value, itemsPerPage.value, debouncedSearch.value, type.value, sortField.value, sortOrder.value ]);
+	const requestKey = computedDebounced(() => [ props.period, first.value, itemsPerPage.value, debouncedSearch.value, type.value, sortField.value, sortOrder.value ]);
 	const initialLoading = ref(true);
 
 	const { data: response, pending, error } = await useLazyAsyncData(

@@ -1,10 +1,16 @@
 <template>
 	<div class="flex min-h-full flex-col gap-6 p-4 sm:p-6">
-		<div class="flex items-center justify-between gap-4">
+		<div class="flex items-center justify-between gap-4 max-sm:flex-col max-sm:items-start">
 			<h1 class="page-title">Sponsors</h1>
-			<div class="flex items-center gap-2">
-				<Button label="Manual additions" icon="pi pi-history" severity="secondary" outlined @click="historyDialog = true"/>
-				<Button label="Add credits" icon="pi pi-plus text-xs" @click="creditsDialog = true"/>
+			<div class="flex items-center gap-2 max-sm:w-full">
+				<Button
+					class="max-sm:w-1/2 max-sm:whitespace-nowrap"
+					label="Manual additions"
+					icon="pi pi-history"
+					severity="secondary"
+					outlined
+					@click="historyDialog = true"/>
+				<Button class="max-sm:w-1/2" label="Add credits" icon="pi pi-plus text-xs" @click="creditsDialog = true"/>
 			</div>
 		</div>
 

@@ -26,7 +26,7 @@
 						option-label="label"
 						option-value="value"
 						aria-label="Sponsor statuses"
-						class="!w-full min-w-0"/>
+						class="!w-full min-w-44"/>
 					<label for="dashboardLinkage" class="font-bold">Dashboard account</label>
 					<Select
 						id="dashboardLinkage"
@@ -35,7 +35,7 @@
 						option-label="label"
 						option-value="value"
 						aria-label="Dashboard account linkage"
-						class="!w-full min-w-0"/>
+						class="!w-full min-w-44"/>
 					<Button
 						label="Reset"
 						aria-label="Reset account filters"
@@ -48,6 +48,7 @@
 		</div>
 		<DataTable
 			class="max-md:hidden"
+			table-class="table-fixed"
 			:value="result.items"
 			lazy
 			:first="displayedFirst"
@@ -59,7 +60,7 @@
 			data-key="githubId"
 			@sort="onSort"
 		>
-			<Column field="sponsor" header="Sponsor" sortable class="min-w-36">
+			<Column field="sponsor" header="Sponsor" sortable class="w-[28%] min-w-36 xl:w-[24%]">
 				<template #body="{ data }">
 					<AsyncCell :loading="pending" preserve-height>
 						<div>
@@ -73,7 +74,7 @@
 					</AsyncCell>
 				</template>
 			</Column>
-			<Column field="status" header="Status" sortable class="min-w-32">
+			<Column field="status" header="Status" sortable class="w-1/5 min-w-32 xl:w-[17%]">
 				<template #body="{ data }">
 					<AsyncCell :loading="pending" preserve-height>
 						<span class="inline-flex items-center gap-2 whitespace-nowrap font-semibold">
@@ -83,16 +84,16 @@
 					</AsyncCell>
 				</template>
 			</Column>
-			<Column field="currentMonthly" header="Monthly amount" sortable class="min-w-36">
+			<Column field="currentMonthly" header="Monthly amount" sortable class="w-[22%] min-w-36 xl:w-[19%]">
 				<template #body="{ data }"><AsyncCell :loading="pending" preserve-height>{{ data.currentMonthlyAmount === null ? '—' : formatMoney(data.currentMonthlyAmount) }}</AsyncCell></template>
 			</Column>
-			<Column field="periodValue" header="Period amount" sortable class="min-w-32">
+			<Column field="periodValue" header="Period amount" sortable class="w-1/5 min-w-32 xl:w-[17%]">
 				<template #body="{ data }"><AsyncCell :loading="pending" preserve-height>{{ formatMoney(data.periodSponsorshipValue) }}</AsyncCell></template>
 			</Column>
-			<Column header="Events" field="events" sortable class="min-w-16">
+			<Column header="Events" field="events" sortable class="w-[10%] min-w-16 xl:w-[9%]">
 				<template #body="{ data }"><AsyncCell :loading="pending" preserve-height>{{ formatNumber(data.periodEvents) }}</AsyncCell></template>
 			</Column>
-			<Column field="latestEvent" header="Latest event" sortable class="min-w-36 max-xl:hidden">
+			<Column field="latestEvent" header="Latest event" sortable class="w-[14%] min-w-36 max-xl:hidden">
 				<template #body="{ data }"><AsyncCell :loading="pending" preserve-height>{{ formatUtcDateForTable(data.latestEvent) }}</AsyncCell></template>
 			</Column>
 			<template #empty><div class="p-6 text-center">{{ emptyMessage }}</div></template>
@@ -126,7 +127,7 @@
 		</div>
 		<Paginator
 			v-if="result.total > displayedRows"
-			:first="displayedFirst"
+			:first="first"
 			:rows="displayedRows"
 			:total-records="result.total"
 			:page-link-size="pageLinkSize"
@@ -195,7 +196,7 @@
 		{ label: 'Not linked', value: 'unlinked' },
 	];
 
-	const requestKey = computed(() => [ props.period, first.value, itemsPerPage.value, debouncedSearch.value, status.value, linked.value, sortField.value, sortOrder.value ]);
+	const requestKey = computedDebounced(() => [ props.period, first.value, itemsPerPage.value, debouncedSearch.value, status.value, linked.value, sortField.value, sortOrder.value ]);
 	const initialLoading = ref(true);
 
 	const { data: response, pending, error } = await useLazyAsyncData(

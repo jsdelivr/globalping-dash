@@ -30,6 +30,7 @@
 
 		<DataTable
 			class="max-md:hidden"
+			table-class="table-fixed"
 			:value="result.items"
 			lazy
 			:first="displayedFirst"
@@ -41,10 +42,10 @@
 			data-key="id"
 			@sort="onSort"
 		>
-			<Column field="date" header="Date" sortable class="min-w-28">
+			<Column field="date" header="Date" sortable class="min-w-28" style="width: 17%;">
 				<template #body="{ data }"><AsyncCell :loading="pending" preserve-height>{{ formatUtcDateForTable(data.date) }}</AsyncCell></template>
 			</Column>
-			<Column field="sponsor" header="Recipient" sortable class="min-w-32">
+			<Column field="sponsor" header="Recipient" sortable class="min-w-32" style="width: 23%;">
 				<template #body="{ data }">
 					<AsyncCell :loading="pending" preserve-height>
 						<span class="inline-flex items-center gap-1.5">
@@ -55,7 +56,7 @@
 					</AsyncCell>
 				</template>
 			</Column>
-			<Column field="type" header="Type and details" sortable class="min-w-52">
+			<Column field="type" header="Type and details" sortable class="min-w-52" style="width: 30%;">
 				<template #body="{ data }">
 					<AsyncCell :loading="pending" preserve-height>
 						<div class="flex flex-col items-start gap-1">
@@ -65,10 +66,10 @@
 					</AsyncCell>
 				</template>
 			</Column>
-			<Column field="credits" header="Credits" sortable class="min-w-24">
+			<Column field="credits" header="Credits" sortable class="min-w-24" style="width: 12%;">
 				<template #body="{ data }"><AsyncCell :loading="pending" preserve-height>{{ formatNumber(data.credits) }}</AsyncCell></template>
 			</Column>
-			<Column field="addedBy" header="Added by" sortable class="min-w-28">
+			<Column field="addedBy" header="Added by" sortable class="min-w-28" style="width: 18%;">
 				<template #body="{ data }"><AsyncCell :loading="pending" preserve-height>{{ data.addedBy || 'System' }}</AsyncCell></template>
 			</Column>
 			<template #empty><div class="p-6 text-center">{{ emptyMessage }}</div></template>
@@ -82,8 +83,11 @@
 						<div class="flex items-start justify-between gap-3">
 							<div>
 								<div class="text-sm text-bluegray-500">{{ formatUtcDateForTable(addition.date) }}</div>
-								<a v-if="addition.githubLogin" class="mt-1 inline-block font-semibold text-inherit underline transition-none hover:text-inherit" :href="`https://github.com/${addition.githubLogin}`" target="_blank" rel="noopener">{{ addition.githubLogin }}</a>
-								<span v-else class="mt-1 inline-block font-semibold">GitHub ID {{ addition.githubId }}</span>
+								<span class="mt-1 inline-flex items-center gap-1.5">
+									<a v-if="addition.githubLogin" class="font-semibold text-inherit underline transition-none hover:text-inherit" :href="`https://github.com/${addition.githubLogin}`" target="_blank" rel="noopener">{{ addition.githubLogin }}</a>
+									<span v-else class="font-semibold">GitHub ID {{ addition.githubId }}</span>
+									<i v-if="addition.dashboardUserId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
+								</span>
 							</div>
 							<div class="text-right font-semibold">{{ formatNumber(addition.credits) }} credits</div>
 						</div>
@@ -96,7 +100,7 @@
 		</div>
 		<Paginator
 			v-if="result.total > displayedRows"
-			:first="displayedFirst"
+			:first="first"
 			:rows="displayedRows"
 			:total-records="result.total"
 			:page-link-size="pageLinkSize"
@@ -156,7 +160,7 @@
 		{ label: 'Other credits', value: 'other' },
 	];
 
-	const requestKey = computed(() => [ first.value, itemsPerPage.value, debouncedSearch.value, type.value, sortField.value, sortOrder.value ]);
+	const requestKey = computedDebounced(() => [ first.value, itemsPerPage.value, debouncedSearch.value, type.value, sortField.value, sortOrder.value ]);
 	const initialLoading = ref(true);
 
 	const { data: response, pending, error } = await useLazyAsyncData(

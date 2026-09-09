@@ -2,7 +2,7 @@
 	<div class="grid gap-4 xl:grid-cols-2">
 		<section class="flex flex-col rounded-xl border bg-white dark:bg-dark-800 dark:text-white">
 			<h3 class="border-b px-4 py-2 font-bold">Current overview</h3>
-			<AsyncBlock class="min-h-32 grow p-3" :status="status">
+			<AsyncBlock class="min-h-[136px] grow p-3" :status="status">
 				<div class="grid h-full gap-2 sm:grid-cols-3">
 					<div class="flex flex-col justify-between gap-3 rounded-lg bg-surface-50 p-3 dark:bg-dark-700">
 						<span>Active sponsors</span>

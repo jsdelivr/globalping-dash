@@ -24,7 +24,7 @@
 		</section>
 
 		<div class="flex flex-col gap-8 sm:gap-10">
-			<SponsorAccountsTable :period="period"/>
+			<SponsorsAccountsTable :period="period"/>
 			<SponsorsEventsTable :period="period"/>
 		</div>
 
@@ -43,8 +43,6 @@
 
 <script setup lang="ts">
 	import { customEndpoint } from '@directus/sdk';
-	// eslint-disable-next-line import/extensions
-	import SponsorAccountsTable from '~/components/sponsors/SponsorAccountsTable.vue';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useSponsorsPeriod } from '~/composables/useSponsorsPeriod';
 	import adminModeMiddleware from '~/middleware/admin-mode';

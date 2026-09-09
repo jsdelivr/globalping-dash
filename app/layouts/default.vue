@@ -150,11 +150,10 @@
 										class="text-sm font-semibold leading-5 text-[#4b5563] dark:!text-dark-0"
 										:class="{ '!text-bluegray-900 dark:!text-bluegray-0': notification.status === 'inbox' }"
 									>
-										<span>{{ notification.subject }}</span>
-										<span
-											v-if="notification.status === 'inbox'"
-											class="mb-px ml-2 inline-block size-2 rounded-full bg-primary-500"
-										/>
+										<template v-if="notification.status === 'inbox'">
+											{{ notification.subject.slice(0, notification.subject.lastIndexOf(' ') + 1) }}<span class="whitespace-nowrap">{{ notification.subject.slice(notification.subject.lastIndexOf(' ') + 1) }}<span class="mb-px ml-2 inline-block size-2 rounded-full bg-primary-500"/></span>
+										</template>
+										<template v-else>{{ notification.subject }}</template>
 									</span>
 
 									<span class="text-sm font-normal leading-4 text-bluegray-500">

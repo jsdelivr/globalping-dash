@@ -196,31 +196,25 @@
 
 	const { data: response, pending, error } = await useLazyAsyncData(
 		async () => {
-			const requestedPeriod = props.period;
-			const requestedFirst = first.value;
-			const requestedRows = itemsPerPage.value;
-			const requestedSearch = debouncedSearch.value;
-			const requestedType = type.value;
-			const requestedSortField = sortField.value;
-			const requestedSortOrder = sortOrder.value;
+			const params = {
+				period: props.period,
+				offset: first.value,
+				limit: itemsPerPage.value,
+				...debouncedSearch.value && { search: debouncedSearch.value },
+				...type.value !== 'all' && { types: type.value },
+				sort: sortField.value,
+				direction: sortOrder.value === -1 ? 'desc' : 'asc',
+			};
 			const result = await minDelay($directus.request<PageResult<SponsorshipEvent>>(customEndpoint({
 				path: '/admin-sponsors/events',
-				params: {
-					period: requestedPeriod,
-					offset: requestedFirst,
-					limit: requestedRows,
-					...requestedSearch && { search: requestedSearch },
-					...requestedType !== 'all' && { types: requestedType },
-					sort: requestedSortField,
-					direction: requestedSortOrder === -1 ? 'desc' : 'asc',
-				},
+				params,
 			})));
 
 			return {
 				result,
-				first: requestedFirst,
-				rows: requestedRows,
-				anyFilterApplied: Boolean(requestedSearch || requestedType !== 'all'),
+				first: params.offset,
+				rows: params.limit,
+				anyFilterApplied: Boolean(params.search || params.types),
 			};
 		},
 		{ default: (): EventsTableData => ({ result: { items: [], total: 0 }, first: 0, rows: itemsPerPage.value, anyFilterApplied: false }), watch: [ requestKey ] },

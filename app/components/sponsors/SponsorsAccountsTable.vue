@@ -213,33 +213,26 @@
 
 	const { data: response, pending, error } = await useLazyAsyncData(
 		async () => {
-			const requestedPeriod = props.period;
-			const requestedFirst = first.value;
-			const requestedRows = itemsPerPage.value;
-			const requestedSearch = debouncedSearch.value;
-			const requestedStatus = status.value;
-			const requestedLinked = linked.value;
-			const requestedSortField = sortField.value;
-			const requestedSortOrder = sortOrder.value;
+			const params = {
+				period: props.period,
+				offset: first.value,
+				limit: itemsPerPage.value,
+				...debouncedSearch.value && { search: debouncedSearch.value },
+				...status.value !== 'all' && { statuses: status.value },
+				...linked.value !== 'all' && { linked: linked.value === 'linked' },
+				sort: sortField.value,
+				direction: sortOrder.value === -1 ? 'desc' : 'asc',
+			};
 			const result = await minDelay($directus.request<PageResult<SponsorAccount>>(customEndpoint({
 				path: '/admin-sponsors/accounts',
-				params: {
-					period: requestedPeriod,
-					offset: requestedFirst,
-					limit: requestedRows,
-					...requestedSearch && { search: requestedSearch },
-					...requestedStatus !== 'all' && { statuses: requestedStatus },
-					...requestedLinked !== 'all' && { linked: requestedLinked === 'linked' },
-					sort: requestedSortField,
-					direction: requestedSortOrder === -1 ? 'desc' : 'asc',
-				},
+				params,
 			})));
 
 			return {
 				result,
-				first: requestedFirst,
-				rows: requestedRows,
-				anyFilterApplied: Boolean(requestedSearch || requestedStatus !== 'all' || requestedLinked !== 'all'),
+				first: params.offset,
+				rows: params.limit,
+				anyFilterApplied: Boolean(params.search || params.statuses || params.linked !== undefined),
 			};
 		},
 		{ default: (): AccountsTableData => ({ result: { items: [], total: 0 }, first: 0, rows: itemsPerPage.value, anyFilterApplied: false }), watch: [ requestKey ] },

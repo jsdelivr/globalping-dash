@@ -296,14 +296,12 @@
 				? {
 					type: 'payment' as const,
 					githubId: recipient.value.githubId,
-					githubLogin: recipient.value.login,
 					credits: credits.value,
 					amountInDollars: paymentAmount.value!,
 				}
 				: {
 					type: 'other' as const,
 					githubId: recipient.value.githubId,
-					githubLogin: recipient.value.login,
 					credits: credits.value,
 					comment: comment.value.trim(),
 				};

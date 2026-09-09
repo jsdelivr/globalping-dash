@@ -55,12 +55,18 @@
 			<Column field="sponsor" header="Sponsor" sortable class="min-w-40" style="width: 20%;">
 				<template #body="{ data }">
 					<AsyncCell :loading="pending" preserve-height>
-						<span class="inline-flex items-center gap-1.5">
-							<a v-if="data.githubLogin" class="font-semibold text-inherit underline transition-none hover:text-inherit" :href="`https://github.com/${data.githubLogin}`" target="_blank" rel="noopener">
+						<span class="flex min-w-0 max-w-full items-center gap-1.5">
+							<a
+								v-if="data.githubLogin"
+								class="min-w-0 truncate font-semibold text-inherit underline transition-none hover:text-inherit"
+								:href="`https://github.com/${data.githubLogin}`"
+								:title="data.githubLogin"
+								target="_blank"
+								rel="noopener">
 								{{ data.githubLogin }}
 							</a>
-							<span v-else>GitHub ID {{ data.githubId }}</span>
-							<i v-if="data.dashboardUserId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
+							<span v-else class="min-w-0 truncate">GitHub ID {{ data.githubId }}</span>
+							<i v-if="data.dashboardUserId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user shrink-0 text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
 						</span>
 					</AsyncCell>
 				</template>
@@ -93,15 +99,21 @@
 				<AsyncRow v-for="event in result.items" :key="event.id" :loading="pending">
 					<article class="rounded-xl border bg-white p-4 dark:bg-dark-800">
 						<div class="flex items-start justify-between gap-3">
-							<div>
+							<div class="min-w-0">
 								<div class="text-sm text-bluegray-500">{{ formatUtcDateForTable(event.date) }}</div>
-								<span class="mt-1 inline-flex items-center gap-1.5">
-									<a v-if="event.githubLogin" class="font-semibold text-inherit underline transition-none hover:text-inherit" :href="`https://github.com/${event.githubLogin}`" target="_blank" rel="noopener">{{ event.githubLogin }}</a>
-									<span v-else class="font-semibold">GitHub ID {{ event.githubId }}</span>
-									<i v-if="event.dashboardUserId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
+								<span class="mt-1 flex min-w-0 max-w-full items-center gap-1.5">
+									<a
+										v-if="event.githubLogin"
+										class="min-w-0 truncate font-semibold text-inherit underline transition-none hover:text-inherit"
+										:href="`https://github.com/${event.githubLogin}`"
+										:title="event.githubLogin"
+										target="_blank"
+										rel="noopener">{{ event.githubLogin }}</a>
+									<span v-else class="min-w-0 truncate font-semibold">GitHub ID {{ event.githubId }}</span>
+									<i v-if="event.dashboardUserId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user shrink-0 text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
 								</span>
 							</div>
-							<div class="text-right">
+							<div class="shrink-0 text-right">
 								<div class="font-semibold">{{ formatMoney(event.sponsorshipValue) }}</div>
 								<small v-if="event.monthsCovered > 1" class="text-bluegray-500">{{ formatMoney(event.amountInDollars) }} × {{ formatNumber(event.monthsCovered) }} months</small>
 							</div>

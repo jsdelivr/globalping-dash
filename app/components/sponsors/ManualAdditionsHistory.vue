@@ -48,10 +48,16 @@
 			<Column field="sponsor" header="Recipient" sortable class="min-w-32" style="width: 23%;">
 				<template #body="{ data }">
 					<AsyncCell :loading="pending" preserve-height>
-						<span class="inline-flex items-center gap-1.5">
-							<a v-if="data.githubLogin" class="font-semibold text-inherit underline transition-none hover:text-inherit" :href="`https://github.com/${data.githubLogin}`" target="_blank" rel="noopener">{{ data.githubLogin }}</a>
-							<span v-else>GitHub ID {{ data.githubId }}</span>
-							<i v-if="data.dashboardUserId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
+						<span class="flex min-w-0 max-w-full items-center gap-1.5">
+							<a
+								v-if="data.githubLogin"
+								class="min-w-0 truncate font-semibold text-inherit underline transition-none hover:text-inherit"
+								:href="`https://github.com/${data.githubLogin}`"
+								:title="data.githubLogin"
+								target="_blank"
+								rel="noopener">{{ data.githubLogin }}</a>
+							<span v-else class="min-w-0 truncate">GitHub ID {{ data.githubId }}</span>
+							<i v-if="data.dashboardUserId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user shrink-0 text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
 						</span>
 					</AsyncCell>
 				</template>
@@ -81,15 +87,21 @@
 				<AsyncRow v-for="addition in result.items" :key="addition.id" :loading="pending">
 					<article class="rounded-xl border bg-white p-4 dark:bg-dark-800">
 						<div class="flex items-start justify-between gap-3">
-							<div>
+							<div class="min-w-0">
 								<div class="text-sm text-bluegray-500">{{ formatUtcDateForTable(addition.date) }}</div>
-								<span class="mt-1 inline-flex items-center gap-1.5">
-									<a v-if="addition.githubLogin" class="font-semibold text-inherit underline transition-none hover:text-inherit" :href="`https://github.com/${addition.githubLogin}`" target="_blank" rel="noopener">{{ addition.githubLogin }}</a>
-									<span v-else class="font-semibold">GitHub ID {{ addition.githubId }}</span>
-									<i v-if="addition.dashboardUserId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
+								<span class="mt-1 flex min-w-0 max-w-full items-center gap-1.5">
+									<a
+										v-if="addition.githubLogin"
+										class="min-w-0 truncate font-semibold text-inherit underline transition-none hover:text-inherit"
+										:href="`https://github.com/${addition.githubLogin}`"
+										:title="addition.githubLogin"
+										target="_blank"
+										rel="noopener">{{ addition.githubLogin }}</a>
+									<span v-else class="min-w-0 truncate font-semibold">GitHub ID {{ addition.githubId }}</span>
+									<i v-if="addition.dashboardUserId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user shrink-0 text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
 								</span>
 							</div>
-							<div class="text-right font-semibold">{{ formatNumber(addition.credits) }} credits</div>
+							<div class="shrink-0 text-right font-semibold">{{ formatNumber(addition.credits) }} credits</div>
 						</div>
 						<div class="mt-3 flex items-center gap-2"><Tag :value="typeLabel(addition.type)" :severity="addition.type === 'payment' ? 'warn' : 'secondary'"/><span class="text-sm">{{ addition.type === 'payment' ? `${formatMoney(addition.amountInDollars || 0)} payment` : addition.comment }}</span></div>
 						<div class="mt-2 text-xs text-bluegray-500">Added by {{ addition.addedBy || 'System' }}</div>

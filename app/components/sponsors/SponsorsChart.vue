@@ -20,7 +20,6 @@
 	import Chart from 'primevue/chart';
 	import { formatMoney } from '~/utils/format-money';
 	import { formatNumber } from '~/utils/format-number';
-	import { SPONSOR_COLORS } from '~/utils/sponsor-colors';
 
 	const props = defineProps<{
 		points: SponsorsChartPoint[];
@@ -41,8 +40,8 @@
 			{
 				label: 'Recurring',
 				data: props.points.map(point => point.recurringValue),
-				backgroundColor: SPONSOR_COLORS.recurring,
-				borderColor: SPONSOR_COLORS.recurring,
+				backgroundColor: '#3b82f6',
+				borderColor: '#3b82f6',
 				stack: 'value',
 				borderSkipped: false,
 				borderRadius: (context: { dataIndex: number }) => props.points[context.dataIndex]?.oneTimeValue
@@ -55,8 +54,8 @@
 			{
 				label: 'One-time',
 				data: props.points.map(point => point.oneTimeValue),
-				backgroundColor: SPONSOR_COLORS.oneTime,
-				borderColor: SPONSOR_COLORS.oneTime,
+				backgroundColor: '#f97316',
+				borderColor: '#f97316',
 				stack: 'value',
 				borderSkipped: false,
 				borderRadius: { topLeft: 7, topRight: 7 },

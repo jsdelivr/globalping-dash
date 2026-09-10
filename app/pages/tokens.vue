@@ -481,6 +481,7 @@
 					path: '/applications/revoke',
 					body: JSON.stringify({
 						accountId: appToRevoke.value.account_id,
+						userCreated: appToRevoke.value.user_created,
 						id: appToRevoke.value.id,
 					}),
 				}));

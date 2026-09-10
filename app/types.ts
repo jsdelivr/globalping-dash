@@ -192,6 +192,7 @@ declare global {
 		owner_name: string;
 		owner_url: string;
 		account_id: string;
+		user_created: string;
 	};
 
 	type AppApproval = {

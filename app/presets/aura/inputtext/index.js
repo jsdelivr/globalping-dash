@@ -47,7 +47,7 @@ export default {
 
 			// Misc
 			'appearance-none',
-			'transition-colors transition-shadow duration-200',
+			'transition-[border-color,box-shadow] duration-200',
 		],
 	}),
 };

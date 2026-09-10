@@ -20,6 +20,12 @@ export function useUserFilter () {
 			};
 		}
 
+		if (filterField === 'account_id') {
+			return {
+				account_id: { _eq: user.value.account },
+			};
+		}
+
 		return {
 			[filterField]: { _eq: user.value.id },
 		};

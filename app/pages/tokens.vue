@@ -287,7 +287,7 @@
 	const { data: tokens, pending: tokensPending, error: tokenError, refresh: refreshTokenData } = await useLazyAsyncData(
 		() => minDelay($directus.request(readItems('gp_tokens', {
 			filter: {
-				...getUserFilter('user_created'),
+				...getUserFilter('account_id'),
 				app_id: { _null: true },
 			},
 			offset: firstToken.value,
@@ -306,7 +306,7 @@
 			{
 				query: {
 					filter: {
-						...getUserFilter('user_created'),
+						...getUserFilter('account_id'),
 						app_id: { _null: true },
 					},
 				},
@@ -449,7 +449,7 @@
 			method: 'GET',
 			path: '/applications',
 			params: {
-				userId: getUserFilter('user_id').user_id?._eq || 'all',
+				accountId: getUserFilter('account_id').account_id?._eq || 'all',
 				offset: firstApp.value,
 				limit: itemsPerPage.value,
 			},
@@ -480,7 +480,8 @@
 					method: 'POST',
 					path: '/applications/revoke',
 					body: JSON.stringify({
-						userId: appToRevoke.value.user_id,
+						accountId: appToRevoke.value.account_id,
+						userCreated: appToRevoke.value.user_created,
 						id: appToRevoke.value.id,
 					}),
 				}));

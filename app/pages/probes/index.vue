@@ -60,7 +60,7 @@
 										<p class="wrap-anywhere col-start-2 col-end-3 font-bold">
 											{{ slotProps.data.name || slotProps.data.city }}<span v-if="auth.adminMode">,
 												<span class="font-normal text-bluegray-800 dark:text-bluegray-300">
-													{{slotProps.data.user?.github_username ?? 'not adopted'}}
+													{{getOwnerName(slotProps.data)}}
 												</span>
 											</span>
 										</p>
@@ -159,7 +159,7 @@
 												<p class="wrap-anywhere col-start-2 col-end-3 font-bold">
 													{{ probe.name || probe.city }}<span v-if="auth.adminMode">,
 														<span class="font-normal text-bluegray-800 dark:text-bluegray-300">
-															{{probe.user?.github_username ?? 'not adopted'}}
+															{{getOwnerName(probe)}}
 														</span>
 													</span>
 												</p>
@@ -344,7 +344,7 @@
 	const { data: probeCount, pending: countLoading, refresh: refreshProbeCount } = await useLazyAsyncData(
 		() => $directus.request<[{ count: number }]>(aggregate('gp_probes', {
 			query: {
-				filter: getUserFilter('userId'),
+				filter: getUserFilter('account_id'),
 			},
 			aggregate: { count: '*' },
 		})),
@@ -357,18 +357,21 @@
 		hasAnyProbes.value = !!newProbeCount;
 	});
 
+	const getOwnerName = (probe: ProbeWithOwner) => probe.owner?.org?.name ?? probe.owner?.user?.github_username ?? 'not adopted';
+
 	const { data: probes, pending: loading, error: probeError, refresh: refreshProbes } = await useLazyAsyncData(
-		() => minDelay($directus.request<ProbeWithUser[]>(readItems('gp_probes', {
+		() => minDelay($directus.request<ProbeWithOwner[]>(readItems('gp_probes', {
 			filter: getCurrentFilter(),
 			sort: getSortSettings() as any, // the directus QuerySort type does not include the count(...) versions of fields, leading to a TS error.
 			offset: first.value,
 			limit: itemsPerPage.value,
 			fields: [
 				'*',
-				{ user: [ 'id', 'github_username' ] } as unknown as 'userId', // directus SDK types do not support relational fields
+				// directus SDK types do not support relational fields
+				{ owner: [{ user: [ 'id', 'github_username' ] }, { org: [ 'id', 'name' ] }] } as unknown as 'account_id',
 			],
 			alias: {
-				user: 'userId',
+				owner: 'account_id',
 			},
 		}))),
 		{

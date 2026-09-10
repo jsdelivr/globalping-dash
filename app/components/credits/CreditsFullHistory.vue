@@ -110,7 +110,7 @@
 			method: 'GET',
 			path: '/credits-timeline',
 			params: {
-				userId: getUserFilter('user_id').user_id?._eq || 'all',
+				accountId: getUserFilter('account_id').account_id?._eq || 'all',
 				...getTableFilter(),
 				offset: first.value,
 				limit: itemsPerPage.value,

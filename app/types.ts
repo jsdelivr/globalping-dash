@@ -12,7 +12,7 @@ declare global {
 		'gp_apps': Application[];
 		'gp_apps_approvals': AppApproval[];
 
-		'directus_users': User;
+		'directus_users': DirectusUser;
 		'city-autocomplete': City[];
 	};
 
@@ -25,7 +25,7 @@ declare global {
 
 	type Credits = {
 		amount: number;
-		user_id: string;
+		account_id: string;
 	};
 
 	type CreditsAddition = {
@@ -45,7 +45,7 @@ declare global {
 	type CreditsDeduction = {
 		amount: number;
 		date: 'datetime';
-		user_id: string;
+		account_id: string;
 	};
 
 	type CreditsChange = {
@@ -110,7 +110,7 @@ declare global {
 			format?: string;
 		}[];
 		systemTags: string[];
-		userId: string | null;
+		account_id: string | null;
 		uuid: string;
 		version: string;
 		hardwareDevice: string | null;
@@ -125,7 +125,12 @@ declare global {
 		};
 	};
 
-	type ProbeWithUser<TCountry extends string = string> = Probe<TCountry> & { user: Partial<User> };
+	type ProbeWithOwner<TCountry extends string = string> = Probe<TCountry> & {
+		owner: {
+			user: Pick<User, 'id' | 'github_username'> | null;
+			org: { id: string; name: string } | null;
+		} | null;
+	};
 
 	type NotificationPreference = {
 		enabled: boolean;
@@ -148,7 +153,12 @@ declare global {
 		adoption_token: string;
 		default_prefix: string;
 		date_created: string;
+		last_page: string | null;
+		account: string;
 	};
+
+	// In Directus, `account` is the reverse alias of gp_accounts.user, so it comes back as an array of one id.
+	type DirectusUser = Omit<User, 'account'> & { account: string[] };
 
 	type NotificationTypes = Record<string, {
 		readOnly: boolean;
@@ -181,7 +191,8 @@ declare global {
 		date_last_used: string | null;
 		owner_name: string;
 		owner_url: string;
-		user_id: string;
+		account_id: string;
+		user_created: string;
 	};
 
 	type AppApproval = {

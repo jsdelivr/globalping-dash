@@ -167,6 +167,7 @@
 		itemsPerPage,
 		pageKey: 'eventsPage',
 		limitKey: 'eventsLimit',
+		maxItemsPerPage: 100,
 	});
 
 	const search = ref('');

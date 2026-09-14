@@ -177,6 +177,7 @@
 		itemsPerPage,
 		pageKey: 'accountsPage',
 		limitKey: 'accountsLimit',
+		maxItemsPerPage: 100,
 	});
 
 	const search = ref('');

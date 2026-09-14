@@ -149,6 +149,7 @@
 		itemsPerPage,
 		pageKey: 'manualAdditionsPage',
 		limitKey: 'manualAdditionsLimit',
+		maxItemsPerPage: 100,
 	});
 
 	const search = ref('');

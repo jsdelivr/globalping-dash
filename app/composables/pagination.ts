@@ -3,6 +3,7 @@ export interface PaginationOptions {
 	defaultItemsPerPage?: number;
 	itemsPerPage: Ref<number>;
 	limitKey?: string;
+	maxItemsPerPage?: number;
 	pageKey?: string;
 }
 
@@ -14,7 +15,7 @@ const getPositiveInteger = (value: unknown) => {
 	return Number.isSafeInteger(number) ? number : null;
 };
 
-export const usePagination = ({ active = () => true, defaultItemsPerPage, itemsPerPage, limitKey = 'limit', pageKey = 'page' }: PaginationOptions) => {
+export const usePagination = ({ active = () => true, defaultItemsPerPage, itemsPerPage, limitKey = 'limit', maxItemsPerPage, pageKey = 'page' }: PaginationOptions) => {
 	const page = ref(0);
 	const route = useRoute();
 	const windowSize = useWindowSize();
@@ -25,7 +26,7 @@ export const usePagination = ({ active = () => true, defaultItemsPerPage, itemsP
 
 			const limit = getPositiveInteger(limitQuery);
 
-			if (limit) {
+			if (limit && (maxItemsPerPage === undefined || limit <= maxItemsPerPage)) {
 				itemsPerPage.value = limit;
 			} else if (defaultItemsPerPage !== undefined) {
 				itemsPerPage.value = defaultItemsPerPage;

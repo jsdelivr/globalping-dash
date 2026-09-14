@@ -120,6 +120,9 @@ declare global {
 		searchIndex: string;
 		isOutdated: boolean;
 		customLocation: CustomLocation<TCountry>;
+		settings: {
+			meteredConnection: boolean;
+		};
 	};
 
 	type ProbeWithUser<TCountry extends string = string> = Probe<TCountry> & { user: Partial<User> };

@@ -50,7 +50,7 @@
 						@click="additionType = 'payment'"
 					>
 						<span class="flex items-start gap-2">
-							<RadioButton v-model="additionType" input-id="manualPayment" value="payment"/>
+							<RadioButton v-model="additionType" input-id="manualPayment" value="payment" aria-label="Manual one-time payment"/>
 							<span><b class="block">Manual one-time payment</b><small class="text-bluegray-500">Payment recorded outside the automated GitHub flow.</small></span>
 						</span>
 					</button>
@@ -61,7 +61,7 @@
 						@click="additionType = 'other'"
 					>
 						<span class="flex items-start gap-2">
-							<RadioButton v-model="additionType" input-id="otherCredits" value="other"/>
+							<RadioButton v-model="additionType" input-id="otherCredits" value="other" aria-label="Other credits"/>
 							<span><b class="block">Other credits</b><small class="text-bluegray-500">Free credits or another manual adjustment.</small></span>
 						</span>
 					</button>
@@ -71,8 +71,8 @@
 			<section class="flex flex-col gap-2">
 				<label for="creditAmount" class="font-bold">Credits to add<i class="text-primary">*</i></label>
 				<InputNumber
-					id="creditAmount"
 					v-model="credits"
+					input-id="creditAmount"
 					class="w-full"
 					input-class="w-full"
 					:min="1"
@@ -87,8 +87,8 @@
 			<section v-if="additionType === 'payment'" class="flex flex-col gap-2">
 				<label for="paymentAmount" class="font-bold">Payment amount (USD)<i class="text-primary">*</i></label>
 				<InputNumber
-					id="paymentAmount"
 					v-model="paymentAmount"
+					input-id="paymentAmount"
 					class="w-full"
 					input-class="w-full"
 					mode="currency"

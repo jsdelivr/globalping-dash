@@ -155,10 +155,10 @@ export const useAuth = defineStore('auth', {
 					$directus.request(readMe()),
 					$directus.request(readRolesMe()),
 				]);
-				this.isLoggedIn = true;
-				this.expiresAt = Number(expires_at);
 				this.user = toUser(user as DirectusUser);
 				this.isAdmin = !!roles.some(role => role.name === 'Administrator');
+				this.expiresAt = Number(expires_at);
+				this.isLoggedIn = true;
 
 				if (this.isAdmin) {
 					this.applyAdminConfig();

@@ -44,7 +44,6 @@
 			<div ref="scopeControl" class="w-full sm:w-64">
 				<label for="probe-log-scopes" class="sr-only">Filter logs by scope</label>
 				<MultiSelect
-					ref="scopeSelector"
 					v-model="scopeInput"
 					input-id="probe-log-scopes"
 					class="w-full"
@@ -80,33 +79,13 @@
 							label: { class: 'min-w-0 flex-1 truncate pb-px pr-0.5 !leading-5' },
 							removeIcon: { class: 'order-first !flex !size-4 shrink-0 items-center justify-center !leading-none' },
 						},
-						pcFilter: { root: { maxlength: SCOPE_MAX_LENGTH } },
 						dropdown: { class: 'h-full !w-9' },
 					}"
 					:pt-options="{ mergeProps: true }"
-					@filter="onScopeFilter"
-					@hide="scopeFilter = ''"
 					@update:model-value="onScopesUpdated"
 				>
 					<template #option="{ option }">
 						<span class="min-w-0 flex-1 truncate font-mono text-xs" :title="option">{{ option }}</span>
-					</template>
-					<template v-if="customScopeCandidate" #footer>
-						<div class="border-t border-surface-200 p-1 dark:border-dark-600">
-							<button
-								type="button"
-								class="group flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-bluegray-900 transition-colors hover:bg-surface-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary dark:text-surface-0 dark:hover:bg-dark-600"
-								:aria-label="`Add custom scope ${customScopeCandidate}`"
-								:title="`Add custom scope ${customScopeCandidate}`"
-								@click="addCustomScope"
-							>
-								<span class="flex size-6 shrink-0 items-center justify-center rounded bg-surface-100 text-bluegray-600 transition-colors group-hover:bg-surface-200 dark:bg-dark-600 dark:text-bluegray-300 dark:group-hover:bg-dark-500">
-									<i class="pi pi-plus text-[10px]" aria-hidden="true"/>
-								</span>
-								<span class="min-w-0 flex-1 truncate font-mono text-xs">{{ customScopeCandidate }}</span>
-								<span class="shrink-0 text-[11px] font-normal text-bluegray-400 dark:text-bluegray-400">Add scope</span>
-							</button>
-						</div>
 					</template>
 				</MultiSelect>
 			</div>
@@ -128,11 +107,11 @@
 
 <script setup lang="ts">
 	import { useResizeObserver } from '@vueuse/core';
-	import { canAppendProbeLogScope, SEARCH_MAX_LENGTH, SCOPE_MAX_LENGTH } from '~/composables/useProbeLogFilters';
+	import { canAppendProbeLogScope, SEARCH_MAX_LENGTH } from '~/composables/useProbeLogFilters';
 	import { formatNumber } from '~/utils/format-number';
 	import { pluralize } from '~/utils/pluralize';
 
-	const props = defineProps<{
+	defineProps<{
 		renderedCount: number;
 		loadedCount: number;
 		filtersActive: boolean;
@@ -147,7 +126,6 @@
 	const emit = defineEmits<{
 		'search-input': [];
 		'scopes-updated': [ scopes: string[] ];
-		'custom-scope-added': [ scope: string ];
 	}>();
 
 	const searchInput = defineModel<string>('searchInput', { required: true });
@@ -155,44 +133,12 @@
 	const enabled = defineModel<boolean>('enabled', { required: true });
 
 	const scopeControl = ref<HTMLDivElement | null>(null);
-	const scopeSelector = ref<{ hide: (isFocus?: boolean) => void } | null>(null);
-	const scopeFilter = ref('');
 	const scopeValuesOverflowing = ref(false);
 
 	const isScopeOptionDisabled = (scope: string) => !scopeInput.value.includes(scope) && !canAppendProbeLogScope(scopeInput.value, scope);
 
-	const customScopeCandidate = computed(() => {
-		const scope = scopeFilter.value.trim();
-
-		if (!scope
-			|| scope.length > SCOPE_MAX_LENGTH
-			|| scope.includes(',')
-			|| props.scopeOptions.includes(scope)
-			|| !canAppendProbeLogScope(scopeInput.value, scope)) {
-			return '';
-		}
-
-		return scope;
-	});
-
-	const onScopeFilter = (event: { value: string }) => {
-		scopeFilter.value = event.value;
-	};
-
 	const onScopesUpdated = (scopes: string[]) => {
 		emit('scopes-updated', scopes);
-	};
-
-	const addCustomScope = () => {
-		const scope = customScopeCandidate.value;
-
-		if (!scope) {
-			return;
-		}
-
-		emit('custom-scope-added', scope);
-		scopeFilter.value = '';
-		scopeSelector.value?.hide(true);
 	};
 
 	const updateScopeValuesOverflowing = () => {

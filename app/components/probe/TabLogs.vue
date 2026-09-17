@@ -16,7 +16,6 @@
 				:scope-options="scopeOptions"
 				@search-input="onSearchInput"
 				@scopes-updated="onScopesUpdated"
-				@custom-scope-added="addCustomScope"
 			/>
 			<div v-if="loadedLogCount" class="h-4 max-lg:h-2"/>
 			<ProbeLogViewport
@@ -75,7 +74,6 @@
 		filtersActive,
 		onSearchInput,
 		onScopesUpdated,
-		addCustomScope,
 		onApplied,
 	} = useProbeLogFilters();
 

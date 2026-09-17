@@ -88,7 +88,6 @@ export const useProbeLogFilters = () => {
 	const scopeInput = ref([ ...initialFilter.scopes ]);
 	const filterUpdatePending = ref(false);
 	const filtersActive = computed(() => Boolean(filter.value.search || filter.value.scopes.length));
-	const storedCustomScopes = useLocalStorage<unknown>('probe-log-custom-scopes', []);
 
 	const pendingQueryUpdates = new Set<string>();
 
@@ -96,11 +95,9 @@ export const useProbeLogFilters = () => {
 		server: false,
 	});
 
-	const customScopeOptions = computed(() => normalizeScopeOptions(storedCustomScopes.value));
 	const apiScopeOptions = computed(() => normalizeScopeOptions(scopeResponse.value ?? []));
 	const scopeOptions = computed(() => normalizeScopeOptions([
 		...apiScopeOptions.value,
-		...customScopeOptions.value,
 		...scopeInput.value,
 	]));
 
@@ -173,14 +170,6 @@ export const useProbeLogFilters = () => {
 		scheduleFilterUpdate();
 	};
 
-	const addCustomScope = (scope: string) => {
-		storedCustomScopes.value = [ ...customScopeOptions.value, scope ];
-
-		if (!scopeInput.value.includes(scope)) {
-			onScopesUpdated([ ...scopeInput.value, scope ]);
-		}
-	};
-
 	watch(
 		[ () => route.query[SEARCH_QUERY_KEY], () => route.query[SCOPES_QUERY_KEY] ],
 		([ searchQuery, scopesQuery ]) => {
@@ -212,7 +201,6 @@ export const useProbeLogFilters = () => {
 		filtersActive,
 		onSearchInput,
 		onScopesUpdated,
-		addCustomScope,
 		onApplied: filtersApplied.on,
 	};
 };

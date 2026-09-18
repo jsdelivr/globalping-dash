@@ -304,7 +304,6 @@
 	import CountryFlag from 'vue-country-flag-next';
 	import { usePublicIp } from '~/composables/usePublicIp';
 	import { useUserFilter } from '~/composables/useUserFilter';
-	import { useAuth } from '~/store/auth';
 	import { LINK_TOKEN_STORAGE_KEY, useHardwareProbeAdoption } from '~/store/local-adoption';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 	import { smoothResize } from '~/utils/smooth-resize';
@@ -322,10 +321,8 @@
 	const store = useHardwareProbeAdoption();
 	const { activeProbe } = storeToRefs(store);
 	const { $directus } = useNuxtApp();
-	const { getUserFilter } = useUserFilter();
+	const { getUserFilter, getAccountId } = useUserFilter();
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
-	const auth = useAuth();
-	const { user } = storeToRefs(auth);
 	const userPublicIp = usePublicIp();
 
 	const activeStep = ref(props.manualHwAdoption ? '5' : '0');
@@ -394,7 +391,7 @@
 	const { data: initialIds } = await useLazyAsyncData(
 		'initial_user_probes',
 		() => $directus.request(readItems('gp_probes', {
-			filter: getUserFilter('userId'),
+			filter: getUserFilter('account_id'),
 		})),
 		{ default: () => new Set(), transform: probes => new Set(probes.map(probe => probe.id)) },
 	);
@@ -414,7 +411,7 @@
 
 			try {
 				const currentProbes = await $directus.request(readItems('gp_probes', {
-					filter: getUserFilter('userId'),
+					filter: getUserFilter('account_id'),
 				}));
 
 				const newProbes = currentProbes.filter(probe => !initialIds.value.has(probe.id));
@@ -546,8 +543,7 @@
 				method: 'POST',
 				path: '/adoption-code/send-code',
 				body: JSON.stringify({
-					// If getUserFilter returned {} send admin ID.
-					userId: getUserFilter('user_id').user_id?._eq || user.value.id,
+					accountId: getAccountId(),
 					ip: ip.value,
 				}),
 			}));
@@ -584,7 +580,7 @@
 				method: 'POST',
 				path: '/adoption-code/send-code',
 				body: JSON.stringify({
-					userId: getUserFilter('user_id').user_id?._eq || user.value.id,
+					accountId: getAccountId(),
 					ip: ip.value,
 				}),
 			}));
@@ -604,7 +600,7 @@
 				method: 'POST',
 				path: '/adoption-code/verify-code',
 				body: JSON.stringify({
-					userId: getUserFilter('user_id').user_id?._eq || user.value.id,
+					accountId: getAccountId(),
 					code: code.value.substring(0, 6),
 				}),
 			})) as Probe;

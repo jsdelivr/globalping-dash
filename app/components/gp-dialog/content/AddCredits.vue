@@ -175,7 +175,7 @@
 	const { user } = storeToRefs(auth);
 	const metadata = useMetadata();
 	const { creditsPerAdoptedProbe, creditsPerDollar } = storeToRefs(metadata);
-	const { getUserFilter } = useUserFilter();
+	const { getUserFilter, getAccountId } = useUserFilter();
 
 	defineEmits([ 'cancel', 'adopt-a-probe' ]);
 
@@ -183,7 +183,7 @@
 		'gp_adopted_probes_exist',
 		() => auth.isLoggedIn
 			? $directus.request(readItems('gp_probes', {
-				filter: getUserFilter('userId'),
+				filter: getUserFilter('account_id'),
 				limit: 1,
 			}))
 			: Promise.resolve([]),
@@ -195,7 +195,7 @@
 		() => auth.isLoggedIn
 			? $directus.request<SponsorshipDetails>(customEndpoint({
 				path: '/sponsorship-details',
-				params: { userId: auth.user.id },
+				params: { accountId: getAccountId() },
 			}))
 			: Promise.resolve({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }),
 		{ default: () => ({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }) },

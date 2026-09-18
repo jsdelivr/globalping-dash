@@ -7,19 +7,16 @@ interface AuthState {
 	expiresAt: number;
 	isAdmin: boolean;
 	impersonation: {
-		originalUser: User & {
-			last_page: string | null;
-		};
+		originalUser: User;
 		github_username: string;
-		impersonatedUser: User & {
-			last_page: string | null;
-		} | null;
+		impersonatedUser: User | null;
 	} | null;
 	adminMode: boolean;
-	user: User & {
-		last_page: string | null;
-	};
+	user: User;
 }
+
+// Directus returns the account as a one-element array, the app carries the id itself.
+const toUser = (user: DirectusUser): User => ({ ...user, account: user.account[0] ?? '' });
 
 export const useAuth = defineStore('auth', {
 	state: (): AuthState => ({
@@ -44,6 +41,7 @@ export const useAuth = defineStore('auth', {
 			default_prefix: '',
 			last_page: '',
 			date_created: '',
+			account: '',
 		},
 	}),
 	actions: {
@@ -64,7 +62,9 @@ export const useAuth = defineStore('auth', {
 
 			return redirectUrl.toString();
 		},
-		impersonate (user: User) {
+		impersonate (directusUser: DirectusUser) {
+			const user = toUser(directusUser);
+
 			if (!user.github_username || !this.isAdmin) {
 				return;
 			}
@@ -110,6 +110,7 @@ export const useAuth = defineStore('auth', {
 						typeof adminConfig?.impersonation !== 'object'
 						|| typeof adminConfig?.impersonation?.github_username !== 'string'
 						|| typeof adminConfig?.impersonation?.originalUser?.id !== 'string'
+						|| typeof adminConfig?.impersonation?.impersonatedUser?.account !== 'string'
 					))
 				) {
 					this.clearAdminConfig();
@@ -154,10 +155,10 @@ export const useAuth = defineStore('auth', {
 					$directus.request(readMe()),
 					$directus.request(readRolesMe()),
 				]);
-				this.isLoggedIn = true;
-				this.expiresAt = Number(expires_at);
-				this.user = user as AuthState['user'];
+				this.user = toUser(user as DirectusUser);
 				this.isAdmin = !!roles.some(role => role.name === 'Administrator');
+				this.expiresAt = Number(expires_at);
+				this.isLoggedIn = true;
 
 				if (this.isAdmin) {
 					this.applyAdminConfig();

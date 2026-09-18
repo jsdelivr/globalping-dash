@@ -304,7 +304,6 @@
 	import CountryFlag from 'vue-country-flag-next';
 	import { usePublicIp } from '~/composables/usePublicIp';
 	import { useUserFilter } from '~/composables/useUserFilter';
-	import { useAuth } from '~/store/auth';
 	import { LINK_TOKEN_STORAGE_KEY, useHardwareProbeAdoption } from '~/store/local-adoption';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 	import { smoothResize } from '~/utils/smooth-resize';
@@ -322,9 +321,8 @@
 	const store = useHardwareProbeAdoption();
 	const { activeProbe } = storeToRefs(store);
 	const { $directus } = useNuxtApp();
-	const { getUserFilter } = useUserFilter();
+	const { getUserFilter, getAccountId } = useUserFilter();
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
-	const auth = useAuth();
 	const userPublicIp = usePublicIp();
 
 	const activeStep = ref(props.manualHwAdoption ? '5' : '0');
@@ -545,8 +543,7 @@
 				method: 'POST',
 				path: '/adoption-code/send-code',
 				body: JSON.stringify({
-					// If getUserFilter returned {} send the admin's own account.
-					accountId: getUserFilter('account_id').account_id?._eq || auth.user.account,
+					accountId: getAccountId(),
 					ip: ip.value,
 				}),
 			}));
@@ -583,7 +580,7 @@
 				method: 'POST',
 				path: '/adoption-code/send-code',
 				body: JSON.stringify({
-					accountId: getUserFilter('account_id').account_id?._eq || auth.user.account,
+					accountId: getAccountId(),
 					ip: ip.value,
 				}),
 			}));
@@ -603,7 +600,7 @@
 				method: 'POST',
 				path: '/adoption-code/verify-code',
 				body: JSON.stringify({
-					accountId: getUserFilter('account_id').account_id?._eq || auth.user.account,
+					accountId: getAccountId(),
 					code: code.value.substring(0, 6),
 				}),
 			})) as Probe;

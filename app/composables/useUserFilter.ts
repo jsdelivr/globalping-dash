@@ -31,7 +31,10 @@ export function useUserFilter () {
 		};
 	};
 
+	const getAccountId = (adminValue?: string) => getUserFilter('account_id').account_id?._eq || adminValue || auth.user.account;
+
 	return {
 		getUserFilter,
+		getAccountId,
 	};
 }

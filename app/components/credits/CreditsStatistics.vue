@@ -94,17 +94,15 @@
 	import { useCreditsFilters } from '~/composables/useCreditsFilters';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';
-	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
 	import { formatNumber } from '~/utils/format-number';
 	import { isLeapYear } from '~/utils/is-leap-year';
 	import { minDelay } from '~/utils/min-delay';
 
-	const auth = useAuth();
 	const metadata = useMetadata();
 	const { $directus } = useNuxtApp();
 	const { directusDateQuery, filter } = useCreditsFilters();
-	const { getUserFilter } = useUserFilter();
+	const { getUserFilter, getAccountId } = useUserFilter();
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 
@@ -185,7 +183,7 @@
 			})),
 			$directus.request<SponsorshipDetails>(customEndpoint({
 				path: '/sponsorship-details',
-				params: { accountId: getUserFilter('account_id').account_id?._eq || auth.user.account, ...endDate.value && { to: endDate.value } },
+				params: { accountId: getAccountId(), ...endDate.value && { to: endDate.value } },
 			})),
 			isRelativeFilter.value
 				? $directus.request<[{ count: number }]>(aggregate('gp_probes', {

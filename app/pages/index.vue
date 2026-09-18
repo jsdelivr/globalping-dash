@@ -194,7 +194,7 @@
 	const creditsPerAdoptedProbe = useMetadata().creditsPerAdoptedProbe;
 	const auth = useAuth();
 	const { user } = storeToRefs(auth);
-	const { getUserFilter } = useUserFilter();
+	const { getUserFilter, getAccountId } = useUserFilter();
 	const { width: windowWidth } = useWindowSize();
 
 	// SUMMARY
@@ -253,7 +253,7 @@
 		'gp_sponsorship-details',
 		() => $directus.request<SponsorshipDetails>(customEndpoint({
 			path: '/sponsorship-details',
-			params: { accountId: getUserFilter('account_id').account_id?._eq || auth.user.account },
+			params: { accountId: getAccountId() },
 		})),
 		{ default: () => ({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }) },
 	);

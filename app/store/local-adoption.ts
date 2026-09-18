@@ -146,14 +146,14 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 
 		async adoptProbe (token: string) {
 			const { $directus } = useNuxtApp();
-			const { getUserFilter } = useUserFilter();
+			const { getAccountId } = useUserFilter();
 
 			const probe = await $directus.request<Probe>(customEndpoint({
 				method: 'POST',
 				path: '/local-adoption/adopt',
 				body: JSON.stringify({
 					token,
-					accountId: getUserFilter('account_id').account_id?._eq || useAuth().user.account,
+					accountId: getAccountId(),
 				}),
 			}));
 

@@ -276,7 +276,7 @@
 
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
-	const { getUserFilter } = useUserFilter();
+	const { getUserFilter, getAccountId } = useUserFilter();
 	const auth = useAuth();
 
 	const itemsPerPage = ref(Math.round(config.public.itemsPerTablePage / 2));
@@ -449,7 +449,7 @@
 			method: 'GET',
 			path: '/applications',
 			params: {
-				accountId: getUserFilter('account_id').account_id?._eq || 'all',
+				accountId: getAccountId('all'),
 				offset: firstApp.value,
 				limit: itemsPerPage.value,
 			},

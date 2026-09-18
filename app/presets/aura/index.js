@@ -49,7 +49,7 @@ import inputtext from './inputtext';
 // import menubar from './menubar';
 import message from './message';
 // import metergroup from './metergroup';
-// import multiselect from './multiselect';
+import multiselect from './multiselect';
 // import orderlist from './orderlist';
 // import organizationchart from './organizationchart';
 // import overlaybadge from './overlaybadge';
@@ -123,7 +123,7 @@ export default {
 	selectbutton,
 	// slider,
 	// rating,
-	// multiselect,
+	multiselect,
 	togglebutton,
 	// cascadeselect,
 	// listbox,

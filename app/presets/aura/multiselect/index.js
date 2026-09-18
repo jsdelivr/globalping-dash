@@ -82,84 +82,67 @@ export default {
 	},
 	overlay: {
 		class: [
-			// Size
-			'max-w-[calc(100vw-2rem)]',
-
-			// Colors
+			'flex flex-col overflow-hidden max-w-[calc(100vw-2rem)] max-h-[calc(100dvh-1rem)]',
 			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-white/80',
-
-			// Shape
-			'border border-surface-300 dark:border-dark-600',
-			'rounded-md',
-			'shadow-md',
-			'mt-[2px]',
+			'border border-surface-300 dark:border-dark-600 rounded-lg',
+			'!mt-0 shadow-[0_10px_30px_rgb(23_35_58_/_0.10)]',
 		],
 	},
 	header: {
 		class: [
-			// Flex
-			'flex items-center justify-between',
-
-			// Spacing
-			'pt-2 px-4 pb-0 gap-2',
-			'm-0',
-
-			// Shape
-			'border-b-0',
-			'rounded-tl-md',
-			'rounded-tr-md',
-
-			// Color
+			'flex shrink-0 items-center gap-2 mx-2 mt-3 mb-2',
 			'text-surface-700 dark:text-white/80',
-			'bg-surface-0 dark:bg-dark-700',
-			'border-surface-300 dark:border-dark-600',
-
-			'[&_[data-pc-name=pcfiltercontainer]]:!flex-auto',
-			'[&_[data-pc-name=pcfilter]]:w-full',
 		],
+	},
+	pcFilterContainer: {
+		root: { class: 'min-w-0 flex-auto' },
+	},
+	pcFilter: ({ props }) => ({
+		root: ({ global }) => ({
+			...global,
+			'aria-label': props.filterPlaceholder,
+			'class': [
+				global.class,
+				'w-full !py-2 !pl-9 !pr-3 !text-sm !bg-surface-50 dark:!bg-dark-800',
+				'[&[aria-activedescendant]]:!ring-0',
+			],
+		}),
+	}),
+	pcFilterIconContainer: {
+		root: { class: '!left-3 !right-auto text-bluegray-400' },
 	},
 	listContainer: {
-		class: [
-			// Sizing
-			'max-h-[200px]',
-
-			// Misc
-			'overflow-auto',
-		],
+		class: 'dark-scrollbar min-h-0 overflow-auto overscroll-contain',
 	},
 	list: {
-		class: 'p-1 list-none m-0',
+		class: 'list-none m-0 px-2 pb-2 pt-0',
 	},
 	option: ({ context }) => ({
 		class: [
-			'relative',
-			'flex items-center',
-
-			// Font
-			'leading-none',
-
-			// Spacing
-			'm-0 px-3 py-2 gap-2',
-			'first:mt-0 mt-[2px]',
-
-			// Shape
-			'border-0 rounded',
-
-			// Colors and States
+			'relative flex items-center min-h-9 gap-2.5 m-0 px-2.5 py-2',
+			'leading-none border-0 rounded',
+			'text-bluegray-900 dark:text-surface-0',
 			{
-				'bg-surface-100 dark:bg-dark-600': context.focused,
-				'text-bluegray-900 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-dark-600': !context.selected,
-				'text-bluegray-900 dark:text-surface-0': context.selected,
+				'bg-emerald-50 dark:bg-transparent': context.selected && !context.focused,
+				'bg-emerald-100': context.selected && context.focused,
+				'bg-surface-100': !context.selected && context.focused,
+				'dark:bg-dark-600': context.focused,
+				'hover:bg-emerald-100': context.selected && !context.disabled,
+				'hover:bg-surface-100': !context.selected && !context.disabled,
+				'dark:hover:bg-dark-600': !context.disabled,
+				'opacity-50 cursor-default': context.disabled,
+				'cursor-pointer': !context.disabled,
 			},
-
-			// Transition
-			'transition-shadow duration-200',
-
-			// Misc
-			'cursor-pointer overflow-hidden whitespace-nowrap',
+			'overflow-hidden whitespace-nowrap select-none',
 		],
 	}),
+	pcOptionCheckbox: {
+		root: ({ global }) => ({ ...global, class: [ global.class, 'shrink-0' ] }),
+	},
+	optionLabel: {
+		class: 'min-w-0 truncate',
+	},
 	optionGroup: {
 		class: [
 			'font-semibold',

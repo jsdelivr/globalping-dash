@@ -195,7 +195,7 @@
 		() => auth.isLoggedIn
 			? $directus.request<SponsorshipDetails>(customEndpoint({
 				path: '/sponsorship-details',
-				params: { userId: auth.user.id },
+				params: { accountId: getUserFilter('account_id').account_id?._eq || auth.user.account },
 			}))
 			: Promise.resolve({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }),
 		{ default: () => ({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }) },

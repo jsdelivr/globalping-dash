@@ -185,7 +185,7 @@
 			})),
 			$directus.request<SponsorshipDetails>(customEndpoint({
 				path: '/sponsorship-details',
-				params: { userId: auth.user.id, ...endDate.value && { to: endDate.value } },
+				params: { accountId: getUserFilter('account_id').account_id?._eq || auth.user.account, ...endDate.value && { to: endDate.value } },
 			})),
 			isRelativeFilter.value
 				? $directus.request<[{ count: number }]>(aggregate('gp_probes', {

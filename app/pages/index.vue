@@ -253,7 +253,7 @@
 		'gp_sponsorship-details',
 		() => $directus.request<SponsorshipDetails>(customEndpoint({
 			path: '/sponsorship-details',
-			params: { userId: auth.user.id },
+			params: { accountId: getUserFilter('account_id').account_id?._eq || auth.user.account },
 		})),
 		{ default: () => ({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }) },
 	);

@@ -55,19 +55,11 @@
 			<Column field="sponsor" header="Sponsor" sortable class="min-w-40" style="width: 20%;">
 				<template #body="{ data }">
 					<AsyncCell :loading="pending" preserve-height>
-						<span class="flex min-w-0 max-w-full items-center gap-1.5">
-							<a
-								v-if="data.githubLogin"
-								class="min-w-0 truncate font-semibold text-inherit underline transition-none hover:text-inherit"
-								:href="`https://github.com/${data.githubLogin}`"
-								:title="data.githubLogin"
-								target="_blank"
-								rel="noopener">
-								{{ data.githubLogin }}
-							</a>
-							<span v-else class="min-w-0 truncate">GitHub ID {{ data.githubId }}</span>
-							<i v-if="data.dashboardUserId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user shrink-0 text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
-						</span>
+						<SponsorsIdentity
+							class="max-w-full"
+							:github-login="data.githubLogin"
+							:github-id="data.githubId"
+							:dashboard-user-id="data.dashboardUserId"/>
 					</AsyncCell>
 				</template>
 			</Column>
@@ -101,17 +93,11 @@
 						<div class="flex items-start justify-between gap-3">
 							<div class="min-w-0">
 								<div class="text-sm text-bluegray-500">{{ formatUtcDateForTable(event.date) }}</div>
-								<span class="mt-1 flex min-w-0 max-w-full items-center gap-1.5">
-									<a
-										v-if="event.githubLogin"
-										class="min-w-0 truncate font-semibold text-inherit underline transition-none hover:text-inherit"
-										:href="`https://github.com/${event.githubLogin}`"
-										:title="event.githubLogin"
-										target="_blank"
-										rel="noopener">{{ event.githubLogin }}</a>
-									<span v-else class="min-w-0 truncate font-semibold">GitHub ID {{ event.githubId }}</span>
-									<i v-if="event.dashboardUserId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user shrink-0 text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
-								</span>
+								<SponsorsIdentity
+									class="mt-1 max-w-full font-semibold"
+									:github-login="event.githubLogin"
+									:github-id="event.githubId"
+									:dashboard-user-id="event.dashboardUserId"/>
 							</div>
 							<div class="shrink-0 text-right">
 								<div class="font-semibold">{{ formatMoney(event.sponsorshipValue) }}</div>

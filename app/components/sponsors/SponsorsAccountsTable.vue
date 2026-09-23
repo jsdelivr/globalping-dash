@@ -64,17 +64,11 @@
 				<template #body="{ data }">
 					<AsyncCell :loading="pending" preserve-height>
 						<div class="min-w-0">
-							<span class="flex min-w-0 max-w-full items-center gap-1.5">
-								<a
-									v-if="data.githubLogin"
-									class="min-w-0 truncate font-semibold text-inherit underline transition-none hover:text-inherit"
-									:href="`https://github.com/${data.githubLogin}`"
-									:title="data.githubLogin"
-									target="_blank"
-									rel="noopener">{{ data.githubLogin }}</a>
-								<span v-else class="min-w-0 truncate">GitHub ID {{ data.githubId }}</span>
-								<i v-if="data.dashboardUserId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user shrink-0 text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
-							</span>
+							<SponsorsIdentity
+								class="max-w-full"
+								:github-login="data.githubLogin"
+								:github-id="data.githubId"
+								:dashboard-user-id="data.dashboardUserId"/>
 							<div class="mt-1 text-xs text-bluegray-500 xl:hidden">Latest: {{ formatUtcDateForTable(data.latestEvent) }}</div>
 						</div>
 					</AsyncCell>
@@ -110,17 +104,11 @@
 				<AsyncRow v-for="account in result.items" :key="account.githubId" :loading="pending">
 					<article class="rounded-xl border bg-white p-4 dark:bg-dark-800">
 						<div class="flex items-start justify-between gap-3">
-							<span class="flex min-w-0 flex-1 items-center gap-1.5">
-								<a
-									v-if="account.githubLogin"
-									class="min-w-0 truncate font-semibold text-inherit underline transition-none hover:text-inherit"
-									:href="`https://github.com/${account.githubLogin}`"
-									:title="account.githubLogin"
-									target="_blank"
-									rel="noopener">{{ account.githubLogin }}</a>
-								<span v-else class="min-w-0 truncate font-semibold">GitHub ID {{ account.githubId }}</span>
-								<i v-if="account.dashboardUserId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user shrink-0 text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
-							</span>
+							<SponsorsIdentity
+								class="flex-1 font-semibold"
+								:github-login="account.githubLogin"
+								:github-id="account.githubId"
+								:dashboard-user-id="account.dashboardUserId"/>
 							<span class="inline-flex shrink-0 items-center gap-2 whitespace-nowrap font-semibold">
 								<i class="pi pi-circle-fill text-2xs" :class="statusColor(account.status)"/>
 								{{ statusLabel(account.status) }}

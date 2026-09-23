@@ -134,6 +134,22 @@
 	import { formatNumber } from '~/utils/format-number';
 	import { minDelay } from '~/utils/min-delay';
 
+	type ManualAdditionSort = typeof additionSortFields[number];
+
+	type ManualAddition = {
+		id: number;
+		date: string;
+		githubId: string;
+		githubLogin: string | null;
+		dashboardUserId: string | null;
+		dashboardUsername: string | null;
+		addedBy: string | null;
+		type: ManualAdditionType;
+		credits: number;
+		amountInDollars: number | null;
+		comment: string | null;
+	};
+
 	type AdditionsTableData = {
 		result: PageResult<ManualAddition>;
 		filterKey: string;
@@ -143,10 +159,11 @@
 	};
 
 	const { $directus } = useNuxtApp();
+	const config = useRuntimeConfig();
 
-	const itemsPerPage = ref(10);
+	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({
-		defaultItemsPerPage: 10,
+		defaultItemsPerPage: config.public.itemsPerTablePage,
 		itemsPerPage,
 		pageKey: 'manualAdditionsPage',
 		limitKey: 'manualAdditionsLimit',
@@ -168,6 +185,7 @@
 	});
 
 	const debouncedSearch = computedDebounced(() => search.value.trim(), 350);
+
 	const typeOptions: Array<{ label: string; value: 'all' | ManualAdditionType }> = [
 		{ label: 'All', value: 'all' },
 		{ label: 'Manual one-time payment', value: 'payment' },
@@ -189,6 +207,7 @@
 				sort: sortField.value,
 				direction: sortOrder.value === -1 ? 'desc' : 'asc',
 			};
+
 			const result = await minDelay($directus.request<PageResult<ManualAddition>>(customEndpoint({
 				path: '/admin-sponsors/manual-additions',
 				params,
@@ -204,6 +223,7 @@
 		},
 		{ default: (): AdditionsTableData => ({ result: { items: [], total: 0 }, filterKey: '', first: 0, rows: itemsPerPage.value, anyFilterApplied: false }), watch: [ requestKey ] },
 	);
+
 	const result = computed(() => response.value.result);
 	const displayedFirst = computed(() => response.value.first);
 	const displayedRows = computed(() => response.value.rows);

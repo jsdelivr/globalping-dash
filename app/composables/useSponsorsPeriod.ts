@@ -1,3 +1,5 @@
+export type SponsorsPeriod = 'past-year' | `${number}`;
+
 type SponsorsPeriodOption = {
 	label: string;
 	value: SponsorsPeriod;
@@ -13,12 +15,15 @@ const isValidPeriod = (value: unknown): value is SponsorsPeriod => {
 	}
 
 	const year = Number(value);
+
 	return year >= 2024 && year <= new Date().getUTCFullYear();
 };
 
 export const useSponsorsPeriod = () => {
 	const route = useRoute();
+
 	const period = computed<SponsorsPeriod>(() => isValidPeriod(route.query.period) ? route.query.period : 'past-year');
+
 	const periodOptions = computed<SponsorsPeriodOption[]>(() => {
 		const options: SponsorsPeriodOption[] = [{ label: 'Past year', value: 'past-year' }];
 

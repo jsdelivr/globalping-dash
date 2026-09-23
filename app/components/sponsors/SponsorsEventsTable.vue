@@ -145,11 +145,30 @@
 	import { computedDebounced } from '~/composables/computedDebounced';
 	import { usePagination } from '~/composables/pagination';
 	import { useErrorToast } from '~/composables/useErrorToast';
+	import type { SponsorsPeriod } from '~/composables/useSponsorsPeriod';
 	import { useUrlSort } from '~/composables/useUrlSort';
 	import { formatUtcDateForTable } from '~/utils/date-formatters';
 	import { formatMoney } from '~/utils/format-money';
 	import { formatNumber } from '~/utils/format-number';
 	import { minDelay } from '~/utils/min-delay';
+
+	type SponsorshipEventSort = typeof eventSortFields[number];
+
+	type SponsorshipReason = 'recurring_sponsorship' | 'one_time_sponsorship' | 'tier_changed';
+
+	type SponsorshipEvent = {
+		id: number;
+		date: string;
+		githubId: string;
+		githubLogin: string | null;
+		dashboardUserId: string | null;
+		dashboardUsername: string | null;
+		reason: SponsorshipReason;
+		manual: boolean;
+		amountInDollars: number;
+		monthsCovered: number;
+		sponsorshipValue: number;
+	};
 
 	type EventsTableData = {
 		result: PageResult<SponsorshipEvent>;
@@ -161,10 +180,11 @@
 
 	const props = defineProps<{ period: SponsorsPeriod }>();
 	const { $directus } = useNuxtApp();
+	const config = useRuntimeConfig();
 
-	const itemsPerPage = ref(10);
+	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({
-		defaultItemsPerPage: 10,
+		defaultItemsPerPage: config.public.itemsPerTablePage,
 		itemsPerPage,
 		pageKey: 'eventsPage',
 		limitKey: 'eventsLimit',
@@ -186,6 +206,7 @@
 	});
 
 	const debouncedSearch = computedDebounced(() => search.value.trim(), 350);
+
 	const typeOptions: Array<{ label: string; value: 'all' | SponsorshipReason }> = [
 		{ label: 'All', value: 'all' },
 		{ label: 'Recurring sponsorship', value: 'recurring_sponsorship' },
@@ -209,6 +230,7 @@
 				sort: sortField.value,
 				direction: sortOrder.value === -1 ? 'desc' : 'asc',
 			};
+
 			const result = await minDelay($directus.request<PageResult<SponsorshipEvent>>(customEndpoint({
 				path: '/admin-sponsors/events',
 				params,
@@ -224,6 +246,7 @@
 		},
 		{ default: (): EventsTableData => ({ result: { items: [], total: 0 }, filterKey: '', first: 0, rows: itemsPerPage.value, anyFilterApplied: false }), watch: [ requestKey ] },
 	);
+
 	const result = computed(() => response.value.result);
 	const displayedFirst = computed(() => response.value.first);
 	const displayedRows = computed(() => response.value.rows);

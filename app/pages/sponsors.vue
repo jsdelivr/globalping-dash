@@ -65,6 +65,7 @@
 		path: '/admin-sponsors/summary',
 		params: { period: period.value },
 	}))), { watch: [ period ] });
+
 	const summaryStatus = computed<'' | 'pending' | 'error'>(() => error.value ? 'error' : pending.value ? 'pending' : '');
 
 	useErrorToast(error);

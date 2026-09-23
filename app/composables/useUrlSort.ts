@@ -9,9 +9,11 @@ type UrlSortOptions<T extends string> = {
 
 export const useUrlSort = <T extends string>({ defaultField, defaultOrder, directionKey, fieldKey, fields, pageKey }: UrlSortOptions<T>) => {
 	const route = useRoute();
+
 	const sortField = computed<T>(() => typeof route.query[fieldKey] === 'string' && fields.includes(route.query[fieldKey] as T)
 		? route.query[fieldKey] as T
 		: defaultField);
+
 	const sortOrder = computed<1 | -1>(() => {
 		const direction = route.query[directionKey];
 
@@ -21,6 +23,7 @@ export const useUrlSort = <T extends string>({ defaultField, defaultOrder, direc
 
 		return defaultOrder;
 	});
+
 	const setSort = (field: T, order: 1 | -1) => navigateTo({
 		path: route.path,
 		query: {

@@ -167,7 +167,6 @@
 	import { minDelay } from '~/utils/min-delay';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
-	type AdditionType = 'payment' | 'other';
 	type GithubUser = { id: number; login: string; avatar_url: string; html_url: string };
 
 	type Recipient = {
@@ -187,7 +186,7 @@
 	const recipientInput = ref('');
 	const recipient = ref<Recipient | null>(null);
 	const lookupPending = ref(false);
-	const additionType = ref<AdditionType>('payment');
+	const additionType = ref<ManualAdditionType>('payment');
 	const credits = ref<number | null>(null);
 	const paymentAmount = ref<number | null>(null);
 	const comment = ref('');
@@ -229,6 +228,7 @@
 				const endpoint = !forceUsernameLookup && /^\d+$/.test(lookupValue)
 					? `https://api.github.com/user/${lookupValue}`
 					: `https://api.github.com/users/${encodeURIComponent(lookupValue)}`;
+
 				const response = await fetch(endpoint, { headers: { Accept: 'application/vnd.github+json' } });
 
 				if (response.status === 404) {
@@ -247,6 +247,7 @@
 					fields: [ 'id', 'github_username' ],
 					limit: 1,
 				})) as Array<{ id: string; github_username: string | null }>;
+
 				const dashboardUser = dashboardUsers[0];
 
 				return {

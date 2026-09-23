@@ -155,11 +155,28 @@
 	import { computedDebounced } from '~/composables/computedDebounced';
 	import { usePagination } from '~/composables/pagination';
 	import { useErrorToast } from '~/composables/useErrorToast';
+	import type { SponsorsPeriod } from '~/composables/useSponsorsPeriod';
 	import { useUrlSort } from '~/composables/useUrlSort';
 	import { formatUtcDateForTable } from '~/utils/date-formatters';
 	import { formatMoney } from '~/utils/format-money';
 	import { formatNumber } from '~/utils/format-number';
 	import { minDelay } from '~/utils/min-delay';
+
+	type SponsorAccountSort = typeof accountSortFields[number];
+
+	type SponsorStatus = 'active' | 'former' | 'one-time';
+
+	type SponsorAccount = {
+		githubId: string;
+		githubLogin: string | null;
+		dashboardUserId: string | null;
+		dashboardUsername: string | null;
+		status: SponsorStatus;
+		currentMonthlyAmount: number | null;
+		periodSponsorshipValue: number;
+		periodEvents: number;
+		latestEvent: string;
+	};
 
 	type AccountsTableData = {
 		result: PageResult<SponsorAccount>;
@@ -171,10 +188,11 @@
 
 	const props = defineProps<{ period: SponsorsPeriod }>();
 	const { $directus } = useNuxtApp();
+	const config = useRuntimeConfig();
 
-	const itemsPerPage = ref(10);
+	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({
-		defaultItemsPerPage: 10,
+		defaultItemsPerPage: config.public.itemsPerTablePage,
 		itemsPerPage,
 		pageKey: 'accountsPage',
 		limitKey: 'accountsLimit',
@@ -197,6 +215,7 @@
 	});
 
 	const debouncedSearch = computedDebounced(() => search.value.trim(), 350);
+
 	const statusOptions: Array<{ label: string; value: 'all' | SponsorStatus }> = [
 		{ label: 'All', value: 'all' },
 		{ label: 'Active recurring', value: 'active' },
@@ -227,6 +246,7 @@
 				sort: sortField.value,
 				direction: sortOrder.value === -1 ? 'desc' : 'asc',
 			};
+
 			const result = await minDelay($directus.request<PageResult<SponsorAccount>>(customEndpoint({
 				path: '/admin-sponsors/accounts',
 				params,
@@ -242,6 +262,7 @@
 		},
 		{ default: (): AccountsTableData => ({ result: { items: [], total: 0 }, filterKey: '', first: 0, rows: itemsPerPage.value, anyFilterApplied: false }), watch: [ requestKey ] },
 	);
+
 	const result = computed(() => response.value.result);
 	const displayedFirst = computed(() => response.value.first);
 	const displayedRows = computed(() => response.value.rows);
@@ -260,6 +281,7 @@
 
 	const statusLabel = (status: SponsorStatus) => statusOptions.find(option => option.value === status)?.label || status;
 	const statusColor = (status: SponsorStatus) => status === 'active' ? 'text-blue-500' : status === 'one-time' ? 'text-orange-500' : 'text-bluegray-400';
+
 	const resetFilters = () => {
 		status.value = 'all';
 		linked.value = 'all';

@@ -138,8 +138,8 @@
 			<div v-else class="rounded-xl border bg-white p-6 text-center dark:bg-dark-800">{{ emptyMessage }}</div>
 		</div>
 		<Paginator
-			v-if="result.total > displayedRows"
-			:first="first"
+			v-if="response.filterKey === filterKey && result.total > displayedRows"
+			:first="displayedFirst"
 			:rows="displayedRows"
 			:total-records="result.total"
 			:page-link-size="pageLinkSize"
@@ -163,6 +163,7 @@
 
 	type AccountsTableData = {
 		result: PageResult<SponsorAccount>;
+		filterKey: string;
 		first: number;
 		rows: number;
 		anyFilterApplied: boolean;
@@ -209,11 +210,13 @@
 		{ label: 'Not linked', value: 'unlinked' },
 	];
 
-	const requestKey = computedDebounced(() => [ props.period, first.value, itemsPerPage.value, debouncedSearch.value, status.value, linked.value, sortField.value, sortOrder.value ]);
+	const filterKey = computed(() => JSON.stringify([ props.period, debouncedSearch.value, status.value, linked.value ]));
+	const requestKey = computedDebounced(() => [ filterKey.value, first.value, itemsPerPage.value, sortField.value, sortOrder.value ]);
 	const initialLoading = ref(true);
 
 	const { data: response, pending, error } = await useLazyAsyncData(
 		async () => {
+			const requestedFilterKey = filterKey.value;
 			const params = {
 				period: props.period,
 				offset: first.value,
@@ -231,12 +234,13 @@
 
 			return {
 				result,
+				filterKey: requestedFilterKey,
 				first: params.offset,
 				rows: params.limit,
 				anyFilterApplied: Boolean(params.search || params.statuses || params.linked !== undefined),
 			};
 		},
-		{ default: (): AccountsTableData => ({ result: { items: [], total: 0 }, first: 0, rows: itemsPerPage.value, anyFilterApplied: false }), watch: [ requestKey ] },
+		{ default: (): AccountsTableData => ({ result: { items: [], total: 0 }, filterKey: '', first: 0, rows: itemsPerPage.value, anyFilterApplied: false }), watch: [ requestKey ] },
 	);
 	const result = computed(() => response.value.result);
 	const displayedFirst = computed(() => response.value.first);

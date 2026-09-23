@@ -18,6 +18,7 @@
 
 <script setup lang="ts">
 	import Chart from 'primevue/chart';
+	import { useAppearance } from '~/store/appearance';
 	import { formatMoney } from '~/utils/format-money';
 	import { formatNumber } from '~/utils/format-number';
 
@@ -30,7 +31,7 @@
 	const bluegray400 = documentStyle.getPropertyValue('--bluegray-400');
 	const bluegray700 = documentStyle.getPropertyValue('--bluegray-700');
 	const surface300 = documentStyle.getPropertyValue('--p-surface-300');
-	const dark = document.documentElement.classList.contains('dark');
+	const appearance = useAppearance();
 
 	const hasEvents = computed(() => props.points.some(point => point.events > 0));
 
@@ -75,7 +76,7 @@
 				position: 'bottom' as const,
 				align: 'center' as const,
 				labels: {
-					color: dark ? bluegray400 : bluegray700,
+					color: appearance.theme === 'dark' ? bluegray400 : bluegray700,
 					font: { size: 12, weight: 500 },
 					padding: 20,
 					useBorderRadius: true,
@@ -116,8 +117,8 @@
 			y: {
 				stacked: true,
 				beginAtZero: true,
-				grid: { color: dark ? bluegray700 : surface300 },
-				border: { color: dark ? bluegray700 : surface300 },
+				grid: { color: appearance.theme === 'dark' ? bluegray700 : surface300 },
+				border: { color: appearance.theme === 'dark' ? bluegray700 : surface300 },
 				ticks: {
 					color: bluegray400,
 					font: { size: 10, weight: 400 },

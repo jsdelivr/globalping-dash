@@ -14,6 +14,31 @@
 	.wrap-anywhere {
 		overflow-wrap: anywhere;
 	}
+
+	.dark .dark-scrollbar {
+		color-scheme: dark;
+		scrollbar-color: var(--dark-600) var(--dark-950);
+		scrollbar-width: thin;
+	}
+
+	.dark .dark-scrollbar::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+	}
+
+	.dark .dark-scrollbar::-webkit-scrollbar-track,
+	.dark .dark-scrollbar::-webkit-scrollbar-corner {
+		background: var(--dark-950);
+	}
+
+	.dark .dark-scrollbar::-webkit-scrollbar-thumb {
+		background: var(--dark-600);
+		border-radius: 9999px;
+	}
+
+	.dark .dark-scrollbar::-webkit-scrollbar-thumb:hover {
+		background: var(--dark-400);
+	}
 }
 
 @tailwind utilities;

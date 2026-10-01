@@ -94,17 +94,15 @@
 	import { useCreditsFilters } from '~/composables/useCreditsFilters';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';
-	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
 	import { formatNumber } from '~/utils/format-number';
 	import { isLeapYear } from '~/utils/is-leap-year';
 	import { minDelay } from '~/utils/min-delay';
 
-	const auth = useAuth();
 	const metadata = useMetadata();
 	const { $directus } = useNuxtApp();
 	const { directusDateQuery, filter } = useCreditsFilters();
-	const { getUserFilter } = useUserFilter();
+	const { getUserFilter, getAccountId } = useUserFilter();
 
 	const creditsPerAdoptedProbe = metadata.creditsPerAdoptedProbe;
 
@@ -166,7 +164,7 @@
 			$directus.request<Array<{ sum: { amount: number } } & DateGroupFields<'date'>>>(aggregate('gp_credits_deductions', {
 				query: {
 					filter: {
-						...getUserFilter('user_id'),
+						...getUserFilter('account_id'),
 						date: directusDateQuery.value,
 					},
 				},
@@ -185,13 +183,13 @@
 			})),
 			$directus.request<SponsorshipDetails>(customEndpoint({
 				path: '/sponsorship-details',
-				params: { userId: auth.user.id, ...endDate.value && { to: endDate.value } },
+				params: { accountId: getAccountId(), ...endDate.value && { to: endDate.value } },
 			})),
 			isRelativeFilter.value
 				? $directus.request<[{ count: number }]>(aggregate('gp_probes', {
 					query: {
 						filter: {
-							...getUserFilter('userId'),
+							...getUserFilter('account_id'),
 							onlineTimesToday: { _gt: 0 },
 						},
 					},

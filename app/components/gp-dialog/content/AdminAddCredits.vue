@@ -43,28 +43,22 @@
 			<section class="flex flex-col gap-2">
 				<span class="font-bold">Addition type<i class="text-primary">*</i></span>
 				<div class="grid gap-2 sm:grid-cols-2">
-					<button
-						type="button"
-						class="flex items-start rounded-lg border p-3 text-left"
+					<label
+						for="manualPayment"
+						class="flex cursor-pointer items-start gap-2 rounded-lg border p-3 text-left"
 						:class="additionType === 'payment' ? 'border-primary bg-primary-50 dark:bg-dark-700' : 'hover:border-surface-400 dark:hover:border-dark-400'"
-						@click="additionType = 'payment'"
 					>
-						<span class="flex items-start gap-2">
-							<RadioButton v-model="additionType" input-id="manualPayment" value="payment" aria-label="Manual one-time payment"/>
-							<span><b class="block">Manual one-time payment</b><small class="text-bluegray-500">Payment recorded outside the automated GitHub flow.</small></span>
-						</span>
-					</button>
-					<button
-						type="button"
-						class="flex items-start rounded-lg border p-3 text-left"
+						<RadioButton v-model="additionType" name="additionType" input-id="manualPayment" value="payment" aria-label="Manual one-time payment"/>
+						<span><b class="block">Manual one-time payment</b><small class="text-bluegray-500">Payment recorded outside the automated GitHub flow.</small></span>
+					</label>
+					<label
+						for="otherCredits"
+						class="flex cursor-pointer items-start gap-2 rounded-lg border p-3 text-left"
 						:class="additionType === 'other' ? 'border-primary bg-primary-50 dark:bg-dark-700' : 'hover:border-surface-400 dark:hover:border-dark-400'"
-						@click="additionType = 'other'"
 					>
-						<span class="flex items-start gap-2">
-							<RadioButton v-model="additionType" input-id="otherCredits" value="other" aria-label="Other credits"/>
-							<span><b class="block">Other credits</b><small class="text-bluegray-500">Free credits or another manual adjustment.</small></span>
-						</span>
-					</button>
+						<RadioButton v-model="additionType" name="additionType" input-id="otherCredits" value="other" aria-label="Other credits"/>
+						<span><b class="block">Other credits</b><small class="text-bluegray-500">Free credits or another manual adjustment.</small></span>
+					</label>
 				</div>
 			</section>
 
@@ -73,8 +67,7 @@
 				<InputNumber
 					v-model="credits"
 					input-id="creditAmount"
-					class="w-full"
-					input-class="w-full"
+					fluid
 					:min="1"
 					:max-fraction-digits="0"
 					:use-grouping="false"
@@ -89,8 +82,7 @@
 				<InputNumber
 					v-model="paymentAmount"
 					input-id="paymentAmount"
-					class="w-full"
-					input-class="w-full"
+					fluid
 					mode="currency"
 					currency="USD"
 					locale="en-US"
@@ -104,7 +96,7 @@
 
 			<section v-else class="flex flex-col gap-2">
 				<label for="creditComment" class="font-bold">Comment<i class="text-primary">*</i></label>
-				<InputText id="creditComment" v-model="comment" class="w-full" :invalid="Boolean(errors.comment)"/>
+				<InputText id="creditComment" v-model="comment" fluid :invalid="Boolean(errors.comment)"/>
 				<p class="text-sm text-bluegray-500">Describe why these credits are being added. Start with an uppercase letter and end with a period. This is visible to users in their credits history.</p>
 				<p v-if="errors.comment" class="text-sm text-red-500">{{ errors.comment }}</p>
 			</section>

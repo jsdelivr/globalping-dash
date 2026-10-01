@@ -245,4 +245,40 @@ declare global {
 		donatedInLastYear: number;
 		donatedByMonth: number[];
 	};
+
+	type ManualAdditionType = 'payment' | 'other';
+
+	type SponsorsChartPoint = {
+		month: string;
+		recurringValue: number;
+		oneTimeValue: number;
+		events: number;
+	};
+
+	type SponsorsSummary = {
+		overview: {
+			activeSponsors: number;
+			previousMonth: {
+				totalValue: number;
+				recurringValue: number;
+				oneTimeValue: number;
+			};
+			estimatedNextMonthValue: number;
+		};
+		period: {
+			sponsors: number;
+			sponsorshipValue: number;
+			recurringValue: number;
+			oneTimeValue: number;
+		};
+		allTime: {
+			sponsors: number;
+		};
+		chart: SponsorsChartPoint[];
+	};
+
+	type PageResult<T> = {
+		items: T[];
+		total: number;
+	};
 }

@@ -11,6 +11,8 @@ declare global {
 		'gp_tokens': Token[];
 		'gp_apps': Application[];
 		'gp_apps_approvals': AppApproval[];
+		'gp_orgs': DirectusOrg[];
+		'gp_org_members': DirectusMembership[];
 
 		'directus_users': DirectusUser;
 		'city-autocomplete': City[];
@@ -155,10 +157,39 @@ declare global {
 		date_created: string;
 		last_page: string | null;
 		account: string;
+		selected_orgs: string[];
+		memberships: Membership[];
 	};
 
 	// In Directus, `account` is the reverse alias of gp_accounts.user, so it comes back as an array of one id.
-	type DirectusUser = Omit<User, 'account'> & { account: string[] };
+	type DirectusUser = Omit<User, 'account' | 'memberships'> & { account: string[]; memberships: DirectusMembership[] };
+
+	type Org = {
+		id: string;
+		name: string;
+		github_id: string;
+		account: string;
+		user_type: 'member' | 'special' | 'sponsor';
+	};
+
+	type Account = {
+		id: string;
+		name: string;
+		github_id: string;
+		user_type: User['user_type'];
+		role: Membership['role'] | 'owner';
+	};
+
+	type Membership = {
+		id: string;
+		role: 'admin' | 'member' | 'viewer';
+		org: Org;
+	};
+
+	// In Directus, `account` is the reverse alias of gp_accounts.org, so it comes back as an array of one id.
+	type DirectusOrg = Omit<Org, 'account'> & { account: string[] };
+
+	type DirectusMembership = Omit<Membership, 'org'> & { org: DirectusOrg };
 
 	type NotificationTypes = Record<string, {
 		readOnly: boolean;

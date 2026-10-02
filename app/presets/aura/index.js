@@ -45,7 +45,7 @@ import inputtext from './inputtext';
 // import knob from './knob';
 // import listbox from './listbox';
 // import megamenu from './megamenu';
-// import menu from './menu';
+import menu from './menu';
 // import menubar from './menubar';
 import message from './message';
 // import metergroup from './metergroup';
@@ -187,7 +187,7 @@ export default {
 
 	// menu
 	// contextmenu,
-	// menu,
+	menu,
 	// menubar,
 	steps,
 	tieredmenu,

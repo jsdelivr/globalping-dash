@@ -1,40 +1,29 @@
-import { storeToRefs } from 'pinia';
+import { useAccount } from '~/store/account';
 import { useAuth } from '~/store/auth';
 
 export function useUserFilter () {
 	const auth = useAuth();
-	const { user } = storeToRefs(auth);
+	const account = useAccount();
 
-	const getUserFilter = (filterField: string): Record<string, { _eq: string } | undefined> => {
-		if (auth.isAdmin && auth.adminMode) {
+	const getUserFilter = (filterField: 'account_id' | 'github_id' | 'recipient'): Record<string, { _eq: string } | undefined> => {
+		if (auth.adminMode) {
 			return {};
 		}
 
-		if (!user?.value) {
-			throw new Error('User not found');
+		switch (filterField) {
+			case 'account_id':
+				return { account_id: { _eq: account.current.id } };
+			case 'github_id':
+				return { github_id: { _eq: account.current.github_id } };
+			case 'recipient':
+				return { recipient: { _eq: auth.user.id } };
 		}
-
-		if (filterField === 'github_id') {
-			return {
-				github_id: { _eq: user.value.external_identifier || 'admin' },
-			};
-		}
-
-		if (filterField === 'account_id') {
-			return {
-				account_id: { _eq: user.value.account },
-			};
-		}
-
-		return {
-			[filterField]: { _eq: user.value.id },
-		};
 	};
 
-	const getAccountId = (adminValue?: string) => getUserFilter('account_id').account_id?._eq || adminValue || auth.user.account;
+	const getAccountIdOrAll = () => auth.adminMode ? 'all' : account.current.id;
 
 	return {
 		getUserFilter,
-		getAccountId,
+		getAccountIdOrAll,
 	};
 }

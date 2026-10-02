@@ -148,7 +148,7 @@
 	import { readItem, aggregate } from '@directus/sdk';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useProbeDetailTabs } from '~/composables/useProbeDetailTabs';
-	import { useAuth } from '~/store/auth';
+	import { useUserFilter } from '~/composables/useUserFilter';
 	import { formatNumber } from '~/utils/format-number';
 	import { getOfflineDurationText, getProbeStatusColor, getProbeStatusText } from '~/utils/probe-status';
 	import { sendErrorToast } from '~/utils/send-toast';
@@ -156,8 +156,7 @@
 	const { $directus } = useNuxtApp();
 	const route = useRoute();
 	const router = useRouter();
-	const auth = useAuth();
-	const { user } = storeToRefs(auth);
+	const { getUserFilter } = useUserFilter();
 	const probeId = computed(() => route.params.id as string);
 	const probeDetailsUpdating = ref(false);
 	const updateProbeDialog = ref(false);
@@ -233,7 +232,7 @@
 		() => $directus.request<{ sum: { amount: number }; adopted_probe: string }[]>(aggregate('gp_credits_additions', {
 			query: {
 				filter: {
-					github_id: { _eq: user.value.external_identifier || 'admin' },
+					...getUserFilter('github_id'),
 					adopted_probe: { _eq: probeDetails?.value?.id },
 					date_created: { _gte: '$NOW(-30 day)' },
 				},

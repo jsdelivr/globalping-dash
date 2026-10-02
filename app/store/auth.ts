@@ -1,5 +1,6 @@
 import { readMe, readRolesMe, deleteUser } from '@directus/sdk';
 import { defineStore } from 'pinia';
+import { useAccount } from '~/store/account';
 import { useHardwareProbeAdoption } from '~/store/local-adoption';
 
 interface AuthState {
@@ -15,8 +16,11 @@ interface AuthState {
 	user: User;
 }
 
-// Directus returns the account as a one-element array, the app carries the id itself.
-const toUser = (user: DirectusUser): User => ({ ...user, account: user.account[0] ?? '' });
+export const MEMBERSHIP_FIELDS = [ 'id', 'role', { org: [ 'id', 'name', 'github_id', 'account', 'user_type' ] }] as const;
+
+const toMembership = (membership: DirectusMembership): Membership => ({ ...membership, org: { ...membership.org, account: membership.org.account[0] ?? '' } });
+
+const toUser = (user: DirectusUser): User => ({ ...user, account: user.account[0] ?? '', memberships: user.memberships.map(toMembership) });
 
 export const useAuth = defineStore('auth', {
 	state: (): AuthState => ({
@@ -42,6 +46,8 @@ export const useAuth = defineStore('auth', {
 			last_page: '',
 			date_created: '',
 			account: '',
+			selected_orgs: [],
+			memberships: [],
 		},
 	}),
 	actions: {
@@ -111,6 +117,7 @@ export const useAuth = defineStore('auth', {
 						|| typeof adminConfig?.impersonation?.github_username !== 'string'
 						|| typeof adminConfig?.impersonation?.originalUser?.id !== 'string'
 						|| typeof adminConfig?.impersonation?.impersonatedUser?.account !== 'string'
+						|| !Array.isArray(adminConfig?.impersonation?.impersonatedUser?.memberships)
 					))
 				) {
 					this.clearAdminConfig();
@@ -143,6 +150,7 @@ export const useAuth = defineStore('auth', {
 			this.clearAdminConfig();
 			await $directus.logout();
 			probeStore.reset();
+			useAccount().$reset();
 			this.$reset();
 			navigateTo('/login');
 		},
@@ -152,17 +160,19 @@ export const useAuth = defineStore('auth', {
 			try {
 				const { expires_at } = await $directus.refresh();
 				const [ user, roles ] = await Promise.all([
-					$directus.request(readMe()),
+					$directus.request(readMe({ fields: [ '*', { memberships: MEMBERSHIP_FIELDS }] })),
 					$directus.request(readRolesMe()),
 				]);
 				this.user = toUser(user as DirectusUser);
 				this.isAdmin = !!roles.some(role => role.name === 'Administrator');
 				this.expiresAt = Number(expires_at);
-				this.isLoggedIn = true;
 
 				if (this.isAdmin) {
 					this.applyAdminConfig();
 				}
+
+				useAccount().restore();
+				this.isLoggedIn = true;
 			} catch (error) {
 				console.error(error);
 			}

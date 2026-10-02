@@ -166,16 +166,17 @@
 <script setup lang="ts">
 	import { customEndpoint, readItems } from '@directus/sdk';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { useAccount } from '~/store/account';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
 	import { formatNumber } from '~/utils/format-number';
 	const { $directus } = useNuxtApp();
 
 	const auth = useAuth();
-	const { user } = storeToRefs(auth);
+	const account = useAccount();
 	const metadata = useMetadata();
 	const { creditsPerAdoptedProbe, creditsPerDollar } = storeToRefs(metadata);
-	const { getUserFilter, getAccountId } = useUserFilter();
+	const { getUserFilter } = useUserFilter();
 
 	defineEmits([ 'cancel', 'adopt-a-probe' ]);
 
@@ -195,7 +196,7 @@
 		() => auth.isLoggedIn
 			? $directus.request<SponsorshipDetails>(customEndpoint({
 				path: '/sponsorship-details',
-				params: { accountId: getAccountId() },
+				params: { accountId: account.current.id },
 			}))
 			: Promise.resolve({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }),
 		{ default: () => ({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }) },
@@ -203,5 +204,5 @@
 
 	const step1Completed = computed(() => auth.isLoggedIn);
 	const step2Completed = computed(() => adoptionsExists.value);
-	const step3Completed = computed(() => user.value.user_type === 'sponsor' || user.value.user_type === 'special');
+	const step3Completed = computed(() => account.current.user_type === 'sponsor' || account.current.user_type === 'special');
 </script>

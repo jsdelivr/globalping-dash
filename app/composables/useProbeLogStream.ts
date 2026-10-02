@@ -8,12 +8,13 @@ const MAX_STORED_LOGS = 20_000;
 // The local key stays stable when API pages are added or removed.
 export type StoredProbeLog = ProbeLog & { _key: number };
 
-// The viewport uses these callbacks to keep its scroll position during a history request.
-export interface ProbeLogHistoryLifecycle {
-	onStart: () => void;
-	onCommit: (result: { prepended: boolean }) => void;
-	onCancel: () => void;
+// A response-time snapshot protects visible rows and restores their position after an update.
+export interface ProbeLogHistorySnapshot {
+	visibleKeys: number[];
+	restore: (prependedCount: number) => void;
 }
+
+export type CaptureProbeLogHistoryViewport = () => ProbeLogHistorySnapshot;
 
 // A bootstrap replaces the cache, live appends newer logs, and history prepends older logs.
 type RequestKind = 'bootstrap' | 'live' | 'history';
@@ -63,13 +64,11 @@ export const useProbeLogStream = ({
 
 	// Only one API request may run at a time. The flags below remember what should run next.
 	let activeRequest: ActiveRequest | undefined;
-	let activeHistoryLifecycle: ProbeLogHistoryLifecycle | undefined;
-	let queuedHistoryLifecycle: ProbeLogHistoryLifecycle | undefined;
+	let queuedHistoryCapture: CaptureProbeLogHistoryViewport | undefined;
 	let nextLogKey = 0;
 	// A bootstrap does not use the live cursor and replaces the current cache.
 	let needsBootstrap = true;
-	// These flags queue work that could not start because another request was active.
-	let historyRequested = false;
+	// Queue a return to live tail when another request is active.
 	let returnToLiveRequested = false;
 	// Remember to fetch once a pending filter update has settled.
 	let refreshAfterPendingFilter = false;
@@ -125,12 +124,6 @@ export const useProbeLogStream = ({
 		return { chunks: retained, evicted };
 	};
 
-	const cancelActiveHistoryLifecycle = () => {
-		const lifecycle = activeHistoryLifecycle;
-		activeHistoryLifecycle = undefined;
-		lifecycle?.onCancel();
-	};
-
 	const abortActiveRequest = (kinds?: RequestKind[]) => {
 		if (!activeRequest || (kinds && !kinds.includes(activeRequest.kind))) {
 			return;
@@ -142,9 +135,7 @@ export const useProbeLogStream = ({
 		pending.value = false;
 
 		if (request.kind === 'history') {
-			// Let the viewport forget the scroll anchor saved for this request.
 			historyLoadPending.value = false;
-			cancelActiveHistoryLifecycle();
 		}
 	};
 
@@ -228,19 +219,15 @@ export const useProbeLogStream = ({
 			return;
 		}
 
-		if (historyRequested && canLoadOlderLogs.value) {
-			const lifecycle = queuedHistoryLifecycle;
-			historyRequested = false;
-			queuedHistoryLifecycle = undefined;
+		if (queuedHistoryCapture && canLoadOlderLogs.value) {
+			const captureViewport = queuedHistoryCapture;
+			queuedHistoryCapture = undefined;
 
-			if (lifecycle) {
-				void loadOlderLogs(lifecycle);
-				return;
-			}
+			void loadOlderLogs(captureViewport);
+			return;
 		}
 
-		historyRequested = false;
-		queuedHistoryLifecycle = undefined;
+		queuedHistoryCapture = undefined;
 		scheduleRefresh();
 	}
 
@@ -481,32 +468,30 @@ export const useProbeLogStream = ({
 		return chunks.value[0]?.firstId ?? null;
 	}
 
-	function requestOlderLogs (lifecycle: ProbeLogHistoryLifecycle) {
+	function requestOlderLogs (captureViewport: CaptureProbeLogHistoryViewport) {
 		if (!canLoadOlderLogs.value) {
 			return;
 		}
 
 		if (activeRequest) {
 			// Remember one history request and start it when the current request releases the slot.
-			if (activeRequest.kind !== 'history' && !historyRequested) {
-				historyRequested = true;
-				queuedHistoryLifecycle = lifecycle;
+			if (activeRequest.kind !== 'history' && !queuedHistoryCapture) {
+				queuedHistoryCapture = captureViewport;
 			}
 
 			return;
 		}
 
-		void loadOlderLogs(lifecycle);
+		void loadOlderLogs(captureViewport);
 	}
 
-	async function loadOlderLogs (lifecycle: ProbeLogHistoryLifecycle) {
+	async function loadOlderLogs (captureViewport: CaptureProbeLogHistoryViewport) {
 		if (!canLoadOlderLogs.value || activeRequest) {
 			return;
 		}
 
 		clearTimeout(refreshTimeout.value);
-		historyRequested = false;
-		queuedHistoryLifecycle = undefined;
+		queuedHistoryCapture = undefined;
 		const before = oldestStoredId();
 
 		if (!before) {
@@ -519,10 +504,6 @@ export const useProbeLogStream = ({
 			return;
 		}
 
-		activeHistoryLifecycle = lifecycle;
-		// The viewport captures its scroll anchor at the real request start, not while queued.
-		lifecycle.onStart();
-
 		try {
 			const response = await fetchLogs(request, {
 				...buildFilterParams(),
@@ -533,11 +514,25 @@ export const useProbeLogStream = ({
 				return;
 			}
 
+			historyLoadFailed.value = false;
 			const chunk = createChunk(response);
-			hasOlderLogs.value = Boolean(chunk) && response.hasOlder;
 
 			if (chunk) {
 				const retained = trimNewestChunks([ chunk, ...chunks.value ]);
+				const snapshot = captureViewport();
+
+				if (retained.evicted) {
+					const retainedKeys = new Set(retained.chunks.flatMap(item => item.logs.map(log => log._key)));
+
+					// The user may have scrolled into newer pages while this request was in flight.
+					// Keep the cache and cursor intact so history can be retried when they return to the top.
+					if (snapshot.visibleKeys.some(key => !retainedKeys.has(key))) {
+						// Queue the loader removal before restoring the unchanged viewport.
+						finishRequest(request);
+						snapshot.restore(0);
+						return;
+					}
+				}
 
 				chunks.value = retained.chunks;
 
@@ -547,11 +542,11 @@ export const useProbeLogStream = ({
 					needsBootstrap = true;
 					clearTimeout(refreshTimeout.value);
 				}
+
+				snapshot.restore(chunk.logs.length);
 			}
 
-			historyLoadFailed.value = false;
-			lifecycle.onCommit({ prepended: Boolean(chunk) });
-			activeHistoryLifecycle = undefined;
+			hasOlderLogs.value = Boolean(chunk) && response.hasOlder;
 		} catch {
 			if (activeRequest === request) {
 				if (!historyLoadFailed.value) {
@@ -561,10 +556,6 @@ export const useProbeLogStream = ({
 				historyLoadFailed.value = true;
 			}
 		} finally {
-			if (activeHistoryLifecycle === lifecycle) {
-				cancelActiveHistoryLifecycle();
-			}
-
 			finishRequest(request);
 		}
 	}
@@ -575,8 +566,7 @@ export const useProbeLogStream = ({
 		clearTimeout(refreshTimeout.value);
 		pending.value = false;
 		historyLoadPending.value = false;
-		historyRequested = false;
-		queuedHistoryLifecycle = undefined;
+		queuedHistoryCapture = undefined;
 		returnToLiveRequested = false;
 		refreshAfterPendingFilter = false;
 	};

@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-	import type { ProbeLogHistoryLifecycle, StoredProbeLog } from '~/composables/useProbeLogStream';
+	import type { CaptureProbeLogHistoryViewport, StoredProbeLog } from '~/composables/useProbeLogStream';
 	import { useProbeLogViewport } from '~/composables/useProbeLogViewport';
 	import { formatTechnicalDateTime } from '~/utils/date-formatters';
 
@@ -61,7 +61,7 @@
 		emptyStateText: string;
 		enabled: boolean;
 		canLoadOlderLogs: boolean;
-		requestOlderLogs: (lifecycle: ProbeLogHistoryLifecycle) => void;
+		requestOlderLogs: (captureViewport: CaptureProbeLogHistoryViewport) => void;
 		requestLatestBootstrap: () => void;
 		tailRevision: number;
 	}>();

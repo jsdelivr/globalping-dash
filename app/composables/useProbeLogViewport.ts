@@ -1,5 +1,5 @@
 import throttle from 'lodash/throttle';
-import type { ProbeLogHistoryLifecycle, StoredProbeLog } from '~/composables/useProbeLogStream';
+import type { CaptureProbeLogHistoryViewport, StoredProbeLog } from '~/composables/useProbeLogStream';
 
 export const MAX_DISPLAYED_LOGS = 5000;
 
@@ -13,16 +13,19 @@ interface ProbeLogViewportOptions {
 	detachedFromLiveEdge: MaybeRefOrGetter<boolean>;
 	followingLiveTail: Ref<boolean>;
 	canLoadOlderLogs: MaybeRefOrGetter<boolean>;
-	requestOlderLogs: (lifecycle: ProbeLogHistoryLifecycle) => void;
+	requestOlderLogs: (captureViewport: CaptureProbeLogHistoryViewport) => void;
 	requestLatestBootstrap: () => void;
 	tailRevision: MaybeRefOrGetter<number>;
 }
 
-interface ScrollAnchor {
+interface ViewportSnapshot {
 	// The row key identifies the same log after Vue renders the updated list.
 	key: number;
 	// The top position tells us where that row was on the screen.
 	top: number;
+	// Keep the entire visible range in the render window after a prepend.
+	lastVisibleIndex: number;
+	visibleKeys: number[];
 }
 
 export const useProbeLogViewport = ({
@@ -40,31 +43,58 @@ export const useProbeLogViewport = ({
 	// Keep the DOM small even when we have more logs saved in memory.
 	const renderedLogs = computed(() => toValue(loadedLogs).slice(renderStart.value, renderStart.value + MAX_DISPLAYED_LOGS));
 	const renderEnd = computed(() => Math.min(renderStart.value + MAX_DISPLAYED_LOGS, loadedLogCount.value));
-	let historyAnchor: ScrollAnchor | null = null;
 
-	// Remember the first visible row so the view does not jump when rows are added above it.
-	const captureScrollAnchor = (): ScrollAnchor | null => {
+	// Capture the visible range and its anchor before changing the displayed logs.
+	const captureViewport = (): ViewportSnapshot | null => {
 		const container = logContainer.value;
 
 		if (!container) {
 			return null;
 		}
 
-		const containerTop = container.getBoundingClientRect().top;
-		const rows = Array.from(container.querySelectorAll<HTMLElement>('[data-log-key]'));
-		const row = rows.find(item => item.getBoundingClientRect().bottom > containerTop);
+		const containerBounds = container.getBoundingClientRect();
+		const rows = container.querySelectorAll<HTMLElement>('[data-log-key]');
 
-		if (!row) {
+		// Log rows are ordered vertically, including rows with multiline messages.
+		const findBoundary = (isPastBoundary: (bounds: DOMRect) => boolean, start = 0) => {
+			let end = rows.length;
+
+			while (start < end) {
+				const middle = Math.floor((start + end) / 2);
+
+				if (isPastBoundary(rows[middle]!.getBoundingClientRect())) {
+					end = middle;
+				} else {
+					start = middle + 1;
+				}
+			}
+
+			return start;
+		};
+
+		const firstVisible = findBoundary(bounds => bounds.bottom > containerBounds.top);
+		const visibleEnd = findBoundary(bounds => bounds.top >= containerBounds.bottom, firstVisible);
+
+		if (firstVisible === visibleEnd) {
 			return null;
 		}
 
+		const row = rows[firstVisible]!;
+		const visibleKeys: number[] = [];
+
+		for (let index = firstVisible; index < visibleEnd; index++) {
+			visibleKeys.push(Number(rows[index]!.dataset.logKey));
+		}
+
 		return {
-			key: Number(row.dataset.logKey),
+			key: visibleKeys[0]!,
 			top: row.getBoundingClientRect().top,
+			lastVisibleIndex: renderStart.value + visibleEnd - 1,
+			visibleKeys,
 		};
 	};
 
-	const restoreScrollAnchor = (anchor: ScrollAnchor | null) => {
+	const restoreScrollAnchor = (anchor: ViewportSnapshot | null) => {
 		void nextTick(() => {
 			const container = logContainer.value;
 
@@ -93,29 +123,22 @@ export const useProbeLogViewport = ({
 		});
 	};
 
-	// The stream owns the history request, while this composable owns the scroll position.
-	// These callbacks let the stream tell us when that request starts, finishes, or is cancelled.
-	const historyLifecycle: ProbeLogHistoryLifecycle = {
-		onStart: () => {
-			// History can wait behind another request, so capture the position only when it really starts.
-			historyAnchor = captureScrollAnchor();
-		},
-		onCommit: ({ prepended }) => {
-			const anchor = historyAnchor;
-			historyAnchor = null;
+	// Share one response-time snapshot between the eviction check and scroll restoration.
+	const captureHistoryViewport: CaptureProbeLogHistoryViewport = () => {
+		const anchor = captureViewport();
 
-			if (!prepended) {
-				return;
-			}
+		return {
+			visibleKeys: anchor?.visibleKeys ?? [],
+			restore: (prependedCount) => {
+				if (prependedCount) {
+					followingLiveTail.value = false;
+					// Show as much older history as possible while keeping every visible row rendered.
+					renderStart.value = Math.max(0, (anchor?.lastVisibleIndex ?? -1) + prependedCount + 1 - MAX_DISPLAYED_LOGS);
+				}
 
-			followingLiveTail.value = false;
-			// The new history was added at the start. Show it without moving the row the user was reading.
-			renderStart.value = 0;
-			restoreScrollAnchor(anchor);
-		},
-		onCancel: () => {
-			historyAnchor = null;
-		},
+				restoreScrollAnchor(anchor);
+			},
+		};
 	};
 
 	// Move through logs we already have in memory. This does not make an API request.
@@ -129,7 +152,7 @@ export const useProbeLogViewport = ({
 			return false;
 		}
 
-		const anchor = captureScrollAnchor();
+		const anchor = captureViewport();
 		renderStart.value = nextStart;
 		restoreScrollAnchor(anchor);
 		return true;
@@ -160,7 +183,7 @@ export const useProbeLogViewport = ({
 
 			if (toValue(canLoadOlderLogs)) {
 				followingLiveTail.value = false;
-				requestOlderLogs(historyLifecycle);
+				requestOlderLogs(captureHistoryViewport);
 				return;
 			}
 		}

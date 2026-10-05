@@ -113,15 +113,16 @@ export const useProbeLogStream = ({
 	// History keeps the oldest pages in view, so discard new pages when the cache is full.
 	const trimNewestChunks = (items: LogChunk[]) => {
 		const retained = [ ...items ];
+		const evictedChunks: LogChunk[] = [];
 		let count = getLoadedCount(retained);
-		let evicted = false;
 
 		while (count > MAX_STORED_LOGS && retained.length) {
-			count -= retained.pop()!.logs.length;
-			evicted = true;
+			const chunk = retained.pop()!;
+			count -= chunk.logs.length;
+			evictedChunks.push(chunk);
 		}
 
-		return { chunks: retained, evicted };
+		return { chunks: retained, evictedChunks };
 	};
 
 	const abortActiveRequest = (kinds?: RequestKind[]) => {
@@ -521,12 +522,12 @@ export const useProbeLogStream = ({
 				const retained = trimNewestChunks([ chunk, ...chunks.value ]);
 				const snapshot = captureViewport();
 
-				if (retained.evicted) {
-					const retainedKeys = new Set(retained.chunks.flatMap(item => item.logs.map(log => log._key)));
+				if (retained.evictedChunks.length) {
+					const visibleKeys = new Set(snapshot.visibleKeys);
 
 					// The user may have scrolled into newer pages while this request was in flight.
 					// Keep the cache and cursor intact so history can be retried when they return to the top.
-					if (snapshot.visibleKeys.some(key => !retainedKeys.has(key))) {
+					if (retained.evictedChunks.some(item => item.logs.some(log => visibleKeys.has(log._key)))) {
 						// Queue the loader removal before restoring the unchanged viewport.
 						finishRequest(request);
 						snapshot.restore(0);
@@ -536,7 +537,7 @@ export const useProbeLogStream = ({
 
 				chunks.value = retained.chunks;
 
-				if (retained.evicted) {
+				if (retained.evictedChunks.length) {
 					// We removed newer pages to keep history, so this cache is no longer at the live edge.
 					detachedFromLiveEdge.value = true;
 					needsBootstrap = true;

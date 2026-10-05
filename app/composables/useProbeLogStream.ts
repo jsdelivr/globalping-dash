@@ -47,8 +47,8 @@ export const useProbeLogStream = ({
 }: ProbeLogStreamOptions) => {
 	const config = useRuntimeConfig();
 	const refreshTimeout = ref<ReturnType<typeof setTimeout>>();
-	// Logs are stored as API pages, ordered from oldest to newest.
-	const chunks = ref<LogChunk[]>([]);
+	// Immutable log pages are ordered oldest to newest; replace the array to update the cache.
+	const chunks = shallowRef<LogChunk[]>([]);
 	const lastFetchedId = ref<string | null>(null);
 	const initialLoadPending = ref(true);
 	const pending = ref(false);

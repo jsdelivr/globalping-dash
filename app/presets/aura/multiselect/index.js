@@ -1,20 +1,22 @@
 export default {
-	root: ({ props, state }) => ({
+	root: ({ props }) => ({
 		class: [
 			// Font
 			'leading-none',
 
 			// Display and Position
-			'inline-flex',
+			'inline-flex items-center',
 			'relative',
+			'max-w-full overflow-hidden',
 
 			// Shape
 			'rounded-md',
+			'outline-none outline-offset-0',
 
 			// Color and Background
-			{ 'bg-surface-0 dark:bg-surface-950': !props.disabled },
+			{ 'bg-surface-0 dark:bg-dark-900': !props.disabled },
 			'border',
-			{ 'border-surface-300 dark:border-surface-600': !props.invalid },
+			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
 
 			// Invalid State
 			'invalid:focus:ring-red-200',
@@ -22,23 +24,26 @@ export default {
 			{ 'border-red-500 dark:border-red-400': props.invalid },
 
 			// Transitions
-			'transition-all',
+			'transition-[border-color,box-shadow]',
 			'duration-200',
 
 			// States
-			{ 'hover:border-surface-400 dark:hover:border-surface-700': !props.invalid },
-			{ 'outline-none outline-offset-0 z-10 ring-1 ring-primary-500 dark:ring-primary-400': state.focused },
+			{ 'hover:border-surface-400 dark:hover:border-dark-400': !props.invalid },
+			'active:z-10 active:ring-1 active:ring-primary-500 dark:active:ring-primary-400',
+			'focus-within:z-10 focus-within:ring-1 focus-within:ring-primary-500 dark:focus-within:ring-primary-400',
+			'has-[[aria-expanded=true]]:z-10 has-[[aria-expanded=true]]:ring-1 has-[[aria-expanded=true]]:ring-primary-500 dark:has-[[aria-expanded=true]]:ring-primary-400',
 
 			// Misc
 			'cursor-pointer',
 			'select-none',
-			{ 'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default': props.disabled },
+			{ 'bg-surface-200 dark:bg-dark-500 select-none pointer-events-none cursor-default': props.disabled },
 		],
 	}),
-	labelContainer: 'overflow-hidden flex flex-auto cursor-pointer',
+	labelContainer: 'min-w-0 overflow-hidden flex flex-auto items-center cursor-pointer',
 	label: ({ props }) => ({
 		class: [
 			'text-base leading-2',
+			{ 'flex h-full min-h-0 items-center gap-1': props.display === 'chip' },
 
 			// Spacing
 			{
@@ -57,6 +62,7 @@ export default {
 			'overflow-hidden whitespace-nowrap cursor-pointer overflow-ellipsis',
 		],
 	}),
+	chipItem: 'shrink-0',
 	dropdown: {
 		class: [
 			// Flexbox
@@ -76,87 +82,67 @@ export default {
 	},
 	overlay: {
 		class: [
-			// Colors
-			'bg-surface-0 dark:bg-surface-900',
+			'flex flex-col overflow-hidden max-w-[calc(100vw-2rem)] max-h-[calc(100dvh-1rem)]',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-white/80',
-
-			// Shape
-			'border border-surface-300 dark:border-surface-700',
-			'rounded-md',
-			'shadow-md',
-			'mt-[2px]',
+			'border border-surface-300 dark:border-dark-600 rounded-lg',
+			'!mt-0 shadow-[0_10px_30px_rgb(23_35_58_/_0.10)]',
 		],
 	},
 	header: {
 		class: [
-			// Flex
-			'flex items-center justify-between',
-
-			// Spacing
-			'pt-2 px-4 pb-0 gap-2',
-			'm-0',
-
-			// Shape
-			'border-b-0',
-			'rounded-tl-md',
-			'rounded-tr-md',
-
-			// Color
+			'flex shrink-0 items-center gap-2 mx-2 mt-3 mb-2',
 			'text-surface-700 dark:text-white/80',
-			'bg-surface-0 dark:bg-surface-900',
-			'border-surface-300 dark:border-surface-700',
-
-			'[&_[data-pc-name=pcfiltercontainer]]:!flex-auto',
-			'[&_[data-pc-name=pcfilter]]:w-full',
 		],
+	},
+	pcFilterContainer: {
+		root: { class: 'min-w-0 flex-auto' },
+	},
+	pcFilter: ({ props }) => ({
+		root: ({ global }) => ({
+			...global,
+			'aria-label': props.filterPlaceholder,
+			'class': [
+				global.class,
+				'w-full !py-2 !pl-9 !pr-3 !text-sm !bg-surface-50 dark:!bg-dark-800',
+				'[&[aria-activedescendant]]:!ring-0',
+			],
+		}),
+	}),
+	pcFilterIconContainer: {
+		root: { class: '!left-3 !right-auto text-bluegray-400' },
 	},
 	listContainer: {
-		class: [
-			// Sizing
-			'max-h-[200px]',
-
-			// Misc
-			'overflow-auto',
-		],
+		class: 'dark-scrollbar min-h-0 overflow-auto overscroll-contain',
 	},
 	list: {
-		class: 'p-1 list-none m-0',
+		class: 'list-none m-0 px-2 pb-2 pt-0',
 	},
 	option: ({ context }) => ({
 		class: [
-			'relative',
-			'flex items-center',
-
-			// Font
-			'leading-none',
-
-			// Spacing
-			'm-0 px-3 py-2 gap-2',
-			'first:mt-0 mt-[2px]',
-
-			// Shape
-			'border-0 rounded',
-
-			// Colors
+			'relative flex items-center min-h-9 gap-2.5 m-0 px-2.5 py-2',
+			'leading-none border-0 rounded',
+			'text-bluegray-900 dark:text-surface-0',
 			{
-				'text-surface-700 dark:text-white/80': (!context.focused && !context.selected) || (context.focused && !context.selected),
-				'bg-surface-200 dark:bg-surface-600/60': context.focused && !context.selected,
-				// 'text-surface-700 dark:text-white/80': context.focused && !context.selected,
-				'bg-highlight': context.selected,
+				'bg-emerald-50 dark:bg-transparent': context.selected && !context.focused,
+				'bg-emerald-100': context.selected && context.focused,
+				'bg-surface-100': !context.selected && context.focused,
+				'dark:bg-dark-600': context.focused,
+				'hover:bg-emerald-100': context.selected && !context.disabled,
+				'hover:bg-surface-100': !context.selected && !context.disabled,
+				'dark:hover:bg-dark-600': !context.disabled,
+				'opacity-50 cursor-default': context.disabled,
+				'cursor-pointer': !context.disabled,
 			},
-
-			// States
-			{ 'hover:bg-surface-100 dark:hover:bg-[rgba(255,255,255,0.03)]': !context.focused && !context.selected },
-			{ 'hover:bg-highlight-emphasis': context.selected },
-			{ 'hover:text-surface-700 hover:bg-surface-100 dark:hover:text-white dark:hover:bg-[rgba(255,255,255,0.03)]': context.focused && !context.selected },
-
-			// Transition
-			'transition-shadow duration-200',
-
-			// Misc
-			'cursor-pointer overflow-hidden whitespace-nowrap',
+			'overflow-hidden whitespace-nowrap select-none',
 		],
 	}),
+	pcOptionCheckbox: {
+		root: ({ global }) => ({ ...global, class: [ global.class, 'shrink-0' ] }),
+	},
+	optionLabel: {
+		class: 'min-w-0 truncate',
+	},
 	optionGroup: {
 		class: [
 			'font-semibold',

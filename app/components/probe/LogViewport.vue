@@ -13,6 +13,7 @@
 		<div
 			v-for="log in renderedLogs"
 			:key="log._key"
+			v-memo="[log]"
 			:data-log-key="log._key"
 			class="whitespace-nowrap text-gray-800 dark:text-gray-300"
 		>

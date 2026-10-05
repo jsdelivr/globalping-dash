@@ -50,6 +50,7 @@
 					placeholder="Scopes"
 					filter-placeholder="Find a scope"
 					filter
+					auto-filter-focus
 					reset-filter-on-hide
 					:options="scopeOptions"
 					:option-disabled="isScopeOptionDisabled"

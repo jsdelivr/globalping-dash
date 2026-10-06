@@ -220,6 +220,7 @@ declare global {
 		scopes: string[];
 		type: string;
 		parent: number | null;
+		account_id: string;
 	};
 
 	type Application = {

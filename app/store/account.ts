@@ -83,6 +83,9 @@ export const useAccount = defineStore('account', {
 		canManageProbes (): boolean {
 			return !this.current.org_id || this.current.org_role === 'admin';
 		},
+		canCreateTokens (): boolean {
+			return !this.current.org_id || this.current.org_role === 'admin' || this.current.org_role === 'member';
+		},
 	},
 	actions: {
 		restore () {

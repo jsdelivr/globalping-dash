@@ -14,9 +14,7 @@ export default {
 			{ 'bg-surface-0 dark:bg-dark-900': !props.disabled },
 
 			'border',
-			{ 'dark:border-dark-400': parent.instance.$name !== 'InputGroup' },
-			{ 'dark:border-dark-400': parent.instance.$name === 'InputGroup' },
-			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
+			{ 'border-surface-300 dark:border-dark-600': !props.invalid && (!(state.focused || state.overlayVisible) || props.disabled) },
 
 			// Invalid State
 			'invalid:focus:ring-red-200',
@@ -28,8 +26,10 @@ export default {
 			'duration-200',
 
 			// States
-			{ 'hover:[&:not(:focus-within)]:border-surface-400 dark:hover:[&:not(:focus-within)]:border-dark-400 focus-within:border-primary-500 dark:focus-within:border-primary-400': !props.invalid },
-			{ 'outline-none outline-offset-0 ring-1 ring-primary-500 dark:ring-primary-400 z-10': state.focused },
+			{ 'hover:[&:not(:focus-within)]:border-surface-400 dark:hover:[&:not(:focus-within)]:border-dark-400': !props.invalid && !props.disabled && !(state.focused || state.overlayVisible) },
+			{ 'outline-none outline-offset-0 z-10': (state.focused || state.overlayVisible) && !props.disabled },
+			{ 'border-primary-500 dark:border-primary-400 ring-[0.5px] ring-primary-500 dark:ring-primary-400': (state.focused || state.overlayVisible) && !props.invalid && !props.disabled },
+			{ 'ring-1 ring-red-500 dark:ring-red-400': (state.focused || state.overlayVisible) && props.invalid && !props.disabled },
 
 			// Misc
 			'cursor-pointer',

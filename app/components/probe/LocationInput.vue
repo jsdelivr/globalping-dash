@@ -2,11 +2,14 @@
 	<div
 		v-if="probe"
 		ref="containerRef"
+		v-tooltip.top="account.canManageProbes ? null : 'Only organization admins can do this'"
 		class="absolute inset-x-4 bottom-14 flex h-9 flex-col gap-1 sm:bottom-9 sm:flex-row sm:items-center sm:gap-0"
 		@focusin="isActive = true"
 		@focusout="cancelEditing"
 	>
 		<div
+			:inert="!account.canManageProbes"
+			:class="{ 'opacity-60': !account.canManageProbes }"
 			class="relative flex size-full shrink-0 items-center justify-center rounded-md bg-[#E5E7EB] focus-within:z-10 has-[[aria-expanded=true]]:z-10 sm:w-24 sm:rounded-r-none dark:bg-dark-800"
 			aria-hidden="true"
 		>
@@ -40,6 +43,8 @@
 		</div>
 
 		<div
+			:inert="!account.canManageProbes"
+			:class="{ 'opacity-60': !account.canManageProbes }"
 			class="relative flex h-full grow items-center rounded-md bg-white focus-within:z-10 sm:-ml-px sm:rounded-l-none dark:bg-dark-800"
 		>
 			<ProbeCityAutocomplete
@@ -79,9 +84,11 @@
 	import isEqual from 'lodash/isEqual';
 	import type { SelectChangeEvent } from 'primevue/select';
 	import CountryFlag from 'vue-country-flag-next';
+	import { useAccount } from '~/store/account';
 	import { updateMapMarker } from '~/utils/init-google-map';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
+	const account = useAccount();
 	const { $directus } = useNuxtApp();
 
 	const probe = defineModel('probe', {

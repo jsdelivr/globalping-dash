@@ -17,23 +17,26 @@
 					custom-class="text-bluegray-900 dark:border-dark-600 dark:text-bluegray-0"
 				>
 					<template #edit-button>
-						<Button
-							class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:border-surface-300 hover:bg-surface-300 dark:!border-dark-600 dark:bg-dark-600 dark:hover:!border-dark-400 dark:hover:bg-dark-400"
-							:aria-label="probe.tags.length ? 'Open edit tags dialog' : 'Open add tags dialog'"
-							:aria-expanded="tagPopoverRef?.value?.visible || false"
-							aria-haspopup="dialog"
-							aria-controls="editTagsPopover"
-							@click="openEditTagsPopover($event)"
-						>
-							<i
-								class="pi text-sm text-dark-800 dark:text-bluegray-0"
-								:class="{
-									'pi-pencil': probe.tags.length,
-									'pi-plus': !probe.tags.length,
-								}"
-							/>
-							<span class="text-xs text-dark-800 dark:text-bluegray-0">{{ probe.tags.length ? 'Edit' : 'Add' }}</span>
-						</Button>
+						<ProbeOwnerOnly v-slot="{ disabled }">
+							<Button
+								:disabled="disabled"
+								class="h-6 !border-surface-200 bg-surface-200 !px-3 !py-0 hover:border-surface-300 hover:bg-surface-300 dark:!border-dark-600 dark:bg-dark-600 dark:hover:!border-dark-400 dark:hover:bg-dark-400"
+								:aria-label="probe.tags.length ? 'Open edit tags dialog' : 'Open add tags dialog'"
+								:aria-expanded="tagPopoverRef?.value?.visible || false"
+								aria-haspopup="dialog"
+								aria-controls="editTagsPopover"
+								@click="openEditTagsPopover($event)"
+							>
+								<i
+									class="pi text-sm text-dark-800 dark:text-bluegray-0"
+									:class="{
+										'pi-pencil': probe.tags.length,
+										'pi-plus': !probe.tags.length,
+									}"
+								/>
+								<span class="text-xs text-dark-800 dark:text-bluegray-0">{{ probe.tags.length ? 'Edit' : 'Add' }}</span>
+							</Button>
+						</ProbeOwnerOnly>
 					</template>
 				</ProbeUserTagsList>
 
@@ -158,9 +161,11 @@
 	import { updateItem } from '@directus/sdk';
 	import isEqual from 'lodash/isEqual';
 	import memoize from 'lodash/memoize';
+	import { useAccount } from '~/store/account';
 	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
+	const account = useAccount();
 	const probe = defineModel('probe', {
 		type: Object as PropType<Probe>,
 		required: true,
@@ -176,9 +181,10 @@
 	const windowSize = useWindowSize();
 	const { $directus } = useNuxtApp();
 
-	const uPrefixes = [ user.value.github_username, ...user.value.github_organizations ]
+	const accountPrefixes = account.current.org_id ? [ account.current.name ] : [ user.value.github_username, ...user.value.github_organizations ];
+	const uPrefixes = accountPrefixes
 		// Make the default prefix the first option
-		.sort((prefixA, prefixB) => prefixA === user.value.default_prefix ? -1 : prefixB === user.value.default_prefix ? 1 : 0)
+		.sort((prefixA, prefixB) => prefixA === account.current.tag_prefix ? -1 : prefixB === account.current.tag_prefix ? 1 : 0)
 		.map(value => `u-${value}`);
 
 	const tagPopoverRef = ref();
@@ -218,7 +224,7 @@
 
 	const addTag = () => {
 		isEditingTags.value = true;
-		tagsToEdit.value.push({ uPrefix: `u-${user.value.default_prefix}`, value: '' });
+		tagsToEdit.value.push({ uPrefix: `u-${account.current.tag_prefix}`, value: '' });
 	};
 
 	const removeTag = (index: number) => {

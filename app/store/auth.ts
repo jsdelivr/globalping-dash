@@ -1,4 +1,4 @@
-import { readMe, readRolesMe, deleteUser } from '@directus/sdk';
+import { readItems, readMe, readRolesMe, deleteUser } from '@directus/sdk';
 import { defineStore } from 'pinia';
 import { useAccount } from '~/store/account';
 import { useHardwareProbeAdoption } from '~/store/local-adoption';
@@ -16,9 +16,14 @@ interface AuthState {
 	user: User;
 }
 
-export const MEMBERSHIP_FIELDS = [ 'id', 'role', { org: [ 'id', 'name', 'github_id', 'account', 'user_type' ] }] as const;
+export const MEMBERSHIP_FIELDS = [ 'id', 'role', { org: [ 'id', 'name', 'github_id', 'account', 'user_type', 'public_probes' ] }] as const;
 
-const toMembership = (membership: DirectusMembership): Membership => ({ ...membership, org: { ...membership.org, account: membership.org.account[0] ?? '' } });
+const toMembership = (membership: DirectusMembership): Membership => ({ ...membership, org: { ...membership.org, account: membership.org.account[0] ?? '', adoption_token: membership.org.adoption_token ?? null } });
+
+const withOrgAdoptionTokens = (memberships: Membership[], orgs: DirectusOrg[]) => memberships.map(membership => ({
+	...membership,
+	org: { ...membership.org, adoption_token: orgs.find(({ id }) => id === membership.org.id)?.adoption_token ?? null },
+}));
 
 const toUser = (user: DirectusUser): User => ({ ...user, account: user.account[0] ?? '', memberships: user.memberships.map(toMembership) });
 
@@ -159,16 +164,24 @@ export const useAuth = defineStore('auth', {
 
 			try {
 				const { expires_at } = await $directus.refresh();
-				const [ user, roles ] = await Promise.all([
+				const [ user, roles, adminOrgs ] = await Promise.all([
 					$directus.request(readMe({ fields: [ '*', { memberships: MEMBERSHIP_FIELDS }] })),
 					$directus.request(readRolesMe()),
+					$directus.request(readItems('gp_orgs', { filter: { members: { role: { _eq: 'admin' } } } })),
 				]);
 				this.user = toUser(user as DirectusUser);
+				this.user.memberships = withOrgAdoptionTokens(this.user.memberships, adminOrgs);
 				this.isAdmin = !!roles.some(role => role.name === 'Administrator');
 				this.expiresAt = Number(expires_at);
 
 				if (this.isAdmin) {
 					this.applyAdminConfig();
+				}
+
+				if (this.impersonation && this.user.memberships.some(({ role }) => role === 'admin')) {
+					const impersonatedOrgIds = this.user.memberships.filter(({ role }) => role === 'admin').map(({ org }) => org.id);
+					const impersonatedAdminOrgs = await $directus.request(readItems('gp_orgs', { filter: { id: { _in: impersonatedOrgIds } } }));
+					this.user.memberships = withOrgAdoptionTokens(this.user.memberships, impersonatedAdminOrgs);
 				}
 
 				useAccount().restore();

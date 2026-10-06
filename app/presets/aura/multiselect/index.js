@@ -82,11 +82,14 @@ export default {
 	},
 	overlay: {
 		class: [
+			// Spacing follows the overlay's top or bottom placement
+			'!mt-0.5 [&[style*="transform-origin:_center_bottom"]]:!-mt-0.5',
+
 			'flex flex-col overflow-hidden max-w-[calc(100vw-2rem)] max-h-[calc(100dvh-1rem)]',
 			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-white/80',
 			'border border-surface-300 dark:border-dark-600 rounded-lg',
-			'!mt-0 shadow-[0_10px_30px_rgb(23_35_58_/_0.10)]',
+			'shadow-[0_10px_30px_rgb(23_35_58_/_0.10)]',
 		],
 	},
 	header: {

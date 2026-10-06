@@ -27,12 +27,14 @@
 				<p>
 					To target this specific probe, it must be <strong>tagged by your username</strong>.
 				</p>
-				<Button
-					label="Tag all my probes and proceed"
-					class="flex-1"
-					:disabled="auth.adminMode || !!auth.impersonation"
-					@click="enablePublicProbe"
-				/>
+				<ProbeOwnerOnly v-slot="{ disabled }" class="flex">
+					<Button
+						label="Tag all my probes and proceed"
+						class="flex-1"
+						:disabled="auth.adminMode || !!auth.impersonation || disabled"
+						@click="enablePublicProbe"
+					/>
+				</ProbeOwnerOnly>
 				<p>
 					Alternatively, you can target a random probe at this location (including probes from other users).
 				</p>
@@ -66,12 +68,14 @@
 </template>
 
 <script setup lang="ts">
-	import { readItem, updateUser } from '@directus/sdk';
+	import { readItem } from '@directus/sdk';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { USERNAME_TAG_PATTERN } from '~/constants/users';
+	import { useAccount } from '~/store/account';
 	import { useAuth } from '~/store/auth';
 
 	const auth = useAuth();
+	const account = useAccount();
 	const route = useRoute();
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
@@ -117,19 +121,16 @@
 	const enablePublicProbe = async () => {
 		syncingProbeData.value = true;
 
-		return $directus.request(updateUser(auth.user.id, { public_probes: true }))
-			.then(() => {
-				auth.refresh();
-				startRefreshingProbeData();
-			})
+		return account.setPublicProbes(true)
+			.then(startRefreshingProbeData)
 			.catch((e) => {
 				useErrorToast(e);
 				syncingProbeData.value = false;
 			});
 	};
 
-	watch([ isProbePrivate, () => auth.user.public_probes ], ([ isProbePrivate, userPublicProbes ]) => {
-		if (isProbePrivate && userPublicProbes) {
+	watch([ isProbePrivate, () => account.current.public_probes ], ([ isProbePrivate, publicProbes ]) => {
+		if (isProbePrivate && publicProbes) {
 			syncingProbeData.value = true;
 			startRefreshingProbeData();
 		}

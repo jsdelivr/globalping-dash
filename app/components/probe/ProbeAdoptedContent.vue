@@ -20,10 +20,10 @@
 		<label :for="`public-probes-${getCurrentInstance()?.uid}`" class="block cursor-pointer font-bold">Make your probes public</label>
 		<p class="mt-3 text-xs">
 			When enabled, your probes are automatically tagged by
-			<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.default_prefix}`"/>,
+			<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${account.current.tag_prefix}`"/>,
 			allowing you to select them in measurements,
 			and a list of your active probes is also available on your
-			<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${user.default_prefix}`" target="_blank" rel="noopener">user page</NuxtLink>.
+			<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${account.current.tag_prefix}`" target="_blank" rel="noopener">user page</NuxtLink>.
 		</p>
 	</div>
 
@@ -36,17 +36,16 @@
 </template>
 
 <script setup lang="ts">
-	import { updateMe } from '@directus/sdk';
 	import CountryFlag from 'vue-country-flag-next';
 	import { useNotifications } from '~/composables/useNotifications';
+	import { useAccount } from '~/store/account';
 	import { useAuth } from '~/store/auth';
 	import { minDelay } from '~/utils/min-delay';
 	import { pluralize } from '~/utils/pluralize';
 	import { sendErrorToast } from '~/utils/send-toast';
 
-	const { $directus } = useNuxtApp();
 	const auth = useAuth();
-	const { user } = storeToRefs(auth);
+	const account = useAccount();
 	const { updateHeaderNotifications } = useNotifications();
 
 	defineProps({
@@ -59,22 +58,19 @@
 	defineEmits([ 'cancel' ]);
 
 	const isLoading = ref(false);
-	const publicProbes = ref(user.value.public_probes);
-	const shouldDisplaySwitch = !user.value.public_probes && !auth.impersonation;
+	const publicProbes = ref(account.current.public_probes);
+	const shouldDisplaySwitch = !account.current.public_probes && !auth.impersonation;
 
 	const updatePublicProbes = async () => {
 		isLoading.value = true;
 
 		try {
-			await minDelay($directus.request(updateMe({
-				public_probes: publicProbes.value,
-			})), 500);
+			await minDelay(account.setPublicProbes(publicProbes.value), 500);
 		} catch (e) {
 			sendErrorToast(e);
 		}
 
-		await auth.refresh();
-		publicProbes.value = user.value.public_probes;
+		publicProbes.value = account.current.public_probes;
 		isLoading.value = false;
 	};
 

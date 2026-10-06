@@ -1,5 +1,5 @@
 import type { CookieRef } from '#app';
-import { updateUser } from '@directus/sdk';
+import { updateItem, updateUser } from '@directus/sdk';
 import { defineStore } from 'pinia';
 import { useAuth } from '~/store/auth';
 
@@ -60,10 +60,14 @@ export const useAccount = defineStore('account', {
 
 			return {
 				id: user.account,
+				org_id: null,
 				name: user.github_username || `${user.first_name} ${user.last_name}`,
 				github_id: user.external_identifier || 'admin',
 				user_type: user.user_type,
-				role: 'owner',
+				org_role: null,
+				public_probes: user.public_probes,
+				tag_prefix: user.default_prefix,
+				adoption_token: user.adoption_token,
 			};
 		},
 		current (): Account {
@@ -73,8 +77,11 @@ export const useAccount = defineStore('account', {
 				return this.personal;
 			}
 
-			const { org: { account, name, github_id, user_type }, role } = membership;
-			return { id: account, name, github_id, user_type, role };
+			const { org: { id, account, name, github_id, user_type, public_probes, adoption_token }, role } = membership;
+			return { id: account, org_id: id, name, github_id, user_type, org_role: role, public_probes, tag_prefix: name, adoption_token };
+		},
+		canManageProbes (): boolean {
+			return !this.current.org_id || this.current.org_role === 'admin';
 		},
 	},
 	actions: {
@@ -94,6 +101,17 @@ export const useAccount = defineStore('account', {
 
 			storeActiveId(accountId);
 			window.location.reload();
+		},
+		async setPublicProbes (publicProbes: boolean) {
+			const auth = useAuth();
+			const { $directus } = useNuxtApp();
+			const { org_id: orgId } = this.current;
+
+			await (orgId
+				? $directus.request(updateItem('gp_orgs', orgId, { public_probes: publicProbes }))
+				: $directus.request(updateUser(auth.user.id, { public_probes: publicProbes })));
+
+			await auth.refresh();
 		},
 		async setSelected (selectedOrgs: string[]) {
 			const auth = useAuth();

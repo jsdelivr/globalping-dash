@@ -252,7 +252,7 @@ export const useHardwareProbeAdoption = defineStore('hardware-probe-adoption', {
 		},
 
 		startPolling () {
-			if (this.localNetworkAccess === 'denied' || !useAuth().isLoggedIn) {
+			if (this.localNetworkAccess === 'denied' || !useAuth().isLoggedIn || !useAccount().canManageProbes) {
 				return;
 			}
 

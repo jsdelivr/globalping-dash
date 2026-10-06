@@ -77,26 +77,31 @@
 				>
 					<div class="flex items-center justify-between max-sm:flex-col max-sm:text-center">
 						<div class="ml-2">You get <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="font-bold" :class="{'text-primary': step2Completed}">+{{ formatNumber(creditsPerAdoptedProbe) }} credits</span> / probe / day</span></div>
-						<Button
-							v-if="!step1Completed"
-							disabled
-							severity="secondary"
-							outlined
-							label="Adopt a probe"
-						/>
-						<Button
-							v-else-if="step2Completed"
-							severity="secondary"
-							outlined
-							label="Adopt another probe"
-							class="text-primary !opacity-100"
-							@click="$emit('adopt-a-probe')"
-						/>
-						<Button
-							v-else
-							label="Adopt your first probe"
-							@click="$emit('adopt-a-probe')"
-						/>
+						<ProbeOwnerOnly v-slot="{ disabled }">
+							<Button
+								v-if="!step1Completed"
+								disabled
+								severity="secondary"
+								outlined
+								label="Adopt a probe"
+							/>
+							<Button
+								v-else-if="step2Completed"
+								severity="secondary"
+								outlined
+								label="Adopt another probe"
+								class="text-primary"
+								:class="{ '!opacity-100': !disabled }"
+								:disabled="disabled"
+								@click="$emit('adopt-a-probe')"
+							/>
+							<Button
+								v-else
+								label="Adopt your first probe"
+								:disabled="disabled"
+								@click="$emit('adopt-a-probe')"
+							/>
+						</ProbeOwnerOnly>
 					</div>
 				</div>
 			</div>

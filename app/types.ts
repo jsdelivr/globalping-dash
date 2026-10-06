@@ -170,14 +170,20 @@ declare global {
 		github_id: string;
 		account: string;
 		user_type: 'member' | 'special' | 'sponsor';
+		public_probes: boolean;
+		adoption_token: string | null;
 	};
 
 	type Account = {
 		id: string;
+		org_id: string | null;
 		name: string;
 		github_id: string;
-		user_type: User['user_type'];
-		role: Membership['role'] | 'owner';
+		user_type: 'member' | 'special' | 'sponsor';
+		org_role: Membership['role'] | null;
+		public_probes: boolean;
+		tag_prefix: string;
+		adoption_token: string | null;
 	};
 
 	type Membership = {
@@ -187,7 +193,7 @@ declare global {
 	};
 
 	// In Directus, `account` is the reverse alias of gp_accounts.org, so it comes back as an array of one id.
-	type DirectusOrg = Omit<Org, 'account'> & { account: string[] };
+	type DirectusOrg = Omit<Org, 'account' | 'adoption_token'> & { account: string[]; adoption_token?: string; members?: DirectusMembership[] };
 
 	type DirectusMembership = Omit<Membership, 'org'> & { org: DirectusOrg };
 

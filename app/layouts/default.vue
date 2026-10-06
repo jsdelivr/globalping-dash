@@ -1,7 +1,9 @@
 <template>
 	<section class="grid grid-cols-[256px_auto] grid-rows-[56px_auto] max-lg:grid-cols-1">
-		<PopupUnadoptedProbeDetected/>
-		<PopupLocalNetworkAccess/>
+		<template v-if="account.canManageProbes">
+			<PopupUnadoptedProbeDetected/>
+			<PopupLocalNetworkAccess/>
+		</template>
 		<Toast class="max-[440px]:left-5 max-[440px]:w-auto"/>
 
 		<header class="col-span-2 flex items-center border-b bg-dark-800 px-6 py-3 text-surface-0 max-lg:pr-3 max-sm:pl-4 max-sm:pr-2">
@@ -19,8 +21,8 @@
 					<i class="pi pi-external-link text-bluegray-300"/>
 					<span class="m-2">Globalping</span>
 				</NuxtLink>
-				<p v-if="account.current.role === 'owner'" class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(account.current.user_type) }}</span></p>
-				<p v-else class="mx-12">Organization role: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(account.current.role) }}</span></p>
+				<p v-if="account.current.org_role" class="mx-12">Organization role: <span v-tooltip.bottom="{ value: rolesHint, escape: false, class: 'max-w-md [&>[data-pc-section=text]]:leading-normal' }" class="cursor-help rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(account.current.org_role) }}</span></p>
+				<p v-else class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(account.current.user_type) }}</span></p>
 				<div v-if="auth.isAdmin" class="mr-2 flex items-center gap-2">
 					<Button
 						class="relative text-surface-0 hover:bg-transparent"
@@ -281,6 +283,18 @@
 	// PROFILE
 
 	const addOrgDialog = ref(false);
+
+	const ROLE_DESCRIPTIONS = [
+		{ role: 'admin', description: 'Manages the organization: its settings, adoption token, members and their roles. Adopts and edits its probes, gets its notifications and uses its credits.' },
+		{ role: 'member', description: 'Sees the organization\'s probes and credits, and creates tokens and app approvals that spend its credits. Can\'t adopt or edit probes.' },
+		{ role: 'viewer', description: 'Read-only: sees the organization\'s probes and credits. Can\'t create tokens or run measurements on globalping.io as the organization.' },
+	];
+
+	const rolesHint = computed(() => ROLE_DESCRIPTIONS.map(({ role, description }) => {
+		const isCurrent = role === account.current.org_role;
+		const title = `<strong class="${isCurrent ? 'text-primary' : ''}">${capitalize(role)}</strong>${isCurrent ? ' <span class="text-xs opacity-70">(your role)</span>' : ''}`;
+		return `<p class="mb-2 last:mb-0">${title}<br>${description}</p>`;
+	}).join(''));
 	const accountsExpanded = ref(false);
 
 	const accountOptions = computed(() => [
@@ -288,7 +302,7 @@
 			key: 'personal',
 			label: account.personal.name,
 			icon: 'pi pi-user',
-			active: account.current.role === 'owner',
+			active: !account.current.org_id,
 			command: () => account.switchTo(null),
 		},
 		...account.selectedOrgs.map(membership => ({

@@ -34,15 +34,18 @@
 							</NuxtLink>
 							<div v-if="isEmpty(cities)" class="ml-2">No locations to show</div>
 						</div>
-						<Button
-							class="ml-auto min-w-36 max-sm:ml-0 max-sm:mt-3"
-							:severity="adoptedProbes.length ? 'secondary' : undefined"
-							:outlined="!!adoptedProbes.length"
-							@click="adoptProbeDialog = true"
-						>
-							<NuxtIcon class="pi" name="capture" aria-hidden="true"/>
-							<span class="font-bold">{{ adoptedProbes.length ? "Adopt a probe" : "Adopt your first probe" }}</span>
-						</Button>
+						<ProbeOwnerOnly v-slot="{ disabled }" class="ml-auto max-sm:ml-0 max-sm:mt-3">
+							<Button
+								class="min-w-36"
+								:severity="adoptedProbes.length ? 'secondary' : undefined"
+								:outlined="!!adoptedProbes.length"
+								:disabled="disabled"
+								@click="adoptProbeDialog = true"
+							>
+								<NuxtIcon class="pi" name="capture" aria-hidden="true"/>
+								<span class="font-bold">{{ adoptedProbes.length ? "Adopt a probe" : "Adopt your first probe" }}</span>
+							</Button>
+						</ProbeOwnerOnly>
 					</div>
 				</div>
 			</AsyncBlock>

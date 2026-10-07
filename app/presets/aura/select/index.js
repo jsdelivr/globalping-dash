@@ -97,6 +97,9 @@ export default {
 	},
 	overlay: {
 		class: [
+			// Spacing follows the overlay's top or bottom placement
+			'!mt-0.5 [&[style*="transform-origin:_center_bottom"]]:!-mt-0.5',
+
 			// Colors
 			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-white/80',

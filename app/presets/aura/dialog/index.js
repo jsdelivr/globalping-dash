@@ -1,16 +1,16 @@
 export default {
 	root: ({ props, state }) => ({
 		class: [
+			'flex flex-col',
 			// Shape
 			'rounded-lg',
 			'shadow-lg',
 			'border-0',
 
 			// Size
-			props.position === 'top' ? 'max-h[calc(95vh-7*16px)]' : 'max-h-[90vh]',
-			{ 'my-28': props.position === 'top' },
-			'max-w-[min(900px,95vw)]',
-			'w-[50vw]',
+			props.position === 'top' ? 'max-h-[calc(100dvh-32px)] sm:max-h-[calc(100dvh-224px)]' : 'max-h-[90vh]',
+			{ 'my-4 sm:my-28': props.position === 'top' },
+			'max-w-[95vw]',
 			'm-0',
 
 			// Color
@@ -79,6 +79,7 @@ export default {
 			'border-surface-200 dark:border-dark-400',
 
 			// Misc
+			'min-h-0',
 			'overflow-y-auto',
 		],
 	}),
@@ -115,7 +116,7 @@ export default {
 			// Background and Effects
 			{ 'has-[.mask-active]:bg-transparent bg-black/40': props.modal },
 
-			'overflow-y-scroll',
+			'overflow-y-auto',
 		],
 	}),
 	transition: ({ props }) => {

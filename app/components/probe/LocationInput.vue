@@ -2,14 +2,14 @@
 	<div
 		v-if="probe"
 		ref="containerRef"
-		v-tooltip.top="account.canManageProbes ? null : 'Only organization admins can do this'"
+		v-tooltip.top="hint"
 		class="absolute inset-x-4 bottom-14 flex h-9 flex-col gap-1 sm:bottom-9 sm:flex-row sm:items-center sm:gap-0"
 		@focusin="isActive = true"
 		@focusout="cancelEditing"
 	>
 		<div
-			:inert="!account.canManageProbes"
-			:class="{ 'opacity-60': !account.canManageProbes }"
+			:inert="disabled"
+			:class="{ 'opacity-60': disabled }"
 			class="relative flex size-full shrink-0 items-center justify-center rounded-md border border-[#D1D5DB] bg-[#E5E7EB] sm:w-24 sm:rounded-r-none sm:border-r-0 dark:border-dark-600 dark:bg-dark-800"
 			aria-hidden="true"
 		>
@@ -43,8 +43,8 @@
 		</div>
 
 		<div
-			:inert="!account.canManageProbes"
-			:class="{ 'opacity-60': !account.canManageProbes }"
+			:inert="disabled"
+			:class="{ 'opacity-60': disabled }"
 			class="relative flex h-full grow items-center rounded-md border border-[#D1D5DB] bg-white focus:z-10 focus:ring-1 focus:ring-primary sm:rounded-l-none sm:border-l-0 dark:border-dark-600 dark:bg-dark-800"
 		>
 			<ProbeCityAutocomplete
@@ -84,11 +84,11 @@
 	import isEqual from 'lodash/isEqual';
 	import type { SelectChangeEvent } from 'primevue/select';
 	import CountryFlag from 'vue-country-flag-next';
-	import { useAccount } from '~/store/account';
+	import { useProbeEditing } from '~/composables/useProbeEditing';
 	import { updateMapMarker } from '~/utils/init-google-map';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
-	const account = useAccount();
+	const { hint, disabled } = useProbeEditing();
 	const { $directus } = useNuxtApp();
 
 	const probe = defineModel('probe', {

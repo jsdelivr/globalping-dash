@@ -12,7 +12,15 @@
 						<InputText v-model="search" class="m-0 h-9 min-w-80 max-md:w-full max-md:min-w-0" placeholder="Search accounts" aria-label="Search sponsor accounts"/>
 					</IconField>
 				</InputGroup>
-				<Button class="relative h-9 shrink-0" label="Filters" severity="secondary" outlined @click="filtersPanel?.toggle($event)">
+				<Button
+					class="relative h-9 shrink-0"
+					label="Filters"
+					severity="secondary"
+					outlined
+					data-dropdown-trigger
+					aria-haspopup="dialog"
+					:aria-expanded="filtersPanel?.visible ?? false"
+					@click="filtersPanel?.toggle($event)">
 					<template #icon><i class="pi pi-sliders-h"/><i v-if="anyCategoricalFilterApplied" class="pi pi-circle-fill absolute left-7 top-1.5 text-[0.4rem] text-primary"/></template>
 				</Button>
 			</div>

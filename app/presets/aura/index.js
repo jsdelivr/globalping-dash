@@ -39,7 +39,7 @@ import iconfield from './iconfield';
 import inputgroup from './inputgroup';
 import inputgroupaddon from './inputgroupaddon';
 // import inputmask from './inputmask';
-// import inputnumber from './inputnumber';
+import inputnumber from './inputnumber';
 import inputotp from './inputotp';
 import inputtext from './inputtext';
 // import knob from './knob';
@@ -61,7 +61,7 @@ import paginator from './paginator';
 import popover from './popover';
 // import progressbar from './progressbar';
 // import progressspinner from './progressspinner';
-// import radiobutton from './radiobutton';
+import radiobutton from './radiobutton';
 // import rating from './rating';
 // import ripple from './ripple';
 // import scrollpanel from './scrollpanel';
@@ -112,12 +112,12 @@ export default {
 	autocomplete,
 	select,
 	dropdown: select,
-	// inputnumber,
+	inputnumber,
 	inputtext,
 	datepicker,
 	calendar: datepicker,
 	checkbox,
-	// radiobutton,
+	radiobutton,
 	toggleswitch,
 	// inputswitch: toggleswitch,
 	selectbutton,

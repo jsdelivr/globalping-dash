@@ -6,9 +6,10 @@ export default {
 			// Flexbox & Alignment
 			'inline-flex',
 			'align-bottom',
+			'shrink-0',
 
 			// Size
-			'w-5 h-5',
+			'w-4 h-4',
 
 			// Misc
 			'cursor-pointer',
@@ -17,11 +18,11 @@ export default {
 	},
 	box: ({ props, context }) => ({
 		class: [
-			// Flexbox
-			'flex justify-center items-center',
+			// Position
+			'relative',
 
 			// Size
-			'w-5 h-5',
+			'w-4 h-4',
 
 			// Shape
 			'border outline-transparent',
@@ -81,18 +82,21 @@ export default {
 		class: [
 			'block',
 
+			// Position
+			'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
+
 			// Shape
 			'rounded-full',
 
 			// Size
-			'w-3 h-3',
+			'w-2 h-2',
 
 			// Conditions
 			{
 				'bg-surface-0 dark:bg-surface-900': context.checked,
 				'bg-primary': !context.checked,
-				'backface-hidden invisible scale-[0.1]': !context.checked,
-				'transform visible translate-z-0 scale-[1,1]': context.checked,
+				'invisible scale-[0.1]': !context.checked,
+				'visible scale-100': context.checked,
 			},
 
 			// Transition

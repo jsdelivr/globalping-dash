@@ -17,7 +17,7 @@ export default {
 			{ '!w-16': props.showButtons && props.buttonLayout === 'vertical' },
 		],
 	}),
-	pcInput: {
+	pcInputText: {
 		root: ({ parent, context }) => ({
 			class: [
 				// Font
@@ -42,27 +42,32 @@ export default {
 				{ 'border-0': parent.instance.$parentInstance?.$name === 'InputGroup' && !parent.props.showButtons },
 
 				// Colors
-				'text-surface-800 dark:text-white/80',
-				'placeholder:text-surface-400 dark:placeholder:text-surface-500',
-				{ 'bg-surface-0 dark:bg-surface-950': !context.disabled },
+				'placeholder:text-bluegray-400',
+				{ 'text-bluegray-900 dark:text-surface-0 bg-surface-0 dark:bg-dark-900': !context.disabled },
 				'border',
-				{ 'border-surface-300 dark:border-surface-700': !parent.props.invalid },
+				{ 'border-surface-300 dark:border-dark-600': !parent.props.invalid },
 
 				// Invalid State
 				'invalid:focus:ring-red-200',
 				'invalid:hover:border-red-500',
-				{ 'border-red-500 dark:border-red-400': parent.props.invalid },
+				{ 'border-red-500 dark:border-red-400 focus:ring-red-200 dark:focus:ring-red-400': parent.props.invalid },
 
 				// States
-				{ 'hover:border-primary': !parent.props.invalid },
-				'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10',
-				{ 'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default': context.disabled },
+				{
+					'hover:[&:not(:focus)]:border-surface-400 dark:hover:[&:not(:focus)]:border-dark-400 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400': !context.disabled && !parent.props.invalid,
+					'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:z-10': !context.disabled,
+					'text-bluegray-500 bg-surface-100 dark:bg-dark-500 select-none pointer-events-none cursor-default': context.disabled,
+				},
 
 				// Filled State *for FloatLabel
 				{ filled: parent.instance?.$parentInstance?.$name === 'FloatLabel' && parent.state.d_modelValue !== null },
 
 				// Position
 				{ 'order-2': parent.props.buttonLayout === 'horizontal' || parent.props.buttonLayout === 'vertical' },
+
+				// Misc
+				'appearance-none',
+				'transition-colors transition-shadow duration-200',
 			],
 		}),
 	},

@@ -113,8 +113,7 @@
 			:rows="displayedRows"
 			:total-records="result.total"
 			:page-link-size="pageLinkSize"
-			:template="isMobile ? 'PrevPageLink CurrentPageReport NextPageLink' : template"
-			current-page-report-template="{currentPage} / {totalPages}"
+			:template="template"
 			@page="page = $event.page"
 		/>
 	</section>
@@ -159,7 +158,6 @@
 	const { $directus } = useNuxtApp();
 	const config = useRuntimeConfig();
 	const history = ref<HTMLElement>();
-	const isMobile = useMediaQuery('(max-width: 639px)');
 
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({

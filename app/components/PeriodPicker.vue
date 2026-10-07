@@ -28,7 +28,7 @@
 
 			<template v-if="searchable" #header>
 				<div class="flex flex-col">
-					<div class="m-2 flex items-center gap-2 rounded-md border px-3 py-2 ring-primary focus-within:ring-1 dark:bg-dark-800">
+					<div class="m-2 flex items-center gap-2 rounded-md border px-3 py-2 focus-within:border-primary focus-within:ring-[0.5px] focus-within:ring-primary-500 dark:bg-dark-800 dark:focus-within:border-primary-400 dark:focus-within:ring-primary-400">
 						<i class="pi pi-search"/>
 						<input
 							v-model="filterInput"

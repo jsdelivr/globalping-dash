@@ -4,8 +4,8 @@
 		ref="probeNameInput"
 		class="relative flex h-[42px] w-full cursor-pointer items-center gap-1 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-offset-2 sm:w-auto"
 		:class="{
-			'[&>input]:outline-none [&>input]:ring-1 [&>input]:ring-primary': isEditingName,
-			'[&>input]:dark:border-dark-600 [&>input]:dark:bg-dark-800': isEditingName,
+			'[&>input]:border-primary [&>input]:outline-none [&>input]:ring-[0.5px] [&>input]:ring-primary-500': isEditingName,
+			'[&>input]:dark:border-primary [&>input]:dark:bg-dark-800': isEditingName,
 		}"
 		role="button"
 		aria-label="Edit probe name"

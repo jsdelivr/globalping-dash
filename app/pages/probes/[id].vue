@@ -92,7 +92,7 @@
 				Your hardware probe is running an outdated firmware and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="https://github.com/jsdelivr/globalping-hwprobe#download-the-latest-firmware" target="_blank">our guide</NuxtLink> to update it manually.
 			</Message>
 
-			<Message v-else-if="probeDetails?.isOutdated && !probeDetails.hardwareDevice && account.canManageProbes" severity="warn" icon="pi pi-exclamation-triangle">
+			<Message v-else-if="probeDetails?.isOutdated && !probeDetails.hardwareDevice && !editingDisabled" severity="warn" icon="pi pi-exclamation-triangle">
 				Your probe container is running an outdated software and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="#" @click="updateProbeDialog = true">our guide</NuxtLink> to update it manually.
 			</Message>
 
@@ -148,8 +148,8 @@
 	import { readItem, aggregate } from '@directus/sdk';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useProbeDetailTabs } from '~/composables/useProbeDetailTabs';
+	import { PROBE_ACCOUNT_KEY, useProbeEditing } from '~/composables/useProbeEditing';
 	import { useUserFilter } from '~/composables/useUserFilter';
-	import { useAccount } from '~/store/account';
 	import { formatNumber } from '~/utils/format-number';
 	import { getOfflineDurationText, getProbeStatusColor, getProbeStatusText } from '~/utils/probe-status';
 	import { sendErrorToast } from '~/utils/send-toast';
@@ -158,7 +158,6 @@
 	const route = useRoute();
 	const router = useRouter();
 	const { getUserFilter } = useUserFilter();
-	const account = useAccount();
 	const probeId = computed(() => route.params.id as string);
 	const probeDetailsUpdating = ref(false);
 	const updateProbeDialog = ref(false);
@@ -191,6 +190,10 @@
 		probeId,
 		() => $directus.request<Probe>(readItem('gp_probes', probeId.value)),
 	);
+
+	const probeAccountId = computed(() => probeDetails.value?.account_id);
+	provide(PROBE_ACCOUNT_KEY, probeAccountId);
+	const { disabled: editingDisabled } = useProbeEditing(probeAccountId);
 
 	watch(probeDetailsError, (newError) => {
 		if (!newError) {

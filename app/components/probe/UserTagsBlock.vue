@@ -87,13 +87,19 @@
 
 								<template v-for="(tag, index) in tagsToEdit" :key="index">
 									<Select
+										v-if="getPrefixOptions(tag).length > 1"
 										v-model="tag.uPrefix"
-										:options="uPrefixes"
+										:options="getPrefixOptions(tag)"
 										:scroll-height="'200px'"
 										append-to="self"
 										aria-label="Tag prefix"
 										aria-required="true"
 									/>
+									<span
+										v-else
+										class="flex h-full items-center truncate rounded-md border border-surface-300 bg-surface-50 px-3 text-bluegray-700 dark:border-dark-600 dark:bg-dark-800 dark:text-bluegray-0"
+										aria-label="Tag prefix"
+									>{{ tag.uPrefix }}</span>
 									<div class="inline-flex w-6 justify-center">{{ probe.tags[0]?.format === 'v1' ? '-' : ':' }}</div>
 									<div class="relative">
 										<InputText
@@ -181,17 +187,13 @@
 	const windowSize = useWindowSize();
 	const { $directus } = useNuxtApp();
 
-	const accountPrefixes = account.current.org_id ? [ account.current.name ] : [ user.value.github_username, ...user.value.github_organizations ];
-	const uPrefixes = accountPrefixes
-		// Make the default prefix the first option
-		.sort((prefixA, prefixB) => prefixA === account.current.tag_prefix ? -1 : prefixB === account.current.tag_prefix ? 1 : 0)
-		.map(value => `u-${value}`);
+	const uPrefix = `u-${account.current.org_id ? account.current.name : user.value.github_username}`;
 
 	const tagPopoverRef = ref();
-	const tagsToEdit = ref<{ uPrefix: string; value: string; format?: string }[]>([]);
+	const tagsToEdit = ref<{ uPrefix: string; value: string; format?: string; savedPrefix?: string }[]>([]);
 	const isEditingTags = ref<boolean>(false);
 	const popoverContentRef = ref<HTMLElement>();
-	const getDefaultEmptyTags = () => [{ uPrefix: uPrefixes[0]!, value: '' }];
+	const getDefaultEmptyTags = () => [{ uPrefix, value: '' }];
 
 	const openEditTagsPopover = (event: Event) => {
 		editTags();
@@ -219,12 +221,15 @@
 			uPrefix: `u-${prefix}`,
 			value,
 			format,
+			savedPrefix: `u-${prefix}`,
 		})) : getDefaultEmptyTags();
 	};
 
+	const getPrefixOptions = ({ savedPrefix }: { savedPrefix?: string }) => !savedPrefix || savedPrefix === uPrefix ? [ uPrefix ] : [ savedPrefix, uPrefix ];
+
 	const addTag = () => {
 		isEditingTags.value = true;
-		tagsToEdit.value.push({ uPrefix: `u-${account.current.tag_prefix}`, value: '' });
+		tagsToEdit.value.push({ uPrefix, value: '' });
 	};
 
 	const removeTag = (index: number) => {

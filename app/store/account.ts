@@ -68,6 +68,7 @@ export const useAccount = defineStore('account', {
 				public_probes: user.public_probes,
 				tag_prefix: user.default_prefix,
 				adoption_token: user.adoption_token,
+				extra_adoption_tokens: [],
 			};
 		},
 		current (): Account {
@@ -77,11 +78,14 @@ export const useAccount = defineStore('account', {
 				return this.personal;
 			}
 
-			const { org: { id, account, name, github_id, user_type, public_probes, adoption_token }, role } = membership;
-			return { id: account, org_id: id, name, github_id, user_type, org_role: role, public_probes, tag_prefix: name, adoption_token };
+			const { org: { id, account, name, github_id, user_type, public_probes, adoption_token, extra_adoption_tokens }, role } = membership;
+			return { id: account, org_id: id, name, github_id, user_type, org_role: role, public_probes, tag_prefix: name, adoption_token, extra_adoption_tokens };
 		},
 		canManageProbes (): boolean {
 			return !this.current.org_id || this.current.org_role === 'admin';
+		},
+		canManageOrg (): boolean {
+			return this.current.org_role === 'admin';
 		},
 		canCreateTokens (): boolean {
 			return !this.current.org_id || this.current.org_role === 'admin' || this.current.org_role === 'member';

@@ -35,7 +35,7 @@ export default {
 	content: {
 		class: [
 			// Flexbox
-			'flex items-center h-full',
+			'flex items-start h-full',
 
 			// Spacing
 			'py-2 px-3 gap-2',
@@ -45,6 +45,9 @@ export default {
 		class: [
 			// Sizing and Spacing
 			'shrink-0',
+
+			// Matches the first line of the text
+			'!leading-[inherit]',
 		],
 	},
 	text: {

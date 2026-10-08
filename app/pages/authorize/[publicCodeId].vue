@@ -69,9 +69,7 @@
 
 	const accountOptions = [
 		account.personal,
-		...account.selectedOrgs
-			.filter(({ role }) => role !== 'viewer')
-			.map(({ org }) => ({ id: org.account, name: org.name })),
+		...account.nonViewerOrgs.map(({ org }) => ({ id: org.account, name: org.name })),
 	];
 
 	const accountId = ref(accountOptions.some(({ id }) => id === account.current.id) ? account.current.id : account.personal.id);

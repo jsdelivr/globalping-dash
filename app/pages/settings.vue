@@ -206,6 +206,8 @@
 			</div>
 		</div>
 
+		<SettingsMigrateToOrg/>
+
 		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Data removal</h5>
@@ -284,7 +286,6 @@
 		email: user.value.email,
 		publicProbes: user.value.public_probes,
 		defaultPrefix: user.value.default_prefix,
-		adoptionToken: user.value.adoption_token,
 		notificationPreferences: serializeNotificationPreferences(),
 	}, (current) => {
 		return firstName.value !== current.firstName
@@ -293,8 +294,13 @@
 			|| email.value !== current.email
 			|| publicProbes.value !== current.publicProbes
 			|| defaultPrefix.value !== current.defaultPrefix
-			|| adoptionToken.value !== current.adoptionToken
+			|| adoptionToken.value !== user.value.adoption_token
 			|| serializeNotificationPreferences() !== initialNotificationPreferences;
+	});
+
+	// A probe transfer replaces the adoption token outside of this form.
+	watch(() => user.value.adoption_token, (token) => {
+		adoptionToken.value = token;
 	});
 
 	const themeOptions = [

@@ -55,6 +55,9 @@ export const useAccount = defineStore('account', {
 			const { user } = useAuth();
 			return user.memberships.filter(membership => user.selected_orgs.includes(membership.org.id));
 		},
+		nonViewerOrgs (): Membership[] {
+			return this.selectedOrgs.filter(({ role }) => role !== 'viewer');
+		},
 		personal (): Account {
 			const { user } = useAuth();
 

@@ -1,15 +1,12 @@
 <template>
 	<div class="flex w-full min-w-0 flex-col gap-2 border-b bg-surface-0 px-3 py-2 text-gray-700 sm:flex-row sm:flex-wrap sm:items-start dark:bg-dark-800 dark:text-gray-300">
 		<div v-if="renderedCount" class="flex min-h-9 min-w-0 items-center break-words sm:mr-auto">
-			<span v-if="filterReplacementPending && requestPending && enabled && !initialLoadPending" class="flex" role="status" aria-live="polite">
+			<span v-if="filterReplacementPending && requestPending && !initialLoadPending" class="flex" role="status" aria-live="polite">
 				<ProbeDotLoader/>
 				<span class="sr-only">Loading filtered logs</span>
 			</span>
-			<span v-else-if="filterReplacementPending && loadFailed && enabled" role="status" aria-live="polite">
+			<span v-else-if="filterReplacementPending && loadFailed" role="status" aria-live="polite">
 				Unable to load filtered logs. Retrying…
-			</span>
-			<span v-else-if="filterReplacementPending && !enabled" role="status" aria-live="polite">
-				{{ emptyStateText }}
 			</span>
 			<span v-else-if="!filterReplacementPending" class="font-bold">
 				<template v-if="renderedCount !== loadedCount">
@@ -119,7 +116,6 @@
 		requestPending: boolean;
 		initialLoadPending: boolean;
 		loadFailed: boolean;
-		emptyStateText: string;
 		scopeOptions: string[];
 	}>();
 
@@ -130,7 +126,6 @@
 
 	const searchInput = defineModel<string>('searchInput', { required: true });
 	const scopeInput = defineModel<string[]>('scopeInput', { required: true });
-	const enabled = defineModel<boolean>('enabled', { required: true });
 
 	const isScopeOptionDisabled = (scope: string) => !scopeInput.value.includes(scope) && !canAppendProbeLogScope(scopeInput.value, scope);
 

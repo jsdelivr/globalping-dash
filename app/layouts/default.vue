@@ -43,7 +43,7 @@
 				</Button>
 				<Button class="flex items-center !px-2 text-surface-0 hover:bg-transparent" text rounded aria-label="Profile" @click="toggleProfile">
 					<i class="pi pi-user rounded-full border-1.5 border-surface-0 p-2" style="font-size: 1.1rem;"/>
-					<p class="font-semibold">{{ account.current.name }}</p>
+					<p class="font-semibold">{{ account.current.name }}<span v-if="account.current.org_id" class="ml-1 font-normal opacity-70">({{ account.personal.name }})</span></p>
 					<i class="pi pi-chevron-down" style="font-size: .7rem;"/>
 				</Button>
 				<Menu ref="profilePanel" :model="items" popup @hide="accountsExpanded = false">
@@ -87,7 +87,7 @@
 					<template #header>
 						<div class="text-lg font-semibold" data-pc-section="title">
 							<i class="pi pi-user mr-2 rounded-full border-1.5 border-main-900 p-2" style="font-size: 1.1rem;"/>
-							<span class="font-semibold">{{ account.current.name }}</span>
+							<span class="font-semibold">{{ account.current.name }}</span><span v-if="account.current.org_id" class="ml-1 font-normal opacity-70">({{ account.personal.name }})</span>
 						</div>
 					</template>
 
@@ -95,6 +95,7 @@
 					<NuxtLink active-class="active" class="sidebar-link" :class="{'active': $route.path.startsWith('/probes')}" to="/probes" @click="mobileSidebar = false"><NuxtIcon class="pi sidebar-link-icon" name="probe"/>Probes</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/credits" @click="mobileSidebar = false"><NuxtIcon class="pi sidebar-link-icon" name="coin"/>Credits</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/tokens" @click="mobileSidebar = false"><i class="pi pi-database sidebar-link-icon"/>Tokens</NuxtLink>
+					<NuxtLink v-if="account.canManageOrg" active-class="active" class="sidebar-link" to="/organization" @click="mobileSidebar = false"><i class="pi pi-building sidebar-link-icon"/>Organization</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/settings" @click="mobileSidebar = false"><i class="pi pi-cog sidebar-link-icon"/>Settings</NuxtLink>
 					<div v-if="!auth.adminMode" class="my-2 flex flex-col border-y py-2">
 						<p class="px-4 py-2 text-sm font-bold text-bluegray-500">Act as organization</p>
@@ -215,6 +216,7 @@
 			<NuxtLink active-class="active" class="sidebar-link" :class="{'active': $route.path.startsWith('/probes')}" to="/probes"><NuxtIcon class="pi sidebar-link-icon" name="probe"/>Probes</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/credits"><NuxtIcon class="pi sidebar-link-icon" name="coin"/>Credits</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database sidebar-link-icon"/>Tokens</NuxtLink>
+			<NuxtLink v-if="account.canManageOrg" active-class="active" class="sidebar-link" to="/organization"><i class="pi pi-building sidebar-link-icon"/>Organization</NuxtLink>
 			<div v-if="!isSponsor" class="mt-auto rounded-xl border bg-surface-0 p-6 dark:border-dark-400 dark:bg-dark-500">
 				<p class="mb-2 font-bold">Sponsorship</p>
 				<p class="mb-6">Support the development of our products by becoming a sponsor.</p>

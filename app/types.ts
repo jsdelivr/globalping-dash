@@ -172,6 +172,7 @@ declare global {
 		user_type: 'member' | 'special' | 'sponsor';
 		public_probes: boolean;
 		adoption_token: string | null;
+		extra_adoption_tokens: ExtraAdoptionToken[];
 	};
 
 	type Account = {
@@ -184,6 +185,7 @@ declare global {
 		public_probes: boolean;
 		tag_prefix: string;
 		adoption_token: string | null;
+		extra_adoption_tokens: ExtraAdoptionToken[];
 	};
 
 	type Membership = {
@@ -192,8 +194,23 @@ declare global {
 		org: Org;
 	};
 
-	// In Directus, `account` is the reverse alias of gp_accounts.org, so it comes back as an array of one id.
-	type DirectusOrg = Omit<Org, 'account' | 'adoption_token'> & { account: string[]; adoption_token?: string; members?: DirectusMembership[] };
+	type DirectusOrg = Omit<Org, 'account' | 'adoption_token' | 'extra_adoption_tokens'> & {
+		// In Directus, `account` is the reverse alias of gp_accounts.org, so it comes back as an array of one id.
+		account: string[];
+		adoption_token?: string;
+		extra_adoption_tokens?: ExtraAdoptionToken[];
+		members?: DirectusMembership[];
+	};
+
+	type ExtraAdoptionToken = {
+		github_username: string;
+		token: string;
+	};
+
+	type CreditsRedirect = {
+		source: { githubId: string; name: string };
+		target: { githubId: string; name: string };
+	};
 
 	type DirectusMembership = Omit<Membership, 'org'> & { org: DirectusOrg };
 

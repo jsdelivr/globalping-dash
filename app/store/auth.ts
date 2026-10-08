@@ -18,12 +18,28 @@ interface AuthState {
 
 export const MEMBERSHIP_FIELDS = [ 'id', 'role', { org: [ 'id', 'name', 'github_id', 'account', 'user_type', 'public_probes' ] }] as const;
 
-const toMembership = (membership: DirectusMembership): Membership => ({ ...membership, org: { ...membership.org, account: membership.org.account[0] ?? '', adoption_token: membership.org.adoption_token ?? null } });
-
-const withOrgAdoptionTokens = (memberships: Membership[], orgs: DirectusOrg[]) => memberships.map(membership => ({
+const toMembership = (membership: DirectusMembership): Membership => ({
 	...membership,
-	org: { ...membership.org, adoption_token: orgs.find(({ id }) => id === membership.org.id)?.adoption_token ?? null },
-}));
+	org: {
+		...membership.org,
+		account: membership.org.account[0] ?? '',
+		adoption_token: membership.org.adoption_token ?? null,
+		extra_adoption_tokens: membership.org.extra_adoption_tokens ?? [],
+	},
+});
+
+const withOrgAdoptionTokens = (memberships: Membership[], orgs: DirectusOrg[]) => memberships.map((membership) => {
+	const org = orgs.find(({ id }) => id === membership.org.id);
+
+	return {
+		...membership,
+		org: {
+			...membership.org,
+			adoption_token: org?.adoption_token ?? null,
+			extra_adoption_tokens: org?.extra_adoption_tokens ?? [],
+		},
+	};
+});
 
 const toUser = (user: DirectusUser): User => ({ ...user, account: user.account[0] ?? '', memberships: user.memberships.map(toMembership) });
 

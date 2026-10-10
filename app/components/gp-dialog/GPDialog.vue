@@ -4,7 +4,7 @@
 		position="top"
 		:class="{
 			'w-auto max-w-[min(800px,95vw)]': props.size === 'auto',
-			'min-w-[700px] max-md:min-w-[95%]': props.size === 'large',
+			'w-[50vw] min-w-[700px] max-w-[min(900px,95vw)] max-md:min-w-[95%]': props.size === 'large',
 			[ props.size ]: ![ 'auto', 'large' ].includes(props.size),
 		}"
 		modal

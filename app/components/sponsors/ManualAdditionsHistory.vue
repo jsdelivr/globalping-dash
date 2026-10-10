@@ -1,5 +1,5 @@
 <template>
-	<section class="flex flex-col gap-4 border-t p-5">
+	<section ref="history" class="flex flex-col gap-4 border-t p-5 max-sm:px-0 max-sm:pb-0">
 		<div>
 			<p class="text-sm text-bluegray-500">Manual payments and other credit adjustments added by administrators.</p>
 		</div>
@@ -37,7 +37,7 @@
 		</div>
 
 		<DataTable
-			class="max-md:hidden"
+			class="max-lg:hidden"
 			table-class="table-fixed"
 			:value="result.items"
 			lazy
@@ -50,56 +50,65 @@
 			data-key="id"
 			@sort="onSort"
 		>
-			<Column field="date" header="Date" sortable class="min-w-28" style="width: 17%;">
+			<Column field="date" header="Date" sortable class="whitespace-nowrap" style="width: 112px;">
 				<template #body="{ data }"><AsyncCell :loading="pending" preserve-height>{{ formatUtcDateForTable(data.date) }}</AsyncCell></template>
 			</Column>
-			<Column field="sponsor" header="Recipient" sortable class="min-w-32" style="width: 23%;">
+			<Column field="sponsor" header="Recipient" sortable style="width: 32%;">
 				<template #body="{ data }">
 					<AsyncCell :loading="pending" preserve-height>
 						<SponsorsIdentity
 							class="max-w-full"
+							wrap
 							:github-login="data.githubLogin"
 							:github-id="data.githubId"
 							:dashboard-user-id="data.dashboardUserId"/>
 					</AsyncCell>
 				</template>
 			</Column>
-			<Column field="type" header="Type and details" sortable class="min-w-52" style="width: 30%;">
+			<Column field="type" header="Type and details" sortable>
 				<template #body="{ data }">
 					<AsyncCell :loading="pending" preserve-height>
 						<div class="flex flex-col items-start gap-1">
 							<Tag :value="typeLabel(data.type)" :severity="data.type === 'payment' ? 'warn' : 'secondary'"/>
-							<small class="text-bluegray-500">{{ data.type === 'payment' ? `${formatMoney(data.amountInDollars || 0)} payment` : data.comment || '—' }}</small>
+							<small class="break-words text-bluegray-500">{{ data.type === 'payment' ? `${formatMoney(data.amountInDollars || 0)} payment` : data.comment || '—' }}</small>
 						</div>
 					</AsyncCell>
 				</template>
 			</Column>
-			<Column field="credits" header="Credits" sortable class="min-w-24" style="width: 12%;">
+			<Column
+				field="credits"
+				header="Credits"
+				sortable
+				body-class="!text-right whitespace-nowrap"
+				style="width: 140px;"
+				:pt="{ columnHeaderContent: { class: 'flex items-center justify-end gap-2' } }">
 				<template #body="{ data }"><AsyncCell :loading="pending" preserve-height>{{ formatNumber(data.credits) }}</AsyncCell></template>
 			</Column>
-			<Column field="addedBy" header="Added by" sortable class="min-w-28" style="width: 18%;">
+			<Column field="addedBy" header="Added by" sortable style="width: 144px;">
 				<template #body="{ data }"><AsyncCell :loading="pending" preserve-height>{{ data.addedBy || 'System' }}</AsyncCell></template>
 			</Column>
 			<template #empty><div class="p-6 text-center">{{ emptyMessage }}</div></template>
 		</DataTable>
 
-		<div class="relative flex w-full flex-col gap-2 md:hidden">
+		<div class="relative flex w-full flex-col gap-2 lg:hidden">
 			<div v-if="loadingWithoutRows" class="flex h-32 items-center justify-center"><i class="pi pi-spin pi-spinner text-xl"/></div>
 			<template v-else-if="result.items.length">
 				<AsyncRow v-for="addition in result.items" :key="addition.id" :loading="pending">
-					<article class="rounded-xl border bg-white p-4 dark:bg-dark-800">
-						<div class="flex items-start justify-between gap-3">
-							<div class="min-w-0">
-								<div class="text-sm text-bluegray-500">{{ formatUtcDateForTable(addition.date) }}</div>
-								<SponsorsIdentity
-									class="mt-1 max-w-full font-semibold"
-									:github-login="addition.githubLogin"
-									:github-id="addition.githubId"
-									:dashboard-user-id="addition.dashboardUserId"/>
-							</div>
-							<div class="shrink-0 text-right font-semibold">{{ formatNumber(addition.credits) }} credits</div>
+					<article class="rounded-xl border bg-white p-4 max-sm:p-3 dark:bg-dark-800">
+						<SponsorsIdentity
+							class="max-w-full font-semibold"
+							wrap
+							:github-login="addition.githubLogin"
+							:github-id="addition.githubId"
+							:dashboard-user-id="addition.dashboardUserId"/>
+						<div class="mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-sm">
+							<div class="whitespace-nowrap text-bluegray-500">{{ formatUtcDateForTable(addition.date) }}</div>
+							<div class="whitespace-nowrap font-semibold">{{ formatNumber(addition.credits) }} credits</div>
 						</div>
-						<div class="mt-3 flex items-center gap-2"><Tag :value="typeLabel(addition.type)" :severity="addition.type === 'payment' ? 'warn' : 'secondary'"/><span class="text-sm">{{ addition.type === 'payment' ? `${formatMoney(addition.amountInDollars || 0)} payment` : addition.comment }}</span></div>
+						<div class="mt-3 flex flex-col items-start gap-1">
+							<Tag :value="typeLabel(addition.type)" :severity="addition.type === 'payment' ? 'warn' : 'secondary'"/>
+							<span v-if="addition.type === 'payment' || addition.comment" class="break-words text-sm">{{ addition.type === 'payment' ? `${formatMoney(addition.amountInDollars || 0)} payment` : addition.comment }}</span>
+						</div>
 						<div class="mt-2 text-xs text-bluegray-500">Added by {{ addition.addedBy || 'System' }}</div>
 					</article>
 				</AsyncRow>
@@ -156,6 +165,7 @@
 
 	const { $directus } = useNuxtApp();
 	const config = useRuntimeConfig();
+	const history = ref<HTMLElement>();
 
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({
@@ -228,6 +238,11 @@
 	const emptyMessage = computed(() => response.value.anyFilterApplied ? 'No results match the current filters' : 'No manual additions yet');
 
 	watch([ debouncedSearch, type ], () => { page.value = 0; });
+
+	watch(displayedFirst, async () => {
+		await nextTick();
+		history.value?.parentElement?.scrollTo({ top: 0 });
+	});
 
 	watch(pending, (isPending) => {
 		if (!isPending) { initialLoading.value = false; }

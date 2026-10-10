@@ -20,12 +20,21 @@ export function useUserFilter () {
 			};
 		}
 
+		if (filterField === 'account_id') {
+			return {
+				account_id: { _eq: user.value.account },
+			};
+		}
+
 		return {
 			[filterField]: { _eq: user.value.id },
 		};
 	};
 
+	const getAccountId = (adminValue?: string) => getUserFilter('account_id').account_id?._eq || adminValue || auth.user.account;
+
 	return {
 		getUserFilter,
+		getAccountId,
 	};
 }

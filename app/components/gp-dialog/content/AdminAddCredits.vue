@@ -46,7 +46,7 @@
 					<label
 						for="manualPayment"
 						class="flex cursor-pointer items-start gap-2 rounded-lg border p-3 text-left"
-						:class="additionType === 'payment' ? 'border-primary bg-primary-50 dark:bg-dark-700' : 'hover:border-surface-400 dark:hover:border-dark-400'"
+						:class="additionType === 'payment' ? 'border-primary bg-primary-50 dark:border-primary-400 dark:bg-dark-700' : 'hover:border-surface-400 dark:hover:border-dark-400'"
 					>
 						<RadioButton v-model="additionType" name="additionType" input-id="manualPayment" value="payment" aria-label="Manual one-time payment"/>
 						<span><b class="block">Manual one-time payment</b><small class="text-bluegray-500">Payment recorded outside the automated GitHub flow.</small></span>
@@ -54,7 +54,7 @@
 					<label
 						for="otherCredits"
 						class="flex cursor-pointer items-start gap-2 rounded-lg border p-3 text-left"
-						:class="additionType === 'other' ? 'border-primary bg-primary-50 dark:bg-dark-700' : 'hover:border-surface-400 dark:hover:border-dark-400'"
+						:class="additionType === 'other' ? 'border-primary bg-primary-50 dark:border-primary-400 dark:bg-dark-700' : 'hover:border-surface-400 dark:hover:border-dark-400'"
 					>
 						<RadioButton v-model="additionType" name="additionType" input-id="otherCredits" value="other" aria-label="Other credits"/>
 						<span><b class="block">Other credits</b><small class="text-bluegray-500">Free credits or another manual adjustment.</small></span>

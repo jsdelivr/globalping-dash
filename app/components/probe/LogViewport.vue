@@ -36,11 +36,11 @@
 				<span class="pi pi-spinner animate-spin text-2xl dark:text-gray-500" aria-hidden="true"/>
 				<span class="sr-only">Loading logs</span>
 			</span>
-			<span v-else-if="loadFailed && enabled">Unable to load logs. Retrying…</span>
+			<span v-else-if="loadFailed">Unable to load logs. Retrying…</span>
 			<span v-else>{{ emptyStateText }}</span>
 		</span>
 		<div v-if="renderedLogs.length" class="h-fit px-1 py-2">
-			<ProbeDotLoader v-if="enabled && followingLiveTail && !detachedFromLiveEdge"/>
+			<ProbeDotLoader v-if="followingLiveTail && !detachedFromLiveEdge"/>
 			<span v-else class="block size-1.5"/>
 		</div>
 	</div>
@@ -60,7 +60,6 @@
 		historyLoadPending: boolean;
 		detachedFromLiveEdge: boolean;
 		emptyStateText: string;
-		enabled: boolean;
 		canLoadOlderLogs: boolean;
 		requestOlderLogs: (captureViewport: CaptureProbeLogHistoryViewport) => void;
 		requestLatestBootstrap: () => void;

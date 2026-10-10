@@ -10,7 +10,15 @@
 					<InputText v-model="search" class="m-0 h-9 w-full" placeholder="Search additions" aria-label="Search manual additions"/>
 				</IconField>
 			</InputGroup>
-			<Button class="relative h-9 shrink-0" label="Filters" severity="secondary" outlined @click="filtersPanel?.toggle($event)">
+			<Button
+				class="relative h-9 shrink-0"
+				label="Filters"
+				severity="secondary"
+				outlined
+				data-dropdown-trigger
+				aria-haspopup="dialog"
+				:aria-expanded="filtersPanel?.visible ?? false"
+				@click="filtersPanel?.toggle($event)">
 				<template #icon><i class="pi pi-sliders-h"/><i v-if="type !== 'all'" class="pi pi-circle-fill absolute left-7 top-1.5 text-[0.4rem] text-primary"/></template>
 			</Button>
 			<Popover ref="filtersPanel" class="w-fit max-w-[calc(100vw-2rem)] p-4 [&>*]:border-none" role="dialog" aria-label="Filter manual additions">

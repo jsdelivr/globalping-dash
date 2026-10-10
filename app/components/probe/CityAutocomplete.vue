@@ -13,7 +13,7 @@
 			loader=" "
 			placeholder="Detect automatically"
 			class="relative size-full rounded-none"
-			input-class="size-full md:rounded-none md:rounded-r-md rounded-md border-none focus:cursor-text cursor-pointer dark:!bg-dark-800 pr-[68px] placeholder:italic"
+			input-class="size-full sm:rounded-none sm:rounded-r-md rounded-md focus:cursor-text cursor-pointer dark:!bg-dark-800 pr-[68px] placeholder:italic"
 			overlay-class="w-full"
 			aria-label="City name"
 			:delay="200"

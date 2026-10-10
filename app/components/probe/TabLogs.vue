@@ -4,7 +4,6 @@
 			<ProbeLogControls
 				v-model:search-input="searchInput"
 				v-model:scope-input="scopeInput"
-				v-model:enabled="enabled"
 				:rendered-count="Math.min(loadedLogCount, MAX_DISPLAYED_LOGS)"
 				:loaded-count="loadedLogCount"
 				:filters-active="filtersActive"
@@ -12,7 +11,6 @@
 				:request-pending="pending"
 				:initial-load-pending="initialLoadPending"
 				:load-failed="logsLoadFailed"
-				:empty-state-text="emptyStateText"
 				:scope-options="scopeOptions"
 				@search-input="onSearchInput"
 				@scopes-updated="onScopesUpdated"
@@ -28,7 +26,6 @@
 				:history-load-pending="historyLoadPending"
 				:detached-from-live-edge="detachedFromLiveEdge"
 				:empty-state-text="emptyStateText"
-				:enabled="enabled"
 				:can-load-older-logs="canLoadOlderLogs"
 				:request-older-logs="requestOlderLogs"
 				:request-latest-bootstrap="requestLatestBootstrap"
@@ -61,7 +58,6 @@
 		},
 	});
 
-	const enabled = ref(true);
 	const followingLiveTail = ref(true);
 
 	// Owns filter inputs, scope discovery, validation, debounce, and URL query updates.
@@ -96,7 +92,6 @@
 		probeId: () => props.probeId,
 		filter,
 		filterUpdatePending,
-		enabled,
 		followingLiveTail,
 	});
 
@@ -104,10 +99,6 @@
 	onApplied(onFiltersApplied);
 
 	const emptyStateText = computed(() => {
-		if (!enabled.value) {
-			return 'Live tail is paused. Resume it to load logs.';
-		}
-
 		if (filtersActive.value) {
 			return 'No logs match the active filters.';
 		}

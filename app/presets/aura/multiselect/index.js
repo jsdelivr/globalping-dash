@@ -1,5 +1,5 @@
 export default {
-	root: ({ props }) => ({
+	root: ({ props, state }) => ({
 		class: [
 			// Font
 			'leading-none',
@@ -28,10 +28,12 @@ export default {
 			'duration-200',
 
 			// States
-			{ 'hover:border-surface-400 dark:hover:border-dark-400': !props.invalid },
-			'active:z-10 active:ring-1 active:ring-primary-500 dark:active:ring-primary-400',
-			'focus-within:z-10 focus-within:ring-1 focus-within:ring-primary-500 dark:focus-within:ring-primary-400',
-			'has-[[aria-expanded=true]]:z-10 has-[[aria-expanded=true]]:ring-1 has-[[aria-expanded=true]]:ring-primary-500 dark:has-[[aria-expanded=true]]:ring-primary-400',
+			{ 'hover:[&:not(:focus-within)]:border-surface-400 dark:hover:[&:not(:focus-within)]:border-dark-400': !props.invalid && !props.disabled && !state.overlayVisible },
+			'active:z-10 focus-within:z-10 has-[[aria-expanded=true]]:z-10',
+			{
+				'active:border-primary-500 dark:active:border-primary-400 active:ring-[0.5px] active:ring-primary-500 dark:active:ring-primary-400 focus-within:border-primary-500 dark:focus-within:border-primary-400 focus-within:ring-[0.5px] focus-within:ring-primary-500 dark:focus-within:ring-primary-400 has-[[aria-expanded=true]]:border-primary-500 dark:has-[[aria-expanded=true]]:border-primary-400 has-[[aria-expanded=true]]:ring-[0.5px] has-[[aria-expanded=true]]:ring-primary-500 dark:has-[[aria-expanded=true]]:ring-primary-400': !props.invalid && !props.disabled,
+				'active:ring-1 active:ring-red-500 dark:active:ring-red-400 focus-within:ring-1 focus-within:ring-red-500 dark:focus-within:ring-red-400 has-[[aria-expanded=true]]:ring-1 has-[[aria-expanded=true]]:ring-red-500 dark:has-[[aria-expanded=true]]:ring-red-400': props.invalid && !props.disabled,
+			},
 
 			// Misc
 			'cursor-pointer',

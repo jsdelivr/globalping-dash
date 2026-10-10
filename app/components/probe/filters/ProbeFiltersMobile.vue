@@ -47,7 +47,7 @@
 
 		<div class="flex flex-col gap-1">
 			<span class="flex items-center font-bold">Sort by:</span>
-			<div class="flex rounded-md border has-[[aria-expanded=true]]:border-primary-500 has-[[data-pc-name=select]:focus-within]:border-primary-500 has-[[aria-expanded=true]]:ring-[0.5px] has-[[data-pc-name=select]:focus-within]:ring-[0.5px] has-[[aria-expanded=true]]:ring-primary-500 has-[[data-pc-name=select]:focus-within]:ring-primary-500 dark:has-[[aria-expanded=true]]:border-primary-400 dark:has-[[data-pc-name=select]:focus-within]:border-primary-400 dark:has-[[aria-expanded=true]]:ring-primary-400 dark:has-[[data-pc-name=select]:focus-within]:ring-primary-400">
+			<div class="flex rounded-md border transition-all duration-200 has-[[aria-expanded=true]]:border-primary-500 has-[[data-pc-name=select]:focus-within]:border-primary-500 has-[[aria-expanded=true]]:ring-[0.5px] has-[[data-pc-name=select]:focus-within]:ring-[0.5px] has-[[aria-expanded=true]]:ring-primary-500 has-[[data-pc-name=select]:focus-within]:ring-primary-500 dark:has-[[aria-expanded=true]]:border-primary-400 dark:has-[[data-pc-name=select]:focus-within]:border-primary-400 dark:has-[[aria-expanded=true]]:ring-primary-400 dark:has-[[data-pc-name=select]:focus-within]:ring-primary-400">
 				<Select
 					v-model="draftFilter.by"
 					:options="SORTABLE_FIELDS"

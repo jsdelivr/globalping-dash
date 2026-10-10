@@ -234,10 +234,23 @@ export const useProbeLogViewport = ({
 		}
 	}, { flush: 'sync' });
 
-	// The stream changes this value when new tail data should pull the view back to the bottom.
+	// Before rendering new rows, preserve the reader's position unless the cache was replaced.
 	watch(() => toValue(tailRevision), () => {
+		const container = logContainer.value;
+		const atBottom = !container
+			|| container.scrollHeight - container.scrollTop - container.clientHeight < SCROLL_EDGE_THRESHOLD;
+		const anchor = atBottom ? null : captureViewport();
+		const hasAnchor = anchor && toValue(loadedLogs).some(log => log._key === anchor.key);
+
 		setRenderWindowToTail();
-		pinToBottom();
+
+		if (!hasAnchor) {
+			pinToBottom();
+			return;
+		}
+
+		// Incoming rows can move the bottom past the polling threshold without a scroll event.
+		void nextTick(onScrollThrottled);
 	});
 
 	onUnmounted(() => {

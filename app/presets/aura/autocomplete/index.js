@@ -45,7 +45,7 @@ export default {
 			'placeholder:text-surface-400 dark:placeholder:text-surface-500',
 			{ 'bg-surface-0 dark:bg-dark-900': !props.disabled },
 			'border',
-			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
+			{ 'border-surface-300 dark:border-dark-600': !props.invalid && (!state.focused || props.disabled) },
 
 			// Invalid State
 			'invalid:focus:ring-red-200',
@@ -53,8 +53,10 @@ export default {
 			{ 'border-red-500 dark:border-red-400': props.invalid },
 
 			// States
-			{ 'hover:[&:not(:focus-within)]:border-surface-400 dark:hover:[&:not(:focus-within)]:border-dark-600 focus-within:border-primary-500 dark:focus-within:border-primary-400': !props.invalid && !props.disabled },
-			{ 'outline-none outline-offset-0 z-10 ring-1 ring-primary-500 dark:ring-primary-400': state.focused },
+			{ 'hover:[&:not(:focus-within)]:border-surface-400 dark:hover:[&:not(:focus-within)]:border-dark-600': !props.invalid && !props.disabled },
+			{ 'outline-none outline-offset-0 z-10': state.focused && !props.disabled },
+			{ 'border-primary-500 dark:border-primary-400 ring-[0.5px] ring-primary-500 dark:ring-primary-400': state.focused && !props.invalid && !props.disabled },
+			{ 'ring-1 ring-red-500 dark:ring-red-400': state.focused && props.invalid && !props.disabled },
 
 			// Transition
 			'transition duration-200 ease-in-out',

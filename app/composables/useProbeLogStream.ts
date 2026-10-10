@@ -34,7 +34,6 @@ interface ProbeLogStreamOptions {
 	probeId: MaybeRefOrGetter<string>;
 	filter: MaybeRefOrGetter<ProbeLogFilter>;
 	filterUpdatePending: MaybeRefOrGetter<boolean>;
-	enabled: Ref<boolean>;
 	followingLiveTail: Ref<boolean>;
 }
 
@@ -42,7 +41,6 @@ export const useProbeLogStream = ({
 	probeId,
 	filter,
 	filterUpdatePending,
-	enabled,
 	followingLiveTail,
 }: ProbeLogStreamOptions) => {
 	const config = useRuntimeConfig();
@@ -70,8 +68,6 @@ export const useProbeLogStream = ({
 	let needsBootstrap = true;
 	// Queue a return to live tail when another request is active.
 	let returnToLiveRequested = false;
-	// Remember to fetch once a pending filter update has settled.
-	let refreshAfterPendingFilter = false;
 
 	const loadedLogs = computed(() => chunks.value.flatMap(chunk => chunk.logs));
 	const loadedLogCount = computed(() => loadedLogs.value.length);
@@ -125,8 +121,8 @@ export const useProbeLogStream = ({
 		return { chunks: retained, evictedChunks };
 	};
 
-	const abortActiveRequest = (kinds?: RequestKind[]) => {
-		if (!activeRequest || (kinds && !kinds.includes(activeRequest.kind))) {
+	const abortActiveRequest = () => {
+		if (!activeRequest) {
 			return;
 		}
 
@@ -144,8 +140,7 @@ export const useProbeLogStream = ({
 		clearTimeout(refreshTimeout.value);
 
 		// Poll only while live tail is active and connected to the newest data.
-		if (!enabled.value
-			|| ((!followingLiveTail.value || detachedFromLiveEdge.value) && !returnToLiveRequested)
+		if (((!followingLiveTail.value || detachedFromLiveEdge.value) && !returnToLiveRequested)
 			|| activeRequest) {
 			return;
 		}
@@ -209,7 +204,7 @@ export const useProbeLogStream = ({
 			return;
 		}
 
-		if (returnToLiveRequested && enabled.value) {
+		if (returnToLiveRequested) {
 			// A queued return starts immediately, while a failed return bootstrap retries on the normal interval.
 			if (completedRequestKind === 'bootstrap') {
 				scheduleRefresh();
@@ -405,8 +400,7 @@ export const useProbeLogStream = ({
 
 	// Load a fresh snapshot when needed; otherwise continue from the last live cursor.
 	async function refreshLogs () {
-		if (!enabled.value
-			|| toValue(filterUpdatePending)
+		if (toValue(filterUpdatePending)
 			|| activeRequest
 			|| (!followingLiveTail.value && !returnToLiveRequested)) {
 			return;
@@ -423,8 +417,6 @@ export const useProbeLogStream = ({
 			return;
 		}
 
-		refreshAfterPendingFilter = false;
-
 		const after = bootstrap ? null : lastFetchedId.value;
 		const params = buildFilterParams();
 
@@ -435,7 +427,7 @@ export const useProbeLogStream = ({
 		try {
 			const response = await fetchLogs(request, params);
 
-			if (!isRequestCurrent(request) || !enabled.value) {
+			if (!isRequestCurrent(request)) {
 				return;
 			}
 
@@ -445,7 +437,7 @@ export const useProbeLogStream = ({
 			} else {
 				const collected = await collectLiveChunks(request, response, after);
 
-				if (!isRequestCurrent(request) || !enabled.value) {
+				if (!isRequestCurrent(request)) {
 					return;
 				}
 
@@ -453,7 +445,7 @@ export const useProbeLogStream = ({
 				commitLive(response, collected);
 			}
 		} catch {
-			if (activeRequest === request && enabled.value) {
+			if (activeRequest === request) {
 				if (loadedLogCount.value && !filterReplacementPending.value && !logsLoadFailed.value) {
 					sendToast('error', 'Unable to load new logs', 'Live tail will retry automatically.');
 				}
@@ -569,7 +561,6 @@ export const useProbeLogStream = ({
 		historyLoadPending.value = false;
 		queuedHistoryCapture = undefined;
 		returnToLiveRequested = false;
-		refreshAfterPendingFilter = false;
 	};
 
 	// Keep the old rows visible while the new filtered snapshot loads.
@@ -600,17 +591,13 @@ export const useProbeLogStream = ({
 		followingLiveTail.value = true;
 		needsBootstrap = true;
 
-		if (enabled.value && !toValue(filterUpdatePending)) {
+		if (!toValue(filterUpdatePending)) {
 			void refreshLogs();
 		}
 	};
 
 	// The viewport calls this after reaching the bottom of a detached cache.
 	const requestLatestBootstrap = () => {
-		if (!enabled.value) {
-			return;
-		}
-
 		needsBootstrap = true;
 		returnToLiveRequested = true;
 
@@ -625,41 +612,19 @@ export const useProbeLogStream = ({
 			resetForFilterReplacement();
 		}
 
-		if (enabled.value && (changed || needsBootstrap || refreshAfterPendingFilter)) {
+		if (changed || needsBootstrap) {
 			void refreshLogs();
 		}
 	};
 
-	// The Live tail switch controls polling, but pausing does not block an older-history request.
-	watch(enabled, (isEnabled) => {
-		if (isEnabled) {
-			if (toValue(filterUpdatePending)) {
-				refreshAfterPendingFilter = true;
-
-				if (detachedFromLiveEdge.value) {
-					requestLatestBootstrap();
-				}
-			} else if (detachedFromLiveEdge.value) {
-				requestLatestBootstrap();
-			} else {
-				void refreshLogs();
-			}
-		} else {
-			clearTimeout(refreshTimeout.value);
-			abortActiveRequest([ 'bootstrap', 'live' ]);
-			initialLoadPending.value = loadedLogCount.value === 0;
-			arbitrateNextRequest();
-		}
-	}, { immediate: true });
-
-	// Scrolling back near the bottom restarts live polling immediately.
+	// Load immediately and restart polling when scrolling back near the bottom.
 	watch(followingLiveTail, (isFollowing) => {
 		clearTimeout(refreshTimeout.value);
 
-		if (isFollowing && enabled.value && !toValue(filterUpdatePending)) {
+		if (isFollowing && !toValue(filterUpdatePending)) {
 			void refreshLogs();
 		}
-	}, { flush: 'sync' });
+	}, { flush: 'sync', immediate: true });
 
 	// Reuse this composable safely when the route changes to another probe.
 	watch(() => toValue(probeId), (currentProbeId, previousProbeId) => {

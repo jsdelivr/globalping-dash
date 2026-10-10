@@ -112,7 +112,7 @@
 				class="absolute !ml-4 !mt-2 !overflow-hidden !rounded-xl bg-surface-0 dark:bg-main-bg"
 				:pt:content="{ class: 'flex items-center !rounded-xl border dark:border-table-border'}"
 			>
-				<div class="flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-4 sm:w-[38rem] sm:p-6">
+				<div class="relative flex w-[calc(100vw-32px)] flex-col gap-6 rounded-xl p-4 sm:w-[38rem] sm:p-6">
 					<div class="flex flex-col items-center justify-between gap-y-2 sm:h-10 sm:flex-row">
 						<h1 class="text-lg font-bold leading-6">Your notifications</h1>
 						<span
@@ -129,6 +129,15 @@
 							label="Mark all as read"
 							icon="pi pi-check-circle text-lg"
 							@click="markAllNotificationsAsRead()"
+						/>
+						<Button
+							class="!absolute right-2 top-2 sm:hidden"
+							severity="secondary"
+							text
+							rounded
+							icon="pi pi-times"
+							aria-label="Close notifications"
+							@click="toggleNotifications"
 						/>
 					</div>
 

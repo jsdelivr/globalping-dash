@@ -11,7 +11,7 @@ export default {
 			// Color and Background
 			{ 'bg-surface-0 dark:bg-dark-900': !props.disabled },
 			'border outline-none',
-			{ 'border-surface-300 dark:border-dark-600': !props.invalid },
+			{ 'border-surface-300 dark:border-dark-600': !props.invalid && (!(state.focused || state.overlayVisible) || props.disabled) },
 
 			// Invalid State
 			'invalid:focus:ring-red-200',
@@ -23,8 +23,10 @@ export default {
 			'duration-200',
 
 			// States
-			{ 'hover:border-surface-400 dark:hover:border-dark-400': !props.invalid },
-			{ 'ring-1 ring-primary-500 dark:ring-primary-400 z-10': state.focused },
+			{ 'hover:border-surface-400 dark:hover:border-dark-400': !props.invalid && !props.disabled && !(state.focused || state.overlayVisible) },
+			{ 'z-10': (state.focused || state.overlayVisible) && !props.disabled },
+			{ 'border-primary-500 dark:border-primary-400 ring-[0.5px] ring-primary-500 dark:ring-primary-400': (state.focused || state.overlayVisible) && !props.invalid && !props.disabled },
+			{ 'ring-1 ring-red-500 dark:ring-red-400': (state.focused || state.overlayVisible) && props.invalid && !props.disabled },
 
 			// Misc
 			'cursor-pointer',
@@ -71,6 +73,9 @@ export default {
 	},
 	panel: {
 		class: [
+			// Spacing follows the overlay's top or bottom placement
+			'!mt-0.5 [&[style*="transform-origin:_center_bottom"]]:!-mt-0.5',
+
 			// Colors
 			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-white/80',

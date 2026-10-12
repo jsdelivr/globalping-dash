@@ -9,7 +9,7 @@ export default {
 			// Size
 			{ 'h-full': props.scrollable && props.scrollHeight === 'flex' },
 
-			'border rounded-2xl overflow-hidden bg-surface-0 dark:bg-dark-800 min-h-[110px]',
+			'border rounded-2xl overflow-hidden bg-surface-0 dark:bg-dark-800 min-h-[90px]',
 		],
 	}),
 	mask: {

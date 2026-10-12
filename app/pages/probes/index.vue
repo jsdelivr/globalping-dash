@@ -303,6 +303,10 @@
 	const selectedProbes = ref<Probe[]>([]);
 	const deleteProbesDialog = ref(false);
 
+	if (!route.query.limit) {
+		itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 420) / 65), 5), 15);
+	}
+
 	const { getUserFilter } = useUserFilter();
 
 	useHead(() => {
@@ -377,7 +381,6 @@
 		{
 			watch: [ mainFetchDeps ],
 			default: () => [],
-			immediate: false,
 		},
 	);
 
@@ -426,15 +429,6 @@
 	});
 
 	const displayPagination = computed(() => probes.value.length && !filteredProbeCountLoading.value && filteredProbeCount.value > itemsPerPage.value);
-
-	// PROBES LIST
-	onMounted(async () => {
-		if (!route.query.limit) {
-			itemsPerPage.value = Math.min(Math.max(Math.floor((window.innerHeight - 420) / 65), 5), 15);
-		} else {
-			await refreshProbes();
-		}
-	});
 
 	const getAllTags = (probe: Probe) => {
 		const systemTags = probe.systemTags;

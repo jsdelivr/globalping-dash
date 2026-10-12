@@ -246,14 +246,57 @@ declare global {
 
 	type ProbeLog = {
 		message: string;
-		scope?: string;
-		level?: string;
-		timestamp?: string;
+		scope: string | null;
+		level: string | null;
+		timestamp: string | null;
+	};
+
+	type ProbeLogsResponse = {
+		logs: ProbeLog[];
+		lastId: string | null;
+		firstId: string | null;
+		hasOlder: boolean;
 	};
 
 	type SponsorshipDetails = {
 		bonus: number;
 		donatedInLastYear: number;
 		donatedByMonth: number[];
+	};
+
+	type ManualAdditionType = 'payment' | 'other';
+
+	type SponsorsChartPoint = {
+		month: string;
+		recurringValue: number;
+		oneTimeValue: number;
+		events: number;
+	};
+
+	type SponsorsSummary = {
+		overview: {
+			activeSponsors: number;
+			previousMonth: {
+				totalValue: number;
+				recurringValue: number;
+				oneTimeValue: number;
+			};
+			estimatedNextMonthValue: number;
+		};
+		period: {
+			sponsors: number;
+			sponsorshipValue: number;
+			recurringValue: number;
+			oneTimeValue: number;
+		};
+		allTime: {
+			sponsors: number;
+		};
+		chart: SponsorsChartPoint[];
+	};
+
+	type PageResult<T> = {
+		items: T[];
+		total: number;
 	};
 }

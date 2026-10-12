@@ -1,6 +1,9 @@
 export default {
-	root: {
+	root: ({ props }) => ({
 		class: [
+			// Spacing follows the popup's top or bottom placement
+			{ '!mt-0.5 [&[style*="transform-origin:_center_bottom"]]:!-mt-0.5': props.popup },
+
 			// Shape
 			'rounded-md shadow-lg',
 
@@ -12,7 +15,7 @@ export default {
 			'bg-surface-0 dark:bg-dark-700',
 			'border border-surface-200 dark:border-dark-400',
 		],
-	},
+	}),
 	rootList: {
 		class: [
 			// Spacings and Shape

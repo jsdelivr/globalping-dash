@@ -7,14 +7,14 @@
 		@focusout="cancelEditing"
 	>
 		<div
-			class="relative flex size-full shrink-0 items-center justify-center rounded-md border border-[#D1D5DB] bg-[#E5E7EB] sm:w-24 sm:rounded-r-none sm:border-r-0 dark:border-dark-600 dark:bg-dark-800"
+			class="relative flex size-full shrink-0 items-center justify-center rounded-md bg-[#E5E7EB] focus-within:z-10 has-[[aria-expanded=true]]:z-10 sm:w-24 sm:rounded-r-none dark:bg-dark-800"
 			aria-hidden="true"
 		>
 			<Select
 				id="country"
 				v-model="selectedCountry"
 				:options="[ ...probe.allowedCountries, OTHER_COUNTRY_OPTION ]"
-				class="flex size-full items-center rounded-md border-0 !border-[#D1D5DB] hover:!border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-primary sm:!rounded-r-none sm:!border-r dark:!border-dark-600 dark:!bg-dark-800 hover:dark:!border-dark-600"
+				class="flex size-full items-center rounded-md sm:!rounded-r-none dark:!bg-dark-800"
 				:pt="{ dropdown: 'w-8', root: { tabindex: '-1' } }"
 				overlay-class="w-full"
 				:pt-options="{ mergeProps: true }"
@@ -40,7 +40,7 @@
 		</div>
 
 		<div
-			class="relative flex h-full grow items-center rounded-md border border-[#D1D5DB] bg-white focus:z-10 focus:ring-1 focus:ring-primary sm:rounded-l-none sm:border-l-0 dark:border-dark-600 dark:bg-dark-800"
+			class="relative flex h-full grow items-center rounded-md bg-white focus-within:z-10 sm:-ml-px sm:rounded-l-none dark:bg-dark-800"
 		>
 			<ProbeCityAutocomplete
 				v-model="editedLocation"

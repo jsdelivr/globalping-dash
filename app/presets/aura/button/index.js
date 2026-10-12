@@ -157,6 +157,10 @@ export default {
 			// Text & Outlined Button
 			{ 'hover:bg-bluegray-50 dark:hover:bg-dark-700': (props.text || props.outlined) && props.severity === 'secondary' && !props.plain },
 
+			// Dropdown Trigger
+			'[&[data-dropdown-trigger]:is(:focus,[aria-expanded=true])]:border-primary-500 dark:[&[data-dropdown-trigger]:is(:focus,[aria-expanded=true])]:border-primary-400',
+			'[&[data-dropdown-trigger]:is(:focus,[aria-expanded=true])]:ring-[0.5px] [&[data-dropdown-trigger]:is(:focus,[aria-expanded=true])]:ring-primary-500 dark:[&[data-dropdown-trigger]:is(:focus,[aria-expanded=true])]:ring-primary-400',
+
 			// Success
 			{ 'hover:bg-green-600 dark:hover:bg-green-300 hover:border-green-600 dark:hover:border-green-300': props.severity === 'success' && !props.text && !props.outlined && !props.plain },
 			{ 'focus:ring-green-500 dark:focus:ring-green-400': props.severity === 'success' },

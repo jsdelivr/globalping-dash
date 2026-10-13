@@ -3,7 +3,7 @@
 		v-model:visible="visible"
 		position="top"
 		:class="{
-			'w-auto max-w-[min(800px,95vw)]': props.size === 'auto',
+			'w-auto max-w-[min(900px,95vw)]': props.size === 'auto',
 			'w-[50vw] min-w-[700px] max-w-[min(900px,95vw)] max-md:min-w-[95%]': props.size === 'large',
 			[ props.size ]: ![ 'auto', 'large' ].includes(props.size),
 		}"

@@ -35,7 +35,12 @@
 				@success="onCreditsAdded"
 			/>
 		</GPDialog>
-		<GPDialog v-model:visible="historyDialog" header="Manual additions" size="w-[min(1100px,95vw)]">
+		<GPDialog
+			v-model:visible="historyDialog"
+			header="Manual additions"
+			size="w-[1100px] max-w-[calc(100vw-32px)]"
+			content-class="max-sm:!px-4 max-sm:!pb-4"
+		>
 			<SponsorsManualAdditionsHistory v-if="historyDialog"/>
 		</GPDialog>
 	</div>

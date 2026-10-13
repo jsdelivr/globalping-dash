@@ -80,7 +80,7 @@ export default {
 
 			// Misc
 			'min-h-0',
-			'overflow-y-auto',
+			'dark-scrollbar overflow-y-auto',
 		],
 	}),
 	footer: {

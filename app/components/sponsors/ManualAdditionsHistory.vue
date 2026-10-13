@@ -70,7 +70,7 @@
 					<AsyncCell :loading="pending" preserve-height>
 						<div class="flex flex-col items-start gap-1">
 							<Tag :value="typeLabel(data.type)" :severity="data.type === 'payment' ? 'warn' : 'secondary'"/>
-							<small class="break-words text-bluegray-500">{{ data.type === 'payment' ? `${formatMoney(data.amountInDollars || 0)} payment` : data.comment || '—' }}</small>
+							<small class="max-w-full break-words text-bluegray-500">{{ data.type === 'payment' ? `${formatMoney(data.amountInDollars || 0)} payment` : data.comment || '—' }}</small>
 						</div>
 					</AsyncCell>
 				</template>
@@ -107,7 +107,7 @@
 						</div>
 						<div class="mt-3 flex flex-col items-start gap-1">
 							<Tag :value="typeLabel(addition.type)" :severity="addition.type === 'payment' ? 'warn' : 'secondary'"/>
-							<span v-if="addition.type === 'payment' || addition.comment" class="break-words text-sm">{{ addition.type === 'payment' ? `${formatMoney(addition.amountInDollars || 0)} payment` : addition.comment }}</span>
+							<span v-if="addition.type === 'payment' || addition.comment" class="max-w-full break-words text-sm">{{ addition.type === 'payment' ? `${formatMoney(addition.amountInDollars || 0)} payment` : addition.comment }}</span>
 						</div>
 						<div class="mt-2 text-xs text-bluegray-500">Added by {{ addition.addedBy || 'System' }}</div>
 					</article>

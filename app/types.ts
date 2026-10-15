@@ -11,6 +11,7 @@ declare global {
 		'gp_tokens': Token[];
 		'gp_apps': Application[];
 		'gp_apps_approvals': AppApproval[];
+		'gp_orgs': { id: string; name: string; github_id: string }[];
 
 		'directus_users': DirectusUser;
 		'city-autocomplete': City[];

@@ -56,7 +56,7 @@
 
 	const { data: credits, error: creditsError } = await useLazyAsyncData(
 		'total-credits',
-		() => $directus.request<{ amount: number }[]>(readItems('gp_credits', { filter: getUserFilter('user_id') })),
+		() => $directus.request<{ amount: number }[]>(readItems('gp_credits', { filter: getUserFilter('account_id') })),
 		{
 			transform: data => data.reduce((sum, { amount }) => sum + amount, 0) || 0,
 			default: () => 0,

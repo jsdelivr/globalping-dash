@@ -3,7 +3,7 @@
 		<template v-if="!reviewing">
 			<section class="flex flex-col gap-2">
 				<label for="creditRecipient" class="font-bold">GitHub username or ID<i class="text-primary">*</i></label>
-				<p class="text-sm text-bluegray-500">Enter a GitHub username or numeric GitHub user ID. Prefix numeric-only usernames with @.</p>
+				<p class="text-sm text-bluegray-500">Enter a GitHub user or organization name, or its numeric GitHub ID. Prefix numeric-only names with @.</p>
 				<div class="flex gap-2 max-sm:flex-col">
 					<InputText
 						id="creditRecipient"
@@ -153,7 +153,7 @@
 </template>
 
 <script setup lang="ts">
-	import { customEndpoint, readUsers } from '@directus/sdk';
+	import { customEndpoint, readItems, readUsers } from '@directus/sdk';
 	import { formatMoney } from '~/utils/format-money';
 	import { formatNumber } from '~/utils/format-number';
 	import { minDelay } from '~/utils/min-delay';
@@ -234,20 +234,29 @@
 				}
 
 				const githubUser = await response.json() as GithubUser;
-				const dashboardUsers = await $directus.request(readUsers({
-					filter: { external_identifier: { _eq: String(githubUser.id) } },
-					fields: [ 'id', 'github_username' ],
-					limit: 1,
-				})) as Array<{ id: string; github_username: string | null }>;
+				// The GitHub account is either a user or an org, each registered on the dashboard under its GitHub id.
+				const [ dashboardUsers, dashboardOrgs ] = await Promise.all([
+					$directus.request(readUsers({
+						filter: { external_identifier: { _eq: String(githubUser.id) } },
+						fields: [ 'id', 'github_username' ],
+						limit: 1,
+					})) as Promise<Array<{ id: string; github_username: string | null }>>,
+					$directus.request(readItems('gp_orgs', {
+						filter: { github_id: { _eq: String(githubUser.id) } },
+						fields: [ 'id', 'name' ],
+						limit: 1,
+					})) as Promise<Array<{ id: string; name: string }>>,
+				]);
 
 				const dashboardUser = dashboardUsers[0];
+				const dashboardOrg = dashboardOrgs[0];
 
 				return {
 					githubId: String(githubUser.id),
 					login: githubUser.login,
 					avatarUrl: githubUser.avatar_url,
 					profileUrl: githubUser.html_url,
-					dashboardAccount: dashboardUser?.github_username || dashboardUser?.id || null,
+					dashboardAccount: dashboardUser?.github_username || dashboardUser?.id || dashboardOrg?.name || null,
 				};
 			})());
 		} catch (error) {

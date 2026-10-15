@@ -136,12 +136,12 @@ export const useProbeFilters = ({ active = () => true }: ProbeFiltersOptions = {
 				: {};
 
 		return {
-			...getUserFilter('userId'),
+			...getUserFilter('account_id'),
 			...searchFilter,
 			...!ignoredFields.includes('status') && !isDefault('status', filter) && { status: { _in: STATUS_MAP[filterValue.status].options } },
 			...!ignoredFields.includes('status') && filterValue.status === 'online-outdated' && { isOutdated: { _eq: true } },
 			...!ignoredFields.includes('adoption') && auth.adminMode && !isDefault('adoption', filter) && {
-				userId: filterValue.adoption === 'adopted' ? { _neq: null } : { _eq: null },
+				account_id: filterValue.adoption === 'adopted' ? { _neq: null } : { _eq: null },
 			},
 			...!ignoredFields.includes('probeType') && auth.adminMode && !isDefault('probeType', filter) && {
 				hardwareDevice: filterValue.probeType === 'hardware' ? { _neq: null } : { _eq: null },

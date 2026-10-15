@@ -39,7 +39,7 @@
 			</Popover>
 		</div>
 		<DataTable
-			class="max-md:hidden"
+			class="wrap-anywhere max-md:hidden"
 			table-class="table-fixed"
 			:value="result.items"
 			lazy
@@ -69,8 +69,8 @@
 			<Column field="type" header="Type" sortable class="min-w-44" style="width: 34%;">
 				<template #body="{ data }">
 					<AsyncCell :loading="pending" preserve-height>
-						<span class="flex h-[26px] flex-nowrap gap-1.5 whitespace-nowrap">
-							<Tag :value="reasonLabel(data.reason)" :severity="reasonSeverity(data.reason)"/>
+						<span class="wrap-anywhere flex min-w-0 max-w-full flex-wrap gap-1.5">
+							<Tag class="max-w-full" :value="reasonLabel(data.reason)" :severity="reasonSeverity(data.reason)"/>
 							<Tag v-if="data.manual" value="Manual" severity="secondary"/>
 						</span>
 					</AsyncCell>
@@ -102,13 +102,13 @@
 									:github-id="event.githubId"
 									:dashboard-user-id="event.dashboardUserId"/>
 							</div>
-							<div class="shrink-0 text-right">
+							<div class="wrap-anywhere min-w-0 max-w-[60%] shrink-0 text-right">
 								<div class="font-semibold">{{ formatMoney(event.sponsorshipValue) }}</div>
 								<small v-if="event.monthsCovered > 1" class="text-bluegray-500">{{ formatMoney(event.amountInDollars) }} × {{ formatNumber(event.monthsCovered) }} months</small>
 							</div>
 						</div>
-						<div class="mt-3 flex flex-wrap gap-1.5">
-							<Tag :value="reasonLabel(event.reason)" :severity="reasonSeverity(event.reason)"/>
+						<div class="wrap-anywhere mt-3 flex min-w-0 max-w-full flex-wrap gap-1.5">
+							<Tag class="max-w-full" :value="reasonLabel(event.reason)" :severity="reasonSeverity(event.reason)"/>
 							<Tag v-if="event.manual" value="Manual" severity="secondary"/>
 						</div>
 					</article>

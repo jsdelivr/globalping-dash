@@ -2,9 +2,10 @@
 	<Dialog
 		v-model:visible="visible"
 		position="top"
+		class="gp-dialog"
 		:class="{
-			'w-auto max-w-[min(800px,95vw)]': props.size === 'auto',
-			'min-w-[700px] max-md:min-w-[95%]': props.size === 'large',
+			'w-auto max-w-[min(900px,95vw)]': props.size === 'auto',
+			'w-[50vw] min-w-[700px] max-w-[min(900px,95vw)] max-md:min-w-[95%]': props.size === 'large',
 			[ props.size ]: ![ 'auto', 'large' ].includes(props.size),
 		}"
 		modal
@@ -62,3 +63,12 @@
 	}
 
 </script>
+
+<style>
+	@media (max-height: 600px) {
+		.gp-dialog {
+			max-height: calc(100dvh - 32px);
+			margin-block: 16px;
+		}
+	}
+</style>

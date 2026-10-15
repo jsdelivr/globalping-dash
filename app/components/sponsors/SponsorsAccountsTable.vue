@@ -55,7 +55,7 @@
 			</Popover>
 		</div>
 		<DataTable
-			class="max-md:hidden"
+			class="wrap-anywhere max-md:hidden"
 			table-class="table-fixed"
 			:value="result.items"
 			lazy
@@ -85,9 +85,9 @@
 			<Column field="status" header="Status" sortable class="w-1/5 min-w-32 xl:w-[17%]">
 				<template #body="{ data }">
 					<AsyncCell :loading="pending" preserve-height>
-						<span class="inline-flex items-center gap-2 whitespace-nowrap font-semibold">
-							<i class="pi pi-circle-fill text-2xs" :class="statusColor(data.status)"/>
-							{{ statusLabel(data.status) }}
+						<span class="inline-flex min-w-0 max-w-full items-center gap-2 font-semibold">
+							<i class="pi pi-circle-fill shrink-0 text-2xs" :class="statusColor(data.status)"/>
+							<span class="wrap-anywhere min-w-0">{{ statusLabel(data.status) }}</span>
 						</span>
 					</AsyncCell>
 				</template>
@@ -117,12 +117,12 @@
 								:github-login="account.githubLogin"
 								:github-id="account.githubId"
 								:dashboard-user-id="account.dashboardUserId"/>
-							<span class="inline-flex shrink-0 items-center gap-2 whitespace-nowrap font-semibold">
-								<i class="pi pi-circle-fill text-2xs" :class="statusColor(account.status)"/>
-								{{ statusLabel(account.status) }}
+							<span class="inline-flex min-w-0 max-w-[60%] shrink-0 items-center gap-2 font-semibold">
+								<i class="pi pi-circle-fill shrink-0 text-2xs" :class="statusColor(account.status)"/>
+								<span class="wrap-anywhere min-w-0">{{ statusLabel(account.status) }}</span>
 							</span>
 						</div>
-						<dl class="mt-3 grid grid-cols-[1fr_auto] gap-x-4 gap-y-2 text-sm">
+						<dl class="wrap-anywhere mt-3 grid grid-cols-[minmax(0,1fr)_fit-content(60%)] gap-x-4 gap-y-2 text-sm [&>dd]:min-w-0">
 							<dt class="text-bluegray-500">Monthly amount</dt><dd>{{ account.currentMonthlyAmount === null ? '—' : formatMoney(account.currentMonthlyAmount) }}</dd>
 							<dt class="text-bluegray-500">Period amount</dt><dd>{{ formatMoney(account.periodSponsorshipValue) }}</dd>
 							<dt class="text-bluegray-500">Events</dt><dd>{{ formatNumber(account.periodEvents) }}</dd>

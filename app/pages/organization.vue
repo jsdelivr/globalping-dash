@@ -32,7 +32,7 @@
 					<div class="w-12">
 						<ToggleSwitch v-model="publicProbes" input-id="org-public-probes"/>
 					</div>
-					<label for="org-public-probes" class="flex-1 cursor-pointer text-sm text-bluegray-500 dark:text-bluegray-300">
+					<label class="flex-1 cursor-text">
 						When enabled, the organization probes are automatically tagged by
 						<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${account.current.name}`"/>,
 						allowing you to select them in measurements, and a list of the active probes is also available on the
@@ -40,8 +40,19 @@
 					</label>
 				</div>
 
+				<div class="mt-6">
+					<OrgProfileFields
+						v-model:website="website"
+						v-model:description="description"
+						v-model:banner="banner"
+						:banner-id="account.current.banner"
+						:disabled="!!auth.impersonation || saveLoading"
+						id-prefix="org"
+					/>
+				</div>
+
 				<div class="mt-6 text-right">
-					<Button label="Apply settings" :loading="saveLoading" :disabled="!isSettingsDirty || !!auth.impersonation" @click="saveSettings"/>
+					<Button label="Apply settings" :loading="saveLoading" :disabled="!isSettingsDirty || !isValidWebsite(website) || !!auth.impersonation" @click="saveSettings"/>
 				</div>
 			</div>
 		</div>
@@ -176,6 +187,7 @@
 	import { useFormDirty } from '~/composables/useFormDirty';
 	import { useAccount } from '~/store/account';
 	import { useAuth } from '~/store/auth';
+	import { type BannerChange, isValidWebsite, saveBanner } from '~/utils/org-profile';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	type OrgMember = { id: string; role: Membership['role']; github_username: string | null };
@@ -245,7 +257,14 @@
 
 	const adoptionToken = ref(account.current.adoption_token ?? '');
 	const publicProbes = ref(account.current.public_probes);
-	const isSettingsDirty = computed(() => adoptionToken.value !== account.current.adoption_token || publicProbes.value !== account.current.public_probes);
+	const website = ref(account.current.website ?? '');
+	const description = ref(account.current.description ?? '');
+	const banner = ref<BannerChange>();
+	const isSettingsDirty = computed(() => adoptionToken.value !== account.current.adoption_token
+		|| publicProbes.value !== account.current.public_probes
+		|| website.value !== (account.current.website ?? '')
+		|| description.value !== (account.current.description ?? '')
+		|| banner.value !== undefined);
 
 	const resetFormDirty = useFormDirty(null, () => isSettingsDirty.value);
 
@@ -267,13 +286,19 @@
 		saveLoading.value = true;
 
 		try {
-			await $directus.request(updateItem('gp_orgs', orgId, {
-				public_probes: publicProbes.value,
-				// Adoption token values are generated on BE and stored there for a limited time, so the token is sent only when it changed.
-				...adoptionToken.value !== account.current.adoption_token ? { adoption_token: adoptionToken.value } : {},
-			}));
+			await Promise.all([
+				$directus.request(updateItem('gp_orgs', orgId, {
+					public_probes: publicProbes.value,
+					website: website.value || null,
+					description: description.value || null,
+					// Adoption token values are generated on BE and stored there for a limited time, so the token is sent only when it changed.
+					...adoptionToken.value !== account.current.adoption_token ? { adoption_token: adoptionToken.value } : {},
+				})),
+				saveBanner($directus, orgId, banner.value),
+			]);
 
 			await auth.refresh();
+			banner.value = undefined;
 			resetFormDirty();
 			sendToast('success', 'Saved', 'Organization settings saved');
 		} catch (e) {

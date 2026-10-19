@@ -89,7 +89,7 @@ import tabs from './tabs';
 import tabview from './tabview';
 import tag from './tag';
 // import terminal from './terminal';
-// import textarea from './textarea';
+import textarea from './textarea';
 import tieredmenu from './tieredmenu';
 // import timeline from './timeline';
 import toast from './toast';
@@ -133,7 +133,7 @@ export default {
 	// inputmask,
 	// knob,
 	treeselect,
-	// textarea,
+	textarea,
 	// password,
 	iconfield,
 	// floatlabel,

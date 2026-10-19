@@ -24,22 +24,17 @@ const activeAccountCookie = () => {
 
 const readActiveId = () => {
 	const auth = useAuth();
-
-	if (auth.adminMode) {
-		return null;
-	}
-
 	const stored = auth.impersonation ? sessionStorage.getItem(IMPERSONATION_KEY) : activeAccountCookie().value;
 	const [ userId, accountId ] = (stored ?? '').split(':');
 	return userId === auth.user.id && accountId ? accountId : null;
 };
 
-const storeActiveId = (accountId: string | null) => {
+const storeActiveId = (accountId: string) => {
 	const { impersonation, user } = useAuth();
-	const value = accountId ? `${user.id}:${accountId}` : undefined;
+	const value = `${user.id}:${accountId}`;
 
 	if (impersonation) {
-		sessionStorage.setItem(IMPERSONATION_KEY, value ?? '');
+		sessionStorage.setItem(IMPERSONATION_KEY, value);
 		return;
 	}
 
@@ -70,6 +65,9 @@ export const useAccount = defineStore('account', {
 				org_role: null,
 				public_probes: user.public_probes,
 				tag_prefix: user.default_prefix,
+				website: null,
+				description: null,
+				banner: null,
 				adoption_token: user.adoption_token,
 				extra_adoption_tokens: [],
 			};
@@ -81,8 +79,8 @@ export const useAccount = defineStore('account', {
 				return this.personal;
 			}
 
-			const { org: { id, account, name, github_id, user_type, public_probes, adoption_token, extra_adoption_tokens }, role } = membership;
-			return { id: account, org_id: id, name, github_id, user_type, org_role: role, public_probes, tag_prefix: name, adoption_token, extra_adoption_tokens };
+			const { org: { id, account, name, github_id, user_type, public_probes, website, description, banner, adoption_token, extra_adoption_tokens }, role } = membership;
+			return { id: account, org_id: id, name, github_id, user_type, org_role: role, public_probes, tag_prefix: name, website, description, banner, adoption_token, extra_adoption_tokens };
 		},
 		canManageProbes (): boolean {
 			return !this.current.org_id || this.current.org_role === 'admin';
@@ -96,20 +94,25 @@ export const useAccount = defineStore('account', {
 	},
 	actions: {
 		restore () {
-			this.activeId = readActiveId();
+			const { adminMode, impersonation, user } = useAuth();
 
-			// An org that is no longer offered falls back to the personal account, for gp-api as well.
-			if (this.activeId && this.activeId !== this.current.id) {
-				storeActiveId(null);
+			if (adminMode) {
 				this.activeId = null;
+				return;
 			}
+
+			// The first of the stored account and the default one (not for an impersonation) that is still offered applies, else the personal account.
+			const offered = [ this.personal.id, ...this.selectedOrgs.map(({ org }) => org.account) ];
+			const accountId = [ readActiveId(), impersonation ? null : user.default_account ].find(id => id && offered.includes(id));
+			this.activeId = accountId && accountId !== this.personal.id ? accountId : null;
+			storeActiveId(this.current.id);
 		},
 		switchTo (accountId: string | null) {
 			if (accountId === this.activeId) {
 				return;
 			}
 
-			storeActiveId(accountId);
+			storeActiveId(accountId ?? this.personal.id);
 			window.location.reload();
 		},
 		async setPublicProbes (publicProbes: boolean) {

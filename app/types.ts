@@ -157,6 +157,7 @@ declare global {
 		date_created: string;
 		last_page: string | null;
 		account: string;
+		default_account: string | null;
 		selected_orgs: string[];
 		memberships: Membership[];
 	};
@@ -171,6 +172,9 @@ declare global {
 		account: string;
 		user_type: 'member' | 'special' | 'sponsor';
 		public_probes: boolean;
+		website: string | null;
+		description: string | null;
+		banner: string | null;
 		adoption_token: string | null;
 		extra_adoption_tokens: ExtraAdoptionToken[];
 	};
@@ -184,6 +188,9 @@ declare global {
 		org_role: Membership['role'] | null;
 		public_probes: boolean;
 		tag_prefix: string;
+		website: string | null;
+		description: string | null;
+		banner: string | null;
 		adoption_token: string | null;
 		extra_adoption_tokens: ExtraAdoptionToken[];
 	};

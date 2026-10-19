@@ -58,12 +58,14 @@
 
 <script setup lang="ts">
 	import { useAccount } from '~/store/account';
+	import { useAuth } from '~/store/auth';
 
 	definePageMeta({
 		layout: 'info',
 	});
 
 	const account = useAccount();
+	const auth = useAuth();
 	const route = useRoute();
 	const config = useRuntimeConfig();
 
@@ -72,7 +74,7 @@
 		...account.nonViewerOrgs.map(({ org }) => ({ id: org.account, name: org.name })),
 	];
 
-	const accountId = ref(accountOptions.some(({ id }) => id === account.current.id) ? account.current.id : account.personal.id);
+	const accountId = ref([ account.current.id, auth.user.default_account ].find(id => accountOptions.some(option => option.id === id)) ?? account.personal.id);
 
 	const { status, data: code, error: codeError } = await useLazyFetch<CodeApprovalDetails>(`${config.public.gpAuthUrl}/oauth/approve/${route.params.publicCodeId}`);
 

@@ -247,6 +247,7 @@
 			</div>
 		</div>
 		<NavigationGuard/>
+		<OnboardingDialog/>
 		<Popover
 			ref="adminPanel"
 			class="absolute !ml-4 !mt-2 !overflow-hidden !rounded-xl bg-[var(--p-surface-0)] dark:bg-[var(--main-bg)]"

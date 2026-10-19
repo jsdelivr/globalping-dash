@@ -16,7 +16,7 @@ interface AuthState {
 	user: User;
 }
 
-export const MEMBERSHIP_FIELDS = [ 'id', 'role', { org: [ 'id', 'name', 'github_id', 'account', 'user_type', 'public_probes' ] }] as const;
+export const MEMBERSHIP_FIELDS = [ 'id', 'role', { org: [ 'id', 'name', 'github_id', 'account', 'user_type', 'public_probes', 'website', 'description', 'banner' ] }] as const;
 
 const toMembership = (membership: DirectusMembership): Membership => ({
 	...membership,
@@ -67,6 +67,7 @@ export const useAuth = defineStore('auth', {
 			last_page: '',
 			date_created: '',
 			account: '',
+			default_account: null,
 			selected_orgs: [],
 			memberships: [],
 		},
@@ -171,7 +172,6 @@ export const useAuth = defineStore('auth', {
 			this.clearAdminConfig();
 			await $directus.logout();
 			probeStore.reset();
-			useAccount().$reset();
 			this.$reset();
 			navigateTo('/login');
 		},

@@ -269,7 +269,7 @@
 
 		try {
 			await $directus.request(updateItem('gp_probes', probe.value.id, { tags: updatedTags }));
-			probe.value.tags = updatedTags;
+			probe.value = { ...probe.value, tags: updatedTags };
 
 			closeEditTagsPopover();
 			sendToast('success', 'Done', 'The probe has been successfully updated');

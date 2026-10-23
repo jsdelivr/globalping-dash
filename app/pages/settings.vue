@@ -61,6 +61,32 @@
 					<NuxtLink to="https://github.com/settings/connections/applications/Ov23liiVFaDD1BIemPkx" class="hover:underline" target="_blank" rel="noopener">Globalping app</NuxtLink>.
 				</Message>
 
+				<template v-if="defaultAccountOptions.length > 1">
+					<label for="defaultAccount" class="mt-6 flex items-center font-bold">
+						Default account <i v-tooltip.top="'The account the dashboard opens in when you sign in. You can switch accounts any time from the account menu.'" class="pi pi-info-circle ml-2"/>
+					</label>
+					<Select
+						v-model="defaultAccount"
+						input-id="defaultAccount"
+						aria-label="Default account"
+						:options="defaultAccountOptions"
+						option-label="label"
+						option-value="value"
+						class="mt-2 w-full"
+					>
+						<template #value="{ value }">
+							<span class="flex items-baseline">
+								<span class="grow">{{ optionOf(value)?.label }}</span>
+								<span class="ml-4 text-sm leading-none">{{ optionOf(value)?.role }}</span>
+							</span>
+						</template>
+						<template #option="{ option }">
+							<span class="grow">{{ option.label }}</span>
+							<span class="ml-4 text-sm">{{ option.role }}</span>
+						</template>
+					</Select>
+				</template>
+
 				<label for="defaultPrefix" class="mt-6 flex items-center font-bold">
 					Default tag prefix <i v-tooltip.top="'Your probe tags will have this prefix by default, but you can adjust it for each tag in the probe settings.'" class="pi pi-info-circle ml-2"/>
 				</label>
@@ -206,6 +232,8 @@
 			</div>
 		</div>
 
+		<SettingsMigrateToOrg/>
+
 		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Data removal</h5>
@@ -241,8 +269,10 @@
 
 <script setup lang="ts">
 	import { customEndpoint, updateMe } from '@directus/sdk';
+	import capitalize from 'lodash/capitalize';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useFormDirty } from '~/composables/useFormDirty';
+	import { useAccount } from '~/store/account';
 	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
@@ -261,6 +291,15 @@
 	const publicProbes = ref(user.value.public_probes);
 	const defaultPrefix = ref(user.value.default_prefix);
 	const adoptionToken = ref(user.value.adoption_token);
+
+	const account = useAccount();
+	const defaultAccountOptions = computed(() => [
+		{ label: account.personal.name, value: account.personal.id, role: 'Personal' },
+		...account.selectedOrgs.map(({ org, role }) => ({ label: org.name, value: org.account, role: capitalize(role) })),
+	]);
+	const optionOf = (value: string) => defaultAccountOptions.value.find(option => option.value === value);
+	const savedDefaultAccount = () => defaultAccountOptions.value.some(({ value }) => value === user.value.default_account) ? user.value.default_account : account.personal.id;
+	const defaultAccount = ref(savedDefaultAccount());
 
 	const { data: notificationTypes, error: notificationTypesError, status: notificationTypesStatus } = useLazyAsyncData(
 		'settings-notification-types',
@@ -284,7 +323,7 @@
 		email: user.value.email,
 		publicProbes: user.value.public_probes,
 		defaultPrefix: user.value.default_prefix,
-		adoptionToken: user.value.adoption_token,
+		defaultAccount: defaultAccount.value,
 		notificationPreferences: serializeNotificationPreferences(),
 	}, (current) => {
 		return firstName.value !== current.firstName
@@ -293,8 +332,14 @@
 			|| email.value !== current.email
 			|| publicProbes.value !== current.publicProbes
 			|| defaultPrefix.value !== current.defaultPrefix
-			|| adoptionToken.value !== current.adoptionToken
+			|| defaultAccount.value !== current.defaultAccount
+			|| adoptionToken.value !== user.value.adoption_token
 			|| serializeNotificationPreferences() !== initialNotificationPreferences;
+	});
+
+	// A probe transfer replaces the adoption token outside of this form.
+	watch(() => user.value.adoption_token, (token) => {
+		adoptionToken.value = token;
 	});
 
 	const themeOptions = [
@@ -318,6 +363,7 @@
 				public_probes: publicProbes.value,
 				default_prefix: defaultPrefix.value,
 				notification_preferences: normalizeNotificationPreferences(),
+				...defaultAccount.value !== savedDefaultAccount() ? { default_account: defaultAccount.value } : {},
 				// Adoption token values are generated on BE and stored there for a limited time. So we are sending 'adoption_token' only if it is really changed.
 				...user.value.adoption_token !== adoptionToken.value ? { adoption_token: adoptionToken.value } : {},
 			}));

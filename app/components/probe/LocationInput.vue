@@ -2,11 +2,14 @@
 	<div
 		v-if="probe"
 		ref="containerRef"
+		v-tooltip.top="hint"
 		class="absolute inset-x-4 bottom-14 flex h-9 flex-col gap-1 sm:bottom-9 sm:flex-row sm:items-center sm:gap-0"
 		@focusin="isActive = true"
 		@focusout="cancelEditing"
 	>
 		<div
+			:inert="disabled"
+			:class="{ 'opacity-60': disabled }"
 			class="relative flex size-full shrink-0 items-center justify-center rounded-md bg-[#E5E7EB] focus-within:z-10 has-[[aria-expanded=true]]:z-10 sm:w-24 sm:rounded-r-none dark:bg-dark-800"
 			aria-hidden="true"
 		>
@@ -40,6 +43,8 @@
 		</div>
 
 		<div
+			:inert="disabled"
+			:class="{ 'opacity-60': disabled }"
 			class="relative flex h-full grow items-center rounded-md bg-white focus-within:z-10 sm:-ml-px sm:rounded-l-none dark:bg-dark-800"
 		>
 			<ProbeCityAutocomplete
@@ -79,9 +84,11 @@
 	import isEqual from 'lodash/isEqual';
 	import type { SelectChangeEvent } from 'primevue/select';
 	import CountryFlag from 'vue-country-flag-next';
+	import { useProbeEditing } from '~/composables/useProbeEditing';
 	import { updateMapMarker } from '~/utils/init-google-map';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
+	const { hint, disabled } = useProbeEditing();
 	const { $directus } = useNuxtApp();
 
 	const probe = defineModel('probe', {

@@ -45,7 +45,7 @@ import inputtext from './inputtext';
 // import knob from './knob';
 // import listbox from './listbox';
 // import megamenu from './megamenu';
-// import menu from './menu';
+import menu from './menu';
 // import menubar from './menubar';
 import message from './message';
 // import metergroup from './metergroup';
@@ -89,7 +89,7 @@ import tabs from './tabs';
 import tabview from './tabview';
 import tag from './tag';
 // import terminal from './terminal';
-// import textarea from './textarea';
+import textarea from './textarea';
 import tieredmenu from './tieredmenu';
 // import timeline from './timeline';
 import toast from './toast';
@@ -133,7 +133,7 @@ export default {
 	// inputmask,
 	// knob,
 	treeselect,
-	// textarea,
+	textarea,
 	// password,
 	iconfield,
 	// floatlabel,
@@ -187,7 +187,7 @@ export default {
 
 	// menu
 	// contextmenu,
-	// menu,
+	menu,
 	// menubar,
 	steps,
 	tieredmenu,

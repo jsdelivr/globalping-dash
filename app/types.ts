@@ -11,7 +11,8 @@ declare global {
 		'gp_tokens': Token[];
 		'gp_apps': Application[];
 		'gp_apps_approvals': AppApproval[];
-		'gp_orgs': { id: string; name: string; github_id: string }[];
+		'gp_orgs': DirectusOrg[];
+		'gp_org_members': DirectusMembership[];
 
 		'directus_users': DirectusUser;
 		'city-autocomplete': City[];
@@ -156,10 +157,69 @@ declare global {
 		date_created: string;
 		last_page: string | null;
 		account: string;
+		default_account: string | null;
+		selected_orgs: string[];
+		memberships: Membership[];
 	};
 
 	// In Directus, `account` is the reverse alias of gp_accounts.user, so it comes back as an array of one id.
-	type DirectusUser = Omit<User, 'account'> & { account: string[] };
+	type DirectusUser = Omit<User, 'account' | 'memberships'> & { account: string[]; memberships: DirectusMembership[] };
+
+	type Org = {
+		id: string;
+		name: string;
+		github_id: string;
+		account: string;
+		user_type: 'member' | 'special' | 'sponsor';
+		public_probes: boolean;
+		website: string | null;
+		description: string | null;
+		banner: string | null;
+		adoption_token: string | null;
+		extra_adoption_tokens: ExtraAdoptionToken[];
+	};
+
+	type Account = {
+		id: string;
+		org_id: string | null;
+		name: string;
+		github_id: string;
+		user_type: 'member' | 'special' | 'sponsor';
+		org_role: Membership['role'] | null;
+		public_probes: boolean;
+		tag_prefix: string;
+		website: string | null;
+		description: string | null;
+		banner: string | null;
+		adoption_token: string | null;
+		extra_adoption_tokens: ExtraAdoptionToken[];
+	};
+
+	type Membership = {
+		id: string;
+		role: 'admin' | 'member' | 'viewer';
+		org: Org;
+	};
+
+	type DirectusOrg = Omit<Org, 'account' | 'adoption_token' | 'extra_adoption_tokens'> & {
+		// In Directus, `account` is the reverse alias of gp_accounts.org, so it comes back as an array of one id.
+		account: string[];
+		adoption_token?: string;
+		extra_adoption_tokens?: ExtraAdoptionToken[];
+		members?: DirectusMembership[];
+	};
+
+	type ExtraAdoptionToken = {
+		github_username: string;
+		token: string;
+	};
+
+	type CreditsRedirect = {
+		source: { githubId: string; name: string };
+		target: { githubId: string; name: string };
+	};
+
+	type DirectusMembership = Omit<Membership, 'org'> & { org: DirectusOrg };
 
 	type NotificationTypes = Record<string, {
 		readOnly: boolean;
@@ -184,6 +244,7 @@ declare global {
 		scopes: string[];
 		type: string;
 		parent: number | null;
+		account_id: string;
 	};
 
 	type Application = {

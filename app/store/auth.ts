@@ -200,7 +200,7 @@ export const useAuth = defineStore('auth', {
 					this.user.memberships = withOrgAdoptionTokens(this.user.memberships, impersonatedAdminOrgs);
 				}
 
-				useAccount().restore();
+				await useAccount().restore();
 				this.isLoggedIn = true;
 			} catch (error) {
 				console.error(error);

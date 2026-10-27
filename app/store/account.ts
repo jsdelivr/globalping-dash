@@ -1,44 +1,28 @@
-import type { CookieRef } from '#app';
-import { updateItem, updateUser } from '@directus/sdk';
+import { customEndpoint, updateItem, updateUser } from '@directus/sdk';
 import { defineStore } from 'pinia';
 import { useAuth } from '~/store/auth';
 
-const COOKIE_NAME = 'gp_active_account';
 const IMPERSONATION_KEY = 'impersonationActiveAccount';
 
-let cookie: CookieRef<string | undefined> | undefined;
-
-const activeAccountCookie = () => {
-	const { hostname, protocol } = new URL(useRuntimeConfig().public.serverUrl);
-	const isGlobalpingHost = hostname === 'globalping.io' || hostname.endsWith('.globalping.io');
-
-	return cookie ??= useCookie<string | undefined>(COOKIE_NAME, {
-		domain: isGlobalpingHost ? '.globalping.io' : undefined,
-		sameSite: 'lax',
-		secure: protocol === 'https:',
-		maxAge: 31536000,
-		encode: value => value ?? '',
-		decode: value => value ?? undefined,
-	});
+const readImpersonationActiveId = () => {
+	const [ userId, accountId ] = (sessionStorage.getItem(IMPERSONATION_KEY) ?? '').split(':');
+	return userId === useAuth().user.id && accountId ? accountId : null;
 };
 
-const readActiveId = () => {
-	const auth = useAuth();
-	const stored = auth.impersonation ? sessionStorage.getItem(IMPERSONATION_KEY) : activeAccountCookie().value;
-	const [ userId, accountId ] = (stored ?? '').split(':');
-	return userId === auth.user.id && accountId ? accountId : null;
+const readSessionActiveId = async () => {
+	const { $directus } = useNuxtApp();
+	const { accountId } = await $directus.request<{ accountId: string }>(customEndpoint({ path: '/accounts/active' }));
+	return accountId;
 };
 
-const storeActiveId = (accountId: string) => {
-	const { impersonation, user } = useAuth();
-	const value = `${user.id}:${accountId}`;
+const storeSessionActiveId = async (accountId: string) => {
+	const { $directus } = useNuxtApp();
 
-	if (impersonation) {
-		sessionStorage.setItem(IMPERSONATION_KEY, value);
-		return;
-	}
-
-	activeAccountCookie().value = value;
+	await $directus.request(customEndpoint({
+		method: 'POST',
+		path: '/accounts/active',
+		body: JSON.stringify({ accountId }),
+	}));
 };
 
 export const useAccount = defineStore('account', {
@@ -93,26 +77,38 @@ export const useAccount = defineStore('account', {
 		},
 	},
 	actions: {
-		restore () {
-			const { adminMode, impersonation, user } = useAuth();
+		async restore () {
+			const { adminMode, impersonation } = useAuth();
 
 			if (adminMode) {
 				this.activeId = null;
 				return;
 			}
 
-			// The first of the stored account and the default one (not for an impersonation) that is still offered applies, else the personal account.
-			const offered = [ this.personal.id, ...this.selectedOrgs.map(({ org }) => org.account) ];
-			const accountId = [ readActiveId(), impersonation ? null : user.default_account ].find(id => id && offered.includes(id));
-			this.activeId = accountId && accountId !== this.personal.id ? accountId : null;
-			storeActiveId(this.current.id);
+			const accountId = impersonation ? readImpersonationActiveId() : await readSessionActiveId();
+			const offered = this.selectedOrgs.map(({ org }) => org.account);
+			this.activeId = accountId && offered.includes(accountId) ? accountId : null;
+
+			// The session may act as an org this dashboard does not offer, e.g. one removed from the selected orgs on another device.
+			if (!impersonation && accountId !== this.current.id) {
+				await storeSessionActiveId(this.current.id);
+				await useNuxtApp().$directus.refresh();
+			}
 		},
-		switchTo (accountId: string | null) {
+		async switchTo (accountId: string | null) {
 			if (accountId === this.activeId) {
 				return;
 			}
 
-			storeActiveId(accountId ?? this.personal.id);
+			const { impersonation, user } = useAuth();
+			const id = accountId ?? this.personal.id;
+
+			if (impersonation) {
+				sessionStorage.setItem(IMPERSONATION_KEY, `${user.id}:${id}`);
+			} else {
+				await storeSessionActiveId(id);
+			}
+
 			window.location.reload();
 		},
 		async setPublicProbes (publicProbes: boolean) {
@@ -134,7 +130,7 @@ export const useAccount = defineStore('account', {
 			auth.user.selected_orgs = user.selected_orgs;
 
 			if (this.activeId && this.activeId !== this.current.id) {
-				this.switchTo(null);
+				await this.switchTo(null);
 			}
 		},
 	},

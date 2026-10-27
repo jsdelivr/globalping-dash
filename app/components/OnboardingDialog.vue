@@ -225,6 +225,6 @@
 		}
 
 		await setDefaultAccount(org.account, { selected_orgs: union(auth.user.selected_orgs, [ org.id ]) });
-		account.switchTo(org.account);
+		await account.switchTo(org.account);
 	});
 </script>

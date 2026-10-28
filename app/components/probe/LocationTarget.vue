@@ -129,8 +129,8 @@
 			});
 	};
 
-	watch([ isProbePrivate, () => account.current.public_probes ], ([ isProbePrivate, publicProbes ]) => {
-		if (isProbePrivate && publicProbes) {
+	watch([ isProbePrivate, () => probe.value?.account_id === account.current.id && account.current.public_probes ], ([ isProbePrivate, ownProbeIsPublic ]) => {
+		if (isProbePrivate && ownProbeIsPublic) {
 			syncingProbeData.value = true;
 			startRefreshingProbeData();
 		}

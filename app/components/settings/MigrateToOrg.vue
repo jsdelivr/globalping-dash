@@ -165,7 +165,7 @@
 	import { getErrorMessage, sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	type Action = 'probes' | 'tokens' | 'credits' | 'redirect';
-	type TransferResult = { probes?: number; tokens?: number; approvals?: number; credits?: number; becameAdmin: boolean };
+	type TransferResult = { probes?: number; tokens?: number; apps?: number; credits?: number; becameAdmin: boolean };
 
 	const ROWS: { action: Action; title: string; button: string }[] = [
 		{ action: 'probes', title: 'Probes', button: 'Transfer probes' },
@@ -262,22 +262,23 @@
 
 	const doneText = (action: Action) => action === 'redirect' ? redirectedToOrg.value && 'Redirected' : moved.value[action];
 
-	const describe = ({ probes, tokens, approvals, credits }: TransferResult) => [
-		probes && `${formatNumber(probes)} ${pluralize('probe', probes)}`,
-		tokens && `${formatNumber(tokens)} ${pluralize('token', tokens)}`,
-		approvals && `${formatNumber(approvals)} ${pluralize('app approval', approvals)}`,
-		credits && `${formatNumber(credits)} ${pluralize('credit', credits)}`,
-	].filter(Boolean).join(' and ') || 'your credits history';
+	const count = (value = 0, noun: string) => `${formatNumber(value)} ${pluralize(noun, value)}`;
+
+	const describe: Record<Exclude<Action, 'redirect'>, (result: TransferResult) => string> = {
+		probes: ({ probes }) => count(probes, 'probe'),
+		tokens: ({ tokens, apps }) => `${count(tokens, 'token')} and ${count(apps, 'app')}`,
+		credits: ({ credits }) => count(credits, 'credit'),
+	};
 
 	const setRedirect = async ({ id, name }: { id: string; name: string }) => {
-		await $directus.request(customEndpoint({
+		const { becameAdmin } = await $directus.request<{ becameAdmin: boolean }>(customEndpoint({
 			method: 'POST',
 			path: '/transfer-data/credits-redirect',
 			body: JSON.stringify({ accountId: account.personal.id, orgId: id }),
 		}));
 
-		await refreshRedirects();
-		sendToast('success', 'Redirected', `Your sponsorship credits will be added to ${name}`);
+		await Promise.all([ refreshRedirects(), becameAdmin && auth.refresh() ]);
+		sendToast('success', 'Redirected', `Your sponsorship credits will be added to ${name}${becameAdmin ? `. You're now an admin of ${name}` : ''}`);
 	};
 
 	const transfer = async (action: Exclude<Action, 'redirect'>, { id, name }: { id: string; name: string }) => {
@@ -287,7 +288,7 @@
 			body: JSON.stringify({ orgId: id }),
 		}));
 
-		const text = `Moved ${describe(result)}`;
+		const text = `Moved ${describe[action](result)}`;
 		moved.value[action] = text;
 		await auth.refresh();
 		sendToast('success', 'Transferred', `${text} to ${name}${result.becameAdmin ? `. You're now an admin of ${name}` : ''}`);

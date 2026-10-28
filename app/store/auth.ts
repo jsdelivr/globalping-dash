@@ -1,6 +1,6 @@
 import { readItems, readMe, readRolesMe, deleteUser } from '@directus/sdk';
 import { defineStore } from 'pinia';
-import { useAccount } from '~/store/account';
+import { readSessionActiveId, useAccount } from '~/store/account';
 import { useHardwareProbeAdoption } from '~/store/local-adoption';
 
 interface AuthState {
@@ -23,8 +23,8 @@ const toMembership = (membership: DirectusMembership): Membership => ({
 	org: {
 		...membership.org,
 		account: membership.org.account[0] ?? '',
-		adoption_token: membership.org.adoption_token ?? null,
-		extra_adoption_tokens: membership.org.extra_adoption_tokens ?? [],
+		adoption_token: null,
+		extra_adoption_tokens: [],
 	},
 });
 
@@ -180,10 +180,11 @@ export const useAuth = defineStore('auth', {
 
 			try {
 				const { expires_at } = await $directus.refresh();
-				const [ user, roles, adminOrgs ] = await Promise.all([
+				const [ user, roles, adminOrgs, sessionActiveId ] = await Promise.all([
 					$directus.request(readMe({ fields: [ '*', { memberships: MEMBERSHIP_FIELDS }] })),
 					$directus.request(readRolesMe()),
 					$directus.request(readItems('gp_orgs', { filter: { members: { role: { _eq: 'admin' } } } })),
+					readSessionActiveId(),
 				]);
 				this.user = toUser(user as DirectusUser);
 				this.user.memberships = withOrgAdoptionTokens(this.user.memberships, adminOrgs);
@@ -201,7 +202,7 @@ export const useAuth = defineStore('auth', {
 					this.user.memberships = withOrgAdoptionTokens(this.user.memberships, impersonatedAdminOrgs);
 				}
 
-				await useAccount().restore();
+				await useAccount().loadActiveAccount(sessionActiveId);
 				this.isLoggedIn = true;
 			} catch (error) {
 				console.error(error);

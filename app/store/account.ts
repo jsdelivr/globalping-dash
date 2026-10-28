@@ -4,12 +4,14 @@ import { useAuth } from '~/store/auth';
 
 const IMPERSONATION_KEY = 'impersonationActiveAccount';
 
+export const ACCOUNT_CHANNEL = 'gp-account';
+
 const readImpersonationActiveId = () => {
 	const [ userId, accountId ] = (sessionStorage.getItem(IMPERSONATION_KEY) ?? '').split(':');
 	return userId === useAuth().user.id && accountId ? accountId : null;
 };
 
-const readSessionActiveId = async () => {
+export const readSessionActiveId = async () => {
 	const { $directus } = useNuxtApp();
 	const { accountId } = await $directus.request<{ accountId: string }>(customEndpoint({ path: '/accounts/active' }));
 	return accountId;
@@ -74,15 +76,19 @@ export const useAccount = defineStore('account', {
 		},
 	},
 	actions: {
-		async restore () {
-			const { adminMode, impersonation } = useAuth();
+		async loadActiveAccount (sessionActiveId: string) {
+			const { adminMode, impersonation, isLoggedIn } = useAuth();
 
 			if (adminMode) {
 				this.activeId = null;
 				return;
 			}
 
-			const accountId = impersonation ? readImpersonationActiveId() : await readSessionActiveId();
+			if (isLoggedIn) {
+				return;
+			}
+
+			const accountId = impersonation ? readImpersonationActiveId() : sessionActiveId;
 			const offered = this.selectedOrgs.map(({ org }) => org.account);
 			this.activeId = accountId && offered.includes(accountId) ? accountId : null;
 
@@ -104,6 +110,7 @@ export const useAccount = defineStore('account', {
 				sessionStorage.setItem(IMPERSONATION_KEY, `${user.id}:${id}`);
 			} else {
 				await storeSessionActiveId(id);
+				new BroadcastChannel(ACCOUNT_CHANNEL).postMessage(id);
 			}
 
 			window.location.reload();

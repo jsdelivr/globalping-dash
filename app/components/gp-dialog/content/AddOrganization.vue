@@ -9,17 +9,9 @@
 		<Column class="w-px">
 			<template #body="{ data }">
 				<Button
-					v-if="isSelected(data)"
-					label="Remove"
-					severity="secondary"
-					outlined
-					:loading="savingOrgId === data.org.id"
-					:disabled="!!savingOrgId || !!auth.impersonation"
-					@click="toggle(data.org.id)"
-				/>
-				<Button
-					v-else
-					label="Add"
+					:label="isSelected(data) ? 'Remove' : 'Add'"
+					:severity="isSelected(data) ? 'secondary' : undefined"
+					:outlined="isSelected(data)"
 					:loading="savingOrgId === data.org.id"
 					:disabled="!!savingOrgId || !!auth.impersonation"
 					@click="toggle(data.org.id)"

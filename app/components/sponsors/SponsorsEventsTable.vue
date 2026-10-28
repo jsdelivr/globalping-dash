@@ -62,7 +62,7 @@
 							class="max-w-full"
 							:github-login="data.githubLogin"
 							:github-id="data.githubId"
-							:dashboard-user-id="data.dashboardUserId"/>
+							:dashboard-account-id="data.dashboardAccountId"/>
 					</AsyncCell>
 				</template>
 			</Column>
@@ -100,7 +100,7 @@
 									class="mt-1 max-w-full font-semibold"
 									:github-login="event.githubLogin"
 									:github-id="event.githubId"
-									:dashboard-user-id="event.dashboardUserId"/>
+									:dashboard-account-id="event.dashboardAccountId"/>
 							</div>
 							<div class="wrap-anywhere min-w-0 max-w-[60%] shrink-0 text-right">
 								<div class="font-semibold">{{ formatMoney(event.sponsorshipValue) }}</div>
@@ -150,8 +150,8 @@
 		date: string;
 		githubId: string;
 		githubLogin: string | null;
-		dashboardUserId: string | null;
-		dashboardUsername: string | null;
+		dashboardAccountId: string | null;
+		dashboardAccountName: string | null;
 		reason: SponsorshipReason;
 		manual: boolean;
 		amountInDollars: number;

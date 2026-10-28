@@ -61,7 +61,7 @@
 							wrap
 							:github-login="data.githubLogin"
 							:github-id="data.githubId"
-							:dashboard-user-id="data.dashboardUserId"/>
+							:dashboard-account-id="data.dashboardAccountId"/>
 					</AsyncCell>
 				</template>
 			</Column>
@@ -100,7 +100,7 @@
 							wrap
 							:github-login="addition.githubLogin"
 							:github-id="addition.githubId"
-							:dashboard-user-id="addition.dashboardUserId"/>
+							:dashboard-account-id="addition.dashboardAccountId"/>
 						<div class="mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-sm">
 							<div class="whitespace-nowrap text-bluegray-500">{{ formatUtcDateForTable(addition.date) }}</div>
 							<div class="whitespace-nowrap font-semibold">{{ formatNumber(addition.credits) }} credits</div>
@@ -146,8 +146,8 @@
 		date: string;
 		githubId: string;
 		githubLogin: string | null;
-		dashboardUserId: string | null;
-		dashboardUsername: string | null;
+		dashboardAccountId: string | null;
+		dashboardAccountName: string | null;
 		addedBy: string | null;
 		type: ManualAdditionType;
 		credits: number;

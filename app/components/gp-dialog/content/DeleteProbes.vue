@@ -51,7 +51,7 @@
 
 		try {
 			if (selectedProbesCount) {
-				await $directus.request(updateItems('gp_probes', props.probes.map(p => p.id), { userId: null }));
+				await $directus.request(updateItems('gp_probes', props.probes.map(p => p.id), { account_id: null }));
 				sendToast('success', 'Done', `The ${pluralize('probe has', 'probes have', selectedProbesCount)} been deleted`);
 				deleteLoading.value = false;
 				emit('success');

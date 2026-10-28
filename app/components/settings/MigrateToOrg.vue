@@ -165,7 +165,7 @@
 	import { getErrorMessage, sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	type Action = 'probes' | 'tokens' | 'credits' | 'redirect';
-	type TransferResult = { probes?: number; tokens?: number; apps?: number; credits?: number; becameAdmin: boolean };
+	type TransferResult = { probes?: number; tokens?: number; apps?: number; credits?: number };
 
 	const ROWS: { action: Action; title: string; button: string }[] = [
 		{ action: 'probes', title: 'Probes', button: 'Transfer probes' },
@@ -278,7 +278,7 @@
 		}));
 
 		await Promise.all([ refreshRedirects(), becameAdmin && auth.refresh() ]);
-		sendToast('success', 'Redirected', `Your sponsorship credits will be added to ${name}${becameAdmin ? `. You're now an admin of ${name}` : ''}`);
+		sendToast('success', 'Redirected', `Your sponsorship credits will be added to ${name}`);
 	};
 
 	const transfer = async (action: Exclude<Action, 'redirect'>, { id, name }: { id: string; name: string }) => {
@@ -291,7 +291,7 @@
 		const text = `Moved ${describe[action](result)}`;
 		moved.value[action] = text;
 		await auth.refresh();
-		sendToast('success', 'Transferred', `${text} to ${name}${result.becameAdmin ? `. You're now an admin of ${name}` : ''}`);
+		sendToast('success', 'Transferred', `${text} to ${name}`);
 	};
 
 	const errorMessage = (action: Action, e: unknown) => {

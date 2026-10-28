@@ -194,6 +194,7 @@ export const useAuth = defineStore('auth', {
 					this.applyAdminConfig();
 				}
 
+				// For Directus admin `readItems('gp_orgs')` above returns all GP orgs, so we are reading impersonated user's orgs by id.
 				if (this.impersonation && this.user.memberships.some(({ role }) => role === 'admin')) {
 					const impersonatedOrgIds = this.user.memberships.filter(({ role }) => role === 'admin').map(({ org }) => org.id);
 					const impersonatedAdminOrgs = await $directus.request(readItems('gp_orgs', { filter: { id: { _in: impersonatedOrgIds } } }));

@@ -35,8 +35,7 @@
 					<label class="flex-1 cursor-text">
 						When enabled, the organization probes are automatically tagged by
 						<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${account.current.name}`"/>,
-						allowing you to select them in measurements, and a list of the active probes is also available on the
-						<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${account.current.name}`" target="_blank" rel="noopener">organization page</NuxtLink>.
+						allowing you to select them in measurements.
 					</label>
 				</div>
 
@@ -46,7 +45,7 @@
 						v-model:description="description"
 						v-model:banner="banner"
 						:banner-id="account.current.banner"
-						:disabled="!!auth.impersonation || saveLoading"
+						:disabled="!!auth.impersonation"
 						id-prefix="org"
 					/>
 				</div>

@@ -80,7 +80,7 @@
 						<label class="flex-1 cursor-text">
 							When enabled, the organization probes are automatically tagged by
 							<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${membership.org.name}`"/>,
-							allowing you to select them in measurements, and a list of the active probes is also available on the organization page.
+							allowing you to select them in measurements.
 						</label>
 					</div>
 
@@ -115,8 +115,6 @@
 					@click="skip"/>
 				<Button
 					label="Apply"
-					icon="pi pi-arrow-right"
-					icon-pos="right"
 					:loading="pending === 'apply'"
 					:disabled="!!pending || !canApply"
 					@click="apply"

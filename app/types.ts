@@ -188,9 +188,6 @@ declare global {
 		org_role: Membership['role'] | null;
 		public_probes: boolean;
 		tag_prefix: string;
-		website: string | null;
-		description: string | null;
-		banner: string | null;
 		adoption_token: string | null;
 		extra_adoption_tokens: ExtraAdoptionToken[];
 	};

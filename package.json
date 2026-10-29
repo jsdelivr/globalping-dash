@@ -70,6 +70,9 @@
 		"*.{css,less,vue}": "stylelint --fix --config .stylelintrc",
 		"*.{cjs,js,json,ts,vue}": "eslint --cache --max-warnings=0 --fix ."
 	},
+	"engines": {
+		"node": "22 || 24"
+	},
 	"pnpm": {
 		"patchedDependencies": {
 			"primevue": "patches/primevue.patch",

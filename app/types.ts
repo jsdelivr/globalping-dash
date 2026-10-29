@@ -195,6 +195,7 @@ declare global {
 	type Membership = {
 		id: string;
 		role: 'admin' | 'member' | 'viewer';
+		notification_preferences: Record<string, NotificationPreference> | null;
 		org: Org;
 	};
 

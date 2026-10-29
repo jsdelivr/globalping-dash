@@ -87,23 +87,24 @@
 					</Select>
 				</template>
 
-				<label for="defaultPrefix" class="mt-6 flex items-center font-bold">
-					Default tag prefix <i v-tooltip.top="'Your probe tags will have this prefix by default, but you can adjust it for each tag in the probe settings.'" class="pi pi-info-circle ml-2"/>
-				</label>
-				<Select
-					id="defaultPrefix"
-					v-model="defaultPrefix"
-					:options="[user.github_username, ...user.github_organizations]"
-					class="mt-2 w-full"
-					:scroll-height="'200px'"
-				/>
-				<Message v-if="publicProbes && defaultPrefix !== user.default_prefix" severity="warn" icon="pi pi-exclamation-triangle" class="mt-2">
-					Changing the default prefix will update your user tag from
-					<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.default_prefix}`"/>
-					to
-					<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${defaultPrefix}`"/> on all probes.
-					Other existing tags won't change unless you update them in the probe settings.
-				</Message>
+				<template v-if="user.default_prefix !== user.github_username">
+					<label for="defaultPrefix" class="mt-6 flex items-center font-bold">
+						Default tag prefix <i v-tooltip.top="'To use an organization prefix instead, migrate your probes to that organization.'" class="pi pi-info-circle ml-2"/>
+					</label>
+					<Select
+						id="defaultPrefix"
+						v-model="defaultPrefix"
+						:options="[user.default_prefix, user.github_username]"
+						class="mt-2 w-full"
+					/>
+					<Message v-if="publicProbes && defaultPrefix !== user.default_prefix" severity="warn" icon="pi pi-exclamation-triangle" class="mt-2">
+						Changing the default prefix will update your public tag from
+						<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.default_prefix}`"/>
+						to
+						<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${defaultPrefix}`"/> on all probes.
+						Other existing tags won't change unless you update them in the probe settings.
+					</Message>
+				</template>
 
 				<label for="userType" class="mt-6 block font-bold">User type</label>
 				<div class="relative mt-2">
@@ -152,7 +153,7 @@
 							allowing you to select them in measurements,
 							and a list of your active probes is also available on your
 							<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${defaultPrefix}`" target="_blank" rel="noopener">user page</NuxtLink>.
-							To use your <span v-if="defaultPrefix === user.github_username">organization name</span><span v-else>personal username</span> instead, change your default tag prefix above.
+							To use your organization tag instead, migrate probes to the organization in the panel below.
 						</label>
 					</div>
 				</div>

@@ -16,7 +16,7 @@ interface AuthState {
 	user: User;
 }
 
-export const MEMBERSHIP_FIELDS = [ 'id', 'role', { org: [ 'id', 'name', 'github_id', 'account', 'user_type', 'public_probes', 'website', 'description', 'banner' ] }] as const;
+export const MEMBERSHIP_FIELDS = [ 'id', 'role', 'notification_preferences', { org: [ 'id', 'name', 'github_id', 'account', 'user_type', 'public_probes', 'website', 'description', 'banner' ] }] as const;
 
 const toMembership = (membership: DirectusMembership): Membership => ({
 	...membership,

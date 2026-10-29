@@ -25,11 +25,11 @@
 		>
 			<div v-if="isProbePrivate && !syncingProbeData" class="flex max-w-80 flex-col gap-5">
 				<p>
-					To target this specific probe, it must be <strong>tagged by your username</strong>.
+					To target this specific probe, it must be <strong>tagged by {{ account.current.name }}</strong>.
 				</p>
 				<ProbeOwnerOnly v-slot="{ disabled }" class="flex">
 					<Button
-						label="Tag all my probes and proceed"
+						label="Tag all probes and proceed"
 						class="flex-1"
 						:disabled="auth.adminMode || !!auth.impersonation || disabled"
 						@click="enablePublicProbe"
@@ -50,7 +50,7 @@
 				<div class="flex items-center justify-between gap-3 font-bold">
 					Synchronizing <ProbeDotLoader/>
 				</div>
-				Waiting for the probes to be tagged by your username. This can take up to 1 minute.
+				Waiting for the probes to be tagged by {{ account.current.name }}. This can take up to 1 minute.
 			</div>
 			<div v-else class="flex max-w-72 flex-col gap-5">
 				<p>

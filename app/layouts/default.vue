@@ -268,6 +268,7 @@
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
 	import { formatNumber } from '~/utils/format-number';
+	import { sendErrorToast } from '~/utils/send-toast';
 
 	const auth = useAuth();
 	const account = useAccount();
@@ -331,14 +332,14 @@
 			label: account.personal.name,
 			icon: 'pi pi-user',
 			active: !account.current.org_id,
-			command: () => account.switchTo(null),
+			command: () => account.switchTo(null).catch(sendErrorToast),
 		},
 		...account.selectedOrgs.map(membership => ({
 			key: membership.org.account,
 			label: membership.org.name,
 			icon: 'pi pi-building',
 			active: membership.org.account === account.current.id,
-			command: () => account.switchTo(membership.org.account),
+			command: () => account.switchTo(membership.org.account).catch(sendErrorToast),
 		})),
 		{
 			key: 'add',

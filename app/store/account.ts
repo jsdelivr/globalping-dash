@@ -65,6 +65,9 @@ export const useAccount = defineStore('account', {
 			const { org: { id, account, name, github_id, user_type, public_probes, adoption_token, extra_adoption_tokens }, role } = membership;
 			return { id: account, org_id: id, name, github_id, user_type, org_role: role, public_probes, tag_prefix: name, adoption_token, extra_adoption_tokens };
 		},
+		owner (): string {
+			return this.current.org_id ? this.current.name : 'your';
+		},
 		canManageProbes (): boolean {
 			return !this.current.org_id || this.current.org_role === 'admin';
 		},

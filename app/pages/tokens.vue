@@ -194,7 +194,7 @@
 		</div>
 		<GPDialog
 			v-model:visible="tokenDetailsDialog"
-			:header="tokenDetails ? 'Edit token' : 'Generate new token'"
+			:header="tokenDetails ? 'Edit token' : `Generate new ${account.current.org_id ? `${account.current.name} ` : ''}token`"
 			content-class="!p-0"
 		>
 			<TokenDetails

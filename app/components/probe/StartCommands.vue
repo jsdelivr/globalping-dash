@@ -15,13 +15,13 @@
 
 			<div v-if="props.adopt === undefined && account.canManageProbes" class="flex items-center">
 				<ToggleSwitch v-model="adopt" :input-id="`public-probes-${getCurrentInstance()?.uid}`"/>
-				<label :for="`public-probes-${getCurrentInstance()?.uid}`" class="ml-2 cursor-pointer font-bold">Adopt the probe under my account</label>
+				<label :for="`public-probes-${getCurrentInstance()?.uid}`" class="ml-2 cursor-pointer font-bold">Adopt the probe under {{ account.current.org_id ? account.current.name : 'my' }} account</label>
 			</div>
 		</div>
 
 		<Message v-if="adopt" severity="warn" class="my-4" icon="pi pi-lightbulb">
-			The command below includes your <strong>secret adoption token</strong> to automatically
-			adopt the new probe under your account.
+			The command below includes {{ account.owner }} <strong>secret adoption token</strong> to automatically
+			adopt the new probe under {{ account.owner }} account.
 		</Message>
 
 		<div class="relative">

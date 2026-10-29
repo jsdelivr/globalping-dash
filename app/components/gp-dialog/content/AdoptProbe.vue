@@ -116,7 +116,7 @@
 						<TabPanel value="0">
 							<!-- inline-block is required so mt-2 is not collapsed -->
 							<p class="mb-4 mt-2 inline-block text-lg font-bold">Configure the probe</p>
-							<p>Recreate the container by running the following commands. The new container will be automatically bound to your account.</p>
+							<p>Recreate the container by running the following commands. The new container will be automatically bound to {{ account.owner }} account.</p>
 							<ProbeStartCommands :adopt="true" :recreate="true"/>
 						</TabPanel>
 						<TabPanel value="1">
@@ -151,7 +151,7 @@
 							Adoption failed
 						</p>
 						<p class="mt-4">
-							We haven't detected any new probes under your account.<br>
+							We haven't detected any new probes under {{ account.owner }} account.<br>
 							If your probe is up and running, please try manual adoption instead.
 						</p>
 

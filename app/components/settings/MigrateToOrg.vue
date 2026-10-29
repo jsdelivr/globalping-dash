@@ -23,6 +23,7 @@
 					option-value="id"
 					placeholder="Select an organization"
 					class="mt-2 w-full"
+					:disabled="!!pending"
 					@change="reset"
 				>
 					<template #option="{ option }">

@@ -136,6 +136,13 @@ export const useAuth = defineStore('auth', {
 			const directusRedirect = `https://dash.globalping.io/auth/callback?redirect=${encodeURIComponent(redirect.toString())}`;
 			await navigateTo(`${config.public.directusUrl}/auth/login/github?redirect=${encodeURIComponent(directusRedirect)}`, { external: true });
 		},
+		async loginLocal () {
+			const config = useRuntimeConfig();
+			const redirect = this.getRedirectUrl();
+			const directusRedirect = `/redirect?url=${encodeURIComponent(redirect)}`;
+
+			await navigateTo(`${config.public.directusUrl}/admin/login?redirect=${encodeURIComponent(directusRedirect)}`, { external: true });
+		},
 		async logout () {
 			const { $directus } = useNuxtApp();
 			const probeStore = useHardwareProbeAdoption();

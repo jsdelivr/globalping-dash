@@ -17,6 +17,7 @@
 					class="mt-2 w-full"/>
 			</template>
 			<h3 v-else class="mt-8">to perform measurements under your <strong>{{ account.personal.name }}</strong> account.</h3>
+			<p class="mt-2 text-sm text-bluegray-500">Want to act as an organization? Add it under "Act as organization" in the dashboard account menu, then select here.</p>
 
 			<Divider class="h-2 before:border-t-2"/>
 

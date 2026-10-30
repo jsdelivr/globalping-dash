@@ -347,7 +347,6 @@
 		email: user.value.email,
 		publicProbes: user.value.public_probes,
 		defaultPrefix: user.value.default_prefix,
-		defaultAccount: defaultAccount.value,
 	}, (current) => {
 		return firstName.value !== current.firstName
 			|| lastName.value !== current.lastName
@@ -355,7 +354,7 @@
 			|| email.value !== current.email
 			|| publicProbes.value !== current.publicProbes
 			|| defaultPrefix.value !== current.defaultPrefix
-			|| defaultAccount.value !== current.defaultAccount
+			|| defaultAccount.value !== savedDefaultAccount()
 			|| adoptionToken.value !== user.value.adoption_token
 			|| Object.keys(accountsNotificationPreferences.value).some(isNotificationPreferencesChanged);
 	});
@@ -363,6 +362,11 @@
 	// A probe transfer replaces the adoption token outside of this form.
 	watch(() => user.value.adoption_token, (token) => {
 		adoptionToken.value = token;
+	});
+
+	// The default account can also be set from the "Add organization" dialog.
+	watch(() => user.value.default_account, () => {
+		defaultAccount.value = savedDefaultAccount();
 	});
 
 	const themeOptions = [

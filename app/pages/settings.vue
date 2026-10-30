@@ -87,25 +87,6 @@
 					</Select>
 				</template>
 
-				<template v-if="user.default_prefix !== user.github_username">
-					<label for="defaultPrefix" class="mt-6 flex items-center font-bold">
-						Default tag prefix <i v-tooltip.top="'To use an organization prefix instead, migrate your probes to that organization.'" class="pi pi-info-circle ml-2"/>
-					</label>
-					<Select
-						id="defaultPrefix"
-						v-model="defaultPrefix"
-						:options="[user.default_prefix, user.github_username]"
-						class="mt-2 w-full"
-					/>
-					<Message v-if="publicProbes && defaultPrefix !== user.default_prefix" severity="warn" icon="pi pi-exclamation-triangle" class="mt-2">
-						Changing the default prefix will update your public tag from
-						<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.default_prefix}`"/>
-						to
-						<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${defaultPrefix}`"/> on all probes.
-						Other existing tags won't change unless you update them in the probe settings.
-					</Message>
-				</template>
-
 				<label for="userType" class="mt-6 block font-bold">User type</label>
 				<div class="relative mt-2">
 					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
@@ -131,6 +112,25 @@
 						<div class="absolute left-0 top-0 h-full w-[calc(100%-176px)] cursor-pointer"/>
 					</CopyOnClick>
 				</div>
+
+				<template v-if="user.default_prefix !== user.github_username">
+					<label for="defaultPrefix" class="mt-6 flex items-center font-bold">
+						Default tag prefix <i v-tooltip.top="'To use an organization prefix instead, migrate your probes to that organization.'" class="pi pi-info-circle ml-2"/>
+					</label>
+					<Select
+						id="defaultPrefix"
+						v-model="defaultPrefix"
+						:options="[user.default_prefix, user.github_username]"
+						class="mt-2 w-full"
+					/>
+					<Message v-if="publicProbes && defaultPrefix !== user.default_prefix" severity="warn" icon="pi pi-exclamation-triangle" class="mt-2">
+						Changing the default prefix will update your public tag from
+						<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.default_prefix}`"/>
+						to
+						<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${defaultPrefix}`"/> on all probes.
+						Other existing tags won't change unless you update them in the probe settings.
+					</Message>
+				</template>
 			</div>
 		</div>
 

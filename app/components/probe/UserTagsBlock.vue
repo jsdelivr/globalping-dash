@@ -7,7 +7,7 @@
 		<div class="flex flex-col gap-3 p-6">
 			<p class="text-sm leading-[125%] text-bluegray-600 dark:text-bluegray-0">
 				Public user-defined tags that can be used to target the probe in measurements.
-				Each tag must be prefixed by your GitHub username or organization.
+				Each tag is prefixed with the account name.
 			</p>
 
 			<div class="flex w-full gap-1">

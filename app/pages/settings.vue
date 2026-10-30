@@ -190,6 +190,20 @@
 				<h5 class="text-lg font-bold">Notifications</h5>
 			</div>
 			<div class="grow sm:w-3/5">
+				<template v-if="notificationAccountOptions.length > 1">
+					<label for="notificationAccount" class="flex items-center font-bold">
+						Account <i v-tooltip.top="'Each selected organization you are an admin of has its own notification settings.'" class="pi pi-info-circle ml-2"/>
+					</label>
+					<Select
+						v-model="notificationAccount"
+						input-id="notificationAccount"
+						aria-label="Notifications account"
+						:options="notificationAccountOptions"
+						option-label="label"
+						option-value="value"
+						class="mb-6 mt-2 w-full"
+					/>
+				</template>
 				<div
 					v-for="(notificationType, notificationTypeId, index) in notificationTypes"
 					:key="notificationTypeId"
@@ -269,7 +283,7 @@
 </template>
 
 <script setup lang="ts">
-	import { customEndpoint, updateMe } from '@directus/sdk';
+	import { customEndpoint, updateItem, updateMe } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useFormDirty } from '~/composables/useFormDirty';
@@ -313,9 +327,18 @@
 
 	useErrorToast(notificationTypesError);
 
-	const notificationPreferences = ref<Record<string, { enabled: boolean; emailEnabled?: boolean; parameter?: string }>>({});
+	type EditablePreferences = Record<string, { enabled: boolean; emailEnabled?: boolean; parameter?: string }>;
+
+	const adminMemberships = computed(() => account.selectedOrgs.filter(({ role }) => role === 'admin'));
+	const notificationAccountOptions = computed(() => [
+		{ label: `${account.personal.name} (personal)`, value: account.personal.id },
+		...adminMemberships.value.map(({ org }) => ({ label: org.name, value: org.account })),
+	]);
+	const notificationAccount = ref(account.canManageOrg ? account.current.id : account.personal.id);
+	const accountsNotificationPreferences = ref<Record<string, EditablePreferences>>({});
+	const notificationPreferences = computed(() => accountsNotificationPreferences.value[notificationAccount.value] ?? {});
 	const showOrgsInfoMessage = ref(false);
-	let initialNotificationPreferences = '{}';
+	let initialNotificationPreferences: Record<string, string> = {};
 
 	const resetFormDirty = useFormDirty({
 		firstName: user.value.first_name,
@@ -325,7 +348,6 @@
 		publicProbes: user.value.public_probes,
 		defaultPrefix: user.value.default_prefix,
 		defaultAccount: defaultAccount.value,
-		notificationPreferences: serializeNotificationPreferences(),
 	}, (current) => {
 		return firstName.value !== current.firstName
 			|| lastName.value !== current.lastName
@@ -335,7 +357,7 @@
 			|| defaultPrefix.value !== current.defaultPrefix
 			|| defaultAccount.value !== current.defaultAccount
 			|| adoptionToken.value !== user.value.adoption_token
-			|| serializeNotificationPreferences() !== initialNotificationPreferences;
+			|| Object.keys(accountsNotificationPreferences.value).some(isNotificationPreferencesChanged);
 	});
 
 	// A probe transfer replaces the adoption token outside of this form.
@@ -363,14 +385,19 @@
 				email: email.value,
 				public_probes: publicProbes.value,
 				default_prefix: defaultPrefix.value,
-				notification_preferences: normalizeNotificationPreferences(),
+				notification_preferences: normalizeNotificationPreferences(account.personal.id),
 				...defaultAccount.value !== savedDefaultAccount() ? { default_account: defaultAccount.value } : {},
 				// Adoption token values are generated on BE and stored there for a limited time. So we are sending 'adoption_token' only if it is really changed.
 				...user.value.adoption_token !== adoptionToken.value ? { adoption_token: adoptionToken.value } : {},
 			}));
 
 			lastSavedAppearance = appearance.value;
-			initialNotificationPreferences = serializeNotificationPreferences();
+
+			await Promise.all(adminMemberships.value
+				.filter(({ org }) => isNotificationPreferencesChanged(org.account))
+				.map(({ id, org }) => $directus.request(updateItem('gp_org_members', id, { notification_preferences: normalizeNotificationPreferences(org.account) }))));
+
+			initialNotificationPreferences = serializeAllNotificationPreferences();
 
 			await auth.refresh();
 
@@ -449,24 +476,33 @@
 
 	// NOTIFICATION PREFERENCES
 
-	watch(notificationTypesStatus, (s) => {
+	watch([ notificationTypesStatus, adminMemberships ], ([ s ]) => {
 		if (s !== 'success') { return; }
 
-		notificationPreferences.value = buildNotificationPreferences();
-		initialNotificationPreferences = serializeNotificationPreferences();
+		const savedPreferences = [
+			[ account.personal.id, user.value.notification_preferences ] as const,
+			...adminMemberships.value.map(({ org, notification_preferences }) => [ org.account, notification_preferences ] as const),
+		].filter(([ accountId ]) => !accountsNotificationPreferences.value[accountId]);
+
+		for (const [ accountId, preferences ] of savedPreferences) {
+			accountsNotificationPreferences.value[accountId] = buildNotificationPreferences(preferences);
+			initialNotificationPreferences[accountId] = JSON.stringify(normalizeNotificationPreferences(accountId));
+		}
 	}, { immediate: true });
 
 	// This builds an object to send to the backend.
-	function normalizeNotificationPreferences () {
+	function normalizeNotificationPreferences (accountId: string) {
+		const preferences = accountsNotificationPreferences.value[accountId];
+
 		return Object.fromEntries(Object.keys(notificationTypes.value).sort().map((type) => {
-			const normalizedPreference: NotificationPreference = { enabled: notificationTypes.value[type]!.readOnly || notificationPreferences.value[type]?.enabled !== false };
+			const normalizedPreference: NotificationPreference = { enabled: notificationTypes.value[type]!.readOnly || preferences?.[type]?.enabled !== false };
 
 			if (notificationTypes.value[type]!.sendEmail) {
-				normalizedPreference.emailEnabled = notificationPreferences.value[type]?.emailEnabled !== false;
+				normalizedPreference.emailEnabled = preferences?.[type]?.emailEnabled !== false;
 			}
 
 			if (notificationTypes.value[type]!.hasParameter) {
-				const parameter = notificationPreferences.value[type]?.parameter?.trim();
+				const parameter = preferences?.[type]?.parameter?.trim();
 
 				if (parameter && /^\d+$/.test(parameter)) {
 					normalizedPreference.parameter = Number.parseInt(parameter, 10);
@@ -477,8 +513,12 @@
 		}));
 	}
 
-	function serializeNotificationPreferences () {
-		return JSON.stringify(normalizeNotificationPreferences());
+	function serializeAllNotificationPreferences () {
+		return Object.fromEntries(Object.keys(accountsNotificationPreferences.value).map(accountId => [ accountId, JSON.stringify(normalizeNotificationPreferences(accountId)) ]));
+	}
+
+	function isNotificationPreferencesChanged (accountId: string) {
+		return JSON.stringify(normalizeNotificationPreferences(accountId)) !== initialNotificationPreferences[accountId];
 	}
 
 	function restrictToDigits (event: InputEvent) {
@@ -492,8 +532,8 @@
 	}
 
 	// This builds an object to use and edit by the form UI.
-	function buildNotificationPreferences () {
-		const userPreferences = user.value.notification_preferences ?? {};
+	function buildNotificationPreferences (savedPreferences: Record<string, NotificationPreference> | null) {
+		const userPreferences = savedPreferences ?? {};
 		const allDisabled = areAllDisabled(userPreferences);
 		const allEmailDisabled = areAllEmailsDisabled(userPreferences);
 
@@ -503,7 +543,7 @@
 				enabled: notificationTypes.value[type]!.readOnly || !allDisabled,
 				emailEnabled: notificationTypes.value[type]!.sendEmail ? !(allDisabled || allEmailDisabled) : undefined,
 				parameter: notificationTypes.value[type]!.hasParameter ? String(notificationTypes.value[type]!.defaultParameter) : undefined,
-			}])) as Record<string, { enabled: boolean; emailEnabled?: boolean; parameter?: string }>;
+			}])) as EditablePreferences;
 
 		// Here we are overriding default values with user preferences.
 		for (const [ type, preference ] of Object.entries(userPreferences).filter(([ type ]) => type in preferences)) {

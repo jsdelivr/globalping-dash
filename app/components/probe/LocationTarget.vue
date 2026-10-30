@@ -25,14 +25,16 @@
 		>
 			<div v-if="isProbePrivate && !syncingProbeData" class="flex max-w-80 flex-col gap-5">
 				<p>
-					To target this specific probe, it must be <strong>tagged by your username</strong>.
+					To target this specific probe, it must be <strong>tagged by {{ account.current.name }}</strong>.
 				</p>
-				<Button
-					label="Tag all my probes and proceed"
-					class="flex-1"
-					:disabled="auth.adminMode || !!auth.impersonation"
-					@click="enablePublicProbe"
-				/>
+				<ProbeOwnerOnly v-slot="{ disabled }" class="flex">
+					<Button
+						label="Tag all probes and proceed"
+						class="flex-1"
+						:disabled="auth.adminMode || !!auth.impersonation || disabled"
+						@click="enablePublicProbe"
+					/>
+				</ProbeOwnerOnly>
 				<p>
 					Alternatively, you can target a random probe at this location (including probes from other users).
 				</p>
@@ -48,7 +50,7 @@
 				<div class="flex items-center justify-between gap-3 font-bold">
 					Synchronizing <ProbeDotLoader/>
 				</div>
-				Waiting for the probes to be tagged by your username. This can take up to 1 minute.
+				Waiting for the probes to be tagged by {{ account.current.name }}. This can take up to 1 minute.
 			</div>
 			<div v-else class="flex max-w-72 flex-col gap-5">
 				<p>
@@ -66,12 +68,14 @@
 </template>
 
 <script setup lang="ts">
-	import { readItem, updateUser } from '@directus/sdk';
+	import { readItem } from '@directus/sdk';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { USERNAME_TAG_PATTERN } from '~/constants/users';
+	import { useAccount } from '~/store/account';
 	import { useAuth } from '~/store/auth';
 
 	const auth = useAuth();
+	const account = useAccount();
 	const route = useRoute();
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
@@ -117,19 +121,16 @@
 	const enablePublicProbe = async () => {
 		syncingProbeData.value = true;
 
-		return $directus.request(updateUser(auth.user.id, { public_probes: true }))
-			.then(() => {
-				auth.refresh();
-				startRefreshingProbeData();
-			})
+		return account.setPublicProbes(true)
+			.then(startRefreshingProbeData)
 			.catch((e) => {
 				useErrorToast(e);
 				syncingProbeData.value = false;
 			});
 	};
 
-	watch([ isProbePrivate, () => auth.user.public_probes ], ([ isProbePrivate, userPublicProbes ]) => {
-		if (isProbePrivate && userPublicProbes) {
+	watch([ isProbePrivate, () => probe.value?.account_id === account.current.id && account.current.public_probes ], ([ isProbePrivate, ownProbeIsPublic ]) => {
+		if (isProbePrivate && ownProbeIsPublic) {
 			syncingProbeData.value = true;
 			startRefreshingProbeData();
 		}

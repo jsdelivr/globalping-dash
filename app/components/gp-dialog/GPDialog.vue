@@ -14,6 +14,9 @@
 		@after-hide="afterHide()"
 	>
 		<slot/>
+		<template v-if="$slots.footer" #footer>
+			<slot name="footer"/>
+		</template>
 	</Dialog>
 </template>
 

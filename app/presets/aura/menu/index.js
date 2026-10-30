@@ -3,15 +3,15 @@ export default {
 		class: [
 			// Sizing and Shape
 			'min-w-[12.5rem]',
-			'rounded-md',
+			'rounded-md shadow-lg',
 
 			// Spacing
 			'p-1',
 
 			// Colors
-			'bg-surface-0 dark:bg-surface-900',
+			'bg-surface-0 dark:bg-dark-700',
 			'text-surface-700 dark:text-white/80',
-			'border border-surface-200 dark:border-surface-700',
+			'border border-surface-200 dark:border-dark-400',
 		],
 	},
 	list: {
@@ -35,7 +35,7 @@ export default {
 			'text-surface-700 dark:text-white/80',
 			{
 				'text-surface-500 dark:text-white/70': !context.focused && !context.active,
-				'text-surface-500 dark:text-white/70 bg-surface-200': context.focused && !context.active,
+				'text-surface-500 dark:text-white/70 bg-surface-200 dark:bg-dark-600': context.focused && !context.active,
 				'bg-highlight': (context.focused && context.active) || context.active || (!context.focused && context.active),
 			},
 
@@ -45,7 +45,7 @@ export default {
 
 			// States
 			{
-				'hover:bg-surface-100 dark:hover:bg-[rgba(255,255,255,0.03)]': !context.active,
+				'hover:bg-surface-100 dark:hover:bg-dark-600': !context.active,
 				'hover:bg-highlight-emphasis': context.active,
 			},
 
@@ -104,6 +104,9 @@ export default {
 			'bg-surface-0 dark:bg-surface-900',
 			'text-surface-400 dark:text-surface-600',
 		],
+	},
+	separator: {
+		class: 'border-t border-surface-200 dark:border-dark-400 my-[2px]',
 	},
 	transition: {
 		enterFromClass: 'opacity-0 scale-y-[0.8]',

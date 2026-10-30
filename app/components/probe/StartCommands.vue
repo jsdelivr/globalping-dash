@@ -13,15 +13,15 @@
 				@update:model-value="onChangePlatform"
 			/>
 
-			<div v-if="props.adopt === undefined" class="flex items-center">
+			<div v-if="props.adopt === undefined && account.canManageProbes" class="flex items-center">
 				<ToggleSwitch v-model="adopt" :input-id="`public-probes-${getCurrentInstance()?.uid}`"/>
-				<label :for="`public-probes-${getCurrentInstance()?.uid}`" class="ml-2 cursor-pointer font-bold">Adopt the probe under my account</label>
+				<label :for="`public-probes-${getCurrentInstance()?.uid}`" class="ml-2 cursor-pointer font-bold">Adopt the probe under {{ account.current.org_id ? account.current.name : 'my' }} account</label>
 			</div>
 		</div>
 
 		<Message v-if="adopt" severity="warn" class="my-4" icon="pi pi-lightbulb">
-			The command below includes your <strong>secret adoption token</strong> to automatically
-			adopt the new probe under your account.
+			The command below includes {{ account.owner }} <strong>secret adoption token</strong> to automatically
+			adopt the new probe under {{ account.owner }} account.
 		</Message>
 
 		<div class="relative">
@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-	import { useAuth } from '~/store/auth';
+	import { useAccount } from '~/store/account';
 	import { smoothResize } from '~/utils/smooth-resize';
 
 	const props = defineProps({
@@ -69,12 +69,11 @@
 		},
 	});
 
-	const auth = useAuth();
-	const { user } = storeToRefs(auth);
+	const account = useAccount();
 
 	const codeWrapperElem = ref<HTMLElement>();
 	const codeElem = ref<HTMLElement>();
-	const adopt = ref(props.adopt ?? true);
+	const adopt = ref((props.adopt ?? true) && account.canManageProbes);
 
 	const updateCommands = {
 		docker: [
@@ -92,11 +91,11 @@
 	const commands = computed(() => {
 		return {
 			docker: {
-				compact: `${props.recreate ? `${updateCommands.docker.map(c => c[0]).join('; ')};\n` : ''}docker run -d ${adopt.value ? `-e GP_ADOPTION_TOKEN=${user.value.adoption_token} ` : ''}--log-driver local --network host --restart=always --name globalping-probe globalping/globalping-probe`,
+				compact: `${props.recreate ? `${updateCommands.docker.map(c => c[0]).join('; ')};\n` : ''}docker run -d ${adopt.value ? `-e GP_ADOPTION_TOKEN=${account.current.adoption_token} ` : ''}--log-driver local --network host --restart=always --name globalping-probe globalping/globalping-probe`,
 				expanded: [
 					...props.recreate ? updateCommands.docker : [],
 					[ 'docker run -d \\', ' # Make sure the container runs on boot' ],
-					...adopt.value ? [ [ `-e GP_ADOPTION_TOKEN=${user.value.adoption_token} \\`, ' # Automatically add the probe to your account' ] ] : [],
+					...adopt.value ? [ [ `-e GP_ADOPTION_TOKEN=${account.current.adoption_token} \\`, ' # Automatically adopt the probe' ] ] : [],
 					[ '--log-driver local \\', ' # Use the modern logging driver to ensure old logs are deleted' ],
 					[ '--network host \\', ' # Bypass overlay and mesh networking to ensure they dont impact latency tests' ],
 					[ '--restart=always \\', ' # Restart the container if it crashes' ],
@@ -104,12 +103,12 @@
 				],
 			},
 			podman: {
-				compact: `${props.recreate ? `${updateCommands.podman.map(c => c[0]).join('; ')};\n` : ''}sudo podman run -d ${adopt.value ? `-e GP_ADOPTION_TOKEN=${user.value.adoption_token} ` : ''}--cap-add=NET_RAW --network host --restart=always --name globalping-probe globalping/globalping-probe`,
+				compact: `${props.recreate ? `${updateCommands.podman.map(c => c[0]).join('; ')};\n` : ''}sudo podman run -d ${adopt.value ? `-e GP_ADOPTION_TOKEN=${account.current.adoption_token} ` : ''}--cap-add=NET_RAW --network host --restart=always --name globalping-probe globalping/globalping-probe`,
 				expanded: [
 					...props.recreate ? updateCommands.podman : [],
 					[ 'sudo \\', ' # Allows the --cap-add=NET_RAW option to work properly' ],
 					[ 'podman run -d \\', ' # The container will NOT start on boot. You need to create a systemd service first.' ],
-					...adopt.value ? [ [ `-e GP_ADOPTION_TOKEN=${user.value.adoption_token} \\`, ' # Automatically add the probe to your account' ] ] : [],
+					...adopt.value ? [ [ `-e GP_ADOPTION_TOKEN=${account.current.adoption_token} \\`, ' # Automatically adopt the probe' ] ] : [],
 					[ '--cap-add=NET_RAW \\', ' # Network permissions to run ping' ],
 					[ '--network host \\', ' # Bypass overlay and mesh networking to ensure they dont impact latency tests' ],
 					[ '--restart=always \\', ' # Restart the container if it crashes' ],

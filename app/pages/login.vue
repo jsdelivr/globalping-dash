@@ -27,6 +27,18 @@
 					label="Sign in with GitHub"
 					@click="auth.login"
 				/>
+				<Button
+					v-if="showLocalLogin"
+					class="mt-3 h-12 w-full !text-left"
+					style="--p-primary-color: #64f; --p-primary-hover-color: #53e;"
+					icon-pos="right"
+					label="Sign in with Directus"
+					@click="auth.loginLocal"
+				>
+					<template #icon>
+						<NuxtIcon class="order-1 text-xl" name="directus" aria-hidden="true"/>
+					</template>
+				</Button>
 			</div>
 
 			<NuxtLink to="https://globalping.io/" class="mt-4 text-bluegray-400 hover:underline" target="_blank">
@@ -69,6 +81,9 @@
 
 	const auth = useAuth();
 	const route = useRoute();
+	const showLocalLogin = computed(() => route.query['sign-in'] === undefined
+		? [ 'localhost', '127.0.0.1', '[::1]' ].includes(location.hostname)
+		: route.query['sign-in'] === 'directus');
 	let redirectHasCreditsView = false;
 	let redirectHasProbeView = false;
 

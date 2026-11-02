@@ -8,7 +8,7 @@
 			<p class="mb-2 font-bold max-sm:hidden">Probes, tokens and credits</p>
 			<Button severity="secondary" outlined label="Migrate to organization" :disabled="!orgs.length || !!auth.impersonation" @click="open"/>
 			<p v-if="!orgs.length" class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">
-				You have no organizations to migrate to. Add one where you're an admin or a member through "Add organization" in the account menu.
+				You must be an admin or a member of an organization to transfer resources.
 			</p>
 		</div>
 
@@ -38,7 +38,7 @@
 						<Tag class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="capitalize(option.role)"/>
 					</template>
 				</Select>
-				<p class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">If the organization isn't in the list, add it through "Add organization" in the account menu first.</p>
+				<p class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Only organizations where you're an admin or a member are listed.</p>
 
 				<p class="mt-6 text-sm font-semibold">Transfers are permanent. A redirect can be cleared any time.</p>
 
@@ -188,7 +188,8 @@
 	const auth = useAuth();
 	const account = useAccount();
 
-	const orgs = computed(() => account.nonViewerOrgs
+	const orgs = computed(() => auth.user.memberships
+		.filter(({ role }) => role !== 'viewer')
 		.map(({ org, role }) => ({ ...org, role }))
 		.sort((a, b) => a.name.localeCompare(b.name)));
 

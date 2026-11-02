@@ -1,6 +1,6 @@
 <template>
-	<GPDialog v-model:visible="visible" header="Few more steps to go!" content-class="!p-0" @after-hide="onHide">
-		<p class="border-y bg-surface-50 px-6 py-5 text-center text-lg font-bold dark:border-dark-600 dark:bg-dark-800">Which account should open by default?</p>
+	<GPDialog v-model:visible="visible" header="A few more steps to go!" content-class="!p-0" overlay-scrollbars @after-hide="onHide">
+		<p class="border-y bg-surface-50 px-6 py-5 text-center text-lg font-bold dark:border-dark-600 dark:bg-dark-800">Choose your default account</p>
 
 		<div class="p-6">
 			<div role="radiogroup" aria-label="Default account" class="grid gap-4 sm:grid-cols-2">
@@ -27,7 +27,7 @@
 							<i :class="card.icon" class="text-bluegray-400 group-has-[:checked]:text-primary sm:!hidden" aria-hidden="true"/>{{ card.title }}
 						</span>
 						<span>{{ isDisabled(card.value) ? 'You aren\'t a member of any GitHub organization yet.' : card.description }}</span>
-						<i :class="card.icon" class="mt-2 text-3xl text-bluegray-400 group-has-[:checked]:text-primary max-sm:!hidden" aria-hidden="true"/>
+						<i :class="card.icon" class="mt-auto pt-2 text-3xl text-bluegray-400 group-has-[:checked]:text-primary max-sm:!hidden" aria-hidden="true"/>
 					</span>
 				</label>
 			</div>
@@ -58,18 +58,17 @@
 					class="mt-2 w-full"
 				>
 					<template #value="{ placeholder }">
-						<span v-if="membership" class="flex items-baseline">
-							<span class="grow">{{ membership.org.name }}</span>
-							<span class="ml-4 text-sm leading-none">{{ capitalize(membership.role) }}</span>
+						<span v-if="membership" class="flex items-center">
+							<span class="min-w-0 grow truncate">{{ membership.org.name }}</span>
+							<Tag class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="capitalize(membership.role)"/>
 						</span>
 						<template v-else>{{ placeholder }}</template>
 					</template>
 					<template #option="{ option }">
-						<span class="grow">{{ option.org.name }}</span>
-						<span class="ml-4 text-sm">{{ capitalize(option.role) }}</span>
+						<span class="min-w-0 grow truncate">{{ option.org.name }}</span>
+						<Tag class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="capitalize(option.role)"/>
 					</template>
 				</Select>
-				<p v-if="!membership" class="mt-1">Pick an organization to continue.</p>
 
 				<template v-if="membership?.role === 'admin'">
 					<p class="mt-6 font-bold">Make the organization probes public</p>
@@ -84,7 +83,7 @@
 						</label>
 					</div>
 
-					<template v-if="!hasProfile">
+					<template v-if="showProfileFields">
 						<Divider align="center" class="my-6 before:dark:!border-dark-600" :pt="{ content: { class: 'z-10 bg-surface-0 px-1 dark:bg-dark-700' } }">
 							<span>Improve your public profile (optional)</span>
 						</Divider>
@@ -100,12 +99,10 @@
 			</template>
 
 			<Message severity="secondary" icon="pi pi-info-circle" class="mt-6">
-				This only sets your default. Switch accounts any time from the account menu; change the default in Settings.
+				Switch accounts any time from the account menu. Change your default account in Settings.
 			</Message>
-		</div>
 
-		<template #footer>
-			<div class="flex w-full justify-end gap-2 border-t pt-4 dark:border-dark-600">
+			<div class="mt-6 flex justify-end gap-2 border-t pt-4 dark:border-dark-600">
 				<Button
 					label="Skip"
 					severity="secondary"
@@ -120,7 +117,7 @@
 					@click="apply"
 				/>
 			</div>
-		</template>
+		</div>
 	</GPDialog>
 </template>
 
@@ -135,7 +132,7 @@
 
 	const CARDS = [
 		{ value: 'personal', title: 'Personal', description: 'Use your own probes, credits and tokens.', icon: 'pi pi-user' },
-		{ value: 'org', title: 'Organization', description: 'Work on behalf of your GitHub organization: its probes, credits and tokens.', icon: 'pi pi-building' },
+		{ value: 'org', title: 'Organization', description: 'Use your GitHub organization\'s probes, credits and tokens.', icon: 'pi pi-building' },
 	] as const;
 
 	const { $directus } = useNuxtApp();
@@ -162,6 +159,7 @@
 	const website = ref('');
 	const description = ref('');
 	const banner = ref<BannerChange>();
+	const showProfileFields = computed(() => membership.value?.role === 'admin' && orgPublicProbes.value && !hasProfile.value);
 
 	watch(membership, (selected) => {
 		orgPublicProbes.value = selected?.org.public_probes ?? false;
@@ -170,7 +168,7 @@
 		banner.value = undefined;
 	}, { immediate: true });
 
-	const canApply = computed(() => choice.value === 'personal' || (!!membership.value && isValidWebsite(website.value)));
+	const canApply = computed(() => choice.value === 'personal' || (!!membership.value && (!showProfileFields.value || isValidWebsite(website.value))));
 
 	// SAVE
 
@@ -216,9 +214,9 @@
 			await Promise.all([
 				$directus.request(updateItem('gp_orgs', org.id, {
 					public_probes: orgPublicProbes.value,
-					...!hasProfile.value && { website: website.value || null, description: description.value || null },
+					...showProfileFields.value && { website: website.value || null, description: description.value || null },
 				})),
-				saveBanner($directus, org.id, banner.value),
+				saveBanner($directus, org.id, showProfileFields.value ? banner.value : undefined),
 			]);
 		}
 

@@ -11,7 +11,7 @@
 		:disabled="disabled"
 		@blur="websiteTouched = true"
 	/>
-	<p v-if="showWebsiteError" class="mt-1 text-sm text-red-500">{{ website.startsWith('http://') ? 'The URL must start with https://' : 'Enter a full URL, e.g. https://example.com' }}</p>
+	<p v-if="showWebsiteError" class="mt-1 text-sm text-red-500">{{ website.startsWith('http://') ? 'The URL must start with https://' : 'Enter a full URL, e.g., https://example.com' }}</p>
 
 	<label :for="`${idPrefix}-description`" class="mt-6 flex items-center font-bold">
 		Description <i v-tooltip.top="PUBLIC_HINT" class="pi pi-info-circle ml-2"/>

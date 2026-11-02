@@ -64,7 +64,7 @@ import popover from './popover';
 import radiobutton from './radiobutton';
 // import rating from './rating';
 // import ripple from './ripple';
-// import scrollpanel from './scrollpanel';
+import scrollpanel from './scrollpanel';
 // import scrolltop from './scrolltop';
 import select from './select';
 import selectbutton from './selectbutton';
@@ -167,7 +167,7 @@ export default {
 	tabview,
 	divider,
 	// toolbar,
-	// scrollpanel,
+	scrollpanel,
 	// splitter,
 	// splitterpanel,
 	stepper,

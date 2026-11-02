@@ -190,7 +190,8 @@ export const useAuth = defineStore('auth', {
 				const [ user, roles, adminOrgs, sessionActiveId ] = await Promise.all([
 					$directus.request(readMe({ fields: [ '*', { memberships: MEMBERSHIP_FIELDS }] })),
 					$directus.request(readRolesMe()),
-					$directus.request(readItems('gp_orgs', { filter: { members: { role: { _eq: 'admin' } } } })),
+					// A Directus admin matches every org here, so the list is capped.
+					$directus.request(readItems('gp_orgs', { filter: { members: { role: { _eq: 'admin' } } }, limit: 100 })),
 					readSessionActiveId(),
 				]);
 				this.user = toUser(user as DirectusUser);
@@ -202,11 +203,11 @@ export const useAuth = defineStore('auth', {
 					this.applyAdminConfig();
 				}
 
-				// For Directus admin `readItems('gp_orgs')` above returns all GP orgs, so we are reading impersonated user's orgs by id.
-				if (this.impersonation && this.user.memberships.some(({ role }) => role === 'admin')) {
-					const impersonatedOrgIds = this.user.memberships.filter(({ role }) => role === 'admin').map(({ org }) => org.id);
-					const impersonatedAdminOrgs = await $directus.request(readItems('gp_orgs', { filter: { id: { _in: impersonatedOrgIds } } }));
-					this.user.memberships = withOrgAdoptionTokens(this.user.memberships, impersonatedAdminOrgs);
+				// For Directus admin `adminOrgs` are not the impersonated user's orgs, so those are read by id.
+				if (this.impersonation) {
+					const adminOrgIds = this.user.memberships.filter(({ role }) => role === 'admin').map(({ org }) => org.id);
+					const impersonatedOrgs = adminOrgIds.length ? await $directus.request(readItems('gp_orgs', { filter: { id: { _in: adminOrgIds } } })) : [];
+					this.user.memberships = withOrgAdoptionTokens(this.user.memberships, impersonatedOrgs);
 				}
 
 				await useAccount().loadActiveAccount(sessionActiveId);

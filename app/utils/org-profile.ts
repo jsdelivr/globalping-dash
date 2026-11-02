@@ -2,10 +2,10 @@ import { customEndpoint } from '@directus/sdk';
 
 export const DESCRIPTION_MAX_LENGTH = 200;
 
-// Same rule as the gp_orgs.website field validation in Directus.
+// Same rules as the gp_orgs.website validation in Directus.
 const WEBSITE_PATTERN = /^https:\/\/[^\s/?#.@]+(\.[^\s/?#.@]+)+([/?#]\S*)?$/;
 
-export const isValidWebsite = (website: string) => !website || WEBSITE_PATTERN.test(website);
+export const isValidWebsite = (website: string) => !website || (WEBSITE_PATTERN.test(website) && URL.canParse(website));
 
 export const BANNER_TYPES = [ 'image/png', 'image/jpeg', 'image/webp' ];
 const BANNER_MIN_WIDTH = 1224;

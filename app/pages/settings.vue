@@ -76,13 +76,15 @@
 					>
 						<template #value="{ value }">
 							<span class="flex items-center">
+								<i class="mr-2 shrink-0" :class="optionOf(value)?.icon" aria-hidden="true"/>
 								<span class="min-w-0 grow truncate">{{ optionOf(value)?.label }}</span>
-								<Tag class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="optionOf(value)?.role"/>
+								<Tag class="ml-6 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="optionOf(value)?.role"/>
 							</span>
 						</template>
 						<template #option="{ option }">
+							<i class="mr-2 shrink-0" :class="option.icon" aria-hidden="true"/>
 							<span class="min-w-0 grow truncate">{{ option.label }}</span>
-							<Tag class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="option.role"/>
+							<Tag class="ml-6 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="option.role"/>
 						</template>
 					</Select>
 				</template>
@@ -205,13 +207,15 @@
 					>
 						<template #value="{ value }">
 							<span class="flex items-center">
+								<i class="mr-2 shrink-0" :class="optionOf(value)?.icon" aria-hidden="true"/>
 								<span class="min-w-0 grow truncate">{{ optionOf(value)?.label }}</span>
-								<Tag class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="optionOf(value)?.role"/>
+								<Tag class="ml-6 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="optionOf(value)?.role"/>
 							</span>
 						</template>
 						<template #option="{ option }">
+							<i class="mr-2 shrink-0" :class="option.icon" aria-hidden="true"/>
 							<span class="min-w-0 grow truncate">{{ option.label }}</span>
-							<Tag class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="option.role"/>
+							<Tag class="ml-6 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="option.role"/>
 						</template>
 					</Select>
 				</template>
@@ -295,6 +299,7 @@
 
 <script setup lang="ts">
 	import { customEndpoint, updateItem, updateMe } from '@directus/sdk';
+	import capitalize from 'lodash/capitalize';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useFormDirty } from '~/composables/useFormDirty';
 	import { useAccount } from '~/store/account';
@@ -319,8 +324,8 @@
 
 	const account = useAccount();
 	const defaultAccountOptions = computed(() => [
-		{ label: account.personal.name, value: account.personal.id, role: 'Personal' },
-		...account.selectedOrgs.map(({ org, role }) => ({ label: org.name, value: org.account, role: `Organization ${role}` })),
+		{ label: account.personal.name, value: account.personal.id, role: 'Personal', icon: 'pi pi-user' },
+		...account.selectedOrgs.map(({ org, role }) => ({ label: org.name, value: org.account, role: capitalize(role), icon: 'pi pi-building' })),
 	]);
 	const optionOf = (value: string) => defaultAccountOptions.value.find(option => option.value === value);
 	const savedDefaultAccount = () => defaultAccountOptions.value.some(({ value }) => value === user.value.default_account) ? user.value.default_account : account.personal.id;

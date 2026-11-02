@@ -72,7 +72,7 @@
 							v-bind="props.action">
 							<span :class="[ item.icon, { 'text-primary': item.active } ]"/>
 							<span class="ml-2 min-w-0 grow truncate" :class="{ 'font-bold text-primary': item.active }" :title="typeof item.label === 'string' ? item.label : undefined">{{ item.label }}</span>
-							<Tag v-if="item.badge" v-tooltip.left="item.hint" class="ml-4 h-[21px] shrink-0 bg-neutral-100 !py-0 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="item.badge"/>
+							<Tag v-if="item.badge" class="ml-6 h-[21px] shrink-0 bg-neutral-100 !py-0 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="item.badge"/>
 							<i v-if="hasSubmenu" class="pi pi-angle-right ml-4 text-xs"/>
 						</a>
 					</template>
@@ -113,7 +113,7 @@
 						<button v-for="item in accountOptions" :key="item.key" class="sidebar-link" :class="{ 'font-bold !text-primary': item.active }" @click="item.command(); mobileSidebar = false">
 							<i class="sidebar-link-icon shrink-0" :class="[ item.icon, { '!text-primary': item.active } ]"/>
 							<span class="w-0 grow truncate text-left" :title="item.label">{{ item.label }}</span>
-							<Tag v-if="item.badge" v-tooltip.right="item.hint" class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="item.badge"/>
+							<Tag v-if="item.badge" class="ml-6 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="item.badge"/>
 						</button>
 					</div>
 					<button active-class="active" class="sidebar-link" @click="auth.logout"><i class="pi pi-power-off sidebar-link-icon"/>Sign out</button>
@@ -323,18 +323,11 @@
 
 	const addOrgDialog = ref(false);
 
-	const ROLE_DESCRIPTIONS = [
-		{ role: 'admin', description: 'Manages the organization: its settings, adoption token, members and their roles. Adopts and edits its probes, gets its notifications and uses its credits.' },
-		{ role: 'member', description: 'Sees the organization\'s probes and credits, and creates tokens and app approvals that spend its credits. Can\'t adopt or edit probes.' },
-		{ role: 'viewer', description: 'Read-only: sees the organization\'s probes and credits. Can\'t create tokens or run measurements on globalping.io as the organization.' },
-	];
-
 	const accountOptions = computed(() => [
 		{
 			key: 'personal',
 			label: account.personal.name,
 			badge: 'Personal',
-			hint: undefined,
 			icon: 'pi pi-user',
 			active: !account.current.org_id,
 			command: () => account.switchTo(null).catch(sendErrorToast),
@@ -342,8 +335,7 @@
 		...account.selectedOrgs.map(membership => ({
 			key: membership.org.account,
 			label: membership.org.name,
-			badge: `Organization ${membership.role}`,
-			hint: ROLE_DESCRIPTIONS.find(({ role }) => role === membership.role)?.description,
+			badge: capitalize(membership.role),
 			icon: 'pi pi-building',
 			active: membership.org.account === account.current.id,
 			command: () => account.switchTo(membership.org.account).catch(sendErrorToast),
@@ -353,7 +345,6 @@
 			label: 'Add organization',
 			active: false,
 			badge: undefined,
-			hint: undefined,
 			icon: 'pi pi-plus',
 			command: () => { addOrgDialog.value = true; },
 		},

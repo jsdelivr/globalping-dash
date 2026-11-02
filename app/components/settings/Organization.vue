@@ -285,24 +285,30 @@
 	const saveSettings = async () => {
 		saveLoading.value = true;
 
-		try {
-			await Promise.all([
-				$directus.request(updateItem('gp_orgs', orgId, {
-					public_probes: publicProbes.value,
-					website: website.value || null,
-					description: description.value || null,
-					// Adoption token values are generated on BE and stored there for a limited time, so the token is sent only when it changed.
-					...adoptionToken.value !== account.current.adoption_token ? { adoption_token: adoptionToken.value } : {},
-				})),
-				saveBanner($directus, orgId, banner.value),
-			]);
+		const [ settingsResult, bannerResult ] = await Promise.allSettled([
+			$directus.request(updateItem('gp_orgs', orgId, {
+				public_probes: publicProbes.value,
+				website: website.value || null,
+				description: description.value || null,
+				// Adoption token values are generated on BE and stored there for a limited time, so the token is sent only when it changed.
+				...adoptionToken.value !== account.current.adoption_token ? { adoption_token: adoptionToken.value } : {},
+			})),
+			saveBanner($directus, orgId, banner.value),
+		]);
 
-			await auth.refresh();
+		await auth.refresh();
+
+		if (bannerResult.status === 'fulfilled') {
 			banner.value = undefined;
+		}
+
+		const failed = [ settingsResult, bannerResult ].find((result): result is PromiseRejectedResult => result.status === 'rejected');
+
+		if (failed) {
+			sendErrorToast(failed.reason);
+		} else {
 			resetFormDirty();
 			sendToast('success', 'Saved', 'Organization settings saved');
-		} catch (e) {
-			sendErrorToast(e);
 		}
 
 		saveLoading.value = false;

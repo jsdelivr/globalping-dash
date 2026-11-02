@@ -363,6 +363,7 @@
 	const saveLoading = ref(false);
 	const save = async () => {
 		saveLoading.value = true;
+		const savedNotificationPreferences = serializeAllNotificationPreferences();
 
 		try {
 			await $directus.request(updateMe({
@@ -380,13 +381,19 @@
 
 			lastSavedAppearance = appearance.value;
 
-			await Promise.all(adminMemberships.value
+			const orgResults = await Promise.allSettled(adminMemberships.value
 				.filter(({ org }) => isNotificationPreferencesChanged(org.account))
 				.map(({ id, org }) => $directus.request(updateItem('gp_org_members', id, { notification_preferences: normalizeNotificationPreferences(org.account) }))));
 
-			initialNotificationPreferences = serializeAllNotificationPreferences();
-
 			await auth.refresh();
+
+			const failed = orgResults.find((result): result is PromiseRejectedResult => result.status === 'rejected');
+
+			if (failed) {
+				throw failed.reason;
+			}
+
+			initialNotificationPreferences = savedNotificationPreferences;
 
 			sendToast('success', 'Saved', 'All settings saved');
 			resetFormDirty();

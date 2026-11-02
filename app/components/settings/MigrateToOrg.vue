@@ -1,20 +1,21 @@
 <template>
 	<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 		<div class="max-sm:mb-4 sm:w-2/5 sm:pr-6">
-			<h5 class="text-lg font-bold">Migrate to organization</h5>
-			<p class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Move your personal probes, tokens and credits to an organization, or redirect your sponsorship credits to it.</p>
+			<h5 class="text-lg font-bold">Transfer to an organization</h5>
+			<p class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Transfer your personal probes, tokens and credits to an organization, or redirect future sponsorship credits.</p>
 		</div>
 		<div class="grow sm:w-3/5">
 			<p class="mb-2 font-bold max-sm:hidden">Probes, tokens and credits</p>
-			<Button severity="secondary" outlined label="Migrate to organization" :disabled="!orgs.length || !!auth.impersonation" @click="open"/>
+			<Button severity="secondary" outlined label="Transfer to an organization" :disabled="!orgs.length || !!auth.impersonation" @click="open"/>
 			<p v-if="!orgs.length" class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">
 				You must be an admin or a member of an organization to transfer resources.
 			</p>
 		</div>
 
-		<GPDialog v-model:visible="dialogVisible" header="Migrate to organization">
+		<GPDialog v-model:visible="dialogVisible" header="Transfer to an organization">
 			<div class="sm:w-[36rem]">
-				<label for="migrate-org" class="block font-bold">Organization</label>
+				<p class="mb-6 text-sm text-bluegray-500 dark:text-bluegray-300">Choose an organization, then select what to transfer. Each action below runs separately.</p>
+				<label for="migrate-org" class="block font-bold">Destination organization</label>
 				<Select
 					v-model="orgId"
 					input-id="migrate-org"
@@ -40,7 +41,9 @@
 				</Select>
 				<p class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Only organizations where you're an admin or a member are listed.</p>
 
-				<p class="mt-6 text-sm font-semibold">Transfers are permanent. A redirect can be cleared any time.</p>
+				<Message v-if="org" severity="warn" icon="pi pi-exclamation-triangle" class="mt-6">
+					Transfers of probes, tokens and credits cannot be undone. Sponsorship credit redirects can be removed at any time.
+				</Message>
 
 				<ul v-if="org" class="mt-4 divide-y dark:divide-dark-600">
 					<li v-for="row in ROWS" :key="row.action" class="py-4 first:pt-0 last:pb-0">
@@ -49,23 +52,23 @@
 								<p class="font-bold">{{ row.title }}</p>
 								<div class="mt-1 text-sm text-bluegray-500 dark:text-bluegray-300">
 									<template v-if="row.action === 'probes'">
-										<p>Move your personal probes and adoption token to <b>{{ org.name }}</b>. You get a new adoption token.</p>
+										<p>Move all your personal probes to <b>{{ org.name }}</b>. Your current adoption token moves with them, and your personal account gets a new token.</p>
 										<p v-if="account.personal.public_probes && org.public_probes" class="mt-1">
 											Their public tag changes from <Tag :class="TAG_CLASS" severity="secondary" :value="`u-${account.personal.tag_prefix}`"/>
 											to <Tag :class="TAG_CLASS" severity="secondary" :value="`u-${org.name}`"/>.
 										</p>
 										<p v-else-if="account.personal.public_probes" class="mt-1">
-											Their public tag <Tag :class="TAG_CLASS" severity="secondary" :value="`u-${account.personal.tag_prefix}`"/>
-											disappears until an admin of <b>{{ org.name }}</b> makes the organization probes public.
+											Their public tag <Tag :class="TAG_CLASS" severity="secondary" :value="`u-${account.personal.tag_prefix}`"/> is removed.
+											An organization admin can enable public probes to add <Tag :class="TAG_CLASS" severity="secondary" :value="`u-${org.name}`"/>.
 										</p>
 									</template>
-									<p v-else-if="row.action === 'tokens'">Move your personal API tokens and app approvals to <b>{{ org.name }}</b>. They spend its credits from then on.</p>
+									<p v-else-if="row.action === 'tokens'">Move your personal tokens and app approvals to <b>{{ org.name }}</b>. Measurements made with them will use the organization's credits.</p>
 									<template v-else-if="row.action === 'credits'">
-										<p>Move your personal balance, usage, sponsorship history and sponsor bonus to <b>{{ org.name }}</b>.</p>
-										<p v-if="redirectFromOrg" class="mt-1"><b>{{ org.name }}</b>'s sponsorship credits will still be added to your personal account. Clear the redirect below to keep them in <b>{{ org.name }}</b>.</p>
+										<p>Move your personal credit balance, usage history, sponsorship history and sponsor bonus to <b>{{ org.name }}</b>.</p>
+										<p v-if="redirectFromOrg" class="mt-1">Sponsorship credits for <b>{{ org.name }}</b> will continue going to your personal account. Remove the redirect below to keep future credits in <b>{{ org.name }}</b>.</p>
 									</template>
 									<template v-else>
-										<p>Move your future sponsorship credits to <b>{{ org.name }}</b> instead of your personal account.</p>
+										<p>Send future sponsorship credits to <b>{{ org.name }}</b> instead of your personal account.</p>
 									</template>
 								</div>
 							</div>
@@ -89,7 +92,7 @@
 
 						<div v-if="confirming === row.action" class="mt-3 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 max-sm:flex-wrap dark:border-red-500/30 dark:bg-red-500/10">
 							<span v-if="row.action === 'redirect'" class="grow break-words text-sm text-red-600 max-sm:w-full dark:text-red-300">
-								This removes
+								This will remove
 								<template v-for="(redirect, index) in redirects" :key="redirect.source.githubId">
 									<b>{{ redirect.source.name }} → {{ redirect.target.name }}</b>{{ index < redirects.length - 1 ? ', ' : '.' }}
 								</template>
@@ -130,7 +133,7 @@
 									<template v-if="clearing === redirect.source.githubId">
 										<Button
 											class="ml-auto shrink-0"
-											label="Clear"
+											label="Remove"
 											severity="danger"
 											size="small"
 											:loading="pending === 'clear'"
@@ -147,7 +150,7 @@
 									<Button
 										v-else
 										class="ml-auto shrink-0"
-										label="Clear"
+										label="Remove"
 										severity="secondary"
 										outlined
 										size="small"
@@ -177,8 +180,8 @@
 
 	const ROWS: { action: Action; title: string; button: string }[] = [
 		{ action: 'probes', title: 'Probes', button: 'Transfer probes' },
-		{ action: 'tokens', title: 'Tokens', button: 'Transfer tokens' },
-		{ action: 'credits', title: 'Credits', button: 'Transfer credits' },
+		{ action: 'tokens', title: 'Tokens and app approvals', button: 'Transfer tokens' },
+		{ action: 'credits', title: 'Credit balance and history', button: 'Transfer credits' },
 		{ action: 'redirect', title: 'Future sponsorship credits', button: 'Redirect credits' },
 	];
 
@@ -259,7 +262,7 @@
 
 			await refreshRedirects();
 			clearing.value = null;
-			sendToast('success', 'Cleared', 'The credits redirect was cleared');
+			sendToast('success', 'Redirect removed', `Removed the sponsorship credit redirect from ${source.name} to ${target.name}.`);
 		} catch (e) {
 			sendErrorToast(e);
 		}
@@ -269,7 +272,7 @@
 
 	// MIGRATION
 
-	const doneText = (action: Action) => action === 'redirect' ? redirectedToOrg.value && 'Redirected' : moved.value[action];
+	const doneText = (action: Action) => action === 'redirect' ? redirectedToOrg.value && 'Sponsorship credits redirected' : moved.value[action];
 
 	const count = (value = 0, noun: string) => `${formatNumber(value)} ${pluralize(noun, value)}`;
 
@@ -287,7 +290,7 @@
 		}));
 
 		await Promise.all([ refreshRedirects(), becameAdmin && auth.refresh() ]);
-		sendToast('success', 'Redirected', `Your sponsorship credits will be added to ${name}`);
+		sendToast('success', 'Redirect enabled', `Future sponsorship credits will be added to ${name}.`);
 	};
 
 	const transfer = async (action: Exclude<Action, 'redirect'>, { id, name }: { id: string; name: string }) => {
@@ -297,7 +300,7 @@
 			body: JSON.stringify({ orgId: id }),
 		}));
 
-		const text = `Moved ${describe[action](result)}`;
+		const text = `Transferred ${describe[action](result)}`;
 		moved.value[action] = text;
 		await auth.refresh();
 		sendToast('success', 'Transferred', `${text} to ${name}`);
@@ -307,7 +310,7 @@
 		const message = getErrorMessage(e);
 
 		return action === 'probes' && message.includes('no admin')
-			? `Only admins can move probes into ${org.value!.name} once it has an admin, so ask one to make you an admin.`
+			? `Only organization admins can transfer probes to ${org.value!.name}. Ask an existing admin to change your role.`
 			: message;
 	};
 

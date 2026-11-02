@@ -313,8 +313,10 @@
 	const extraAdoptionTokens = computed(() => account.current.extra_adoption_tokens);
 
 	const removeExtraAdoptionToken = async (removed: ExtraAdoptionToken) => {
-		await $directus.request(updateItem('gp_orgs', orgId, {
-			extra_adoption_tokens: extraAdoptionTokens.value.filter(({ token }) => token !== removed.token),
+		await $directus.request(customEndpoint({
+			method: 'DELETE',
+			path: '/transfer-data/adoption-token',
+			body: JSON.stringify({ accountId: account.current.id, token: removed.token }),
 		}));
 
 		await auth.refresh();

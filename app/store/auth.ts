@@ -1,6 +1,6 @@
 import { readItems, readMe, readRolesMe, deleteUser } from '@directus/sdk';
 import { defineStore } from 'pinia';
-import { readSessionActiveId, useAccount } from '~/store/account';
+import { clearImpersonationActiveId, readSessionActiveId, useAccount } from '~/store/account';
 import { useHardwareProbeAdoption } from '~/store/local-adoption';
 
 interface AuthState {
@@ -113,6 +113,7 @@ export const useAuth = defineStore('auth', {
 				last_page: this.user.last_page,
 			};
 
+			clearImpersonationActiveId();
 			this.storeAdminConfig();
 			window.location.reload();
 		},

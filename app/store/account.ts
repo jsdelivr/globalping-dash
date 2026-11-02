@@ -11,6 +11,8 @@ const readImpersonationActiveId = () => {
 	return userId === useAuth().user.id && accountId ? accountId : null;
 };
 
+export const clearImpersonationActiveId = () => sessionStorage.removeItem(IMPERSONATION_KEY);
+
 export const readSessionActiveId = async () => {
 	const { $directus } = useNuxtApp();
 	const { accountId } = await $directus.request<{ accountId: string }>(customEndpoint({ path: '/accounts/active' }));

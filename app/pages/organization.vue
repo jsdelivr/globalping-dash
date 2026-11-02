@@ -44,7 +44,7 @@
 						v-model:website="website"
 						v-model:description="description"
 						v-model:banner="banner"
-						:banner-id="org.banner"
+						:banner-id="org?.banner"
 						:disabled="!!auth.impersonation"
 						id-prefix="org"
 					/>
@@ -220,7 +220,7 @@
 
 	const orgId = account.current.org_id!;
 	const ownMembershipId = auth.user.memberships.find(({ org }) => org.id === orgId)?.id;
-	const org = computed(() => auth.user.memberships.find(membership => membership.org.id === orgId)!.org);
+	const org = computed(() => auth.user.memberships.find(membership => membership.org.id === orgId)?.org);
 
 	const roleRank = (role: Membership['role']) => ROLES.findIndex(({ value }) => value === role);
 	const roleLabel = (role: Membership['role']) => ROLES[roleRank(role)]?.label;
@@ -257,14 +257,14 @@
 
 	const adoptionToken = ref(account.current.adoption_token ?? '');
 	const publicProbes = ref(account.current.public_probes);
-	const website = ref(org.value.website ?? '');
-	const description = ref(org.value.description ?? '');
+	const website = ref(org.value?.website ?? '');
+	const description = ref(org.value?.description ?? '');
 	const banner = ref<BannerChange>();
-	const isSettingsDirty = computed(() => adoptionToken.value !== account.current.adoption_token
+	const isSettingsDirty = computed(() => !!org.value && (adoptionToken.value !== account.current.adoption_token
 		|| publicProbes.value !== account.current.public_probes
 		|| website.value !== (org.value.website ?? '')
 		|| description.value !== (org.value.description ?? '')
-		|| banner.value !== undefined);
+		|| banner.value !== undefined));
 
 	const resetFormDirty = useFormDirty(null, () => isSettingsDirty.value);
 
@@ -313,8 +313,10 @@
 	const extraAdoptionTokens = computed(() => account.current.extra_adoption_tokens);
 
 	const removeExtraAdoptionToken = async (removed: ExtraAdoptionToken) => {
-		await $directus.request(updateItem('gp_orgs', orgId, {
-			extra_adoption_tokens: extraAdoptionTokens.value.filter(({ token }) => token !== removed.token),
+		await $directus.request(customEndpoint({
+			method: 'DELETE',
+			path: '/transfer-data/adoption-token',
+			body: JSON.stringify({ accountId: account.current.id, token: removed.token }),
 		}));
 
 		await auth.refresh();

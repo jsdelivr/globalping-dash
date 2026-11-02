@@ -12,7 +12,7 @@
 			</NuxtLink>
 			<NuxtLink to="https://www.jsdelivr.com/" class="m-2 mr-auto text-xs text-bluegray-600 no-underline hover:underline">by jsDelivr</NuxtLink>
 
-			<div class="flex items-center max-lg:hidden">
+			<div class="flex min-w-0 items-center max-lg:hidden">
 				<NuxtLink v-if="!auth.adminMode && !auth.impersonation" class="ml-6 text-surface-0 no-underline hover:underline" to="https://www.jsdelivr.com/" target="_blank">
 					<i class="pi pi-external-link text-bluegray-300"/>
 					<span class="m-2">jsDelivr</span>
@@ -21,8 +21,7 @@
 					<i class="pi pi-external-link text-bluegray-300"/>
 					<span class="m-2">Globalping</span>
 				</NuxtLink>
-				<p v-if="account.current.org_role" class="mx-12">Organization role: <span v-tooltip.bottom="{ value: rolesHint, escape: false, class: 'max-w-md [&>[data-pc-section=text]]:leading-normal' }" class="cursor-help rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(account.current.org_role) }}</span></p>
-				<p v-else class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(account.current.user_type) }}</span></p>
+				<p class="mx-6 shrink-0 whitespace-nowrap">Account tier: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(account.current.user_type) }}</span></p>
 				<div v-if="auth.isAdmin" class="mr-2 flex items-center gap-2">
 					<Button
 						class="relative text-surface-0 hover:bg-transparent"
@@ -37,13 +36,13 @@
 						<span v-if="auth.impersonation" class="text-sm font-bold">Impersonating {{ auth.impersonation.github_username }}</span>
 					</Button>
 				</div>
-				<Button class="relative mr-8 text-surface-0 hover:bg-transparent" text rounded aria-label="Notifications" @click="toggleNotifications">
+				<Button class="relative mr-4 text-surface-0 hover:bg-transparent" text rounded aria-label="Notifications" @click="toggleNotifications">
 					<i class="pi pi-bell text-[1.3rem]"/>
 					<i v-if="inboxNotificationIds.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.4rem] text-primary"/>
 				</Button>
 				<Button class="flex items-center !px-2 text-surface-0 hover:bg-transparent" text rounded aria-label="Profile" @click="toggleProfile">
 					<i class="pi pi-user rounded-full border-1.5 border-surface-0 p-2" style="font-size: 1.1rem;"/>
-					<p class="font-semibold">{{ account.current.name }}<span v-if="account.current.org_id" class="ml-1 font-normal opacity-70">({{ account.personal.name }})</span></p>
+					<p class="max-w-48 truncate font-semibold xl:max-w-64">{{ account.current.name }}<span v-if="account.current.org_id" class="ml-1 font-normal opacity-70">({{ account.personal.name }})</span></p>
 					<i class="pi pi-chevron-down" style="font-size: .7rem;"/>
 				</Button>
 				<Menu ref="profilePanel" :model="items" popup @hide="accountsExpanded = false">
@@ -91,6 +90,8 @@
 							<span class="font-semibold">{{ account.current.name }}</span><span v-if="account.current.org_id" class="ml-1 font-normal opacity-70">({{ account.personal.name }})</span>
 						</div>
 					</template>
+
+					<p class="mb-2 px-4 text-sm">Account tier: <span class="font-semibold">{{ capitalize(account.current.user_type) }}</span></p>
 
 					<NuxtLink active-class="active" class="sidebar-link" to="/" @click="mobileSidebar = false"><i class="pi pi-home sidebar-link-icon"/>Overview</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" :class="{'active': $route.path.startsWith('/probes')}" to="/probes" @click="mobileSidebar = false"><NuxtIcon class="pi sidebar-link-icon" name="probe"/>Probes</NuxtLink>
@@ -322,11 +323,6 @@
 		{ role: 'viewer', description: 'Read-only: sees the organization\'s probes and credits. Can\'t create tokens or run measurements on globalping.io as the organization.' },
 	];
 
-	const rolesHint = computed(() => ROLE_DESCRIPTIONS.map(({ role, description }) => {
-		const isCurrent = role === account.current.org_role;
-		const title = `<strong class="${isCurrent ? 'text-primary' : ''}">${capitalize(role)}</strong>${isCurrent ? ' <span class="text-xs opacity-70">(your role)</span>' : ''}`;
-		return `<p class="mb-2 last:mb-0">${title}<br>${description}</p>`;
-	}).join(''));
 	const accountsExpanded = ref(false);
 
 	const accountOptions = computed(() => [

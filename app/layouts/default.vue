@@ -45,32 +45,38 @@
 					<p class="max-w-48 truncate font-semibold xl:max-w-64">{{ account.current.name }}<span v-if="account.current.org_id" class="ml-1 font-normal opacity-70">({{ account.personal.name }})</span></p>
 					<i class="pi pi-chevron-down" style="font-size: .7rem;"/>
 				</Button>
-				<Menu ref="profilePanel" :model="items" popup @hide="accountsExpanded = false">
-					<template #item="{ item, props }">
+				<TieredMenu
+					ref="profilePanel"
+					:model="items"
+					class="!left-auto !right-6"
+					:pt="{
+						itemContent: ({ context }) => ({ class: { 'bg-surface-200 dark:bg-dark-600': context.focused } }),
+						submenu: { class: '!left-auto !right-full w-max rounded-md max-w-[calc(100vw-100%-48px)]', 'aria-label': 'Switch account', 'aria-labelledby': undefined },
+					}"
+					:pt-options="{ mergeProps: true }"
+					auto-display
+					popup
+				>
+					<template #item="{ item, props, hasSubmenu }">
 						<router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
 							<a v-ripple :href="href" v-bind="props.action" @click="navigate">
 								<span :class="item.icon"/>
 								<span class="ml-2">{{ item.label }}</span>
 							</a>
 						</router-link>
-						<a v-else-if="item.toggle" v-ripple v-bind="props.action" @click.stop="accountsExpanded = !accountsExpanded">
-							<span :class="item.icon"/>
-							<span class="mx-2">{{ item.label }}</span>
-							<span class="pi pi-angle-down ml-auto text-xs transition-transform" :class="{ 'rotate-180': accountsExpanded }"/>
-						</a>
 						<a
 							v-else
 							v-ripple
 							:href="item.url"
 							:target="item.target"
-							v-bind="props.action"
-							:class="{ 'ps-9': item.nested }">
+							v-bind="props.action">
 							<span :class="[ item.icon, { 'text-primary': item.active } ]"/>
 							<span class="ml-2 min-w-0 grow truncate" :class="{ 'font-bold text-primary': item.active }" :title="typeof item.label === 'string' ? item.label : undefined">{{ item.label }}</span>
 							<Tag v-if="item.badge" v-tooltip.left="item.hint" class="ml-4 h-[21px] shrink-0 bg-neutral-100 !py-0 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="item.badge"/>
+							<i v-if="hasSubmenu" class="pi pi-angle-right ml-4 text-xs"/>
 						</a>
 					</template>
-				</Menu>
+				</TieredMenu>
 			</div>
 
 			<GPDialog v-model:visible="addOrgDialog" header="Add organization" size="large">
@@ -103,7 +109,7 @@
 					</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/settings" @click="mobileSidebar = false"><i class="pi pi-cog sidebar-link-icon"/>Settings</NuxtLink>
 					<div v-if="!auth.adminMode" class="my-2 flex flex-col border-y py-2">
-						<p class="px-4 py-2 text-sm font-bold text-bluegray-500">Act as organization</p>
+						<p class="px-4 py-2 text-sm font-bold text-bluegray-500">Switch account</p>
 						<button v-for="item in accountOptions" :key="item.key" class="sidebar-link" :class="{ 'font-bold !text-primary': item.active }" @click="item.command(); mobileSidebar = false">
 							<i class="sidebar-link-icon shrink-0" :class="[ item.icon, { '!text-primary': item.active } ]"/>
 							<span class="w-0 grow truncate text-left" :title="item.label">{{ item.label }}</span>
@@ -323,8 +329,6 @@
 		{ role: 'viewer', description: 'Read-only: sees the organization\'s probes and credits. Can\'t create tokens or run measurements on globalping.io as the organization.' },
 	];
 
-	const accountsExpanded = ref(false);
-
 	const accountOptions = computed(() => [
 		{
 			key: 'personal',
@@ -363,11 +367,10 @@
 		},
 		...auth.adminMode ? [] : [
 			{
-				label: 'Act as organization',
+				label: 'Switch account',
 				icon: 'pi pi-building',
-				toggle: true,
+				items: accountOptions.value,
 			},
-			...accountOptions.value.map(item => ({ ...item, visible: accountsExpanded.value, nested: true })),
 		],
 		{
 			separator: true,

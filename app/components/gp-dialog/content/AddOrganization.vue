@@ -1,5 +1,5 @@
 <template>
-	<p class="mb-4">The organizations you pick here appear in the "Act as organization" menu. Your organizations come from GitHub and are updated every time you sign in.</p>
+	<p class="mb-4">The organizations you pick here appear in the "Switch account" menu. Your organizations come from GitHub and are updated every time you sign in.</p>
 
 	<DataTable v-if="auth.user.memberships.length" :value="auth.user.memberships" data-key="id" class="mb-2">
 		<Column header="Organization">

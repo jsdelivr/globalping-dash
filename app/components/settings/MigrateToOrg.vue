@@ -26,9 +26,16 @@
 					:disabled="!!pending"
 					@change="reset"
 				>
+					<template #value="{ placeholder }">
+						<span v-if="org" class="flex items-center">
+							<span class="min-w-0 grow truncate">{{ org.name }}</span>
+							<Tag class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="capitalize(org.role)"/>
+						</span>
+						<template v-else>{{ placeholder }}</template>
+					</template>
 					<template #option="{ option }">
-						<span class="grow">{{ option.name }}</span>
-						<span class="ml-4 text-sm opacity-70">{{ capitalize(option.role) }}</span>
+						<span class="min-w-0 grow truncate">{{ option.name }}</span>
+						<Tag class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="capitalize(option.role)"/>
 					</template>
 				</Select>
 				<p class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">If the organization isn't in the list, add it through "Add organization" in the account menu first.</p>

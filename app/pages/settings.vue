@@ -75,14 +75,14 @@
 						class="mt-2 w-full"
 					>
 						<template #value="{ value }">
-							<span class="flex items-baseline">
-								<span class="grow">{{ optionOf(value)?.label }}</span>
-								<span class="ml-4 text-sm leading-none">{{ optionOf(value)?.role }}</span>
+							<span class="flex items-center">
+								<span class="min-w-0 grow truncate">{{ optionOf(value)?.label }}</span>
+								<Tag class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="optionOf(value)?.role"/>
 							</span>
 						</template>
 						<template #option="{ option }">
-							<span class="grow">{{ option.label }}</span>
-							<span class="ml-4 text-sm">{{ option.role }}</span>
+							<span class="min-w-0 grow truncate">{{ option.label }}</span>
+							<Tag class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="option.role"/>
 						</template>
 					</Select>
 				</template>
@@ -202,7 +202,18 @@
 						option-label="label"
 						option-value="value"
 						class="mb-6 mt-2 w-full"
-					/>
+					>
+						<template #value="{ value }">
+							<span class="flex items-center">
+								<span class="min-w-0 grow truncate">{{ optionOf(value)?.label }}</span>
+								<Tag class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="optionOf(value)?.role"/>
+							</span>
+						</template>
+						<template #option="{ option }">
+							<span class="min-w-0 grow truncate">{{ option.label }}</span>
+							<Tag class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="option.role"/>
+						</template>
+					</Select>
 				</template>
 				<div
 					v-for="(notificationType, notificationTypeId, index) in notificationTypes"
@@ -284,7 +295,6 @@
 
 <script setup lang="ts">
 	import { customEndpoint, updateItem, updateMe } from '@directus/sdk';
-	import capitalize from 'lodash/capitalize';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useFormDirty } from '~/composables/useFormDirty';
 	import { useAccount } from '~/store/account';
@@ -310,7 +320,7 @@
 	const account = useAccount();
 	const defaultAccountOptions = computed(() => [
 		{ label: account.personal.name, value: account.personal.id, role: 'Personal' },
-		...account.selectedOrgs.map(({ org, role }) => ({ label: org.name, value: org.account, role: capitalize(role) })),
+		...account.selectedOrgs.map(({ org, role }) => ({ label: org.name, value: org.account, role: `Organization ${role}` })),
 	]);
 	const optionOf = (value: string) => defaultAccountOptions.value.find(option => option.value === value);
 	const savedDefaultAccount = () => defaultAccountOptions.value.some(({ value }) => value === user.value.default_account) ? user.value.default_account : account.personal.id;
@@ -330,10 +340,8 @@
 	type EditablePreferences = Record<string, { enabled: boolean; emailEnabled?: boolean; parameter?: string }>;
 
 	const adminMemberships = computed(() => account.selectedOrgs.filter(({ role }) => role === 'admin'));
-	const notificationAccountOptions = computed(() => [
-		{ label: `${account.personal.name} (personal)`, value: account.personal.id },
-		...adminMemberships.value.map(({ org }) => ({ label: org.name, value: org.account })),
-	]);
+	const notificationAccountOptions = computed(() => defaultAccountOptions.value.filter(({ value }) => value === account.personal.id
+		|| adminMemberships.value.some(({ org }) => org.account === value)));
 	const notificationAccount = ref(account.canManageOrg ? account.current.id : account.personal.id);
 	const accountsNotificationPreferences = ref<Record<string, EditablePreferences>>({});
 	const notificationPreferences = computed(() => accountsNotificationPreferences.value[notificationAccount.value] ?? {});

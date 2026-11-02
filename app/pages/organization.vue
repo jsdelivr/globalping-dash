@@ -120,7 +120,7 @@
 		<h2 class="page-title mt-12">
 			Members <span v-if="members.length" class="font-normal text-bluegray-500 dark:text-bluegray-300">· {{ members.length }}</span>
 		</h2>
-		<p class="mt-4 xl:w-1/2">Role changes apply immediately. Admins manage the organization, members can use its credits, and viewers can only see it.</p>
+		<p class="mt-4">Role changes apply immediately.</p>
 		<DataTable
 			:value="members"
 			:loading="membersLoading"
@@ -137,7 +137,10 @@
 					</div>
 				</template>
 			</Column>
-			<Column header="Role" class="w-1/2">
+			<Column class="w-1/2">
+				<template #header>
+					Role <i v-tooltip.top="{ value: rolesHint, escape: false, class: 'max-w-md [&>[data-pc-section=text]]:leading-normal' }" class="pi pi-info-circle" aria-label="Organization roles"/>
+				</template>
 				<template #body="{ data }">
 					<span v-if="data.id === ownMembershipId" v-tooltip.top="'You can\'t change your own role'" class="inline-flex h-[2.125rem] items-center px-3">{{ roleLabel(data.role) }}</span>
 					<Select
@@ -200,11 +203,12 @@
 	};
 
 	const MEMBERS_PER_PAGE = 10;
-	const ROLES: { value: Membership['role']; label: string }[] = [
-		{ value: 'admin', label: 'Admin' },
-		{ value: 'member', label: 'Member' },
-		{ value: 'viewer', label: 'Viewer' },
+	const ROLES: { value: Membership['role']; label: string; description: string }[] = [
+		{ value: 'admin', label: 'Admin', description: 'Manages the organization\'s settings, adoption token, members and their roles. Adopts and edits its probes, gets its notifications and uses its credits.' },
+		{ value: 'member', label: 'Member', description: 'Sees the organization\'s probes and credits, and creates tokens and app approvals that spend its credits. Can\'t adopt or edit probes.' },
+		{ value: 'viewer', label: 'Viewer', description: 'Sees the organization\'s probes and credits. Can\'t create tokens or run measurements on globalping.io as the organization.' },
 	];
+	const rolesHint = ROLES.map(({ label, description }) => `<p class="mb-2 last:mb-0"><strong>${label}</strong><br>${description}</p>`).join('');
 
 	definePageMeta({
 		middleware: () => useAccount().canManageOrg ? undefined : navigateTo('/'),

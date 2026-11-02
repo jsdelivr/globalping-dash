@@ -382,6 +382,10 @@
 	const githubAdminNote = (member: OrgMember) => `If ${member.github_username} is an admin of the organization on GitHub, they'll become an admin again on their next sign-in.`;
 
 	const changeRole = (member: OrgMember, role: Membership['role']) => {
+		if (role === member.role) {
+			return;
+		}
+
 		if (role === 'viewer') {
 			roleSelectsRevision.value++;
 

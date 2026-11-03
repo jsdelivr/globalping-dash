@@ -403,7 +403,7 @@
 
 			confirm({
 				header: `Change ${member.github_username} to viewer?`,
-				message: [{ bold: member.github_username ?? '' }, ' will lose access to the organization credits. Their tokens and app approvals in this organization will be deleted. This can\'t be undone.' ],
+				message: [{ bold: member.github_username ?? '' }, ' will no longer be able to spend the organization\'s credits. Their tokens and app approvals in this organization will be deleted. This cannot be undone.' ],
 				note: member.role === 'admin' ? githubAdminNote(member) : undefined,
 				label: 'Change to viewer',
 				danger: true,

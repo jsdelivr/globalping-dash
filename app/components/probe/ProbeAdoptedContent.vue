@@ -4,7 +4,7 @@
 			<i class="pi pi-verified mr-2 text-green-600"/>
 			Congratulations!
 		</p>
-		<p class="mt-4">You are now the owner of the following {{ pluralize('probe', probes.length) }}:</p>
+		<p class="mt-4">{{ account.current.org_id ? `${account.current.name} is` : 'You are' }} now the owner of the following {{ pluralize('probe', probes.length) }}:</p>
 		<div v-for="probe in probes" :key="probe.id" class="mt-4">
 			<NuxtLink :to="`/probes/${probe.id}`">
 				<div class="rounded-xl border bg-surface-0 p-3 dark:border-dark-400 dark:bg-dark-800">
@@ -17,9 +17,9 @@
 
 	<div v-if="shouldDisplaySwitch" class="mt-4 rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
 		<ToggleSwitch v-model="publicProbes" :disabled="isLoading" :input-id="`public-probes-${getCurrentInstance()?.uid}`" @update:model-value="updatePublicProbes"/>
-		<label :for="`public-probes-${getCurrentInstance()?.uid}`" class="block cursor-pointer font-bold">Make your probes public</label>
+		<label :for="`public-probes-${getCurrentInstance()?.uid}`" class="block cursor-pointer font-bold">Make {{ account.owner }} probes public</label>
 		<p class="mt-3 text-xs">
-			When enabled, your probes are automatically tagged by
+			When enabled, {{ account.owner }} probes are automatically tagged by
 			<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${account.current.tag_prefix}`"/>,
 			allowing you to select them in measurements<template v-if="!account.current.org_id">,
 				and a list of your active probes is also available on your

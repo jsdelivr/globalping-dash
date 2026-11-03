@@ -126,10 +126,12 @@
 						<template v-if="row.action === 'redirect' && redirects.length">
 							<p class="mt-4 text-sm font-bold">Current redirects</p>
 							<ul aria-label="Current redirects" class="mt-2 flex flex-col gap-2">
-								<li v-for="redirect in redirects" :key="redirect.source.githubId" class="flex items-center gap-3 rounded-lg border bg-surface-50 px-4 py-2 dark:border-dark-600 dark:bg-dark-700">
-									<span class="min-w-0 break-words font-semibold">{{ redirect.source.name }}</span>
-									<i class="pi pi-arrow-right text-sm text-bluegray-400"/>
-									<span class="min-w-0 break-words font-semibold">{{ redirect.target.name }}</span>
+								<li v-for="redirect in redirects" :key="redirect.source.githubId" class="flex items-center gap-3 rounded-lg border bg-surface-50 px-4 py-2 max-sm:flex-wrap dark:border-dark-600 dark:bg-dark-700">
+									<span class="flex min-w-0 grow flex-wrap items-center gap-x-3 max-sm:w-full">
+										<span class="max-w-full break-words font-semibold">{{ redirect.source.name }}</span>
+										<i class="pi pi-arrow-right text-sm text-bluegray-400"/>
+										<span class="max-w-full break-words font-semibold">{{ redirect.target.name }}</span>
+									</span>
 									<template v-if="clearing === redirect.source.githubId">
 										<Button
 											class="ml-auto shrink-0"

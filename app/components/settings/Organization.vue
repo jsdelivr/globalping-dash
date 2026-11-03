@@ -63,9 +63,11 @@
 			</div>
 			<div class="grow sm:w-3/5">
 				<ul class="flex flex-col gap-2">
-					<li v-for="extraToken in extraAdoptionTokens" :key="extraToken.token" class="flex items-center gap-3 rounded-lg border bg-surface-50 px-4 py-3 dark:border-dark-600 dark:bg-dark-700">
-						<span class="min-w-0 truncate font-semibold" :title="extraToken.github_username">{{ extraToken.github_username }}</span>
-						<code class="text-sm text-bluegray-500 dark:text-bluegray-300">{{ maskToken(extraToken.token) }}</code>
+					<li v-for="extraToken in extraAdoptionTokens" :key="extraToken.token" class="flex items-center gap-3 rounded-lg border bg-surface-50 px-4 py-3 max-sm:flex-wrap dark:border-dark-600 dark:bg-dark-700">
+						<span class="flex min-w-0 grow flex-wrap items-center gap-x-3 max-sm:w-full">
+							<span class="max-w-full break-words font-semibold">{{ extraToken.github_username }}</span>
+							<code class="text-sm text-bluegray-500 dark:text-bluegray-300">{{ maskToken(extraToken.token) }}</code>
+						</span>
 						<Button
 							class="ml-auto shrink-0"
 							label="Remove"
@@ -93,10 +95,12 @@
 			</div>
 			<div class="grow sm:w-3/5">
 				<ul class="flex flex-col gap-2">
-					<li v-for="redirect in redirects" :key="redirect.source.githubId" class="flex items-center gap-3 rounded-lg border bg-surface-50 px-4 py-3 dark:border-dark-600 dark:bg-dark-700">
-						<span class="min-w-0 truncate font-semibold">{{ redirect.source.name }}</span>
-						<i class="pi pi-arrow-right text-sm text-bluegray-400"/>
-						<span class="min-w-0 truncate font-semibold">{{ redirect.target.name }}</span>
+					<li v-for="redirect in redirects" :key="redirect.source.githubId" class="flex items-center gap-3 rounded-lg border bg-surface-50 px-4 py-3 max-sm:flex-wrap dark:border-dark-600 dark:bg-dark-700">
+						<span class="flex min-w-0 grow flex-wrap items-center gap-x-3 max-sm:w-full">
+							<span class="max-w-full break-words font-semibold">{{ redirect.source.name }}</span>
+							<i class="pi pi-arrow-right text-sm text-bluegray-400"/>
+							<span class="max-w-full break-words font-semibold">{{ redirect.target.name }}</span>
+						</span>
 						<Button
 							class="ml-auto shrink-0"
 							label="Clear"

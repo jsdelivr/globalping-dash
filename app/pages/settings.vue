@@ -32,35 +32,6 @@
 					<InputText id="username" v-model="user.github_username" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 
-				<label for="organizations" class="mt-6 flex items-center font-bold">
-					Organizations <i v-tooltip.top="'You must either be a public member or your organization must allow access for the Globalping app to appear here.'" class="pi pi-info-circle ml-2"/>
-				</label>
-				<div class="relative mt-2">
-					<ReadOnlyAutoComplete
-						id="tags"
-						v-model="user.github_organizations"
-						:pt="{
-							inputMultiple: { class: 'pb-1 pr-48 min-h-10' },
-						}"
-					/>
-					<Button
-						severity="contrast"
-						size="small"
-						text
-						label="Sync from GitHub"
-						:icon="loadingIconId === 2 ? 'pi pi-sync pi-spin' : 'pi pi-sync'"
-						class="!absolute right-8 top-2 h-6 bg-transparent !px-1 hover:bg-transparent"
-						:disabled="!!auth.impersonation"
-						@click="syncFromGithub(2).then(() => showOrgsInfoMessage = true)"
-					/>
-					<i class="pi pi-lock absolute right-3 top-3 text-bluegray-500"/>
-				</div>
-
-				<Message v-if="showOrgsInfoMessage" severity="info" class="mt-2" icon="pi pi-info-circle">
-					If your organization is still missing, make sure you're either a public member, or the organization allows access for the
-					<NuxtLink to="https://github.com/settings/connections/applications/Ov23liiVFaDD1BIemPkx" class="hover:underline" target="_blank" rel="noopener">Globalping app</NuxtLink>.
-				</Message>
-
 				<template v-if="defaultAccountOptions.length > 1">
 					<label for="defaultAccount" class="mt-6 flex items-center font-bold">
 						Default account <i v-tooltip.top="'The account the dashboard opens in when you sign in. You can switch accounts any time from the account menu.'" class="pi pi-info-circle ml-2"/>
@@ -350,7 +321,6 @@
 	const notificationAccount = ref(account.canManageOrg ? account.current.id : account.personal.id);
 	const accountsNotificationPreferences = ref<Record<string, EditablePreferences>>({});
 	const notificationPreferences = computed(() => accountsNotificationPreferences.value[notificationAccount.value] ?? {});
-	const showOrgsInfoMessage = ref(false);
 	let initialNotificationPreferences: Record<string, string> = {};
 
 	const resetFormDirty = useFormDirty({
@@ -449,11 +419,9 @@
 
 			const response = await $directus.request(customEndpoint<{
 				github_username: string;
-				github_organizations: string[];
 			}>({ method: 'POST', path: '/sync-github-data', body: JSON.stringify({ userId: user.value.id }) }));
 
 			user.value.github_username = response.github_username;
-			user.value.github_organizations = response.github_organizations;
 
 			await auth.refresh();
 

@@ -45,17 +45,23 @@
 
 		<div v-if="auth.adminMode" class="flex size-9 items-stretch justify-between rounded-md border border-surface-300 text-bluegray-700 focus-within:border-primary hover:border-surface-400 dark:border-dark-600 dark:bg-dark-900 dark:text-dark-0 dark:hover:border-dark-400">
 			<Button
+				ref="adminOptsButtonRef"
 				class="relative hover:bg-white focus-visible:ring-primary dark:hover:bg-dark-900 dark:focus-visible:ring-primary"
 				severity="secondary"
 				size="small"
 				text
-				@click="adminOptsRef.toggle($event)">
+				aria-label="Admin filters"
+				aria-haspopup="dialog"
+				:aria-expanded="adminOptsRef?.visible ?? false"
+				@click="toggleAdminOpts">
 				<i class="pi pi-sliders-h"/>
 				<i v-if="anyAdminFilterApplied" class="pi pi-circle-fill absolute right-2 top-2 text-[0.4rem] text-primary"/>
 			</Button>
 
-			<Popover ref="adminOptsRef" class="w-fit gap-4 p-4 [&>*]:border-none" role="dialog">
-				<ProbeFiltersAdminOnly/>
+			<Popover ref="adminOptsRef" class="w-fit gap-4 p-4 [&>*]:border-none" role="dialog" aria-label="Admin filters">
+				<div ref="adminOptsContentRef" tabindex="-1" class="focus-visible:outline-none" @keydown.esc.capture="closeAdminOpts">
+					<ProbeFiltersAdminOnly/>
+				</div>
 			</Popover>
 		</div>
 	</div>
@@ -79,6 +85,27 @@
 	const filterDeps = computed(() => ({ ...filter.value }));
 
 	const adminOptsRef = ref();
+	const adminOptsButtonRef = ref();
+	const adminOptsContentRef = ref<HTMLElement>();
+
+	const toggleAdminOpts = (event: Event) => {
+		adminOptsRef.value.toggle(event);
+
+		nextTick(() => {
+			adminOptsContentRef.value?.focus();
+		});
+	};
+
+	// Select stops Escape from bubbling even when its list is closed, so the popover never sees it.
+	const closeAdminOpts = (event: KeyboardEvent) => {
+		if ((event.target as HTMLElement).getAttribute('aria-expanded') === 'true') {
+			return;
+		}
+
+		adminOptsRef.value.hide();
+		adminOptsButtonRef.value.$el.focus();
+	};
+
 	const STATUS_CODES = Object.keys(STATUS_MAP) as StatusCode[];
 
 	const { data: statusCounts, error: statusCountError } = await useLazyAsyncData(

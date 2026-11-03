@@ -18,9 +18,6 @@
 			<div ref="scrollContent"><slot/></div>
 		</ScrollPanel>
 		<slot v-else/>
-		<template v-if="$slots.footer" #footer>
-			<slot name="footer"/>
-		</template>
 	</Dialog>
 </template>
 

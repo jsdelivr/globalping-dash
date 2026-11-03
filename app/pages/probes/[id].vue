@@ -195,9 +195,7 @@
 
 	const probeAccountId = computed(() => probeDetails.value?.account_id);
 	provide(PROBE_ACCOUNT_KEY, probeAccountId);
-	const probeOwnerGithubId = computed(() => probeAccountId.value === account.personal.id
-		? account.personal.github_id
-		: auth.user.memberships.find(({ org }) => org.account === probeAccountId.value)?.org.github_id ?? '');
+	const probeOwnerGithubId = computed(() => account.findAccount(probeAccountId.value)?.github_id ?? '');
 	const { disabled: editingDisabled } = useProbeEditing(probeAccountId);
 
 	watch(probeDetailsError, (newError) => {

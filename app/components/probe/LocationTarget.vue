@@ -25,7 +25,7 @@
 		>
 			<div v-if="isProbePrivate && !syncingProbeData" class="flex max-w-80 flex-col gap-5">
 				<p>
-					To target this specific probe, it must be <strong>tagged by {{ account.current.name }}</strong>.
+					To target this specific probe, it must be <strong>tagged by {{ ownerTag }}</strong>.
 				</p>
 				<ProbeOwnerOnly v-slot="{ disabled }" class="flex">
 					<Button
@@ -50,7 +50,7 @@
 				<div class="flex items-center justify-between gap-3 font-bold">
 					Synchronizing <ProbeDotLoader/>
 				</div>
-				Waiting for the probes to be tagged by {{ account.current.name }}. This can take up to 1 minute.
+				Waiting for the probes to be tagged by {{ ownerTag }}. This can take up to 1 minute.
 			</div>
 			<div v-else class="flex max-w-72 flex-col gap-5">
 				<p>
@@ -91,6 +91,7 @@
 	);
 
 	const isProbePrivate = computed(() => probe.value?.systemTags.every(tag => !USERNAME_TAG_PATTERN.test(tag)));
+	const ownerTag = computed(() => account.findAccount(probe.value?.account_id)?.tag_prefix || 'its owner');
 	const shouldDisplayPopover = computed(() => (probe.value && isProbePrivate.value) || popoverRef.value?.visible);
 	const isTouchDevice = useMediaQuery('(hover: none)');
 

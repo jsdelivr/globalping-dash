@@ -29,6 +29,19 @@ const storeSessionActiveId = async (accountId: string) => {
 	}));
 };
 
+const toOrgAccount = ({ org: { id, account, name, github_id, user_type, public_probes, adoption_token, extra_adoption_tokens }, role }: Membership): Account => ({
+	id: account,
+	org_id: id,
+	name,
+	github_id,
+	user_type,
+	org_role: role,
+	public_probes,
+	tag_prefix: name,
+	adoption_token,
+	extra_adoption_tokens,
+});
+
 export const useAccount = defineStore('account', {
 	state: () => ({
 		activeId: null as string | null,
@@ -59,13 +72,17 @@ export const useAccount = defineStore('account', {
 		},
 		current (): Account {
 			const membership = this.selectedOrgs.find(({ org }) => org.account === this.activeId);
+			return membership ? toOrgAccount(membership) : this.personal;
+		},
+		findAccount (): (accountId: string | null | undefined) => Account | null {
+			return (accountId) => {
+				if (accountId === this.personal.id) {
+					return this.personal;
+				}
 
-			if (!membership) {
-				return this.personal;
-			}
-
-			const { org: { id, account, name, github_id, user_type, public_probes, adoption_token, extra_adoption_tokens }, role } = membership;
-			return { id: account, org_id: id, name, github_id, user_type, org_role: role, public_probes, tag_prefix: name, adoption_token, extra_adoption_tokens };
+				const membership = useAuth().user.memberships.find(({ org }) => org.account === accountId);
+				return membership ? toOrgAccount(membership) : null;
+			};
 		},
 		owner (): string {
 			return this.current.org_id ? this.current.name : 'your';

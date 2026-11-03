@@ -81,7 +81,7 @@
 								:severity="row.action === 'redirect' ? 'secondary' : 'danger'"
 								outlined
 								:loading="pending === row.action"
-								:disabled="!!pending || !!confirming"
+								:disabled="!!pending || !!confirming || (row.action === 'redirect' && redirectsStatus !== 'success')"
 								@click="row.action === 'redirect' && !redirects.length ? run(row.action) : confirming = row.action"
 							/>
 						</div>
@@ -235,7 +235,7 @@
 
 	// REDIRECTS
 
-	const { data: redirects, error: redirectsError, refresh: refreshRedirects } = useLazyAsyncData(
+	const { data: redirects, status: redirectsStatus, error: redirectsError, refresh: refreshRedirects } = useLazyAsyncData(
 		'settings-credits-redirect',
 		() => $directus.request<{ redirects: CreditsRedirect[] }>(customEndpoint({
 			method: 'GET',

@@ -328,14 +328,13 @@
 		lastName: user.value.last_name,
 		appearance: user.value.appearance,
 		email: user.value.email,
-		publicProbes: user.value.public_probes,
 		defaultPrefix: user.value.default_prefix,
 	}, (current) => {
 		return firstName.value !== current.firstName
 			|| lastName.value !== current.lastName
 			|| appearance.value !== current.appearance
 			|| email.value !== current.email
-			|| publicProbes.value !== current.publicProbes
+			|| publicProbes.value !== user.value.public_probes
 			|| defaultPrefix.value !== current.defaultPrefix
 			|| defaultAccount.value !== savedDefaultAccount()
 			|| adoptionToken.value !== user.value.adoption_token
@@ -345,6 +344,11 @@
 	// A probe transfer replaces the adoption token outside of this form.
 	watch(() => user.value.adoption_token, (token) => {
 		adoptionToken.value = token;
+	});
+
+	// The onboarding dialog can save public probes while this page is open.
+	watch(() => user.value.public_probes, (value) => {
+		publicProbes.value = value;
 	});
 
 	// The default account can also be set from the "Add organization" dialog.

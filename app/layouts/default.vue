@@ -254,7 +254,7 @@
 				<slot/>
 			</div>
 		</div>
-		<NavigationGuard/>
+		<NavigationGuard ref="navigationGuard"/>
 		<OnboardingDialog/>
 		<Popover
 			ref="adminPanel"
@@ -320,6 +320,14 @@
 	// PROFILE
 
 	const addOrgDialog = ref(false);
+	const navigationGuard = ref();
+
+	// The switch is saved before the reload, so unsaved changes must be confirmed first.
+	const switchAccount = async (accountId: string | null) => {
+		if (accountId !== account.activeId && await navigationGuard.value.confirmLeave()) {
+			await account.switchTo(accountId);
+		}
+	};
 
 	const accountOptions = computed(() => [
 		{
@@ -328,7 +336,7 @@
 			badge: 'Personal',
 			icon: 'pi pi-user',
 			active: !account.current.org_id,
-			command: () => account.switchTo(null).catch(sendErrorToast),
+			command: () => switchAccount(null).catch(sendErrorToast),
 		},
 		...account.selectedOrgs.map(membership => ({
 			key: membership.org.account,
@@ -336,7 +344,7 @@
 			badge: capitalize(membership.role),
 			icon: 'pi pi-building',
 			active: membership.org.account === account.current.id,
-			command: () => account.switchTo(membership.org.account).catch(sendErrorToast),
+			command: () => switchAccount(membership.org.account).catch(sendErrorToast),
 		})),
 		{
 			key: 'add',

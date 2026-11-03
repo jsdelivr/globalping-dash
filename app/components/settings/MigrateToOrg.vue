@@ -97,7 +97,7 @@
 									<b>{{ redirect.source.name }} → {{ redirect.target.name }}</b>{{ index < redirects.length - 1 ? ', ' : '.' }}
 								</template>
 							</span>
-							<span v-else class="grow text-sm font-bold text-red-600 max-sm:w-full dark:text-red-300">This can't be undone.</span>
+							<span v-else class="grow text-sm font-bold text-red-600 max-sm:w-full dark:text-red-300">This cannot be undone.</span>
 							<Button
 								v-focus
 								class="max-sm:flex-1"

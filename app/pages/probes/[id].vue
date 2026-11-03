@@ -139,7 +139,7 @@
 			header="Update a probe"
 			size="large"
 		>
-			<GpDialogContentUpdateProbe/>
+			<GpDialogContentUpdateProbe :account-id="probeAccountId ?? undefined"/>
 		</GPDialog>
 	</div>
 </template>

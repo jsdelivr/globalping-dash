@@ -275,7 +275,7 @@
 			header="Update a probe"
 			size="large"
 		>
-			<GpDialogContentUpdateProbe/>
+			<GpDialogContentUpdateProbe :account-id="route.query.account?.toString()"/>
 		</GPDialog>
 	</div>
 </template>

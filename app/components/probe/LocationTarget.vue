@@ -130,8 +130,8 @@
 			});
 	};
 
-	watch([ isProbePrivate, () => probe.value?.account_id === account.current.id && account.current.public_probes ], ([ isProbePrivate, ownProbeIsPublic ]) => {
-		if (isProbePrivate && ownProbeIsPublic) {
+	watch([ isProbePrivate, () => account.findAccount(probe.value?.account_id)?.public_probes ], ([ isProbePrivate, ownerProbesArePublic ]) => {
+		if (isProbePrivate && ownerProbesArePublic) {
 			syncingProbeData.value = true;
 			startRefreshingProbeData();
 		}

@@ -204,11 +204,11 @@ export const useAuth = defineStore('auth', {
 					this.applyAdminConfig();
 				}
 
-				// For Directus admin `adminOrgs` are not the impersonated user's orgs, so those are read by id.
-				if (this.impersonation) {
+				// For a Directus admin `adminOrgs` are all orgs, so the orgs of a Directus admin (or of the impersonated user) are read by id.
+				if (this.isAdmin) {
 					const adminOrgIds = this.user.memberships.filter(({ role }) => role === 'admin').map(({ org }) => org.id);
-					const impersonatedOrgs = adminOrgIds.length ? await $directus.request(readItems('gp_orgs', { filter: { id: { _in: adminOrgIds } } })) : [];
-					this.user.memberships = withOrgAdoptionTokens(this.user.memberships, impersonatedOrgs);
+					const userOrgs = adminOrgIds.length ? await $directus.request(readItems('gp_orgs', { filter: { id: { _in: adminOrgIds } } })) : [];
+					this.user.memberships = withOrgAdoptionTokens(this.user.memberships, userOrgs);
 				}
 
 				await useAccount().loadActiveAccount(sessionActiveId);

@@ -266,7 +266,8 @@
 		|| description.value !== (org.value.description ?? '')
 		|| banner.value !== undefined));
 
-	const resetFormDirty = useFormDirty(null, () => isSettingsDirty.value);
+	// The form is compared with the saved values, so it turns clean on its own after a save.
+	useFormDirty(null, () => isSettingsDirty.value);
 
 	const regenerating = ref(false);
 	const regenerateAdoptionToken = async () => {
@@ -284,6 +285,7 @@
 	const saveLoading = ref(false);
 	const saveSettings = async () => {
 		saveLoading.value = true;
+		const submittedBanner = banner.value;
 
 		const [ settingsResult, bannerResult ] = await Promise.allSettled([
 			$directus.request(updateItem('gp_orgs', orgId, {
@@ -293,12 +295,13 @@
 				// Adoption token values are generated on BE and stored there for a limited time, so the token is sent only when it changed.
 				...adoptionToken.value !== account.current.adoption_token ? { adoption_token: adoptionToken.value } : {},
 			})),
-			saveBanner($directus, orgId, banner.value),
+			saveBanner($directus, orgId, submittedBanner),
 		]);
 
 		await auth.refresh();
 
-		if (bannerResult.status === 'fulfilled') {
+		// A banner picked while saving stays staged.
+		if (bannerResult.status === 'fulfilled' && banner.value === submittedBanner) {
 			banner.value = undefined;
 		}
 
@@ -307,7 +310,6 @@
 		if (failed) {
 			sendErrorToast(failed.reason);
 		} else {
-			resetFormDirty();
 			sendToast('success', 'Saved', 'Organization settings saved');
 		}
 

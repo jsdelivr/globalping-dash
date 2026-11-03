@@ -76,7 +76,7 @@
 							outlined
 							:disabled="!!auth.impersonation"
 							@click="confirm({
-								header: 'Remove adoption token',
+								header: `Remove ${extraToken.github_username}'s adoption token?`,
 								message: [ 'Probes started with the adoption token of ', { bold: extraToken.github_username }, ' will no longer be adopted into the organization.' ],
 								label: 'Remove',
 								danger: true,
@@ -109,7 +109,7 @@
 							outlined
 							:disabled="!!auth.impersonation"
 							@click="confirm({
-								header: 'Clear credits redirect',
+								header: 'Clear the credits redirect?',
 								message: [ 'Sponsorship credits of ', { bold: redirect.source.name }, ' will no longer be added to ', { bold: redirect.target.name }, '.' ],
 								label: 'Clear redirect',
 								danger: true,
@@ -402,8 +402,8 @@
 			roleSelectsRevision.value++;
 
 			confirm({
-				header: 'Change role',
-				message: [{ bold: member.github_username ?? '' }, ' will no longer be able to spend the organization\'s credits. Their tokens and app approvals in this organization will be deleted. This cannot be undone.' ],
+				header: `Change ${member.github_username} to viewer?`,
+				message: [{ bold: member.github_username ?? '' }, ' will no longer be able to spend the organization\'s credits. Their tokens and app approvals in this organization will be deleted. This can\'t be undone.' ],
 				note: member.role === 'admin' ? githubAdminNote(member) : undefined,
 				label: 'Change to viewer',
 				danger: true,
@@ -417,7 +417,7 @@
 			roleSelectsRevision.value++;
 
 			confirm({
-				header: 'Change role',
+				header: `Change ${member.github_username} to member?`,
 				message: [ githubAdminNote(member) ],
 				label: 'Change to member',
 				action: () => updateRole(member, role),

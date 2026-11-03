@@ -103,7 +103,6 @@
 					<NuxtLink active-class="active" class="sidebar-link" :class="{'active': $route.path.startsWith('/probes')}" to="/probes" @click="mobileSidebar = false"><NuxtIcon class="pi sidebar-link-icon" name="probe"/>Probes</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/credits" @click="mobileSidebar = false"><NuxtIcon class="pi sidebar-link-icon" name="coin"/>Credits</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" to="/tokens" @click="mobileSidebar = false"><i class="pi pi-database sidebar-link-icon"/>Tokens</NuxtLink>
-					<NuxtLink v-if="account.canManageOrg" active-class="active" class="sidebar-link" to="/organization" @click="mobileSidebar = false"><i class="pi pi-building sidebar-link-icon"/>Organization</NuxtLink>
 					<NuxtLink v-if="auth.isAdmin && auth.adminMode" active-class="active" class="sidebar-link" to="/sponsors" @click="mobileSidebar = false">
 						<i class="pi pi-users sidebar-link-icon"/>Sponsors<i class="pi pi-shield ml-auto pr-4 text-xs text-bluegray-400" aria-hidden="true"/>
 					</NuxtLink>
@@ -238,7 +237,6 @@
 			<NuxtLink active-class="active" class="sidebar-link" :class="{'active': $route.path.startsWith('/probes')}" to="/probes"><NuxtIcon class="pi sidebar-link-icon" name="probe"/>Probes</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/credits"><NuxtIcon class="pi sidebar-link-icon" name="coin"/>Credits</NuxtLink>
 			<NuxtLink active-class="active" class="sidebar-link" to="/tokens"><i class="pi pi-database sidebar-link-icon"/>Tokens</NuxtLink>
-			<NuxtLink v-if="account.canManageOrg" active-class="active" class="sidebar-link" to="/organization"><i class="pi pi-building sidebar-link-icon"/>Organization</NuxtLink>
 			<NuxtLink v-if="auth.isAdmin && auth.adminMode" active-class="active" class="sidebar-link" to="/sponsors">
 				<i class="pi pi-users sidebar-link-icon"/>Sponsors<i class="pi pi-shield ml-auto pr-4 text-xs text-bluegray-400" aria-hidden="true"/>
 			</NuxtLink>

@@ -1,6 +1,6 @@
 <template>
 	<div class="min-h-full p-4 sm:p-6">
-		<h1 class="page-title">Organization</h1>
+		<h1 class="page-title">Organization settings</h1>
 
 		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5 sm:pr-6">
@@ -210,12 +210,8 @@
 	];
 	const rolesHint = ROLES.map(({ label, description }) => `<p class="mb-2 last:mb-0"><strong>${label}</strong><br>${description}</p>`).join('');
 
-	definePageMeta({
-		middleware: () => useAccount().canManageOrg ? undefined : navigateTo('/'),
-	});
-
 	useHead({
-		title: 'Organization -',
+		title: 'Organization settings -',
 	});
 
 	const { $directus } = useNuxtApp();

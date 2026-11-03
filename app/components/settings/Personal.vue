@@ -54,7 +54,7 @@
 						</template>
 						<template #option="{ option }">
 							<i class="mr-2 shrink-0" :class="option.icon" aria-hidden="true"/>
-							<span class="min-w-0 grow truncate">{{ option.label }}</span>
+							<span class="min-w-0 grow truncate leading-normal">{{ option.label }}</span>
 							<Tag class="ml-6 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="option.role"/>
 						</template>
 					</Select>
@@ -185,7 +185,7 @@
 						</template>
 						<template #option="{ option }">
 							<i class="mr-2 shrink-0" :class="option.icon" aria-hidden="true"/>
-							<span class="min-w-0 grow truncate">{{ option.label }}</span>
+							<span class="min-w-0 grow truncate leading-normal">{{ option.label }}</span>
 							<Tag class="ml-6 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="option.role"/>
 						</template>
 					</Select>

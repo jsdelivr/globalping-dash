@@ -14,7 +14,19 @@
 					option-label="name"
 					option-value="id"
 					aria-label="Account"
-					class="mt-2 w-full"/>
+					class="mt-2 w-full"
+				>
+					<template #value="{ value }">
+						<span class="flex items-center">
+							<i class="mr-2 shrink-0" :class="optionOf(value)?.icon" aria-hidden="true"/>
+							<span class="min-w-0 grow truncate">{{ optionOf(value)?.name }}</span>
+						</span>
+					</template>
+					<template #option="{ option }">
+						<i class="mr-2 shrink-0" :class="option.icon" aria-hidden="true"/>
+						<span class="min-w-0 grow truncate leading-normal">{{ option.name }}</span>
+					</template>
+				</Select>
 			</template>
 			<h3 v-else class="mt-8">to perform measurements under your <strong>{{ account.personal.name }}</strong> account.</h3>
 			<p class="mt-2 text-sm text-bluegray-500">Want to act as an organization? Add it under "Switch account" in the dashboard account menu, then select here.</p>
@@ -71,9 +83,10 @@
 	const config = useRuntimeConfig();
 
 	const accountOptions = [
-		account.personal,
-		...account.nonViewerOrgs.map(({ org }) => ({ id: org.account, name: org.name })),
+		{ id: account.personal.id, name: account.personal.name, icon: 'pi pi-user' },
+		...account.nonViewerOrgs.map(({ org }) => ({ id: org.account, name: org.name, icon: 'pi pi-building' })),
 	];
+	const optionOf = (id: string) => accountOptions.find(option => option.id === id);
 
 	const accountId = ref([ account.current.id, auth.user.default_account ].find(id => accountOptions.some(option => option.id === id)) ?? account.personal.id);
 

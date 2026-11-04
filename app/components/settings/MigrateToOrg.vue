@@ -15,7 +15,7 @@
 				placeholder="Select an organization"
 				class="mt-2 w-full"
 				:disabled="!orgs.length || !!auth.impersonation || !!pending"
-				@change="reset"
+				@change="changeOrg"
 			>
 				<template #value="{ placeholder }">
 					<span v-if="org" class="flex items-center">
@@ -161,11 +161,6 @@
 	const error = ref<{ action: Action; message: string } | null>(null);
 	const moved = ref<Partial<Record<Action, string>>>({});
 
-	const reset = () => {
-		error.value = null;
-		moved.value = {};
-	};
-
 	const focusById = async (id: string) => {
 		await nextTick();
 		document.getElementById(id)?.focus();
@@ -180,10 +175,16 @@
 			path: '/transfer-data/credits-redirect',
 			params: { accountId: account.personal.id },
 		})),
-		{ default: () => [], transform: ({ redirects }) => redirects },
+		{ default: () => [], transform: ({ redirects }) => redirects, immediate: false },
 	);
 
 	useErrorToast(redirectsError);
+
+	const changeOrg = () => {
+		error.value = null;
+		moved.value = {};
+		refreshRedirects();
+	};
 
 	const redirectedToOrg = computed(() => redirects.value.some(({ target }) => target.githubId === org.value?.github_id));
 	const redirectFromOrg = computed(() => redirects.value.some(({ source }) => source.githubId === org.value?.github_id));

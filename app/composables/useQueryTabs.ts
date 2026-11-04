@@ -44,7 +44,7 @@ export const useQueryTabs = (tabNames: MaybeRefOrGetter<string[]>, defaultTab: s
 		}
 
 		const { tab, ...rest } = route.query;
-		router.push({ query: { ...rest } });
+		router.replace({ query: { ...rest } });
 		selectedTab.value = defaultTab;
 	}, { immediate: true });
 

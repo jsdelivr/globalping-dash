@@ -1,8 +1,5 @@
 <template>
-	<div class="min-h-full p-4 sm:p-6">
-		<div>
-			<h1 class="page-title">Settings</h1>
-		</div>
+	<div>
 		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5">
 				<h5 class="text-lg font-bold">Account details</h5>
@@ -276,10 +273,6 @@
 	import { useAccount } from '~/store/account';
 	import { useAuth } from '~/store/auth';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
-
-	useHead({
-		title: 'Settings -',
-	});
 
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();

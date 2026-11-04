@@ -1,7 +1,5 @@
 <template>
-	<div class="min-h-full p-4 sm:p-6">
-		<h1 class="page-title">Organization settings</h1>
-
+	<div>
 		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5 sm:pr-6">
 				<h5 class="text-lg font-bold">General</h5>
@@ -213,10 +211,6 @@
 		{ value: 'viewer', label: 'Viewer', description: 'Sees the organization\'s probes and credits. Can\'t create tokens or run measurements on globalping.io as the organization.' },
 	];
 	const rolesHint = ROLES.map(({ label, description }) => `<p class="mb-2 last:mb-0"><strong>${label}</strong><br>${description}</p>`).join('');
-
-	useHead({
-		title: 'Organization settings -',
-	});
 
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();

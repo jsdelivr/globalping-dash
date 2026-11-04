@@ -364,38 +364,42 @@
 
 	const githubAdminNote = (member: OrgMember) => `If ${member.github_username} is an admin of the organization on GitHub, they'll become an admin again on their next sign-in.`;
 
+	const roleChangeConfirmation = (member: OrgMember, role: Membership['role']) => {
+		const name = { bold: member.github_username ?? '' };
+
+		if (role === 'viewer') {
+			return {
+				message: [ name, ' will no longer be able to spend the organization\'s credits. Their tokens and app approvals in this organization will be deleted. This can\'t be undone.' ],
+				note: member.role === 'admin' ? githubAdminNote(member) : undefined,
+			};
+		}
+
+		if (member.role === 'admin') {
+			return {
+				message: [ name, ' will no longer be able to manage the organization\'s settings, adoption token and members, adopt or edit its probes, or get its notifications.' ],
+				note: githubAdminNote(member),
+			};
+		}
+
+		if (role === 'admin') {
+			return { message: [ name, ' will be able to manage the organization\'s settings, adoption token, members and their roles, adopt and edit its probes, get its notifications and spend its credits.' ] };
+		}
+
+		return { message: [ name, ' will be able to create tokens and app approvals that spend the organization\'s credits.' ] };
+	};
+
 	const changeRole = (member: OrgMember, role: Membership['role']) => {
 		if (role === member.role) {
 			return;
 		}
 
-		if (role === 'viewer') {
-			roleSelectsRevision.value++;
+		roleSelectsRevision.value++;
 
-			confirmationDialog.value?.confirm({
-				header: `Change ${member.github_username} to viewer?`,
-				message: [{ bold: member.github_username ?? '' }, ' will no longer be able to spend the organization\'s credits. Their tokens and app approvals in this organization will be deleted. This can\'t be undone.' ],
-				note: member.role === 'admin' ? githubAdminNote(member) : undefined,
-				label: 'Change to viewer',
-				action: () => updateRole(member, role),
-			});
-
-			return;
-		}
-
-		if (member.role === 'admin') {
-			roleSelectsRevision.value++;
-
-			confirmationDialog.value?.confirm({
-				header: `Change ${member.github_username} to member?`,
-				message: [ githubAdminNote(member) ],
-				label: 'Change to member',
-				action: () => updateRole(member, role),
-			});
-
-			return;
-		}
-
-		updateRole(member, role).catch(sendErrorToast);
+		confirmationDialog.value?.confirm({
+			header: `Change ${member.github_username} to ${role}?`,
+			label: `Change to ${role}`,
+			action: () => updateRole(member, role),
+			...roleChangeConfirmation(member, role),
+		});
 	};
 </script>

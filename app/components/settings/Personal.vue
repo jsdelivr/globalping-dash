@@ -57,10 +57,10 @@
 					</Select>
 				</template>
 
-				<label for="userType" class="mt-6 block font-bold">User type</label>
+				<label for="accountTier" class="mt-6 block font-bold">Account tier</label>
 				<div class="relative mt-2">
 					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
-					<InputText id="userType" v-model="user.user_type" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
+					<InputText id="accountTier" :model-value="capitalize(user.user_type)" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
 				</div>
 
 				<label for="adoption-token" class="mt-6 flex items-center font-bold">

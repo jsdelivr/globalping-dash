@@ -147,8 +147,8 @@
 <script setup lang="ts">
 	import { readItem, aggregate } from '@directus/sdk';
 	import { useErrorToast } from '~/composables/useErrorToast';
-	import { useProbeDetailTabs } from '~/composables/useProbeDetailTabs';
 	import { PROBE_ACCOUNT_KEY, useProbeEditing } from '~/composables/useProbeEditing';
+	import { useQueryTabs } from '~/composables/useQueryTabs';
 	import { useAccount } from '~/store/account';
 	import { useAuth } from '~/store/auth';
 	import { formatNumber } from '~/utils/format-number';
@@ -166,27 +166,13 @@
 	const showMoreIps = ref(false);
 	const windowSize = useWindowSize();
 	const tabListRef = useTemplateRef('tabListRef');
-	const { activeTab, setActiveTab } = useProbeDetailTabs();
 	const probePageLink = ref('/probes');
 	const probeTabs = [
 		{ value: 'details', label: 'Details' },
 		{ value: 'logs', label: 'Logs' },
 		{ value: 'settings', label: 'Settings' },
 	];
-
-	const selectTab = (event: Event, value: string) => {
-		event.stopImmediatePropagation();
-		setActiveTab(value);
-	};
-
-	const selectTabWithKeyboard = (event: KeyboardEvent, value: string) => {
-		if (![ 'Enter', 'NumpadEnter', 'Space' ].includes(event.code)) {
-			return;
-		}
-
-		event.preventDefault();
-		selectTab(event, value);
-	};
+	const { activeTab, setActiveTab, selectTab, selectTabWithKeyboard } = useQueryTabs(probeTabs.map(({ value }) => value), 'details');
 
 	const { data: probeDetails, error: probeDetailsError } = await useAsyncData(
 		probeId,

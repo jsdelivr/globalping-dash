@@ -3,7 +3,10 @@ export const useQueryTabs = (tabNames: MaybeRefOrGetter<string[]>, defaultTab: s
 	const route = useRoute();
 	const router = useRouter();
 
-	const activeTab = ref(defaultTab);
+	const selectedTab = ref(defaultTab);
+
+	// A tab that is no longer available, e.g. after losing the org admin role, falls back to the default one.
+	const activeTab = computed(() => toValue(tabNames).includes(selectedTab.value) ? selectedTab.value : defaultTab);
 
 	const setActiveTab = (value: string) => {
 		if (!toValue(tabNames).includes(value) || value === activeTab.value) {
@@ -36,13 +39,13 @@ export const useQueryTabs = (tabNames: MaybeRefOrGetter<string[]>, defaultTab: s
 
 	watch(() => route.query.tab, (newTab) => {
 		if (typeof newTab === 'string' && toValue(tabNames).includes(newTab)) {
-			activeTab.value = newTab;
+			selectedTab.value = newTab;
 			return;
 		}
 
 		const { tab, ...rest } = route.query;
 		router.push({ query: { ...rest } });
-		activeTab.value = defaultTab;
+		selectedTab.value = defaultTab;
 	}, { immediate: true });
 
 	return { activeTab, setActiveTab, selectTab, selectTabWithKeyboard };

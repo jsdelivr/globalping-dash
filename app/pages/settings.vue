@@ -2,8 +2,8 @@
 	<div class="min-h-full p-4 sm:p-6">
 		<h1 class="page-title">Settings</h1>
 
-		<Tabs v-if="account.canManageOrg" :value="activeTab" lazy :show-navigators="false" class="mt-6">
-			<TabList class="!border-b !border-surface-300 dark:!border-dark-600 [&_[data-pc-section='tablist']]:!border-none">
+		<Tabs :value="activeTab" lazy :show-navigators="false">
+			<TabList v-if="account.canManageOrg" class="mt-6 !border-b !border-surface-300 dark:!border-dark-600 [&_[data-pc-section='tablist']]:!border-none">
 				<Tab
 					v-for="tab in TABS"
 					:key="tab.value"
@@ -22,13 +22,11 @@
 					<SettingsPersonal/>
 				</TabPanel>
 
-				<TabPanel value="organization" tabindex="-1">
+				<TabPanel v-if="account.canManageOrg" value="organization" tabindex="-1">
 					<SettingsOrganization/>
 				</TabPanel>
 			</TabPanels>
 		</Tabs>
-
-		<SettingsPersonal v-else/>
 	</div>
 </template>
 

@@ -5,7 +5,19 @@
 				<h5 class="text-lg font-bold">General</h5>
 			</div>
 			<div class="grow sm:w-3/5">
-				<label for="org-adoption-token" class="flex items-center font-bold">
+				<label for="org-username" class="block font-bold">Username</label>
+				<div class="relative mt-2">
+					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
+					<InputText id="org-username" :model-value="account.current.name" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
+				</div>
+
+				<label for="org-account-tier" class="mt-6 block font-bold">Account tier</label>
+				<div class="relative mt-2">
+					<i class="pi pi-lock absolute right-3 top-2.5 text-bluegray-500"/>
+					<InputText id="org-account-tier" :model-value="capitalize(account.current.user_type)" disabled class="pointer-events-auto w-full cursor-text select-auto bg-transparent pr-44 dark:bg-transparent"/>
+				</div>
+
+				<label for="org-adoption-token" class="mt-6 flex items-center font-bold">
 					Probe adoption token <i v-tooltip.top="'Allows adopting probes into the organization by setting the GP_ADOPTION_TOKEN environment variable.'" class="pi pi-info-circle ml-2"/>
 				</label>
 				<div class="relative mt-2">
@@ -24,6 +36,22 @@
 						<div class="absolute left-0 top-0 h-full w-[calc(100%-176px)] cursor-pointer"/>
 					</CopyOnClick>
 				</div>
+			</div>
+		</div>
+
+		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
+			<div class="max-sm:mb-4 sm:w-2/5 sm:pr-6">
+				<h5 class="text-lg font-bold">Public profile</h5>
+			</div>
+			<div class="grow sm:w-3/5">
+				<OrgProfileFields
+					v-model:website="website"
+					v-model:description="description"
+					v-model:banner="banner"
+					:banner-id="org?.banner"
+					:disabled="!!auth.impersonation"
+					id-prefix="org"
+				/>
 
 				<p class="mt-6 font-bold">Make the organization probes public</p>
 				<div class="mt-3 flex">
@@ -33,26 +61,19 @@
 					<label class="flex-1 cursor-text">
 						When enabled, the organization probes are automatically tagged by
 						<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${account.current.name}`"/>,
-						allowing you to select them in measurements.
+						allowing you to select them in measurements,
+						and a list of the organization's active probes is also available on its
+						<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${account.current.name}`" target="_blank" rel="noopener">user page</NuxtLink>.
 					</label>
-				</div>
-
-				<div class="mt-6">
-					<OrgProfileFields
-						v-model:website="website"
-						v-model:description="description"
-						v-model:banner="banner"
-						:banner-id="org?.banner"
-						:disabled="!!auth.impersonation"
-						id-prefix="org"
-					/>
-				</div>
-
-				<div class="mt-6 text-right">
-					<Button label="Apply settings" :loading="saveLoading" :disabled="!isSettingsDirty || !isValidWebsite(website) || !!auth.impersonation" @click="saveSettings"/>
 				</div>
 			</div>
 		</div>
+
+		<div class="mt-6 text-right">
+			<Button label="Apply settings" :loading="saveLoading" :disabled="!isSettingsDirty || !isValidWebsite(website) || !!auth.impersonation" @click="saveSettings"/>
+		</div>
+
+		<Divider class="!mb-0 !mt-6 before:!border-surface-300 before:dark:!border-dark-600"/>
 
 		<div v-if="extraAdoptionTokens.length" class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5 sm:pr-6">
@@ -119,50 +140,55 @@
 			</div>
 		</div>
 
-		<h2 class="page-title mt-12">
-			Members <span v-if="members.length" class="font-normal text-bluegray-500 dark:text-bluegray-300">· {{ members.length }}</span>
-		</h2>
-		<p class="mt-4">Role changes apply immediately.</p>
-		<DataTable
-			:value="members"
-			:loading="membersLoading"
-			:paginator="members.length > MEMBERS_PER_PAGE"
-			:rows="MEMBERS_PER_PAGE"
-			data-key="id"
-			class="mt-6"
-		>
-			<Column header="Member" class="max-w-0">
-				<template #body="{ data }">
-					<div class="flex min-w-0 items-center gap-1">
-						<span class="truncate font-semibold" :title="data.github_username">{{ data.github_username }}</span>
-						<span v-if="data.id === ownMembershipId" class="shrink-0 text-bluegray-500 dark:text-bluegray-300">(you)</span>
-					</div>
-				</template>
-			</Column>
-			<Column class="w-1/2">
-				<template #header>
-					Role <i v-tooltip.top="{ value: rolesHint, escape: false, class: 'max-w-md [&>[data-pc-section=text]]:leading-normal' }" class="pi pi-info-circle" aria-label="Organization roles"/>
-				</template>
-				<template #body="{ data }">
-					<span v-if="data.id === ownMembershipId" v-tooltip.top="'You can\'t change your own role'" class="inline-flex h-[2.125rem] items-center px-3">{{ roleLabel(data.role) }}</span>
-					<Select
-						v-else
-						:key="`${data.id}-${roleSelectsRevision}`"
-						:model-value="data.role"
-						:options="ROLES"
-						option-label="label"
-						option-value="value"
-						:disabled="!!auth.impersonation || updatingMemberId === data.id"
-						:aria-label="`Role of ${data.github_username}`"
-						class="w-32 sm:w-44"
-						@update:model-value="(role: Membership['role']) => changeRole(data, role)"
-					/>
-				</template>
-			</Column>
-			<template #empty>
-				<p>No members to show.</p>
-			</template>
-		</DataTable>
+		<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
+			<div class="max-sm:mb-4 sm:w-2/5 sm:pr-6">
+				<h5 class="text-lg font-bold">
+					Members <span v-if="members.length" class="font-normal text-bluegray-500 dark:text-bluegray-300">· {{ members.length }}</span>
+				</h5>
+				<p class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Role changes apply immediately.</p>
+			</div>
+			<div class="min-w-0 grow sm:w-3/5">
+				<DataTable
+					:value="members"
+					:loading="membersLoading"
+					:paginator="members.length > MEMBERS_PER_PAGE"
+					:rows="MEMBERS_PER_PAGE"
+					data-key="id"
+				>
+					<Column header="Member" class="max-w-0">
+						<template #body="{ data }">
+							<div class="flex min-w-0 items-center gap-1">
+								<span class="truncate font-semibold" :title="data.github_username">{{ data.github_username }}</span>
+								<span v-if="data.id === ownMembershipId" class="shrink-0 text-bluegray-500 dark:text-bluegray-300">(you)</span>
+							</div>
+						</template>
+					</Column>
+					<Column class="w-1/2">
+						<template #header>
+							Role <i v-tooltip.top="{ value: rolesHint, escape: false, class: 'max-w-md [&>[data-pc-section=text]]:leading-normal' }" class="pi pi-info-circle" aria-label="Organization roles"/>
+						</template>
+						<template #body="{ data }">
+							<span v-if="data.id === ownMembershipId" v-tooltip.top="'You can\'t change your own role'" class="inline-flex h-[2.125rem] items-center px-3">{{ roleLabel(data.role) }}</span>
+							<Select
+								v-else
+								:key="`${data.id}-${roleSelectsRevision}`"
+								:model-value="data.role"
+								:options="ROLES"
+								option-label="label"
+								option-value="value"
+								:disabled="!!auth.impersonation || updatingMemberId === data.id"
+								:aria-label="`Role of ${data.github_username}`"
+								class="w-32 sm:w-44"
+								@update:model-value="(role: Membership['role']) => changeRole(data, role)"
+							/>
+						</template>
+					</Column>
+					<template #empty>
+						<p>No members to show.</p>
+					</template>
+				</DataTable>
+			</div>
+		</div>
 
 		<GPDialog v-model:visible="confirmationVisible" :header="confirmation?.header">
 			<div class="flex items-start gap-4">
@@ -187,6 +213,7 @@
 
 <script setup lang="ts">
 	import { customEndpoint, readItems, updateItem } from '@directus/sdk';
+	import capitalize from 'lodash/capitalize';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useFormDirty } from '~/composables/useFormDirty';
 	import { useAccount } from '~/store/account';

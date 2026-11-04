@@ -76,7 +76,6 @@
 	import { usePagination } from '~/composables/pagination';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useNotifications } from '~/composables/useNotifications';
-	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
 	import { formatNumber } from '~/utils/format-number';
@@ -87,9 +86,8 @@
 	const { $directus } = useNuxtApp();
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
-	const { inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead } = useNotifications();
+	const { getNotificationsFilter, inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead } = useNotifications();
 	const notificationBus = useEventBus<string[]>('notification-updated');
-	const { getUserFilter } = useUserFilter();
 
 	const { data: notifications, error: notificationError } = await useLazyAsyncData(
 		'directus_notifications_page',
@@ -97,7 +95,7 @@
 			format: 'html',
 			limit: itemsPerPage.value,
 			offset: first.value,
-			filter: getUserFilter('recipient'),
+			filter: getNotificationsFilter(),
 			sort: [ '-timestamp' ],
 		})),
 		{ default: () => [], watch: [ first, itemsPerPage ] },
@@ -106,7 +104,7 @@
 	const { data: notificationsCount, error: notificationCountError } = await useLazyAsyncData(
 		'directus_notifications_cnt',
 		() => $directus.request<{ count: { id: number } }[]>(readNotifications({
-			filter: getUserFilter('recipient'),
+			filter: getNotificationsFilter(),
 			aggregate: {
 				count: [ 'id' ],
 			},

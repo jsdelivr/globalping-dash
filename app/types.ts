@@ -290,6 +290,7 @@ declare global {
 		timestamp: string;
 		status: 'inbox' | 'archived';
 		recipient: string;
+		account_id: string | null;
 		sender: string | null;
 		subject: string;
 		message: string;

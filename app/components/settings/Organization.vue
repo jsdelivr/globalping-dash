@@ -94,11 +94,10 @@
 							severity="secondary"
 							outlined
 							:disabled="!!auth.impersonation"
-							@click="confirm({
+							@click="confirmationDialog?.confirm({
 								header: `Remove ${extraToken.github_username}'s adoption token?`,
 								message: [ 'Probes started with the adoption token of ', { bold: extraToken.github_username }, ' will no longer be adopted into the organization.' ],
 								label: 'Remove',
-								danger: true,
 								action: () => removeExtraAdoptionToken(extraToken),
 							})"
 						/>
@@ -127,11 +126,10 @@
 							severity="secondary"
 							outlined
 							:disabled="!!auth.impersonation"
-							@click="confirm({
+							@click="confirmationDialog?.confirm({
 								header: 'Clear the credits redirect?',
 								message: [ 'Sponsorship credits of ', { bold: redirect.source.name }, ' will no longer be added to ', { bold: redirect.target.name }, '.' ],
 								label: 'Clear redirect',
-								danger: true,
 								action: () => clearRedirect(redirect),
 							})"
 						/>
@@ -190,24 +188,7 @@
 			</div>
 		</div>
 
-		<GPDialog v-model:visible="confirmationVisible" :header="confirmation?.header">
-			<div class="flex items-start gap-4">
-				<i class="pi pi-exclamation-triangle mt-0.5 text-xl" :class="confirmation?.danger ? 'text-red-500 dark:text-red-400' : 'text-primary'"/>
-				<div>
-					<p>
-						<template v-for="(part, index) in confirmation?.message" :key="index">
-							<span v-if="typeof part === 'string'">{{ part }}</span>
-							<span v-else class="font-bold">{{ part.bold }}</span>
-						</template>
-					</p>
-					<p v-if="confirmation?.note" class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">{{ confirmation.note }}</p>
-				</div>
-			</div>
-			<div class="mt-6 text-right">
-				<Button class="mr-2" label="Cancel" severity="secondary" text @click="confirmationVisible = false"/>
-				<Button :label="confirmation?.label" :severity="confirmation?.danger ? 'danger' : undefined" :loading="confirming" @click="runConfirmation"/>
-			</div>
-		</GPDialog>
+		<SettingsConfirmationDialog ref="confirmationDialog"/>
 	</div>
 </template>
 
@@ -222,14 +203,6 @@
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	type OrgMember = { id: string; role: Membership['role']; github_username: string | null };
-	type Confirmation = {
-		header: string;
-		message: (string | { bold: string })[];
-		note?: string;
-		label: string;
-		danger?: boolean;
-		action: () => Promise<void> | void;
-	};
 
 	const MEMBERS_PER_PAGE = 10;
 	const ROLES: { value: Membership['role']; label: string; description: string }[] = [
@@ -246,34 +219,11 @@
 	const orgId = account.current.org_id!;
 	const ownMembershipId = auth.user.memberships.find(({ org }) => org.id === orgId)?.id;
 	const org = computed(() => auth.user.memberships.find(membership => membership.org.id === orgId)?.org);
+	const confirmationDialog = useTemplateRef('confirmationDialog');
 
 	const roleRank = (role: Membership['role']) => ROLES.findIndex(({ value }) => value === role);
 	const roleLabel = (role: Membership['role']) => ROLES[roleRank(role)]?.label;
 	const maskToken = (token: string) => `${token.slice(0, 6)}••••${token.slice(-4)}`;
-
-	// CONFIRMATION
-
-	const confirmation = ref<Confirmation | null>(null);
-	const confirmationVisible = ref(false);
-	const confirming = ref(false);
-
-	const confirm = (value: Confirmation) => {
-		confirmation.value = value;
-		confirmationVisible.value = true;
-	};
-
-	const runConfirmation = async () => {
-		confirming.value = true;
-
-		try {
-			await confirmation.value?.action();
-			confirmationVisible.value = false;
-		} catch (e) {
-			sendErrorToast(e);
-		}
-
-		confirming.value = false;
-	};
 
 	// Selects are re-created by bumping their key, which resets them to the member's saved role.
 	const roleSelectsRevision = ref(0);
@@ -422,12 +372,11 @@
 		if (role === 'viewer') {
 			roleSelectsRevision.value++;
 
-			confirm({
+			confirmationDialog.value?.confirm({
 				header: `Change ${member.github_username} to viewer?`,
 				message: [{ bold: member.github_username ?? '' }, ' will no longer be able to spend the organization\'s credits. Their tokens and app approvals in this organization will be deleted. This can\'t be undone.' ],
 				note: member.role === 'admin' ? githubAdminNote(member) : undefined,
 				label: 'Change to viewer',
-				danger: true,
 				action: () => updateRole(member, role),
 			});
 
@@ -437,7 +386,7 @@
 		if (member.role === 'admin') {
 			roleSelectsRevision.value++;
 
-			confirm({
+			confirmationDialog.value?.confirm({
 				header: `Change ${member.github_username} to member?`,
 				message: [ githubAdminNote(member) ],
 				label: 'Change to member',

@@ -81,20 +81,16 @@
 
 	const auth = useAuth();
 	const route = useRoute();
-	const showLocalLogin = computed(() => route.query['sign-in'] === undefined
-		? [ 'localhost', '127.0.0.1', '[::1]' ].includes(location.hostname)
-		: route.query['sign-in'] === 'directus');
-	let redirectHasCreditsView = false;
-	let redirectHasProbeView = false;
 
 	const redirect = Array.isArray(route.query.redirect) ? route.query.redirect[0] : route.query.redirect;
+	const redirectParams = redirect ? new URL(redirect).searchParams : new URLSearchParams();
 
-	if (redirect) {
-		const redirectUrl = new URL(redirect);
-		redirectHasCreditsView = redirectUrl.searchParams.get('view') === 'add-credits';
-		redirectHasProbeView = redirectUrl.searchParams.get('view') === 'start-a-probe';
-	}
+	// A sign-in on the login URL itself wins over one inside the redirect.
+	const signIn = route.query['sign-in'] === undefined ? redirectParams.get('sign-in') ?? undefined : route.query['sign-in'];
+	const showLocalLogin = signIn === undefined
+		? [ 'localhost', '127.0.0.1', '[::1]' ].includes(location.hostname)
+		: signIn === 'directus';
 
-	const addCreditsDialog = ref(route.query.view === 'add-credits' || redirectHasCreditsView);
-	const startAProbeDialog = ref(route.query.view === 'start-a-probe' || redirectHasProbeView);
+	const addCreditsDialog = ref(route.query.view === 'add-credits' || redirectParams.get('view') === 'add-credits');
+	const startAProbeDialog = ref(route.query.view === 'start-a-probe' || redirectParams.get('view') === 'start-a-probe');
 </script>

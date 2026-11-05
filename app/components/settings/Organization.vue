@@ -163,7 +163,7 @@
 					</Column>
 					<Column class="w-1/2">
 						<template #header>
-							Role <i v-tooltip.top="{ value: rolesHint, escape: false, class: 'max-w-md [&>[data-pc-section=text]]:leading-normal' }" class="pi pi-info-circle" aria-label="Organization roles"/>
+							Role <i v-tooltip.top="{ value: rolesHint, escape: false, class: 'max-w-md max-sm:!left-4 max-sm:max-w-[calc(100vw-32px)] max-sm:[&>[data-pc-section=arrow]]:hidden [&>[data-pc-section=text]]:leading-normal' }" class="pi pi-info-circle" aria-label="Organization roles"/>
 						</template>
 						<template #body="{ data }">
 							<span v-if="data.id === ownMembershipId" v-tooltip.top="'You can\'t change your own role'" class="inline-flex h-[2.125rem] items-center px-3">{{ roleLabel(data.role) }}</span>

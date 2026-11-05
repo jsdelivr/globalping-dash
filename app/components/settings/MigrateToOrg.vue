@@ -20,13 +20,13 @@
 				<template #value="{ placeholder }">
 					<span v-if="org" class="flex items-center">
 						<span class="min-w-0 grow truncate">{{ org.name }}</span>
-						<Tag class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="capitalize(org.role)"/>
+						<Tag class="ml-4 shrink-0 border-transparent bg-surface-100 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="capitalize(org.role)"/>
 					</span>
 					<template v-else>{{ placeholder }}</template>
 				</template>
 				<template #option="{ option }">
 					<span class="min-w-0 grow truncate leading-normal">{{ option.name }}</span>
-					<Tag class="ml-4 shrink-0 bg-neutral-100 font-normal text-neutral-700 dark:bg-neutral-500/20 dark:text-neutral-300" severity="secondary" :value="capitalize(option.role)"/>
+					<Tag class="ml-4 shrink-0 border-transparent bg-surface-100 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="capitalize(option.role)"/>
 				</template>
 			</Select>
 			<p v-if="orgs.length" class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Only organizations where you're an admin or a member are listed.</p>

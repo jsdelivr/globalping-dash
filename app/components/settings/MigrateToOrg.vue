@@ -88,33 +88,34 @@
 						class="mt-3">
 						{{ error.message }}
 					</Message>
-
-					<template v-if="row.action === 'redirect' && redirects.length">
-						<p class="mt-4 text-sm font-bold">Current redirects</p>
-						<ul aria-label="Current redirects" class="mt-2 flex flex-col gap-2">
-							<li v-for="redirect in redirects" :key="redirect.source.githubId" class="flex items-center gap-3 rounded-lg border bg-surface-50 px-4 py-2 max-sm:flex-wrap dark:border-dark-600 dark:bg-dark-700">
-								<span class="flex min-w-0 grow flex-wrap items-center gap-x-3 max-sm:w-full">
-									<span class="max-w-full break-words font-semibold">{{ redirect.source.name }}</span>
-									<i class="pi pi-arrow-right text-sm text-bluegray-400"/>
-									<span class="max-w-full break-words font-semibold">{{ redirect.target.name }}</span>
-								</span>
-								<Button
-									class="ml-auto shrink-0"
-									label="Remove"
-									severity="secondary"
-									outlined
-									size="small"
-									@click="confirmationDialog?.confirm({
-										header: 'Remove the credits redirect?',
-										message: [ 'Sponsorship credits of ', { bold: redirect.source.name }, ' will no longer be added to ', { bold: redirect.target.name }, '.' ],
-										label: 'Remove',
-										action: () => clearRedirect(redirect),
-									})"/>
-							</li>
-						</ul>
-					</template>
 				</li>
 			</ul>
+
+			<template v-if="redirects.length">
+				<p class="mt-4 text-sm font-bold">Current redirects</p>
+				<ul aria-label="Current redirects" class="mt-2 flex flex-col gap-2">
+					<li v-for="redirect in redirects" :key="redirect.source.githubId" class="flex items-center gap-3 rounded-lg border bg-surface-50 px-4 py-2 max-sm:flex-wrap dark:border-dark-600 dark:bg-dark-700">
+						<span class="flex min-w-0 grow flex-wrap items-center gap-x-3 max-sm:w-full">
+							<span class="max-w-full break-words font-semibold">{{ redirect.source.name }}</span>
+							<i class="pi pi-arrow-right text-sm text-bluegray-400"/>
+							<span class="max-w-full break-words font-semibold">{{ redirect.target.name }}</span>
+						</span>
+						<Button
+							class="ml-auto shrink-0"
+							label="Remove"
+							severity="secondary"
+							outlined
+							size="small"
+							:disabled="!!auth.impersonation"
+							@click="confirmationDialog?.confirm({
+								header: 'Remove the credits redirect?',
+								message: [ 'Sponsorship credits of ', { bold: redirect.source.name }, ' will no longer be added to ', { bold: redirect.target.name }, '.' ],
+								label: 'Remove',
+								action: () => clearRedirect(redirect),
+							})"/>
+					</li>
+				</ul>
+			</template>
 		</div>
 
 		<SettingsConfirmationDialog ref="confirmationDialog"/>
@@ -175,7 +176,8 @@
 			path: '/transfer-data/credits-redirect',
 			params: { accountId: account.personal.id },
 		})),
-		{ default: () => [], transform: ({ redirects }) => redirects, immediate: false },
+		// Signing out on the Organization tab mounts this tab without an account.
+		{ default: () => [], transform: ({ redirects }) => redirects, immediate: auth.isLoggedIn },
 	);
 
 	useErrorToast(redirectsError);
@@ -183,7 +185,6 @@
 	const changeOrg = () => {
 		error.value = null;
 		moved.value = {};
-		refreshRedirects();
 	};
 
 	const redirectedToOrg = computed(() => redirects.value.some(({ target }) => target.githubId === org.value?.github_id));

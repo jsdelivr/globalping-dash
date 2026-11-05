@@ -1,5 +1,5 @@
 <template>
-	<GPDialog v-model:visible="visible" :header="confirmation?.header" class="sm:min-w-[32rem]">
+	<GPDialog v-model:visible="visible" :header="confirmation?.header" class="sm:min-w-[32rem]" @after-hide="confirmation?.afterHide?.()">
 		<div class="flex items-start gap-4">
 			<i class="pi pi-exclamation-triangle mt-0.5 text-xl text-red-500 dark:text-red-400"/>
 			<div>
@@ -28,6 +28,7 @@
 		note?: string;
 		label: string;
 		action: () => Promise<void>;
+		afterHide?: () => void;
 	};
 
 	const confirmation = ref<Confirmation | null>(null);

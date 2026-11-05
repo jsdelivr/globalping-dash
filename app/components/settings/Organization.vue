@@ -170,6 +170,7 @@
 							<Select
 								v-else
 								:key="`${data.id}-${roleSelectsRevision}`"
+								:input-id="`member-role-${data.id}`"
 								:model-value="data.role"
 								:options="ROLES"
 								option-label="label"
@@ -388,6 +389,12 @@
 		return { message: [ name, ' will be able to create tokens and app approvals that spend the organization\'s credits.' ] };
 	};
 
+	// The pick re-creates the role select, so the dialog can't return the focus to it on its own.
+	const focusRoleSelect = async ({ id }: OrgMember) => {
+		await nextTick();
+		document.getElementById(`member-role-${id}`)?.focus();
+	};
+
 	const changeRole = (member: OrgMember, role: Membership['role']) => {
 		if (role === member.role) {
 			return;
@@ -399,6 +406,7 @@
 			header: `Change ${member.github_username} to ${role}?`,
 			label: `Change to ${role}`,
 			action: () => updateRole(member, role),
+			afterHide: () => focusRoleSelect(member),
 			...roleChangeConfirmation(member, role),
 		});
 	};

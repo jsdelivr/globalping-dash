@@ -268,6 +268,7 @@
 <script setup lang="ts">
 	import { customEndpoint, updateItem, updateMe } from '@directus/sdk';
 	import capitalize from 'lodash/capitalize';
+	import pick from 'lodash/pick';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useFormDirty } from '~/composables/useFormDirty';
 	import { useAccount } from '~/store/account';
@@ -478,6 +479,18 @@
 			initialNotificationPreferences[accountId] = JSON.stringify(normalizeNotificationPreferences(accountId));
 		}
 	}, { immediate: true });
+
+	// An org removed from the selected ones can't be saved anymore, so its unsaved changes are dropped,
+	// and if it was picked, the picker falls back to the personal account.
+	watch(notificationAccountOptions, (options) => {
+		const accountIds = options.map(({ value }) => value);
+		accountsNotificationPreferences.value = pick(accountsNotificationPreferences.value, accountIds);
+		initialNotificationPreferences = pick(initialNotificationPreferences, accountIds);
+
+		if (!accountIds.includes(notificationAccount.value)) {
+			notificationAccount.value = account.personal.id;
+		}
+	});
 
 	// This builds an object to send to the backend.
 	function normalizeNotificationPreferences (accountId: string) {

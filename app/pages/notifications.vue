@@ -60,6 +60,7 @@
 		<p v-else class="p-4 text-lg font-bold leading-5">No notifications at the moment.</p>
 
 		<Paginator
+			v-if="notifications.length"
 			class="mt-6"
 			:first="first"
 			:rows="itemsPerPage"
@@ -76,28 +77,27 @@
 	import { usePagination } from '~/composables/pagination';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useNotifications } from '~/composables/useNotifications';
-	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
 	import { formatNumber } from '~/utils/format-number';
 
 	const auth = useAuth();
 	const route = useRoute();
+	const router = useRouter();
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
-	const { inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead } = useNotifications();
+	const { getNotificationsFilter, inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead } = useNotifications();
 	const notificationBus = useEventBus<string[]>('notification-updated');
-	const { getUserFilter } = useUserFilter();
 
-	const { data: notifications, error: notificationError } = await useLazyAsyncData(
+	const { data: notifications, status: notificationsStatus, error: notificationError } = await useLazyAsyncData(
 		'directus_notifications_page',
 		() => $directus.request<DirectusNotification[]>(readNotifications({
 			format: 'html',
 			limit: itemsPerPage.value,
 			offset: first.value,
-			filter: getUserFilter('recipient'),
+			filter: getNotificationsFilter(),
 			sort: [ '-timestamp' ],
 		})),
 		{ default: () => [], watch: [ first, itemsPerPage ] },
@@ -106,7 +106,7 @@
 	const { data: notificationsCount, error: notificationCountError } = await useLazyAsyncData(
 		'directus_notifications_cnt',
 		() => $directus.request<{ count: { id: number } }[]>(readNotifications({
-			filter: getUserFilter('recipient'),
+			filter: getNotificationsFilter(),
 			aggregate: {
 				count: [ 'id' ],
 			},
@@ -115,6 +115,12 @@
 	);
 
 	useErrorToast(notificationError, notificationCountError);
+
+	watch([ notifications, notificationsStatus ], ([ pageNotifications, status ]) => {
+		if (status === 'success' && !pageNotifications.length && page.value) {
+			router.replace({ query: { ...route.query, page: undefined, limit: undefined } });
+		}
+	});
 
 	notificationBus.on((idsToArchive) => {
 		notifications.value.forEach((notification) => {

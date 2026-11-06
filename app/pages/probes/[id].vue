@@ -92,7 +92,7 @@
 				Your hardware probe is running an outdated firmware and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="https://github.com/jsdelivr/globalping-hwprobe#download-the-latest-firmware" target="_blank">our guide</NuxtLink> to update it manually.
 			</Message>
 
-			<Message v-else-if="probeDetails?.isOutdated && !probeDetails.hardwareDevice" severity="warn" icon="pi pi-exclamation-triangle">
+			<Message v-else-if="probeDetails?.isOutdated && !probeDetails.hardwareDevice && !editingDisabled" severity="warn" icon="pi pi-exclamation-triangle">
 				Your probe container is running an outdated software and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="#" @click="updateProbeDialog = true">our guide</NuxtLink> to update it manually.
 			</Message>
 
@@ -139,7 +139,7 @@
 			header="Update a probe"
 			size="large"
 		>
-			<GpDialogContentUpdateProbe/>
+			<GpDialogContentUpdateProbe :account-id="probeAccountId ?? undefined"/>
 		</GPDialog>
 	</div>
 </template>
@@ -147,7 +147,9 @@
 <script setup lang="ts">
 	import { readItem, aggregate } from '@directus/sdk';
 	import { useErrorToast } from '~/composables/useErrorToast';
-	import { useProbeDetailTabs } from '~/composables/useProbeDetailTabs';
+	import { PROBE_ACCOUNT_KEY, useProbeEditing } from '~/composables/useProbeEditing';
+	import { useQueryTabs } from '~/composables/useQueryTabs';
+	import { useAccount } from '~/store/account';
 	import { useAuth } from '~/store/auth';
 	import { formatNumber } from '~/utils/format-number';
 	import { getOfflineDurationText, getProbeStatusColor, getProbeStatusText } from '~/utils/probe-status';
@@ -157,39 +159,30 @@
 	const route = useRoute();
 	const router = useRouter();
 	const auth = useAuth();
-	const { user } = storeToRefs(auth);
+	const account = useAccount();
 	const probeId = computed(() => route.params.id as string);
 	const probeDetailsUpdating = ref(false);
 	const updateProbeDialog = ref(false);
 	const showMoreIps = ref(false);
 	const windowSize = useWindowSize();
 	const tabListRef = useTemplateRef('tabListRef');
-	const { activeTab, setActiveTab } = useProbeDetailTabs();
 	const probePageLink = ref('/probes');
 	const probeTabs = [
 		{ value: 'details', label: 'Details' },
 		{ value: 'logs', label: 'Logs' },
 		{ value: 'settings', label: 'Settings' },
 	];
-
-	const selectTab = (event: Event, value: string) => {
-		event.stopImmediatePropagation();
-		setActiveTab(value);
-	};
-
-	const selectTabWithKeyboard = (event: KeyboardEvent, value: string) => {
-		if (![ 'Enter', 'NumpadEnter', 'Space' ].includes(event.code)) {
-			return;
-		}
-
-		event.preventDefault();
-		selectTab(event, value);
-	};
+	const { activeTab, setActiveTab, selectTab, selectTabWithKeyboard } = useQueryTabs(probeTabs.map(({ value }) => value), 'details');
 
 	const { data: probeDetails, error: probeDetailsError } = await useAsyncData(
 		probeId,
 		() => $directus.request<Probe>(readItem('gp_probes', probeId.value)),
 	);
+
+	const probeAccountId = computed(() => probeDetails.value?.account_id);
+	provide(PROBE_ACCOUNT_KEY, probeAccountId);
+	const probeOwnerGithubId = computed(() => account.findAccount(probeAccountId.value)?.github_id ?? '');
+	const { disabled: editingDisabled } = useProbeEditing(probeAccountId);
 
 	watch(probeDetailsError, (newError) => {
 		if (!newError) {
@@ -233,7 +226,7 @@
 		() => $directus.request<{ sum: { amount: number }; adopted_probe: string }[]>(aggregate('gp_credits_additions', {
 			query: {
 				filter: {
-					github_id: { _eq: user.value.external_identifier || 'admin' },
+					...!auth.adminMode && { github_id: { _eq: probeOwnerGithubId.value } },
 					adopted_probe: { _eq: probeDetails?.value?.id },
 					date_created: { _gte: '$NOW(-30 day)' },
 				},

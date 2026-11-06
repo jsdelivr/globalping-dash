@@ -23,7 +23,7 @@
 
 	const router = useRouter();
 	const showNavigationConfirm = ref(false);
-	const pendingNavigation = ref<NavigationGuardNext | null>(null);
+	const pendingConfirm = ref<((confirmed: boolean) => void) | null>(null);
 	const isFormDirty = inject<Ref<boolean>>('form-dirty');
 
 	const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -33,18 +33,22 @@
 		}
 	};
 
-	const handleNavigation = (_to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {
+	const confirmLeave = () => new Promise<boolean>((resolve) => {
 		if (isFormDirty?.value) {
-			pendingNavigation.value = next;
+			pendingConfirm.value = resolve;
 			showNavigationConfirm.value = true;
 		} else {
-			next();
+			resolve(true);
 		}
+	});
+
+	const handleNavigation = async (_to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {
+		next(await confirmLeave());
 	};
 
 	const handleNavigationAccept = () => {
-		pendingNavigation.value?.();
-		pendingNavigation.value = null;
+		pendingConfirm.value?.(true);
+		pendingConfirm.value = null;
 		showNavigationConfirm.value = false;
 
 		if (isFormDirty) {
@@ -53,10 +57,12 @@
 	};
 
 	const handleNavigationReject = () => {
-		pendingNavigation.value?.(false);
-		pendingNavigation.value = null;
+		pendingConfirm.value?.(false);
+		pendingConfirm.value = null;
 		showNavigationConfirm.value = false;
 	};
+
+	defineExpose({ confirmLeave });
 
 	onMounted(() => {
 		window.addEventListener('beforeunload', handleBeforeUnload);

@@ -81,31 +81,36 @@
 		</div>
 
 		<div class="flex flex-col gap-2 border-t py-4 sm:flex-row sm:items-center sm:justify-end">
-			<Button
-				v-if="probe.status !== 'offline'"
-				class="!h-9"
-				severity="secondary"
-				outlined
-				label="Restart"
-				icon="pi pi-refresh"
-				aria-label="Restart probe"
-				:loading="restartLoading"
-				:aria-disabled="restartLoading"
-				@click="restartProbe"
-			/>
+			<ProbeOwnerOnly v-if="probe.status !== 'offline'" v-slot="{ disabled }">
+				<Button
+					class="!h-9 w-full"
+					severity="secondary"
+					outlined
+					label="Restart"
+					icon="pi pi-refresh"
+					aria-label="Restart probe"
+					:loading="restartLoading"
+					:aria-disabled="restartLoading"
+					:disabled="disabled"
+					@click="restartProbe"
+				/>
+			</ProbeOwnerOnly>
 
-			<Button
-				class="!h-9 text-red-500"
-				severity="secondary"
-				outlined
-				label="Delete probe"
-				icon="pi pi-trash"
-				aria-label="Delete probe"
-				aria-haspopup="dialog"
-				:aria-expanded="deleteDialog"
-				aria-controls="removeProbeDialog"
-				@click="deleteDialog = true"
-			/>
+			<ProbeOwnerOnly v-slot="{ disabled }">
+				<Button
+					class="!h-9 w-full text-red-500"
+					severity="secondary"
+					outlined
+					label="Delete probe"
+					icon="pi pi-trash"
+					aria-label="Delete probe"
+					aria-haspopup="dialog"
+					:aria-expanded="deleteDialog"
+					aria-controls="removeProbeDialog"
+					:disabled="disabled"
+					@click="deleteDialog = true"
+				/>
+			</ProbeOwnerOnly>
 		</div>
 
 		<GPDialog

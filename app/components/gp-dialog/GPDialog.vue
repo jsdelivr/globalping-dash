@@ -4,6 +4,7 @@
 		position="top"
 		class="gp-dialog"
 		:class="{
+			'gp-dialog-overlay-scrollbars': props.overlayScrollbars,
 			'w-auto max-w-[min(900px,95vw)]': props.size === 'auto',
 			'w-[50vw] min-w-[700px] max-w-[min(900px,95vw)] max-md:min-w-[95%]': props.size === 'large',
 			[ props.size ]: ![ 'auto', 'large' ].includes(props.size),
@@ -13,11 +14,17 @@
 		:draggable="false"
 		@after-hide="afterHide()"
 	>
-		<slot/>
+		<ScrollPanel v-if="props.overlayScrollbars" ref="scrollPanel">
+			<div ref="scrollContent"><slot/></div>
+		</ScrollPanel>
+		<slot v-else/>
 	</Dialog>
 </template>
 
 <script setup lang="ts">
+	import { useResizeObserver } from '@vueuse/core';
+	import ScrollPanel from 'primevue/scrollpanel';
+
 	const route = useRoute();
 	const router = useRouter();
 
@@ -31,6 +38,10 @@
 	});
 
 	const props = defineProps({
+		overlayScrollbars: {
+			type: Boolean,
+			default: false,
+		},
 		size: {
 			type: String as PropType<'auto' | 'large' | string>,
 			default: 'auto',
@@ -42,6 +53,10 @@
 			default: undefined,
 		},
 	});
+
+	const scrollPanel = ref<{ refresh: () => void }>();
+	const scrollContent = ref<HTMLElement>();
+	useResizeObserver(scrollContent, () => scrollPanel.value?.refresh());
 
 	const afterHide = () => {
 		if (props.viewName && route.query.view === props.viewName) {
@@ -65,6 +80,10 @@
 </script>
 
 <style>
+	.gp-dialog-overlay-scrollbars > [data-pc-section="content"] {
+		@apply flex flex-col overflow-hidden;
+	}
+
 	@media (max-height: 600px) {
 		.gp-dialog {
 			max-height: calc(100dvh - 32px);

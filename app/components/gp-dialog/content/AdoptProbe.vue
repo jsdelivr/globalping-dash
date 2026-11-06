@@ -116,7 +116,7 @@
 						<TabPanel value="0">
 							<!-- inline-block is required so mt-2 is not collapsed -->
 							<p class="mb-4 mt-2 inline-block text-lg font-bold">Configure the probe</p>
-							<p>Recreate the container by running the following commands. The new container will be automatically bound to your account.</p>
+							<p>Recreate the container by running the following commands. The new container will be automatically bound to {{ account.owner }} account.</p>
 							<ProbeStartCommands :adopt="true" :recreate="true"/>
 						</TabPanel>
 						<TabPanel value="1">
@@ -151,7 +151,7 @@
 							Adoption failed
 						</p>
 						<p class="mt-4">
-							We haven't detected any new probes under your account.<br>
+							We haven't detected any new probes under {{ account.owner }} account.<br>
 							If your probe is up and running, please try manual adoption instead.
 						</p>
 
@@ -304,6 +304,7 @@
 	import CountryFlag from 'vue-country-flag-next';
 	import { usePublicIp } from '~/composables/usePublicIp';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { useAccount } from '~/store/account';
 	import { LINK_TOKEN_STORAGE_KEY, useHardwareProbeAdoption } from '~/store/local-adoption';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 	import { smoothResize } from '~/utils/smooth-resize';
@@ -321,7 +322,8 @@
 	const store = useHardwareProbeAdoption();
 	const { activeProbe } = storeToRefs(store);
 	const { $directus } = useNuxtApp();
-	const { getUserFilter, getAccountId } = useUserFilter();
+	const { getUserFilter } = useUserFilter();
+	const account = useAccount();
 	const emit = defineEmits([ 'cancel', 'adopted' ]);
 	const userPublicIp = usePublicIp();
 
@@ -543,7 +545,7 @@
 				method: 'POST',
 				path: '/adoption-code/send-code',
 				body: JSON.stringify({
-					accountId: getAccountId(),
+					accountId: account.current.id,
 					ip: ip.value,
 				}),
 			}));
@@ -580,7 +582,7 @@
 				method: 'POST',
 				path: '/adoption-code/send-code',
 				body: JSON.stringify({
-					accountId: getAccountId(),
+					accountId: account.current.id,
 					ip: ip.value,
 				}),
 			}));
@@ -600,7 +602,7 @@
 				method: 'POST',
 				path: '/adoption-code/verify-code',
 				body: JSON.stringify({
-					accountId: getAccountId(),
+					accountId: account.current.id,
 					code: code.value.substring(0, 6),
 				}),
 			})) as Probe;

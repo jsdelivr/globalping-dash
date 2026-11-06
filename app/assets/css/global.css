@@ -12,6 +12,12 @@ html.dark {
 	background: var(--dark-900);
 }
 
+@media (prefers-color-scheme: dark) {
+	html:not(.light) {
+		background: var(--dark-900);
+	}
+}
+
 html {
 	font-size: 14px;
 }

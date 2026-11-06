@@ -103,14 +103,14 @@
 	const filterDeps = computedDebounced(() => [ creditsTableFilterKey.value, first.value, itemsPerPage.value ]);
 
 	const { $directus } = useNuxtApp();
-	const { getAccountId } = useUserFilter();
+	const { getAccountIdOrAll } = useUserFilter();
 
 	const { data: creditsData, pending: loading, error: creditsDataError } = await useLazyAsyncData(
 		() => minDelay($directus.request<{ changes: CreditsChange[]; count: number }>(customEndpoint({
 			method: 'GET',
 			path: '/credits-timeline',
 			params: {
-				accountId: getAccountId('all'),
+				accountId: getAccountIdOrAll(),
 				...getTableFilter(),
 				offset: first.value,
 				limit: itemsPerPage.value,

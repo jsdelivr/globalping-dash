@@ -101,6 +101,7 @@
 
 <script setup lang="ts">
 	import { createItem, customEndpoint, updateItem } from '@directus/sdk';
+	import { useAccount } from '~/store/account';
 	import { formatDate } from '~/utils/date-formatters';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
@@ -114,6 +115,7 @@
 	const emit = defineEmits([ 'generate', 'cancel', 'save', 'regenerate' ]);
 
 	const { $directus } = useNuxtApp();
+	const account = useAccount();
 
 	// NAME
 
@@ -227,6 +229,7 @@
 				origins: origins.value,
 				expire: expire.value && expire.value.toISOString().split('T')[0],
 				value: token,
+				account_id: account.current.id,
 			}));
 
 			emit('generate', response.id, token, name.value);

@@ -335,8 +335,8 @@
 					comment: comment.value.trim(),
 				};
 
-			await minDelay($directus.request(customEndpoint({ method: 'POST', path: '/admin-sponsors/manual-additions', body: JSON.stringify({ ...addition, bypassRedirect: bypassRedirect.value }) })));
-			sendToast('success', 'Credits added', `${formatNumber(credits.value)} credits were added for @${creditRecipient.value!.login}.`);
+			const creditedRecipient = await minDelay($directus.request<{ githubLogin: string }>(customEndpoint({ method: 'POST', path: '/admin-sponsors/manual-additions', body: JSON.stringify({ ...addition, bypassRedirect: bypassRedirect.value }) })));
+			sendToast('success', 'Credits added', `${formatNumber(credits.value)} credits were added for @${creditedRecipient.githubLogin}.`);
 			emit('success');
 		} catch (error) {
 			sendErrorToast(error);

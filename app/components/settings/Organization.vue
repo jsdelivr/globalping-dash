@@ -58,9 +58,9 @@
 					<div class="w-12">
 						<ToggleSwitch v-model="publicProbes" input-id="org-public-probes"/>
 					</div>
-					<label class="flex-1 cursor-text">
+					<label class="flex-1 cursor-text leading-relaxed">
 						When enabled, the organization probes are automatically tagged by
-						<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${account.current.name}`"/>,
+						<Tag class="-my-1 text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${account.current.name}`"/>,
 						allowing you to select them in measurements,
 						and a list of the organization's active probes is also available on its
 						<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${account.current.name}`" target="_blank" rel="noopener">user page</NuxtLink>.

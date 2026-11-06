@@ -18,9 +18,9 @@
 	<div v-if="shouldDisplaySwitch" class="mt-4 rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
 		<ToggleSwitch v-model="publicProbes" :disabled="isLoading" :input-id="`public-probes-${getCurrentInstance()?.uid}`" @update:model-value="updatePublicProbes"/>
 		<label :for="`public-probes-${getCurrentInstance()?.uid}`" class="block cursor-pointer font-bold">Make {{ account.owner }} probes public</label>
-		<p class="mt-3 text-xs">
+		<p class="mt-3 text-xs leading-relaxed">
 			When enabled, {{ account.owner }} probes are automatically tagged by
-			<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${account.current.tag_prefix}`"/>,
+			<Tag class="-my-1 text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${account.current.tag_prefix}`"/>,
 			allowing you to select them in measurements,
 			and a list of {{ account.current.org_id ? 'the organization\'s' : 'your' }} active probes is also available on {{ account.current.org_id ? 'its' : 'your' }}
 			<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${account.current.tag_prefix}`" target="_blank" rel="noopener">user page</NuxtLink>.

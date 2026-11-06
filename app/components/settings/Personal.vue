@@ -93,11 +93,11 @@
 						:options="[user.default_prefix, user.github_username]"
 						class="mt-2 w-full"
 					/>
-					<Message v-if="publicProbes && defaultPrefix !== user.default_prefix" severity="warn" icon="pi pi-exclamation-triangle" class="mt-2">
+					<Message v-if="publicProbes && defaultPrefix !== user.default_prefix" severity="warn" icon="pi pi-exclamation-triangle" class="mt-2 leading-relaxed">
 						Changing the default prefix will update your public tag from
-						<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.default_prefix}`"/>
+						<Tag class="-my-1 text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.default_prefix}`"/>
 						to
-						<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${defaultPrefix}`"/> on all probes.
+						<Tag class="-my-1 text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${defaultPrefix}`"/> on all probes.
 						Other existing tags won't change unless you update them in the probe settings.
 					</Message>
 				</template>
@@ -117,9 +117,9 @@
 					</div>
 
 					<div class="flex-1">
-						<label class="cursor-text">
+						<label class="cursor-text leading-relaxed">
 							When enabled, your probes are automatically tagged by
-							<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${defaultPrefix}`"/>,
+							<Tag class="-my-1 text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${defaultPrefix}`"/>,
 							allowing you to select them in measurements,
 							and a list of your active probes is also available on your
 							<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${defaultPrefix}`" target="_blank" rel="noopener">user page</NuxtLink>.

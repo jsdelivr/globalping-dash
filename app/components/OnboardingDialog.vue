@@ -38,9 +38,9 @@
 					<div class="w-12">
 						<ToggleSwitch v-model="publicProbes" input-id="onboarding-public-probes"/>
 					</div>
-					<label class="flex-1 cursor-text">
+					<label class="flex-1 cursor-text leading-relaxed">
 						When enabled, your probes are automatically tagged by
-						<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${auth.user.default_prefix}`"/>,
+						<Tag class="-my-1 text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${auth.user.default_prefix}`"/>,
 						allowing you to select them in measurements,
 						and a list of your active probes is also available on your
 						<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${auth.user.default_prefix}`" target="_blank" rel="noopener">user page</NuxtLink>.
@@ -78,9 +78,9 @@
 						<div class="w-12">
 							<ToggleSwitch v-model="orgPublicProbes" input-id="onboarding-org-public-probes"/>
 						</div>
-						<label class="flex-1 cursor-text">
+						<label class="flex-1 cursor-text leading-relaxed">
 							When enabled, the organization probes are automatically tagged by
-							<Tag class="text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${membership.org.name}`"/>,
+							<Tag class="-my-1 text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${membership.org.name}`"/>,
 							allowing you to select them in measurements,
 							and a list of the organization's active probes is also available on its
 							<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${membership.org.name}`" target="_blank" rel="noopener">user page</NuxtLink>.

@@ -57,7 +57,7 @@
 					option-label="org.name"
 					option-value="org.id"
 					placeholder="Select an organization"
-					class="mt-2 w-full"
+					class="mt-2 min-h-11 w-full"
 				>
 					<template #value="{ placeholder }">
 						<span v-if="membership" class="flex items-center">

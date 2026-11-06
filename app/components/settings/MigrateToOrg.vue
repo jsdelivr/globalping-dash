@@ -13,7 +13,7 @@
 				option-label="name"
 				option-value="id"
 				placeholder="Select an organization"
-				class="mt-2 w-full"
+				class="mt-2 min-h-11 w-full"
 				:disabled="!orgs.length || !!auth.impersonation || !!pending"
 				@change="changeOrg"
 			>

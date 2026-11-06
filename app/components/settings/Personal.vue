@@ -40,7 +40,7 @@
 						:options="defaultAccountOptions"
 						option-label="label"
 						option-value="value"
-						class="mt-2 w-full"
+						class="mt-2 min-h-11 w-full"
 					>
 						<template #value="{ value }">
 							<span class="flex items-center">
@@ -171,7 +171,7 @@
 						:options="notificationAccountOptions"
 						option-label="label"
 						option-value="value"
-						class="mb-6 mt-2 w-full"
+						class="mb-6 mt-2 min-h-11 w-full"
 					>
 						<template #value="{ value }">
 							<span class="flex items-center">

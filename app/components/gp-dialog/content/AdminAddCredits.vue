@@ -35,10 +35,11 @@
 					<Tag v-if="recipient.dashboardAccount" value="Dashboard account linked" severity="success"/>
 					<Tag v-else value="Not linked" severity="warn"/>
 				</div>
-				<template v-if="recipient?.redirectTarget">
-					<Message severity="info" icon="pi pi-share-alt">
-						<span v-if="!bypassRedirect">Credits will be redirected to @{{ recipient.redirectTarget.githubLogin }}.</span>
-						<span v-else>Credits will be added directly to @{{ recipient.login }} for this addition.</span>
+				<template v-if="recipient && recipient.redirectTarget !== null">
+					<Message :severity="recipient.redirectTarget === undefined && !bypassRedirect ? 'warn' : 'info'" icon="pi pi-share-alt">
+						<span v-if="bypassRedirect">Credits will be added directly to @{{ recipient.login }} for this addition.</span>
+						<span v-else-if="recipient.redirectTarget">Credits will be redirected to @{{ recipient.redirectTarget.githubLogin }}.</span>
+						<span v-else>The redirect destination could not be checked. Retry the lookup or bypass the redirect for this addition.</span>
 					</Message>
 					<label for="bypassRedirect" class="flex cursor-pointer items-center gap-2">
 						<Checkbox v-model="bypassRedirect" input-id="bypassRedirect" binary/>
@@ -123,7 +124,7 @@
 					<dd class="font-semibold">@{{ creditRecipient!.login }} <span class="font-normal text-bluegray-500">(GitHub ID {{ creditRecipient!.githubId }})</span></dd>
 					<dt class="text-bluegray-500">Dashboard account</dt>
 					<dd>{{ creditRecipient!.dashboardAccount || 'Not linked' }}</dd>
-					<template v-if="recipient!.redirectTarget">
+					<template v-if="recipient!.redirectTarget !== null">
 						<dt class="text-bluegray-500">Redirect</dt>
 						<dd>{{ bypassRedirect ? 'Bypassed for this addition' : `From @${recipient!.login} to @${creditRecipient!.login}` }}</dd>
 					</template>
@@ -182,7 +183,8 @@
 		avatarUrl: string;
 		profileUrl: string;
 		dashboardAccount: string | null;
-		redirectTarget: RedirectTarget | null;
+		// undefined means the lookup failed; null confirms there is no redirect.
+		redirectTarget: RedirectTarget | null | undefined;
 	};
 
 	const emit = defineEmits<{
@@ -195,6 +197,8 @@
 	const recipient = ref<Recipient | null>(null);
 	const bypassRedirect = ref(false);
 	const creditRecipient = computed(() => {
+		if (recipient.value?.redirectTarget === undefined && !bypassRedirect.value) { return null; }
+
 		const target = recipient.value?.redirectTarget;
 		return target && !bypassRedirect.value ? { ...target, login: target.githubLogin } : recipient.value;
 	});
@@ -271,7 +275,7 @@
 					})) as Promise<Array<{ id: string; name: string }>>,
 					$directus.request<RedirectTarget | null>(customEndpoint({
 						path: '/admin-sponsors/redirect', params: { githubId: String(githubUser.id) },
-					})),
+					})).catch(() => undefined),
 				]);
 
 				const dashboardUser = dashboardUsers[0];
@@ -294,7 +298,7 @@
 	};
 
 	const validate = () => {
-		errors.recipient = recipient.value ? '' : 'Look up and confirm a GitHub account.';
+		errors.recipient = !recipient.value ? 'Look up and confirm a GitHub account.' : !creditRecipient.value ? 'Retry the lookup or explicitly bypass the redirect.' : '';
 		errors.credits = Number.isInteger(credits.value) && (credits.value || 0) > 0 ? '' : 'Enter a positive whole number of credits.';
 		errors.paymentAmount = '';
 		errors.comment = '';

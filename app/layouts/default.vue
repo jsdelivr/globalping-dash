@@ -112,7 +112,7 @@
 						<button v-for="item in accountOptions" :key="item.key" class="sidebar-link" :class="{ 'font-bold !text-primary': item.active }" @click="item.command(); mobileSidebar = false">
 							<i class="sidebar-link-icon shrink-0" :class="[ item.icon, { '!text-primary': item.active } ]"/>
 							<span class="w-0 grow truncate text-left" :title="item.label">{{ item.label }}</span>
-							<Tag v-if="item.badge" class="ml-6 shrink-0 border-transparent bg-surface-100 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="item.badge"/>
+							<Tag v-if="item.badge" class="ml-6 shrink-0 border-transparent bg-surface-0 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="item.badge"/>
 						</button>
 					</div>
 					<button active-class="active" class="sidebar-link" @click="auth.logout"><i class="pi pi-power-off sidebar-link-icon"/>Sign out</button>

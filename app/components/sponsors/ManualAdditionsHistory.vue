@@ -61,7 +61,8 @@
 							wrap
 							:github-login="data.githubLogin"
 							:github-id="data.githubId"
-							:dashboard-account-id="data.dashboardAccountId"/>
+							:dashboard-account-id="data.dashboardAccountId"
+							:redirect-target="data.redirectTarget"/>
 					</AsyncCell>
 				</template>
 			</Column>
@@ -100,7 +101,8 @@
 							wrap
 							:github-login="addition.githubLogin"
 							:github-id="addition.githubId"
-							:dashboard-account-id="addition.dashboardAccountId"/>
+							:dashboard-account-id="addition.dashboardAccountId"
+							:redirect-target="addition.redirectTarget"/>
 						<div class="mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-sm">
 							<div class="whitespace-nowrap text-bluegray-500">{{ formatUtcDateForTable(addition.date) }}</div>
 							<div class="whitespace-nowrap font-semibold">{{ formatNumber(addition.credits) }} credits</div>
@@ -148,6 +150,7 @@
 		githubLogin: string | null;
 		dashboardAccountId: string | null;
 		dashboardAccountName: string | null;
+		redirectTarget: string | null;
 		addedBy: string | null;
 		type: ManualAdditionType;
 		credits: number;

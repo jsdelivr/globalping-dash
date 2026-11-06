@@ -62,7 +62,8 @@
 							class="max-w-full"
 							:github-login="data.githubLogin"
 							:github-id="data.githubId"
-							:dashboard-account-id="data.dashboardAccountId"/>
+							:dashboard-account-id="data.dashboardAccountId"
+							:redirect-target="data.redirectTarget"/>
 					</AsyncCell>
 				</template>
 			</Column>
@@ -100,7 +101,8 @@
 									class="mt-1 max-w-full font-semibold"
 									:github-login="event.githubLogin"
 									:github-id="event.githubId"
-									:dashboard-account-id="event.dashboardAccountId"/>
+									:dashboard-account-id="event.dashboardAccountId"
+									:redirect-target="event.redirectTarget"/>
 							</div>
 							<div class="wrap-anywhere min-w-0 max-w-[60%] shrink-0 text-right">
 								<div class="font-semibold">{{ formatMoney(event.sponsorshipValue) }}</div>
@@ -152,6 +154,7 @@
 		githubLogin: string | null;
 		dashboardAccountId: string | null;
 		dashboardAccountName: string | null;
+		redirectTarget: string | null;
 		reason: SponsorshipReason;
 		manual: boolean;
 		amountInDollars: number;

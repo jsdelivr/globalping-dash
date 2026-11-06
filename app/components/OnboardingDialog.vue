@@ -57,18 +57,18 @@
 					option-label="org.name"
 					option-value="org.id"
 					placeholder="Select an organization"
-					class="mt-2 min-h-11 w-full"
+					class="mt-2 w-full"
 				>
 					<template #value="{ placeholder }">
 						<span v-if="membership" class="flex items-center">
 							<span class="min-w-0 grow truncate">{{ membership.org.name }}</span>
-							<Tag class="ml-6 shrink-0 border-transparent bg-surface-100 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="capitalize(membership.role)"/>
+							<Tag class="-my-1 ml-6 shrink-0 border-transparent bg-surface-100 !py-0.5 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="capitalize(membership.role)"/>
 						</span>
 						<template v-else>{{ placeholder }}</template>
 					</template>
 					<template #option="{ option }">
-						<span class="min-w-0 grow truncate leading-normal">{{ option.org.name }}</span>
-						<Tag class="ml-6 shrink-0 border-transparent bg-surface-100 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="capitalize(option.role)"/>
+						<span class="-my-1 min-w-0 grow truncate leading-normal">{{ option.org.name }}</span>
+						<Tag class="-my-1 ml-6 shrink-0 border-transparent bg-surface-100 !py-0.5 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="capitalize(option.role)"/>
 					</template>
 				</Select>
 

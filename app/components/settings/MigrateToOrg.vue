@@ -13,20 +13,20 @@
 				option-label="name"
 				option-value="id"
 				placeholder="Select an organization"
-				class="mt-2 min-h-11 w-full"
+				class="mt-2 w-full"
 				:disabled="!orgs.length || !!auth.impersonation || !!pending"
 				@change="changeOrg"
 			>
 				<template #value="{ placeholder }">
 					<span v-if="org" class="flex items-center">
 						<span class="min-w-0 grow truncate">{{ org.name }}</span>
-						<Tag class="ml-4 shrink-0 border-transparent bg-surface-100 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="capitalize(org.role)"/>
+						<Tag class="-my-1 ml-4 shrink-0 border-transparent bg-surface-100 !py-0.5 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="capitalize(org.role)"/>
 					</span>
 					<template v-else>{{ placeholder }}</template>
 				</template>
 				<template #option="{ option }">
-					<span class="min-w-0 grow truncate leading-normal">{{ option.name }}</span>
-					<Tag class="ml-4 shrink-0 border-transparent bg-surface-100 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="capitalize(option.role)"/>
+					<span class="-my-1 min-w-0 grow truncate leading-normal">{{ option.name }}</span>
+					<Tag class="-my-1 ml-4 shrink-0 border-transparent bg-surface-100 !py-0.5 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="capitalize(option.role)"/>
 				</template>
 			</Select>
 			<p v-if="orgs.length" class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Only organizations where you're an admin or a member are listed.</p>
@@ -44,11 +44,11 @@
 							<div class="mt-1 text-sm text-bluegray-500 dark:text-bluegray-300">
 								<template v-if="row.action === 'probes'">
 									<p>Move all your personal probes to <b>{{ org.name }}</b>. Your current adoption token moves with them, and your personal account gets a new token.</p>
-									<p v-if="account.personal.public_probes && org.public_probes" class="mt-1">
+									<p v-if="account.personal.public_probes && org.public_probes" class="mt-1 leading-relaxed">
 										Their public tag changes from <Tag :class="TAG_CLASS" severity="secondary" :value="`u-${account.personal.tag_prefix}`"/>
 										to <Tag :class="TAG_CLASS" severity="secondary" :value="`u-${org.name}`"/>.
 									</p>
-									<p v-else-if="account.personal.public_probes" class="mt-1">
+									<p v-else-if="account.personal.public_probes" class="mt-1 leading-relaxed">
 										Their public tag <Tag :class="TAG_CLASS" severity="secondary" :value="`u-${account.personal.tag_prefix}`"/> is removed.
 										An organization admin can enable public probes to add <Tag :class="TAG_CLASS" severity="secondary" :value="`u-${org.name}`"/>.
 									</p>
@@ -143,7 +143,7 @@
 		{ action: 'redirect', title: 'Future sponsorship credits', button: 'Redirect credits' },
 	];
 
-	const TAG_CLASS = 'text-nowrap bg-surface-0 font-normal dark:bg-dark-800';
+	const TAG_CLASS = '-my-1 text-nowrap bg-surface-0 font-normal dark:bg-dark-800';
 
 	const { $directus } = useNuxtApp();
 	const auth = useAuth();

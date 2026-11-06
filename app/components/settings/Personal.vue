@@ -40,19 +40,19 @@
 						:options="defaultAccountOptions"
 						option-label="label"
 						option-value="value"
-						class="mt-2 min-h-11 w-full"
+						class="mt-2 w-full"
 					>
 						<template #value="{ value }">
 							<span class="flex items-center">
 								<i class="mr-2 shrink-0" :class="optionOf(value)?.icon" aria-hidden="true"/>
 								<span class="min-w-0 grow truncate">{{ optionOf(value)?.label }}</span>
-								<Tag class="ml-6 shrink-0 border-transparent bg-surface-100 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="optionOf(value)?.role"/>
+								<Tag class="-my-1 ml-6 shrink-0 border-transparent bg-surface-100 !py-0.5 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="optionOf(value)?.role"/>
 							</span>
 						</template>
 						<template #option="{ option }">
 							<i class="mr-2 shrink-0" :class="option.icon" aria-hidden="true"/>
-							<span class="min-w-0 grow truncate leading-normal">{{ option.label }}</span>
-							<Tag class="ml-6 shrink-0 border-transparent bg-surface-100 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="option.role"/>
+							<span class="-my-1 min-w-0 grow truncate leading-normal">{{ option.label }}</span>
+							<Tag class="-my-1 ml-6 shrink-0 border-transparent bg-surface-100 !py-0.5 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="option.role"/>
 						</template>
 					</Select>
 				</template>
@@ -171,19 +171,19 @@
 						:options="notificationAccountOptions"
 						option-label="label"
 						option-value="value"
-						class="mb-6 mt-2 min-h-11 w-full"
+						class="mb-6 mt-2 w-full"
 					>
 						<template #value="{ value }">
 							<span class="flex items-center">
 								<i class="mr-2 shrink-0" :class="optionOf(value)?.icon" aria-hidden="true"/>
 								<span class="min-w-0 grow truncate">{{ optionOf(value)?.label }}</span>
-								<Tag class="ml-6 shrink-0 border-transparent bg-surface-100 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="optionOf(value)?.role"/>
+								<Tag class="-my-1 ml-6 shrink-0 border-transparent bg-surface-100 !py-0.5 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="optionOf(value)?.role"/>
 							</span>
 						</template>
 						<template #option="{ option }">
 							<i class="mr-2 shrink-0" :class="option.icon" aria-hidden="true"/>
-							<span class="min-w-0 grow truncate leading-normal">{{ option.label }}</span>
-							<Tag class="ml-6 shrink-0 border-transparent bg-surface-100 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="option.role"/>
+							<span class="-my-1 min-w-0 grow truncate leading-normal">{{ option.label }}</span>
+							<Tag class="-my-1 ml-6 shrink-0 border-transparent bg-surface-100 !py-0.5 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="option.role"/>
 						</template>
 					</Select>
 				</template>

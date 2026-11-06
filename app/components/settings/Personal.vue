@@ -123,7 +123,7 @@
 							allowing you to select them in measurements,
 							and a list of your active probes is also available on your
 							<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${defaultPrefix}`" target="_blank" rel="noopener">user page</NuxtLink>.
-							To use your organization tag instead, migrate probes to the organization in the panel below.
+							<template v-if="canTransfer">To use an organization tag instead, transfer your probes to an organization below.</template>
 						</label>
 					</div>
 				</div>
@@ -288,6 +288,7 @@
 	const adoptionToken = ref(user.value.adoption_token);
 
 	const account = useAccount();
+	const canTransfer = computed(() => user.value.memberships.some(({ role }) => role !== 'viewer'));
 	const defaultAccountOptions = computed(() => [
 		{ label: account.personal.name, value: account.personal.id, role: 'Personal', icon: 'pi pi-user' },
 		...account.selectedOrgs.map(({ org, role }) => ({ label: org.name, value: org.account, role: capitalize(role), icon: 'pi pi-building' })),

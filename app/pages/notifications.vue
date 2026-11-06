@@ -83,6 +83,7 @@
 
 	const auth = useAuth();
 	const route = useRoute();
+	const router = useRouter();
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
@@ -90,7 +91,7 @@
 	const { getNotificationsFilter, inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead } = useNotifications();
 	const notificationBus = useEventBus<string[]>('notification-updated');
 
-	const { data: notifications, error: notificationError } = await useLazyAsyncData(
+	const { data: notifications, status: notificationsStatus, error: notificationError } = await useLazyAsyncData(
 		'directus_notifications_page',
 		() => $directus.request<DirectusNotification[]>(readNotifications({
 			format: 'html',
@@ -114,6 +115,12 @@
 	);
 
 	useErrorToast(notificationError, notificationCountError);
+
+	watch([ notifications, notificationsStatus ], ([ pageNotifications, status ]) => {
+		if (status === 'success' && !pageNotifications.length && page.value) {
+			router.replace({ query: { ...route.query, page: undefined, limit: undefined } });
+		}
+	});
 
 	notificationBus.on((idsToArchive) => {
 		notifications.value.forEach((notification) => {

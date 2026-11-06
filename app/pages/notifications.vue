@@ -60,6 +60,7 @@
 		<p v-else class="p-4 text-lg font-bold leading-5">No notifications at the moment.</p>
 
 		<Paginator
+			v-if="notifications.length"
 			class="mt-6"
 			:first="first"
 			:rows="itemsPerPage"

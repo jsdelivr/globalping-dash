@@ -51,26 +51,37 @@
 					:aria-label="probe.tags.length ? 'Edit tags dialog' : 'Add tags dialog'"
 				>
 					<div class="flex w-full max-w-full flex-col">
-						<Message v-if="probe.tags[0]?.format === 'v1'" severity="warn" class="rounded-b-none">
-							<p class="mt-2 font-bold">The tags format has changed</p>
+						<Message v-if="probe.tags[0]?.format === 'v1' || hasRenamedTags" severity="warn" class="rounded-b-none">
+							<template v-if="probe.tags[0]?.format === 'v1'">
+								<p class="mt-2 font-bold">The tags format has changed</p>
 
-							<p class="mt-4">
-								Your tags use an outdated format and will be converted to the new format after saving.
-								Please be sure to use the updated tags in all future requests.
-							</p>
+								<p class="mt-4">
+									Your tags use an outdated format and will be converted to the new format after saving.
+									Please be sure to use the updated tags in all future requests.
+								</p>
 
-							<p class="mt-4">Outdated format:</p>
-							<ProbeUserTagsList
-								:tags="probe.tags"
-								tag-format="v1"
-								custom-class="bg-white dark:border-dark-600 dark:bg-[#17233a]"
-							/>
+								<p class="mt-4">Outdated format:</p>
+								<ProbeUserTagsList
+									:tags="probe.tags"
+									tag-format="v1"
+									custom-class="bg-white dark:border-dark-600 dark:bg-[#17233a]"
+								/>
 
-							<p class="mt-4">New format:</p>
-							<ProbeUserTagsList
-								:tags="probe.tags"
-								custom-class="bg-white dark:border-dark-600 dark:bg-[#17233a]"
-							/>
+								<p class="mt-4">New format:</p>
+								<ProbeUserTagsList
+									:tags="probe.tags"
+									custom-class="bg-white dark:border-dark-600 dark:bg-[#17233a]"
+								/>
+							</template>
+
+							<template v-if="hasRenamedTags">
+								<p class="mt-4 font-bold first:mt-2">The tag prefix will change</p>
+
+								<p class="mt-4">
+									Edited tags will get the <span class="font-bold">{{ uPrefix }}</span> prefix after saving.
+									Please be sure to use the updated tags in all future requests.
+								</p>
+							</template>
 						</Message>
 
 						<div
@@ -99,7 +110,7 @@
 										v-else
 										class="flex h-full items-center truncate rounded-md border border-surface-300 bg-surface-50 px-3 text-bluegray-700 dark:border-dark-600 dark:bg-dark-800 dark:text-bluegray-0"
 										aria-label="Tag prefix"
-									>{{ tag.uPrefix }}</span>
+									>{{ getPrefix(tag) }}</span>
 									<div class="inline-flex w-6 justify-center">{{ probe.tags[0]?.format === 'v1' ? '-' : ':' }}</div>
 									<div class="relative">
 										<InputText
@@ -190,7 +201,10 @@
 	const uPrefix = `u-${account.current.org_id ? account.current.name : user.value.github_username}`;
 
 	const tagPopoverRef = ref();
-	const tagsToEdit = ref<{ uPrefix: string; value: string; format?: string; savedPrefix?: string }[]>([]);
+
+	type EditedTag = { uPrefix: string; value: string; savedPrefix?: string; savedValue?: string };
+
+	const tagsToEdit = ref<EditedTag[]>([]);
 	const isEditingTags = ref<boolean>(false);
 	const popoverContentRef = ref<HTMLElement>();
 	const getDefaultEmptyTags = () => [{ uPrefix, value: '' }];
@@ -217,15 +231,17 @@
 	const editTags = () => {
 		isEditingTags.value = true;
 
-		tagsToEdit.value = probe.value && probe.value.tags.length ? probe.value.tags.map(({ prefix, value, format }) => ({
+		tagsToEdit.value = probe.value && probe.value.tags.length ? probe.value.tags.map(({ prefix, value }) => ({
 			uPrefix: `u-${prefix}`,
 			value,
-			format,
 			savedPrefix: `u-${prefix}`,
+			savedValue: value,
 		})) : getDefaultEmptyTags();
 	};
 
-	const getPrefixOptions = ({ savedPrefix }: { savedPrefix?: string }) => !savedPrefix || savedPrefix === uPrefix ? [ uPrefix ] : [ savedPrefix, uPrefix ];
+	const getPrefixOptions = ({ value, savedPrefix, savedValue }: EditedTag) => savedPrefix && savedPrefix !== uPrefix && value === savedValue ? [ savedPrefix, uPrefix ] : [ uPrefix ];
+	const getPrefix = (tag: EditedTag) => !tag.value || tag.value === tag.savedValue ? tag.uPrefix : uPrefix;
+	const hasRenamedTags = computed(() => tagsToEdit.value.some(tag => tag.savedPrefix && tag.savedPrefix !== uPrefix && tag.value && tag.value !== tag.savedValue));
 
 	const addTag = () => {
 		isEditingTags.value = true;
@@ -240,9 +256,9 @@
 		}
 	};
 
-	const convertTags = (tagsToEdit: { uPrefix: string; value: string }[]) => tagsToEdit.map(({ uPrefix, value }) => ({
-		prefix: uPrefix.replace('u-', ''),
-		value,
+	const convertTags = (tagsToEdit: EditedTag[]) => tagsToEdit.map(tag => ({
+		prefix: getPrefix(tag).replace('u-', ''),
+		value: tag.value,
 	})).filter(({ prefix, value }) => prefix && value);
 
 	const updateProbeTags = async () => {

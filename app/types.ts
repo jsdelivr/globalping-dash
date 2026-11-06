@@ -147,7 +147,6 @@ declare global {
 		email: string | null;
 		external_identifier: string | null; // null for non-gh admin
 		github_username: string | null; // null for non-gh admin
-		github_organizations: string[];
 		user_type: 'member' | 'special' | 'sponsor';
 		appearance: null | 'light' | 'dark';
 		public_probes: boolean;

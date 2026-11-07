@@ -9,7 +9,13 @@
 			target="_blank"
 			rel="noopener">{{ githubLogin }}</a>
 		<span v-else class="min-w-0" :class="wrap ? 'break-words' : 'truncate'">GitHub ID {{ githubId }}</span>
-		<i v-if="dashboardAccountId" v-tooltip.top="'Dashboard account linked'" class="pi pi-user shrink-0 text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
+		<i
+			v-if="redirectTarget"
+			v-tooltip.top="`Credits redirected to ${redirectTarget}`"
+			class="pi pi-share-alt shrink-0 text-xs text-bluegray-400"
+			role="img"
+			:aria-label="`Credits redirected to ${redirectTarget}`"/>
+		<i v-if="dashboardAccountId" v-tooltip.top="'Dashboard account linked'" role="img" class="pi pi-user shrink-0 text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
 	</span>
 </template>
 
@@ -18,6 +24,7 @@
 		githubLogin: string | null;
 		githubId: string;
 		dashboardAccountId: string | null;
+		redirectTarget?: string | null;
 		wrap?: boolean;
 	}>();
 </script>

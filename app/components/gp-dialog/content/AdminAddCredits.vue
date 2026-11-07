@@ -35,7 +35,18 @@
 					<Tag v-if="recipient.dashboardAccount" value="Dashboard account linked" severity="success"/>
 					<Tag v-else value="Not linked" severity="warn"/>
 				</div>
-				<Message v-if="recipient && !recipient.dashboardAccount" severity="warn" icon="pi pi-info-circle">
+				<template v-if="recipient && recipient.redirectTarget !== null">
+					<Message :severity="recipient.redirectTarget === undefined && !bypassRedirect ? 'warn' : 'info'" icon="pi pi-share-alt">
+						<span v-if="bypassRedirect">Credits will be added directly to @{{ recipient.login }} for this addition.</span>
+						<span v-else-if="recipient.redirectTarget">Credits will be redirected to @{{ recipient.redirectTarget.githubLogin }}.</span>
+						<span v-else>The redirect destination could not be checked. Retry the lookup or bypass the redirect for this addition.</span>
+					</Message>
+					<label for="bypassRedirect" class="flex cursor-pointer items-center gap-2">
+						<Checkbox v-model="bypassRedirect" input-id="bypassRedirect" binary/>
+						<span>Bypass redirect for this addition</span>
+					</label>
+				</template>
+				<Message v-if="creditRecipient && !creditRecipient.dashboardAccount" severity="warn" icon="pi pi-info-circle">
 					The addition will be reserved for this GitHub account and applied when it signs in to Globalping.
 				</Message>
 			</section>
@@ -110,9 +121,13 @@
 				<h3 class="border-b px-4 py-3 font-bold">Review addition</h3>
 				<dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 p-4">
 					<dt class="text-bluegray-500">Recipient</dt>
-					<dd class="font-semibold">@{{ recipient!.login }} <span class="font-normal text-bluegray-500">(GitHub ID {{ recipient!.githubId }})</span></dd>
+					<dd class="font-semibold">@{{ creditRecipient!.login }} <span class="font-normal text-bluegray-500">(GitHub ID {{ creditRecipient!.githubId }})</span></dd>
 					<dt class="text-bluegray-500">Dashboard account</dt>
-					<dd>{{ recipient!.dashboardAccount || 'Not linked' }}</dd>
+					<dd>{{ creditRecipient!.dashboardAccount || 'Not linked' }}</dd>
+					<template v-if="recipient!.redirectTarget !== null">
+						<dt class="text-bluegray-500">Redirect</dt>
+						<dd>{{ bypassRedirect ? 'Bypassed for this addition' : `From @${recipient!.login} to @${creditRecipient!.login}` }}</dd>
+					</template>
 					<dt class="text-bluegray-500">Type</dt>
 					<dd>{{ additionType === 'payment' ? 'Manual one-time payment' : 'Other credits' }}</dd>
 					<dt class="text-bluegray-500">Credits</dt>
@@ -160,6 +175,7 @@
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	type GithubUser = { id: number; login: string; avatar_url: string; html_url: string };
+	type RedirectTarget = { githubId: string; githubLogin: string; dashboardAccount: string | null };
 
 	type Recipient = {
 		githubId: string;
@@ -167,6 +183,8 @@
 		avatarUrl: string;
 		profileUrl: string;
 		dashboardAccount: string | null;
+		// undefined means the lookup failed; null confirms there is no redirect.
+		redirectTarget: RedirectTarget | null | undefined;
 	};
 
 	const emit = defineEmits<{
@@ -177,6 +195,13 @@
 
 	const recipientInput = ref('');
 	const recipient = ref<Recipient | null>(null);
+	const bypassRedirect = ref(false);
+	const creditRecipient = computed(() => {
+		if (recipient.value?.redirectTarget === undefined && !bypassRedirect.value) { return null; }
+
+		const target = recipient.value?.redirectTarget;
+		return target && !bypassRedirect.value ? { ...target, login: target.githubLogin } : recipient.value;
+	});
 	const lookupPending = ref(false);
 	const additionType = ref<ManualAdditionType>('payment');
 	const credits = ref<number | null>(null);
@@ -188,6 +213,7 @@
 
 	watch(recipientInput, () => {
 		recipient.value = null;
+		bypassRedirect.value = false;
 		errors.recipient = '';
 	});
 
@@ -212,6 +238,7 @@
 		}
 
 		lookupPending.value = true;
+		bypassRedirect.value = false;
 		errors.recipient = '';
 		recipient.value = null;
 
@@ -235,7 +262,7 @@
 
 				const githubUser = await response.json() as GithubUser;
 				// The GitHub account is either a user or an org, each registered on the dashboard under its GitHub id.
-				const [ dashboardUsers, dashboardOrgs ] = await Promise.all([
+				const [ dashboardUsers, dashboardOrgs, redirectTarget ] = await Promise.all([
 					$directus.request(readUsers({
 						filter: { external_identifier: { _eq: String(githubUser.id) } },
 						fields: [ 'id', 'github_username' ],
@@ -246,6 +273,9 @@
 						fields: [ 'id', 'name' ],
 						limit: 1,
 					})) as Promise<Array<{ id: string; name: string }>>,
+					$directus.request<RedirectTarget | null>(customEndpoint({
+						path: '/admin-sponsors/redirect', params: { githubId: String(githubUser.id) },
+					})).catch(() => undefined),
 				]);
 
 				const dashboardUser = dashboardUsers[0];
@@ -257,6 +287,7 @@
 					avatarUrl: githubUser.avatar_url,
 					profileUrl: githubUser.html_url,
 					dashboardAccount: dashboardUser?.github_username || dashboardUser?.id || dashboardOrg?.name || null,
+					redirectTarget,
 				};
 			})());
 		} catch (error) {
@@ -267,7 +298,7 @@
 	};
 
 	const validate = () => {
-		errors.recipient = recipient.value ? '' : 'Look up and confirm a GitHub account.';
+		errors.recipient = !recipient.value ? 'Look up and confirm a GitHub account.' : !creditRecipient.value ? 'Retry the lookup or explicitly bypass the redirect.' : '';
 		errors.credits = Number.isInteger(credits.value) && (credits.value || 0) > 0 ? '' : 'Enter a positive whole number of credits.';
 		errors.paymentAmount = '';
 		errors.comment = '';
@@ -308,8 +339,8 @@
 					comment: comment.value.trim(),
 				};
 
-			await minDelay($directus.request(customEndpoint({ method: 'POST', path: '/admin-sponsors/manual-additions', body: JSON.stringify(addition) })));
-			sendToast('success', 'Credits added', `${formatNumber(credits.value)} credits were added for @${recipient.value.login}.`);
+			const creditedRecipient = await minDelay($directus.request<{ githubLogin: string }>(customEndpoint({ method: 'POST', path: '/admin-sponsors/manual-additions', body: JSON.stringify({ ...addition, bypassRedirect: bypassRedirect.value }) })));
+			sendToast('success', 'Credits added', `${formatNumber(credits.value)} credits were added for @${creditedRecipient.githubLogin}.`);
 			emit('success');
 		} catch (error) {
 			sendErrorToast(error);

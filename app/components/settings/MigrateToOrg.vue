@@ -109,7 +109,8 @@
 							:disabled="!!auth.impersonation"
 							@click="confirmationDialog?.confirm({
 								header: 'Remove the credits redirect?',
-								message: [ 'Sponsorship credits of ', { bold: redirect.source.name }, ' will no longer be added to ', { bold: redirect.target.name }, '.' ],
+								message: [ 'Sponsorship credits for ', { bold: redirect.source.name }, ' will no longer be added to ', { bold: redirect.target.name }, '.' ],
+								note: `Credits already added to ${redirect.target.name} will stay there.`,
 								label: 'Remove',
 								action: () => clearRedirect(redirect),
 							})"/>
@@ -260,12 +261,35 @@
 	};
 
 	// Transfers can't be undone and a redirect replaces the existing ones, so both are confirmed first.
-	const confirmRow = ({ action, button }: Row) => confirmationDialog.value?.confirm({
-		header: `${button} to ${org.value!.name}?`,
-		message: action === 'redirect'
-			? [ 'This will remove ', ...redirects.value.flatMap(({ source, target }, index) => [ ...index ? [ ', ' ] : [], { bold: `${source.name} → ${target.name}` }]), '.' ]
-			: [ 'This can\'t be undone.' ],
-		label: button,
-		action: () => run(action),
-	});
+	const confirmRow = ({ action, button }: Row) => {
+		const destination = { bold: org.value!.name };
+		const content = {
+			probes: {
+				message: [ 'All probes in your personal account will move to ', destination, '.' ],
+				note: 'Your current adoption token will move with them, and your personal account will receive a new token.',
+			},
+			tokens: {
+				message: [ 'All tokens and app approvals in your personal account will move to ', destination, '.' ],
+				note: 'Measurements made with them will use the organization\'s credits.',
+			},
+			credits: {
+				message: [ 'Your personal credit balance and history will move to ', destination, '.' ],
+				note: 'This includes your usage history, sponsorship history and sponsor bonus. Future sponsorship credits keep their current destination.',
+			},
+			redirect: {
+				message: [ 'Future sponsorship credits for your personal account will be added to ', destination, '.' ],
+				note: 'You can remove this redirect at any time.',
+			},
+		};
+
+		confirmationDialog.value?.confirm({
+			header: `${button} to ${org.value!.name}?`,
+			...content[action],
+			warning: action === 'redirect'
+				? `This will remove ${redirects.value.map(({ source, target }) => `${source.name} → ${target.name}`).join(', ')}.`
+				: 'This transfer cannot be undone.',
+			label: button,
+			action: () => run(action),
+		});
+	};
 </script>

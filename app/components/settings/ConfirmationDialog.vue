@@ -10,6 +10,7 @@
 					</template>
 				</p>
 				<p v-if="confirmation?.note" class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">{{ confirmation.note }}</p>
+				<p v-if="confirmation?.warning" class="mt-4 font-bold">{{ confirmation.warning }}</p>
 			</div>
 		</div>
 		<div class="mt-6 text-right">
@@ -26,6 +27,7 @@
 		header: string;
 		message: (string | { bold: string })[];
 		note?: string;
+		warning?: string;
 		label: string;
 		action: () => Promise<void>;
 		afterHide?: () => void;

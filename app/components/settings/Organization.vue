@@ -128,7 +128,8 @@
 							:disabled="!!auth.impersonation"
 							@click="confirmationDialog?.confirm({
 								header: 'Clear the credits redirect?',
-								message: [ 'Sponsorship credits of ', { bold: redirect.source.name }, ' will no longer be added to ', { bold: redirect.target.name }, '.' ],
+								message: [ 'Sponsorship credits for ', { bold: redirect.source.name }, ' will no longer be added to ', { bold: redirect.target.name }, '.' ],
+								note: `Credits already added to ${redirect.target.name} will stay there.`,
 								label: 'Clear redirect',
 								action: () => clearRedirect(redirect),
 							})"

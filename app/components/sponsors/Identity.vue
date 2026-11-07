@@ -12,22 +12,14 @@
 		<i
 			v-if="redirectTarget"
 			v-tooltip.top="`Credits redirected to ${redirectTarget}`"
-			class="pi pi-share-alt shrink-0 text-xs text-bluegray-400 focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
-			tabindex="0"
+			class="pi pi-share-alt shrink-0 text-xs text-bluegray-400"
 			role="img"
-			:aria-label="`Credits redirected to ${redirectTarget}`"
-			@focus="forwardTooltipFocus"
-			@blur="forwardTooltipFocus"/>
+			:aria-label="`Credits redirected to ${redirectTarget}`"/>
 		<i v-if="dashboardAccountId" v-tooltip.top="'Dashboard account linked'" role="img" class="pi pi-user shrink-0 text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
 	</span>
 </template>
 
 <script setup lang="ts">
-	// PrimeVue binds either hover or focus, so forward focus to keep both triggers.
-	const forwardTooltipFocus = (event: FocusEvent) => {
-		(event.currentTarget as HTMLElement).dispatchEvent(new Event(event.type === 'focus' ? 'mouseenter' : 'mouseleave'));
-	};
-
 	defineProps<{
 		githubLogin: string | null;
 		githubId: string;

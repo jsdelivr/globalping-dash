@@ -81,7 +81,7 @@
 					fluid
 					:min="1"
 					:max-fraction-digits="0"
-					:use-grouping="false"
+					locale="en-US"
 					:invalid="Boolean(errors.credits)"
 				/>
 				<p class="text-sm text-bluegray-500">This is the exact final number of credits that will be added. No bonus is calculated for this entry.</p>

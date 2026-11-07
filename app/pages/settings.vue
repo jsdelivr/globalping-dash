@@ -191,15 +191,17 @@
 					</div>
 					<div v-if="notificationType.hasParameter" class="mt-3 flex items-center gap-2">
 						<label class="cursor-text text-nowrap">Threshold:</label>
-						<InputText
+						<InputNumber
 							v-if="notificationPreferences[notificationTypeId]"
-							:model-value="notificationPreferences[notificationTypeId].parameter"
+							:model-value="notificationPreferences[notificationTypeId].parameter ? Number(notificationPreferences[notificationTypeId].parameter) : null"
+							fluid
 							:disabled="!!auth.impersonation || !notificationPreferences[notificationTypeId].enabled"
-							inputmode="numeric"
-							pattern="[0-9]*"
+							locale="en-US"
+							:min="0"
+							:max-fraction-digits="0"
 							class="max-w-48"
-							@beforeinput="restrictToDigits"
-							@update:model-value="(value) => notificationPreferences[notificationTypeId]!.parameter = String(value ?? '').replace(/\D+/g, '')"
+							@input="({ value }) => notificationPreferences[notificationTypeId]!.parameter = String(value ?? '')"
+							@update:model-value="(value) => notificationPreferences[notificationTypeId]!.parameter = String(value ?? '')"
 						/>
 					</div>
 				</div>
@@ -432,16 +434,6 @@
 
 	function serializeNotificationPreferences () {
 		return JSON.stringify(normalizeNotificationPreferences());
-	}
-
-	function restrictToDigits (event: InputEvent) {
-		if (event.inputType.startsWith('delete')) {
-			return;
-		}
-
-		if (event.data && /\D/.test(event.data)) {
-			event.preventDefault();
-		}
 	}
 
 	// This builds an object to use and edit by the form UI.

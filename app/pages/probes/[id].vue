@@ -103,10 +103,12 @@
 						:key="tab.value"
 						:value="tab.value"
 						tabindex="0"
-						class="!w-1/3 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto"
+						class="!w-1/3 border-none !px-1 !py-2 !text-[14px] !font-bold sm:!w-auto sm:!px-6"
 						@click.capture="selectTab($event, tab.value)"
 						@keydown.capture="selectTabWithKeyboard($event, tab.value)"
 					>
+						<NuxtIcon v-if="tab.svgIcon" :name="tab.svgIcon" class="pi mr-2 translate-y-px text-sm [&_svg]:inline-block [&_svg]:!align-text-bottom" filled aria-hidden="true"/>
+						<i v-else :class="tab.icon" class="mr-2 translate-y-px text-sm" aria-hidden="true"/>
 						{{ tab.label }}
 					</Tab>
 				</TabList>
@@ -168,9 +170,9 @@
 	const tabListRef = useTemplateRef('tabListRef');
 	const probePageLink = ref('/probes');
 	const probeTabs = [
-		{ value: 'details', label: 'Details' },
-		{ value: 'logs', label: 'Logs' },
-		{ value: 'settings', label: 'Settings' },
+		{ value: 'details', label: 'Details', svgIcon: 'radio' },
+		{ value: 'logs', label: 'Logs', icon: 'pi pi-file' },
+		{ value: 'settings', label: 'Settings', icon: 'pi pi-cog' },
 	];
 	const { activeTab, setActiveTab, selectTab, selectTabWithKeyboard } = useQueryTabs(probeTabs.map(({ value }) => value), 'details');
 

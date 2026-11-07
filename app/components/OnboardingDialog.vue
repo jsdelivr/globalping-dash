@@ -1,5 +1,5 @@
 <template>
-	<GPDialog v-model:visible="visible" header="A few more steps to go!" content-class="!p-0" overlay-scrollbars @after-hide="onHide">
+	<GPDialog v-model:visible="visible" header="Set up your account" content-class="!p-0" overlay-scrollbars @after-hide="onHide">
 		<p class="border-y bg-surface-50 px-6 py-5 text-center text-lg font-bold dark:border-dark-600 dark:bg-dark-800">Choose your default account</p>
 
 		<div class="p-6">
@@ -26,7 +26,7 @@
 						<span class="flex items-center gap-2 font-bold">
 							<i :class="card.icon" class="text-bluegray-400 group-has-[:checked]:text-primary sm:!hidden" aria-hidden="true"/>{{ card.title }}
 						</span>
-						<span>{{ isDisabled(card.value) ? 'You aren\'t a member of any GitHub organization yet.' : card.description }}</span>
+						<span>{{ isDisabled(card.value) ? 'No GitHub organizations are available for your account.' : card.description }}</span>
 						<i :class="card.icon" class="mt-auto pt-2 text-3xl text-bluegray-400 group-has-[:checked]:text-primary max-sm:!hidden" aria-hidden="true"/>
 					</span>
 				</label>
@@ -108,14 +108,14 @@
 
 			<div class="mt-6 flex justify-end gap-2 border-t pt-4 dark:border-dark-600">
 				<Button
-					label="Skip"
+					label="Skip setup"
 					severity="secondary"
 					text
 					:loading="pending === 'skip'"
 					:disabled="!!pending"
 					@click="skip"/>
 				<Button
-					label="Apply"
+					label="Save preferences"
 					:loading="pending === 'apply'"
 					:disabled="!!pending || !canApply"
 					@click="apply"
@@ -135,8 +135,8 @@
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
 	const CARDS = [
-		{ value: 'personal', title: 'Personal', description: 'Use your own probes, credits and tokens.', icon: 'pi pi-user' },
-		{ value: 'org', title: 'Organization', description: 'Use your GitHub organization\'s probes, credits and tokens.', icon: 'pi pi-building' },
+		{ value: 'personal', title: 'Personal', description: 'Use your personal probes, credits, and tokens.', icon: 'pi pi-user' },
+		{ value: 'org', title: 'Organization', description: 'Use your GitHub organization\'s probes, credits, and tokens.', icon: 'pi pi-building' },
 	] as const;
 
 	const { $directus } = useNuxtApp();
@@ -208,7 +208,7 @@
 	const apply = () => run('apply', async () => {
 		if (choice.value === 'personal') {
 			await setDefaultAccount(account.personal.id, { public_probes: publicProbes.value });
-			sendToast('success', 'Saved', 'Your personal account is now the default');
+			sendToast('success', 'Preferences saved', 'Your personal account is now your default.');
 			return;
 		}
 

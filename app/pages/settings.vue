@@ -13,6 +13,7 @@
 					@click.capture="selectTab($event, tab.value)"
 					@keydown.capture="selectTabWithKeyboard($event, tab.value)"
 				>
+					<i :class="tab.icon" class="mr-2 text-sm" aria-hidden="true"/>
 					{{ tab.label }}
 				</Tab>
 			</TabList>
@@ -35,8 +36,8 @@
 	import { useAccount } from '~/store/account';
 
 	const TABS = [
-		{ value: 'personal', label: 'Personal' },
-		{ value: 'organization', label: 'Organization' },
+		{ value: 'personal', label: 'Personal', icon: 'pi pi-user' },
+		{ value: 'organization', label: 'Organization', icon: 'pi pi-building' },
 	];
 
 	useHead({

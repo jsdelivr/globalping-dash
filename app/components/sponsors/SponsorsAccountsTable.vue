@@ -77,7 +77,8 @@
 								:github-login="data.githubLogin"
 								:github-id="data.githubId"
 								:dashboard-account-id="data.dashboardAccountId"
-								:dashboard-account-is-org="data.dashboardAccountIsOrg"/>
+								:dashboard-account-is-org="data.dashboardAccountIsOrg"
+								:redirect-target="data.redirectTarget"/>
 							<div class="mt-1 text-xs text-bluegray-500 xl:hidden">Latest: {{ formatUtcDateForTable(data.latestEvent) }}</div>
 						</div>
 					</AsyncCell>
@@ -118,7 +119,8 @@
 								:github-login="account.githubLogin"
 								:github-id="account.githubId"
 								:dashboard-account-id="account.dashboardAccountId"
-								:dashboard-account-is-org="account.dashboardAccountIsOrg"/>
+								:dashboard-account-is-org="account.dashboardAccountIsOrg"
+								:redirect-target="account.redirectTarget"/>
 							<span class="inline-flex min-w-0 max-w-[60%] shrink-0 items-center gap-2 font-semibold">
 								<i class="pi pi-circle-fill shrink-0 text-2xs" :class="statusColor(account.status)"/>
 								<span class="wrap-anywhere min-w-0">{{ statusLabel(account.status) }}</span>
@@ -170,6 +172,7 @@
 		dashboardAccountId: string | null;
 		dashboardAccountName: string | null;
 		dashboardAccountIsOrg: boolean;
+		redirectTarget: string | null;
 		status: SponsorStatus;
 		currentMonthlyAmount: number | null;
 		periodSponsorshipValue: number;

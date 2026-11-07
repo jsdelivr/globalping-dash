@@ -63,7 +63,8 @@
 							:github-login="data.githubLogin"
 							:github-id="data.githubId"
 							:dashboard-account-id="data.dashboardAccountId"
-							:dashboard-account-is-org="data.dashboardAccountIsOrg"/>
+							:dashboard-account-is-org="data.dashboardAccountIsOrg"
+							:redirect-target="data.redirectTarget"/>
 					</AsyncCell>
 				</template>
 			</Column>
@@ -102,7 +103,8 @@
 									:github-login="event.githubLogin"
 									:github-id="event.githubId"
 									:dashboard-account-id="event.dashboardAccountId"
-									:dashboard-account-is-org="event.dashboardAccountIsOrg"/>
+									:dashboard-account-is-org="event.dashboardAccountIsOrg"
+									:redirect-target="event.redirectTarget"/>
 							</div>
 							<div class="wrap-anywhere min-w-0 max-w-[60%] shrink-0 text-right">
 								<div class="font-semibold">{{ formatMoney(event.sponsorshipValue) }}</div>
@@ -155,6 +157,7 @@
 		dashboardAccountId: string | null;
 		dashboardAccountName: string | null;
 		dashboardAccountIsOrg: boolean;
+		redirectTarget: string | null;
 		reason: SponsorshipReason;
 		manual: boolean;
 		amountInDollars: number;

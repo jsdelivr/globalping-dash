@@ -1,6 +1,6 @@
 <template>
 	<label :for="`${idPrefix}-website`" class="flex items-center font-bold">
-		Website URL <i v-tooltip.top="PUBLIC_HINT" class="pi pi-info-circle ml-2"/>
+		Website <i v-tooltip.top="PUBLIC_HINT" class="pi pi-info-circle ml-2"/>
 	</label>
 	<InputText
 		:id="`${idPrefix}-website`"
@@ -11,7 +11,7 @@
 		:disabled="disabled"
 		@blur="websiteTouched = true"
 	/>
-	<p v-if="showWebsiteError" class="mt-1 text-sm text-red-500">{{ website.startsWith('http://') ? 'The URL must start with https://' : 'Enter a full URL, e.g., https://example.com' }}</p>
+	<p v-if="showWebsiteError" class="mt-1 text-sm text-red-500">{{ website.startsWith('http://') ? 'The URL must start with https://' : 'Enter a full URL, such as https://example.com.' }}</p>
 
 	<label :for="`${idPrefix}-description`" class="mt-6 flex items-center font-bold">
 		Description <i v-tooltip.top="PUBLIC_HINT" class="pi pi-info-circle ml-2"/>
@@ -34,7 +34,7 @@
 
 	<div class="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
 		<p class="flex items-center font-bold">
-			<span :id="`${idPrefix}-banner-title`">Upload banner</span>
+			<span :id="`${idPrefix}-banner-title`">Banner</span>
 			<i v-tooltip.top="PUBLIC_HINT" class="pi pi-info-circle ml-2"/>
 		</p>
 		<p :id="`${idPrefix}-banner-hint`" class="text-sm text-bluegray-500 dark:text-bluegray-300">
@@ -52,7 +52,7 @@
 			<img v-if="previewUrl && !previewFailed" :src="previewUrl" alt="Banner preview" class="size-full object-cover" @error="previewFailed = true">
 			<div v-else class="flex size-full items-center justify-center gap-2 text-bluegray-400 dark:text-bluegray-300">
 				<i class="pi pi-image text-xl" aria-hidden="true"/>
-				<span class="text-sm">{{ previewUrl ? 'Couldn\'t load the banner' : 'No banner' }}</span>
+				<span class="text-sm">{{ previewUrl ? 'Could not load the banner' : 'No banner' }}</span>
 			</div>
 		</div>
 		<div class="flex shrink-0 items-center justify-end gap-2 sm:w-52">
@@ -90,7 +90,7 @@
 		>
 	</div>
 	<p v-if="banner !== undefined" class="mt-1 text-sm text-bluegray-500 dark:text-bluegray-300">
-		{{ banner ? 'New image, applied when you save' : 'The banner will be removed when you save' }}
+		{{ banner ? 'Save your changes to apply the new banner.' : 'Save your changes to remove the banner.' }}
 		<span class="whitespace-nowrap">·&nbsp;<button
 			type="button"
 			class="font-semibold text-primary hover:underline focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:opacity-60"
@@ -105,7 +105,7 @@
 <script setup lang="ts">
 	import { BANNER_HINT, BANNER_TYPES, type BannerChange, DESCRIPTION_MAX_LENGTH, isValidWebsite, validateBanner } from '~/utils/org-profile';
 
-	const PUBLIC_HINT = 'Shown on the organization\'s public page.';
+	const PUBLIC_HINT = 'Shown on your organization\'s public profile.';
 
 	const props = defineProps<{ idPrefix: string; bannerId?: string | null; disabled?: boolean }>();
 

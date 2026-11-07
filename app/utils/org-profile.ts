@@ -12,12 +12,12 @@ const BANNER_MIN_WIDTH = 1224;
 const BANNER_MIN_HEIGHT = 200;
 const BANNER_MAX_MB = 5;
 
-export const BANNER_HINT = [ `Min ${BANNER_MIN_WIDTH}×${BANNER_MIN_HEIGHT} px`, 'png / jpeg / webp', `up to ${BANNER_MAX_MB} MB` ];
+export const BANNER_HINT = [ `At least ${BANNER_MIN_WIDTH}×${BANNER_MIN_HEIGHT} px`, 'PNG, JPEG, or WebP', `Up to ${BANNER_MAX_MB} MB` ];
 
 // A picked file to upload, null to remove the saved banner, undefined to keep it.
 export type BannerChange = File | null | undefined;
 
-const TYPE_ERROR = 'The banner must be a PNG, JPEG or WebP image.';
+const TYPE_ERROR = 'The banner must be a PNG, JPEG, or WebP image.';
 
 export const validateBanner = async (file: File) => {
 	if (!BANNER_TYPES.includes(file.type)) {

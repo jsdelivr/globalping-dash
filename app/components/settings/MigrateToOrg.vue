@@ -55,7 +55,7 @@
 								</template>
 								<p v-else-if="row.action === 'tokens'">Move your personal tokens and app approvals to <b>{{ org.name }}</b>. Measurements made with them will use the organization's credits.</p>
 								<template v-else-if="row.action === 'credits'">
-									<p>Move your personal credit balance, usage history, sponsorship history and sponsor bonus to <b>{{ org.name }}</b>.</p>
+									<p>Move your personal credit balance, usage history, sponsorship history, and sponsor bonus to <b>{{ org.name }}</b>.</p>
 									<p v-if="redirectFromOrg" class="mt-1">Sponsorship credits for <b>{{ org.name }}</b> will continue going to your personal account. Remove the redirect below to keep future credits in <b>{{ org.name }}</b>.</p>
 								</template>
 								<template v-else>
@@ -274,7 +274,7 @@
 			},
 			credits: {
 				message: [ 'Your personal credit balance and history will move to ', destination, '.' ],
-				note: 'This includes your usage history, sponsorship history and sponsor bonus. Future sponsorship credits keep their current destination.',
+				note: 'This includes your usage history, sponsorship history, and sponsor bonus. Future sponsorship credits keep their current destination.',
 			},
 			redirect: {
 				message: [ 'Future sponsorship credits for your personal account will be added to ', destination, '.' ],

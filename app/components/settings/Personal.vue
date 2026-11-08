@@ -123,7 +123,7 @@
 							allowing you to select them in measurements,
 							and a list of your active probes is also available on your
 							<NuxtLink class="font-semibold text-primary hover:underline" :to="`https://globalping.io/users/${defaultPrefix}`" target="_blank" rel="noopener">user page</NuxtLink>.
-							<template v-if="canTransfer">To use an organization tag instead, transfer your probes to an organization below.</template>
+							<template v-if="canTransfer">To use an organization’s tag instead, transfer your probes in the “Transfer to an organization” section below.</template>
 						</label>
 					</div>
 				</div>

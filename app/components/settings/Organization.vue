@@ -78,7 +78,7 @@
 		<div v-if="extraAdoptionTokens.length" class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5 sm:pr-6">
 				<h5 class="text-lg font-bold">Extra adoption tokens</h5>
-				<p class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Previous personal adoption tokens of members who moved their probes into the organization. Probes started with them are adopted into the organization.</p>
+				<p class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Personal adoption tokens that moved with members’ probes. Probes started with these tokens are adopted into the organization.</p>
 			</div>
 			<div class="grow sm:w-3/5">
 				<ul class="flex flex-col gap-2">
@@ -96,7 +96,7 @@
 							:disabled="!!auth.impersonation"
 							@click="confirmationDialog?.confirm({
 								header: `Remove ${extraToken.github_username}'s adoption token?`,
-								message: [ 'Probes started with the adoption token of ', { bold: extraToken.github_username }, ' will no longer be adopted into the organization.' ],
+								message: [ 'Probes started with ', { bold: extraToken.github_username }, '’s adoption token will no longer be adopted into the organization.' ],
 								label: 'Remove',
 								action: () => removeExtraAdoptionToken(extraToken),
 							})"
@@ -305,7 +305,7 @@
 		}));
 
 		await auth.refresh();
-		sendToast('success', 'Removed', `The adoption token of ${removed.github_username} was removed`);
+		sendToast('success', 'Token removed', `Removed ${removed.github_username}’s adoption token.`);
 	};
 
 	// CREDITS REDIRECT

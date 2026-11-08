@@ -348,7 +348,7 @@
 		publicProbes.value = value;
 	});
 
-	// The default account can also be set from the "Add organization" dialog.
+	// The default account can also be set from the "Manage accounts" dialog.
 	watch(() => user.value.default_account, () => {
 		defaultAccount.value = savedDefaultAccount();
 	});

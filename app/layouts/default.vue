@@ -79,8 +79,8 @@
 				</TieredMenu>
 			</div>
 
-			<GPDialog v-model:visible="addOrgDialog" header="Add organization" size="large">
-				<GpDialogContentAddOrganization/>
+			<GPDialog v-model:visible="manageAccountsDialog" header="Manage accounts" size="large">
+				<GpDialogContentManageAccounts/>
 			</GPDialog>
 
 			<div class="hidden max-lg:flex">
@@ -319,7 +319,7 @@
 
 	// PROFILE
 
-	const addOrgDialog = ref(false);
+	const manageAccountsDialog = ref(false);
 	const navigationGuard = ref();
 
 	// The switch is saved before the reload, so unsaved changes must be confirmed first.
@@ -347,12 +347,12 @@
 			command: () => switchAccount(membership.org.account).catch(sendErrorToast),
 		})),
 		{
-			key: 'add',
-			label: 'Manage organizations',
+			key: 'manage-accounts',
+			label: 'Manage accounts',
 			active: false,
 			badge: undefined,
 			icon: 'pi pi-sliders-h',
-			command: () => { addOrgDialog.value = true; },
+			command: () => { manageAccountsDialog.value = true; },
 		},
 	]);
 

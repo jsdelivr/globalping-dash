@@ -32,7 +32,7 @@
 			<p v-if="orgs.length" class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Only organizations where you're an admin or a member are listed.</p>
 			<p v-else class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">No organizations are available for transfers. You need an admin or member role.</p>
 
-			<Message v-if="org" severity="warn" icon="pi pi-exclamation-triangle" class="mt-6">
+			<Message v-if="org" severity="warn" icon="pi pi-exclamation-triangle" class="mt-4">
 				Transfers of probes, tokens, and credits cannot be undone. Sponsorship credit redirects can be removed at any time.
 			</Message>
 

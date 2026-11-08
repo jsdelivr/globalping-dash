@@ -108,7 +108,7 @@
 
 		<div v-if="redirects.length" class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 			<div class="max-sm:mb-4 sm:w-2/5 sm:pr-6">
-				<h5 class="text-lg font-bold">Credits redirect</h5>
+				<h5 class="text-lg font-bold">Sponsorship credit redirects</h5>
 				<p class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Sponsorship credits redirected from or to this organization.</p>
 			</div>
 			<div class="grow sm:w-3/5">

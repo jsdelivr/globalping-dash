@@ -121,16 +121,16 @@
 						</span>
 						<Button
 							class="ml-auto shrink-0"
-							label="Clear"
+							label="Remove"
 							size="small"
 							severity="secondary"
 							outlined
 							:disabled="!!auth.impersonation"
 							@click="confirmationDialog?.confirm({
-								header: 'Clear the credits redirect?',
+								header: 'Remove the credits redirect?',
 								message: [ 'Sponsorship credits for ', { bold: redirect.source.name }, ' will no longer be added to ', { bold: redirect.target.name }, '.' ],
 								note: `Credits already added to ${redirect.target.name} will stay there.`,
-								label: 'Clear redirect',
+								label: 'Remove',
 								action: () => clearRedirect(redirect),
 							})"
 						/>
@@ -328,7 +328,7 @@
 		}));
 
 		await refreshRedirects();
-		sendToast('success', 'Cleared', 'The credits redirect was cleared');
+		sendToast('success', 'Redirect removed', `Removed the sponsorship credit redirect from ${source.name} to ${target.name}.`);
 	};
 
 	// MEMBERS

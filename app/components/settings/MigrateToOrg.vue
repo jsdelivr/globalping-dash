@@ -286,7 +286,7 @@
 			header: `${button} to ${org.value!.name}?`,
 			...content[action],
 			warning: action === 'redirect'
-				? `This will remove ${redirects.value.map(({ source, target }) => `${source.name} → ${target.name}`).join(', ')}.`
+				? `This will remove the existing redirects: ${redirects.value.map(({ source, target }) => `${source.name} → ${target.name}`).join(', ')}.`
 				: 'This transfer cannot be undone.',
 			label: button,
 			action: () => run(action),

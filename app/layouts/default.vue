@@ -348,10 +348,10 @@
 		})),
 		{
 			key: 'add',
-			label: 'Add organization',
+			label: 'Manage organizations',
 			active: false,
 			badge: undefined,
-			icon: 'pi pi-plus',
+			icon: 'pi pi-sliders-h',
 			command: () => { addOrgDialog.value = true; },
 		},
 	]);

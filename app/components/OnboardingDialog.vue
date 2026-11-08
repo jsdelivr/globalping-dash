@@ -108,7 +108,7 @@
 
 			<div class="mt-6 flex justify-end gap-2 border-t pt-4 dark:border-dark-600">
 				<Button
-					label="Skip setup"
+					label="Skip"
 					severity="secondary"
 					text
 					:loading="pending === 'skip'"

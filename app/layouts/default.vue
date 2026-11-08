@@ -106,7 +106,7 @@
 					<NuxtLink v-if="auth.isAdmin && auth.adminMode" active-class="active" class="sidebar-link" to="/sponsors" @click="mobileSidebar = false">
 						<i class="pi pi-users sidebar-link-icon"/>Sponsors<i class="pi pi-shield ml-auto pr-4 text-xs text-bluegray-400" aria-hidden="true"/>
 					</NuxtLink>
-					<NuxtLink active-class="active" class="sidebar-link" to="/settings" @click="mobileSidebar = false"><i class="pi pi-cog sidebar-link-icon"/>Settings</NuxtLink>
+					<NuxtLink active-class="active" class="sidebar-link" :to="settingsRoute" @click="mobileSidebar = false"><i class="pi pi-cog sidebar-link-icon"/>Settings</NuxtLink>
 					<div v-if="!auth.adminMode" class="my-2 flex flex-col border-y py-2">
 						<p class="px-4 py-2 text-sm font-bold text-bluegray-500">Switch account</p>
 						<button v-for="item in accountOptions" :key="item.key" class="sidebar-link" :class="{ 'font-bold !text-primary': item.active }" @click="item.command(); mobileSidebar = false">
@@ -319,6 +319,7 @@
 
 	// PROFILE
 
+	const settingsRoute = computed(() => account.canManageOrg ? '/settings?tab=organization' : '/settings');
 	const manageAccountsDialog = ref(false);
 	const navigationGuard = ref();
 
@@ -360,7 +361,7 @@
 		{
 			label: 'Settings',
 			icon: 'pi pi-cog',
-			route: '/settings',
+			route: settingsRoute.value,
 		},
 		...auth.adminMode ? [] : [
 			{

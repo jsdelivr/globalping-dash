@@ -2,7 +2,7 @@
 	<div class="mt-6 flex rounded-xl border bg-surface-0 p-4 max-sm:flex-col sm:p-6 dark:bg-dark-800">
 		<div class="max-sm:mb-4 sm:w-2/5 sm:pr-6">
 			<h5 class="text-lg font-bold">Transfer to an organization</h5>
-			<p class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Transfer your personal probes, tokens and credits to an organization, or redirect future sponsorship credits.</p>
+			<p class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Transfer your personal probes, tokens, and credits to an organization, or redirect future sponsorship credits.</p>
 		</div>
 		<div class="min-w-0 grow sm:w-3/5">
 			<label for="migrate-org" class="block font-bold">Destination organization</label>
@@ -30,10 +30,10 @@
 				</template>
 			</Select>
 			<p v-if="orgs.length" class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Only organizations where you're an admin or a member are listed.</p>
-			<p v-else class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">You must be an admin or a member of an organization to transfer resources.</p>
+			<p v-else class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">No organizations are available for transfers. You need an admin or member role.</p>
 
 			<Message v-if="org" severity="warn" icon="pi pi-exclamation-triangle" class="mt-6">
-				Transfers of probes, tokens and credits cannot be undone. Sponsorship credit redirects can be removed at any time.
+				Transfers of probes, tokens, and credits cannot be undone. Sponsorship credit redirects can be removed at any time.
 			</Message>
 
 			<ul v-if="org" class="mt-4 divide-y dark:divide-dark-600">

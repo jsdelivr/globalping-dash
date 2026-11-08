@@ -31,7 +31,7 @@
 
 				<template v-if="defaultAccountOptions.length > 1">
 					<label for="defaultAccount" class="mt-6 flex items-center font-bold">
-						Default account <i v-tooltip.top="{ value: 'The account the dashboard opens in when you sign in. You can switch accounts any time from the account menu.', class: 'max-w-sm' }" class="pi pi-info-circle ml-2"/>
+						Default account <i v-tooltip.top="{ value: 'The account selected when you sign in. You can switch accounts any time from the account menu.', class: 'max-w-sm' }" class="pi pi-info-circle ml-2"/>
 					</label>
 					<Select
 						v-model="defaultAccount"

@@ -208,7 +208,7 @@
 
 	const MEMBERS_PER_PAGE = 10;
 	const ROLES: { value: Membership['role']; label: string; description: string }[] = [
-		{ value: 'admin', label: 'Admin', description: 'Manages the organization\'s settings, adoption token, members and their roles. Adopts and edits its probes, gets its notifications and uses its credits.' },
+		{ value: 'admin', label: 'Admin', description: 'Manages the organization\'s settings, adoption token, members, and their roles. Adopts and edits its probes, gets its notifications, and uses its credits.' },
 		{ value: 'member', label: 'Member', description: 'Sees the organization\'s probes and credits, and creates tokens and app approvals that spend its credits. Can\'t adopt or edit probes.' },
 		{ value: 'viewer', label: 'Viewer', description: 'Sees the organization\'s probes and credits. Can\'t create tokens or run measurements on globalping.io as the organization.' },
 	];

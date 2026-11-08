@@ -162,12 +162,12 @@
 			<div class="grow sm:w-3/5">
 				<template v-if="notificationAccountOptions.length > 1">
 					<label for="notificationAccount" class="flex items-center font-bold">
-						Account <i v-tooltip.top="'Each selected organization you are an admin of has its own notification settings.'" class="pi pi-info-circle ml-2"/>
+						Account <i v-tooltip.top="'Manage your notifications separately for each account. Organizations are listed if you’ve added them and are an admin.'" class="pi pi-info-circle ml-2"/>
 					</label>
 					<Select
 						v-model="notificationAccount"
 						input-id="notificationAccount"
-						aria-label="Notifications account"
+						aria-label="Notification account"
 						:options="notificationAccountOptions"
 						option-label="label"
 						option-value="value"

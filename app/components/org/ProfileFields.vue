@@ -46,16 +46,16 @@
 	<div
 		role="group"
 		:aria-labelledby="`${idPrefix}-banner-title`"
-		class="mt-2 flex items-center gap-4 rounded-xl border p-3 max-sm:flex-col max-sm:items-stretch dark:border-dark-600"
+		class="mt-2 flex flex-wrap items-center gap-4 rounded-xl border p-3 max-sm:flex-col max-sm:items-stretch dark:border-dark-600"
 	>
-		<div class="aspect-[1224/200] min-w-0 overflow-hidden rounded-md border border-surface-200 bg-gradient-to-r from-surface-50 to-surface-100 max-sm:w-full sm:flex-1 dark:border-dark-600 dark:from-dark-700 dark:to-dark-600">
+		<div class="aspect-[1224/200] min-w-0 overflow-hidden rounded-md border border-surface-200 bg-gradient-to-r from-surface-50 to-surface-100 max-sm:w-full sm:min-w-72 sm:flex-1 dark:border-dark-600 dark:from-dark-700 dark:to-dark-600">
 			<img v-if="previewUrl && !previewFailed" :src="previewUrl" alt="Banner preview" class="size-full object-cover" @error="previewFailed = true">
 			<div v-else class="flex size-full items-center justify-center gap-2 text-bluegray-400 dark:text-bluegray-300">
 				<i class="pi pi-image text-xl" aria-hidden="true"/>
 				<span class="text-sm">{{ previewUrl ? 'Could not load the banner' : 'No banner' }}</span>
 			</div>
 		</div>
-		<div class="flex shrink-0 items-center justify-end gap-2 sm:w-52">
+		<div class="flex shrink-0 items-center justify-end gap-2 sm:ml-auto sm:w-52">
 			<Button
 				v-if="previewUrl"
 				label="Remove"

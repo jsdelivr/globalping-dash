@@ -156,7 +156,7 @@
 						</span>
 						<Button
 							v-if="inboxNotificationIds.length"
-							:disabled="auth.adminMode"
+							:disabled="auth.adminMode || !!auth.impersonation"
 							severity="secondary"
 							outlined
 							label="Mark all as read"
@@ -184,7 +184,7 @@
 							:value="notification.id"
 							class="!rounded-xl border-none bg-surface-50 !p-0 !pb-4 dark:!border dark:!border-solid dark:!border-table-border dark:bg-dark-800"
 							:class="{ 'bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:!bg-dark-700 dark:bg-none': notification.status === 'inbox' }"
-							@click="markNotificationsAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
+							@click="!auth.adminMode && !auth.impersonation && markNotificationsAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 						>
 							<AccordionHeader
 								class="relative -mb-4 !p-4 !pr-8 text-left [&[aria-expanded='true']>i]:rotate-90"

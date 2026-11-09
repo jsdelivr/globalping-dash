@@ -320,23 +320,17 @@
 	const notificationPreferences = computed(() => accountsNotificationPreferences.value[notificationAccount.value] ?? {});
 	let initialNotificationPreferences: Record<string, string> = {};
 
-	const resetFormDirty = useFormDirty({
-		firstName: user.value.first_name,
-		lastName: user.value.last_name,
-		appearance: user.value.appearance,
-		email: user.value.email,
-		defaultPrefix: user.value.default_prefix,
-	}, (current) => {
-		return firstName.value !== current.firstName
-			|| lastName.value !== current.lastName
-			|| appearance.value !== current.appearance
-			|| email.value !== current.email
-			|| publicProbes.value !== user.value.public_probes
-			|| defaultPrefix.value !== current.defaultPrefix
-			|| defaultAccount.value !== savedDefaultAccount()
-			|| adoptionToken.value !== user.value.adoption_token
-			|| Object.keys(accountsNotificationPreferences.value).some(isNotificationPreferencesChanged);
-	});
+	const lastSavedAppearance = ref(user.value.appearance);
+
+	useFormDirty(null, () => firstName.value !== user.value.first_name
+		|| lastName.value !== user.value.last_name
+		|| appearance.value !== lastSavedAppearance.value
+		|| email.value !== user.value.email
+		|| publicProbes.value !== user.value.public_probes
+		|| defaultPrefix.value !== user.value.default_prefix
+		|| defaultAccount.value !== savedDefaultAccount()
+		|| adoptionToken.value !== user.value.adoption_token
+		|| Object.keys(accountsNotificationPreferences.value).some(isNotificationPreferencesChanged));
 
 	// A probe transfer replaces the adoption token outside of this form.
 	watch(() => user.value.adoption_token, (token) => {
@@ -380,7 +374,7 @@
 				...user.value.adoption_token !== adoptionToken.value ? { adoption_token: adoptionToken.value } : {},
 			}));
 
-			lastSavedAppearance = appearance.value;
+			lastSavedAppearance.value = appearance.value;
 
 			const orgResults = await Promise.allSettled(adminMemberships.value
 				.filter(({ org }) => isNotificationPreferencesChanged(org.account))
@@ -397,7 +391,6 @@
 			initialNotificationPreferences = savedNotificationPreferences;
 
 			sendToast('success', 'Saved', 'All settings saved');
-			resetFormDirty();
 		} catch (e) {
 			sendErrorToast(e);
 		}
@@ -407,8 +400,7 @@
 
 	// APPEARANCE
 
-	let lastSavedAppearance = user.value.appearance;
-	onUnmounted(() => auth.setAppearance(lastSavedAppearance));
+	onUnmounted(() => auth.setAppearance(lastSavedAppearance.value));
 
 	// SYNC WITH GITHUB
 

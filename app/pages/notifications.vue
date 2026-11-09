@@ -10,7 +10,7 @@
 			</span>
 			<Button
 				v-if="inboxNotificationIds.length"
-				:disabled="auth.adminMode"
+				:disabled="auth.adminMode || !!auth.impersonation"
 				severity="secondary"
 				outlined
 				label="Mark all as read"
@@ -26,7 +26,7 @@
 				:value="notification.id"
 				class="group rounded-xl border border-surface-300 bg-white p-0 dark:border-table-border dark:bg-dark-800"
 				:class="{ 'cursor-pointer bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:bg-dark-700 dark:bg-none': notification.status === 'inbox' }"
-				@click="markNotificationsAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
+				@click="!auth.adminMode && !auth.impersonation && markNotificationsAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 			>
 				<div class="relative p-6 pb-4">
 					<div class="relative flex flex-col items-start gap-y-1 pr-10">

@@ -249,7 +249,7 @@
 			</div>
 		</aside>
 
-		<div class="overflow-auto">
+		<div ref="content" class="overflow-auto">
 			<div class="mx-auto h-full max-w-[1664px]">
 				<slot/>
 			</div>
@@ -285,6 +285,12 @@
 
 	const isFormDirty = ref(false);
 	provide('form-dirty', isFormDirty);
+
+	const content = ref<HTMLElement>();
+	const route = useRoute();
+
+	// Pages scroll inside this container rather than the window, so the router's scroll reset doesn't reach it.
+	watch(() => route.path, () => content.value?.scrollTo({ top: 0 }));
 
 	useHead({
 		meta: [

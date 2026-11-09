@@ -67,7 +67,7 @@
 						<template v-else>{{ placeholder }}</template>
 					</template>
 					<template #option="{ option }">
-						<span class="-my-1 min-w-0 grow truncate leading-normal">{{ option.org.name }}</span>
+						<span class="-my-0.5 min-w-0 grow truncate leading-normal">{{ option.org.name }}</span>
 						<OrgRoleTag class="ml-6" :value="capitalize(option.role)"/>
 					</template>
 				</Select>

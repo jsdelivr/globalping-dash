@@ -148,6 +148,8 @@
 			</div>
 			<div class="min-w-0 grow sm:w-3/5">
 				<DataTable
+					:page-link-size="3"
+					:paginator-template="paginatorTemplate"
 					:value="members"
 					:loading="membersLoading"
 					:paginator="members.length > MEMBERS_PER_PAGE"
@@ -226,6 +228,10 @@
 	const roleRank = (role: Membership['role']) => ROLES.findIndex(({ value }) => value === role);
 	const roleLabel = (role: Membership['role']) => ROLES[roleRank(role)]?.label;
 	const maskToken = (token: string) => `${token.slice(0, 6)}••••${token.slice(-4)}`;
+
+	// The members column is too narrow for the first/last buttons below md.
+	const windowSize = useWindowSize();
+	const paginatorTemplate = computed(() => windowSize.width.value < 768 ? 'PrevPageLink PageLinks NextPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink');
 
 	// Selects are re-created by bumping their key, which resets them to the member's saved role.
 	const roleSelectsRevision = ref(0);

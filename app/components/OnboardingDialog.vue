@@ -165,8 +165,8 @@
 	const banner = ref<BannerChange>();
 	const showProfileFields = computed(() => membership.value?.role === 'admin' && orgPublicProbes.value && !hasProfile.value);
 
-	watch(membership, (selected) => {
-		orgPublicProbes.value = selected?.org.public_probes ?? false;
+	watch(orgId, () => {
+		orgPublicProbes.value = membership.value?.org.public_probes ?? false;
 		website.value = '';
 		description.value = '';
 		banner.value = undefined;

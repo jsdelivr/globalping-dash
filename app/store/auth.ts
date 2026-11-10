@@ -57,7 +57,6 @@ export const useAuth = defineStore('auth', {
 			email: '',
 			external_identifier: '',
 			github_username: '',
-			github_organizations: [],
 			user_type: 'member',
 			appearance: null,
 			public_probes: false,

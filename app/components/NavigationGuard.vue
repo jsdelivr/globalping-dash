@@ -21,7 +21,10 @@
 <script setup lang="ts">
 	import type { RouteLocationNormalized, NavigationGuardNext } from 'vue-router';
 
+	import { useAuth } from '~/store/auth';
+
 	const router = useRouter();
+	const auth = useAuth();
 	const showNavigationConfirm = ref(false);
 	const pendingConfirm = ref<((confirmed: boolean) => void) | null>(null);
 	const isFormDirty = inject<Ref<boolean>>('form-dirty');
@@ -33,8 +36,9 @@
 		}
 	};
 
+	// Once the session has ended (sign out, account deletion), unsaved changes can no longer be saved.
 	const confirmLeave = () => new Promise<boolean>((resolve) => {
-		if (isFormDirty?.value) {
+		if (isFormDirty?.value && auth.isLoggedIn) {
 			pendingConfirm.value = resolve;
 			showNavigationConfirm.value = true;
 		} else {

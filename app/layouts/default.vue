@@ -41,7 +41,7 @@
 					<i v-if="inboxNotificationIds.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.4rem] text-primary"/>
 				</Button>
 				<Button class="flex items-center !px-2 text-surface-0 hover:bg-transparent" text rounded aria-label="Profile" @click="toggleProfile">
-					<i class="pi pi-user rounded-full border-1.5 border-surface-0 p-2" style="font-size: 1.1rem;"/>
+					<i class="pi rounded-full border-1.5 border-surface-0 p-2" :class="account.current.org_id ? 'pi-building' : 'pi-user'" style="font-size: 1.1rem;"/>
 					<p class="max-w-48 truncate font-semibold xl:max-w-64">{{ account.current.name }}<span v-if="account.current.org_id" class="ml-1 font-normal opacity-70">({{ account.personal.name }})</span></p>
 					<i class="pi pi-chevron-down" style="font-size: .7rem;"/>
 				</Button>
@@ -92,7 +92,7 @@
 				<Drawer v-model:visible="mobileSidebar" class="border bg-surface-100 pt-4">
 					<template #header>
 						<div class="text-lg font-semibold" data-pc-section="title">
-							<i class="pi pi-user mr-2 rounded-full border-1.5 border-main-900 p-2" style="font-size: 1.1rem;"/>
+							<i class="pi mr-2 rounded-full border-1.5 border-main-900 p-2" :class="account.current.org_id ? 'pi-building' : 'pi-user'" style="font-size: 1.1rem;"/>
 							<span class="font-semibold">{{ account.current.name }}</span><span v-if="account.current.org_id" class="ml-1 font-normal opacity-70">({{ account.personal.name }})</span>
 						</div>
 					</template>

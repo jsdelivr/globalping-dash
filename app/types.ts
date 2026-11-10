@@ -172,6 +172,7 @@ declare global {
 		account: string;
 		user_type: 'member' | 'special' | 'sponsor';
 		public_probes: boolean;
+		default_role: 'viewer' | 'member';
 		website: string | null;
 		description: string | null;
 		banner: string | null;

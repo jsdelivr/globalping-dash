@@ -144,9 +144,23 @@
 				<h5 class="text-lg font-bold">
 					Members <span v-if="members.length" class="font-normal text-bluegray-500 dark:text-bluegray-300">· {{ members.length }}</span>
 				</h5>
-				<p class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Role changes apply immediately.</p>
 			</div>
 			<div class="min-w-0 grow sm:w-3/5">
+				<label for="org-default-role" class="flex items-center font-bold">
+					Default role for new members <i v-tooltip.top="{ value: 'The role members get when they join the organization. GitHub admins of the organization always join as admins.', class: 'max-w-sm' }" class="pi pi-info-circle ml-2"/>
+				</label>
+				<Select
+					v-model="defaultRole"
+					input-id="org-default-role"
+					aria-label="Default role for new members"
+					:options="DEFAULT_ROLES"
+					option-label="label"
+					option-value="value"
+					:disabled="!!auth.impersonation"
+					class="mt-2 w-full"
+					@update:model-value="changeDefaultRole"
+				/>
+				<p class="mb-2 mt-6 font-bold">List of members</p>
 				<DataTable
 					:page-link-size="3"
 					:paginator-template="paginatorTemplate"
@@ -172,13 +186,12 @@
 							<span v-if="data.id === ownMembershipId" v-tooltip.top="'You can\'t change your own role'" class="inline-flex h-[2.125rem] items-center px-3">{{ roleLabel(data.role) }}</span>
 							<Select
 								v-else
-								:key="`${data.id}-${roleSelectsRevision}`"
 								:input-id="`member-role-${data.id}`"
-								:model-value="data.role"
+								:model-value="pickedRoles[data.id] ?? data.role"
 								:options="ROLES"
 								option-label="label"
 								option-value="value"
-								:disabled="!!auth.impersonation || updatingMemberId === data.id"
+								:disabled="!!auth.impersonation"
 								:aria-label="`Role of ${data.github_username}`"
 								class="w-32 sm:w-44"
 								@update:model-value="(role: Membership['role']) => changeRole(data, role)"
@@ -214,6 +227,7 @@
 		{ value: 'member', label: 'Member', description: 'Sees the organization\'s probes and credits, and creates tokens and app approvals that spend its credits. Can\'t adopt or edit probes.' },
 		{ value: 'viewer', label: 'Viewer', description: 'Sees the organization\'s probes and credits. Can\'t create tokens or run measurements on globalping.io as the organization.' },
 	];
+	const DEFAULT_ROLES = ROLES.filter(({ value }) => value !== 'admin');
 	const rolesHint = ROLES.map(({ label, description }) => `<p class="mb-2 last:mb-0"><strong>${label}</strong><br>${description}</p>`).join('');
 
 	const { $directus } = useNuxtApp();
@@ -233,8 +247,30 @@
 	const windowSize = useWindowSize();
 	const paginatorTemplate = computed(() => windowSize.width.value < 768 ? 'PrevPageLink PageLinks NextPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink');
 
-	// Selects are re-created by bumping their key, which resets them to the member's saved role.
-	const roleSelectsRevision = ref(0);
+	// DEFAULT ROLE
+
+	const defaultRole = ref(org.value?.default_role);
+
+	const changeDefaultRole = (role: Org['default_role']) => {
+		if (role === org.value?.default_role) {
+			return;
+		}
+
+		confirmationDialog.value?.confirm({
+			header: `Set the default role to ${role}?`,
+			label: `Set to ${role}`,
+			message: [ 'Members who join the organization from now on will be ', { bold: `${role}s` }, '. Existing members keep their roles.' ],
+			note: 'GitHub admins of the organization always join as admins.',
+			action: async () => {
+				await $directus.request(updateItem('gp_orgs', orgId, { default_role: role }));
+				org.value!.default_role = role;
+				sendToast('success', 'Saved', `New members will join as ${role}s`);
+			},
+			afterHide: () => {
+				defaultRole.value = org.value!.default_role;
+			},
+		});
+	};
 
 	// SETTINGS
 
@@ -355,19 +391,12 @@
 
 	useErrorToast(redirectsError, membersError);
 
-	const updatingMemberId = ref<string | null>(null);
+	const pickedRoles = reactive<Record<string, Membership['role']>>({});
 
 	const updateRole = async (member: OrgMember, role: Membership['role']) => {
-		updatingMemberId.value = member.id;
-
-		try {
-			await $directus.request(updateItem('gp_org_members', member.id, { role }));
-			member.role = role;
-			sendToast('success', 'Saved', `${member.github_username} is now ${role === 'admin' ? 'an' : 'a'} ${role}`);
-		} finally {
-			updatingMemberId.value = null;
-			roleSelectsRevision.value++;
-		}
+		await $directus.request(updateItem('gp_org_members', member.id, { role }));
+		member.role = role;
+		sendToast('success', 'Saved', `${member.github_username} is now ${role === 'admin' ? 'an' : 'a'} ${role}`);
 	};
 
 	const githubAdminNote = (member: OrgMember) => `If ${member.github_username} is an admin of the organization on GitHub, they'll become an admin again on their next sign-in.`;
@@ -396,24 +425,20 @@
 		return { message: [ name, ' will be able to create tokens and app approvals that spend the organization\'s credits.' ] };
 	};
 
-	// The pick re-creates the role select, so the dialog can't return the focus to it on its own.
-	const focusRoleSelect = async ({ id }: OrgMember) => {
-		await nextTick();
-		document.getElementById(`member-role-${id}`)?.focus();
-	};
-
 	const changeRole = (member: OrgMember, role: Membership['role']) => {
 		if (role === member.role) {
 			return;
 		}
 
-		roleSelectsRevision.value++;
+		pickedRoles[member.id] = role;
 
 		confirmationDialog.value?.confirm({
 			header: `Change ${member.github_username} to ${role}?`,
 			label: `Change to ${role}`,
 			action: () => updateRole(member, role),
-			afterHide: () => focusRoleSelect(member),
+			afterHide: () => {
+				pickedRoles[member.id] = member.role;
+			},
 			...roleChangeConfirmation(member, role),
 		});
 	};

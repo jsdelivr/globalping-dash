@@ -270,8 +270,7 @@
 	import { defaults } from 'chart.js';
 	import capitalize from 'lodash/capitalize';
 	import { useNotifications } from '~/composables/useNotifications';
-	import { useToastService } from '~/composables/useToastService';
-	import { ACCOUNT_CHANNEL, useAccount } from '~/store/account';
+	import { useAccount } from '~/store/account';
 	import { useAppearance } from '~/store/appearance';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
@@ -297,15 +296,6 @@
 			{ name: 'theme-color', content: appearance.theme === 'light' ? '#ffffff' : '#17233a' },
 		],
 	});
-
-	const accountChannel = new BroadcastChannel(ACCOUNT_CHANNEL);
-	accountChannel.onmessage = ({ data }) => data !== account.current.id && useToastService().add({
-		severity: 'warn',
-		summary: 'Account switched in another tab',
-		detail: 'Reload the page to continue with the new account.',
-	});
-
-	onBeforeUnmount(() => accountChannel.close());
 
 	// ADMIN
 	const adminPanel = ref();

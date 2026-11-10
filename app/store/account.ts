@@ -4,8 +4,6 @@ import { useAuth } from '~/store/auth';
 
 const IMPERSONATION_KEY = 'impersonationActiveAccount';
 
-export const ACCOUNT_CHANNEL = 'gp-account';
-
 const readImpersonationActiveId = () => {
 	const [ userId, accountId ] = (sessionStorage.getItem(IMPERSONATION_KEY) ?? '').split(':');
 	return userId === useAuth().user.id && accountId ? accountId : null;
@@ -132,7 +130,6 @@ export const useAccount = defineStore('account', {
 				sessionStorage.setItem(IMPERSONATION_KEY, `${user.id}:${id}`);
 			} else {
 				await storeSessionActiveId(id);
-				new BroadcastChannel(ACCOUNT_CHANNEL).postMessage(id);
 			}
 
 			window.location.reload();

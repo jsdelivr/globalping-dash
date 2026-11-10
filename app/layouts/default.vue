@@ -322,6 +322,11 @@
 	// The switch is saved before the reload, so unsaved changes must be confirmed first.
 	const switchAccount = async (accountId: string | null) => {
 		if (accountId !== account.activeId && await navigationGuard.value.confirmLeave()) {
+			// A probe page would switch back to the account of its probe.
+			if (route.name === 'probes-id') {
+				await navigateTo('/probes');
+			}
+
 			await account.switchTo(accountId);
 		}
 	};

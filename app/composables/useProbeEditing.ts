@@ -9,20 +9,11 @@ export const useProbeEditing = (probeAccountId = inject(PROBE_ACCOUNT_KEY, ref()
 	const auth = useAuth();
 	const account = useAccount();
 
-	const hint = computed(() => {
-		const ownerId = probeAccountId.value;
-
-		if (ownerId && ownerId !== account.current.id && !auth.adminMode) {
-			return ownerId === account.personal.id
-				? 'This is your personal probe, switch to your personal account'
-				: 'This is an organization probe, switch to the organization account';
-		}
-
-		return account.canManageProbes ? null : 'Only organization admins can do this';
-	});
+	const foreign = computed(() => !!probeAccountId.value && probeAccountId.value !== account.current.id && !auth.adminMode);
+	const hint = computed(() => foreign.value || account.canManageProbes ? null : 'Only organization admins can do this');
 
 	return {
 		hint,
-		disabled: computed(() => !!hint.value),
+		disabled: computed(() => foreign.value || !!hint.value),
 	};
 };

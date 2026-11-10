@@ -88,6 +88,11 @@
 				</div>
 			</show-more>
 
+			<Message v-if="probeOrgNotSelected" severity="warn" icon="pi pi-exclamation-triangle" :pt="{ content: { class: 'flex items-center gap-2 px-3 py-2' }, text: { class: 'flex w-full flex-wrap items-center gap-2' } }">
+				<span class="mr-auto">This probe belongs to the organization <b>{{ probeOrg!.name }}</b>, which is not in your “Switch account” menu. Add it to open the probe in that account.</span>
+				<Button label="Add and switch" size="small" :loading="switching" :disabled="!!auth.impersonation" @click="addAndSwitch"/>
+			</Message>
+
 			<Message v-if="probeDetails?.isOutdated && probeDetails.hardwareDevice" severity="warn" icon="pi pi-exclamation-triangle">
 				Your hardware probe is running an outdated firmware and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="https://github.com/jsdelivr/globalping-hwprobe#download-the-latest-firmware" target="_blank">our guide</NuxtLink> to update it manually.
 			</Message>
@@ -183,8 +188,34 @@
 
 	const probeAccountId = computed(() => probeDetails.value?.account_id);
 	provide(PROBE_ACCOUNT_KEY, probeAccountId);
-	const probeOwnerGithubId = computed(() => account.findAccount(probeAccountId.value)?.github_id ?? '');
+	const probeOrg = computed(() => account.findAccount(probeAccountId.value));
+	const probeOwnerGithubId = computed(() => probeOrg.value?.github_id ?? '');
+	const probeOrgNotSelected = computed(() => {
+		const orgId = probeOrg.value?.org_id;
+		return !!orgId && !auth.adminMode && !auth.user.selected_orgs.includes(orgId);
+	});
 	const { disabled: editingDisabled } = useProbeEditing(probeAccountId);
+	const switching = ref(false);
+
+	// A link to a probe of another account opens it in that account.
+	watch(probeOrg, (probeOrg) => {
+		if (probeOrg && !auth.adminMode && probeOrg.id !== account.current.id && !probeOrgNotSelected.value) {
+			account.switchTo(probeOrg.id).catch(sendErrorToast);
+		}
+	}, { immediate: true });
+
+	const addAndSwitch = async () => {
+		switching.value = true;
+
+		try {
+			const { id, org_id: orgId } = probeOrg.value!;
+			await account.setSelected([ ...auth.user.selected_orgs, orgId! ]);
+			await account.switchTo(id);
+		} catch (e) {
+			sendErrorToast(e);
+			switching.value = false;
+		}
+	};
 
 	watch(probeDetailsError, (newError) => {
 		if (!newError) {

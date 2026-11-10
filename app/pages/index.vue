@@ -34,15 +34,18 @@
 							</NuxtLink>
 							<div v-if="isEmpty(cities)" class="ml-2">No locations to show</div>
 						</div>
-						<Button
-							class="ml-auto min-w-36 max-sm:ml-0 max-sm:mt-3"
-							:severity="adoptedProbes.length ? 'secondary' : undefined"
-							:outlined="!!adoptedProbes.length"
-							@click="adoptProbeDialog = true"
-						>
-							<NuxtIcon class="pi" name="capture" aria-hidden="true"/>
-							<span class="font-bold">{{ adoptedProbes.length ? "Adopt a probe" : "Adopt your first probe" }}</span>
-						</Button>
+						<ProbeOwnerOnly v-slot="{ disabled }" class="ml-auto max-sm:ml-0 max-sm:mt-3">
+							<Button
+								class="min-w-36"
+								:severity="adoptedProbes.length ? 'secondary' : undefined"
+								:outlined="!!adoptedProbes.length"
+								:disabled="disabled"
+								@click="adoptProbeDialog = true"
+							>
+								<NuxtIcon class="pi" name="capture" aria-hidden="true"/>
+								<span class="font-bold">{{ adoptedProbes.length ? "Adopt a probe" : "Adopt your first probe" }}</span>
+							</Button>
+						</ProbeOwnerOnly>
 					</div>
 				</div>
 			</AsyncBlock>
@@ -181,7 +184,7 @@
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';
 	import { ONLINE_STATUSES, OFFLINE_STATUSES } from '~/constants/probes';
-	import { useAuth } from '~/store/auth';
+	import { useAccount } from '~/store/account';
 	import { useMetadata } from '~/store/metadata';
 	import { formatNumber } from '~/utils/format-number';
 	import { pluralize } from '~/utils/pluralize';
@@ -192,9 +195,8 @@
 
 	const { $directus } = useNuxtApp();
 	const creditsPerAdoptedProbe = useMetadata().creditsPerAdoptedProbe;
-	const auth = useAuth();
-	const { user } = storeToRefs(auth);
-	const { getUserFilter, getAccountId } = useUserFilter();
+	const { getUserFilter } = useUserFilter();
+	const account = useAccount();
 	const { width: windowWidth } = useWindowSize();
 
 	// SUMMARY
@@ -218,7 +220,7 @@
 			filter: getUserFilter('account_id'),
 		}));
 
-		if (user.value.user_type !== 'member') {
+		if (account.current.user_type !== 'member') {
 			fromSponsorshipPromise = $directus.request(readItems('gp_credits_additions', {
 				filter: {
 					...getUserFilter('github_id'),
@@ -242,7 +244,7 @@
 	}, { default: () => {} });
 
 	const total = computed(() => {
-		const creditsObj = credits.value?.total.find(({ account_id }) => account_id === user.value.account);
+		const creditsObj = credits.value?.total.find(({ account_id }) => account_id === account.current.id);
 		return creditsObj ? creditsObj.amount : 0;
 	});
 
@@ -253,7 +255,7 @@
 		'gp_sponsorship-details',
 		() => $directus.request<SponsorshipDetails>(customEndpoint({
 			path: '/sponsorship-details',
-			params: { accountId: getAccountId() },
+			params: { accountId: account.current.id },
 		})),
 		{ default: () => ({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }) },
 	);

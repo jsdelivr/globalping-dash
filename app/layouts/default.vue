@@ -1,7 +1,9 @@
 <template>
 	<section class="grid grid-cols-[256px_auto] grid-rows-[56px_auto] max-lg:grid-cols-1">
-		<PopupUnadoptedProbeDetected/>
-		<PopupLocalNetworkAccess/>
+		<template v-if="account.canManageProbes">
+			<PopupUnadoptedProbeDetected/>
+			<PopupLocalNetworkAccess/>
+		</template>
 		<Toast class="max-[440px]:left-5 max-[440px]:w-auto"/>
 
 		<header class="col-span-2 flex items-center border-b bg-dark-800 px-6 py-3 text-surface-0 max-lg:pr-3 max-sm:pl-4 max-sm:pr-2">
@@ -10,7 +12,7 @@
 			</NuxtLink>
 			<NuxtLink to="https://www.jsdelivr.com/" class="m-2 mr-auto text-xs text-bluegray-600 no-underline hover:underline">by jsDelivr</NuxtLink>
 
-			<div class="flex items-center max-lg:hidden">
+			<div class="flex min-w-0 items-center max-lg:hidden">
 				<NuxtLink v-if="!auth.adminMode && !auth.impersonation" class="ml-6 text-surface-0 no-underline hover:underline" to="https://www.jsdelivr.com/" target="_blank">
 					<i class="pi pi-external-link text-bluegray-300"/>
 					<span class="m-2">jsDelivr</span>
@@ -19,7 +21,7 @@
 					<i class="pi pi-external-link text-bluegray-300"/>
 					<span class="m-2">Globalping</span>
 				</NuxtLink>
-				<p class="mx-12">Account type: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(user.user_type) }}</span></p>
+				<p class="mx-6 shrink-0 whitespace-nowrap">Account tier: <span class="rounded-full bg-[#35425A] px-3 py-2 font-semibold">{{ capitalize(account.current.user_type) }}</span></p>
 				<div v-if="auth.isAdmin" class="mr-2 flex items-center gap-2">
 					<Button
 						class="relative text-surface-0 hover:bg-transparent"
@@ -34,16 +36,27 @@
 						<span v-if="auth.impersonation" class="text-sm font-bold">Impersonating {{ auth.impersonation.github_username }}</span>
 					</Button>
 				</div>
-				<Button class="relative mr-8 text-surface-0 hover:bg-transparent" text rounded aria-label="Notifications" @click="toggleNotifications">
+				<Button class="relative mr-4 text-surface-0 hover:bg-transparent" text rounded aria-label="Notifications" @click="toggleNotifications">
 					<i class="pi pi-bell text-[1.3rem]"/>
 					<i v-if="inboxNotificationIds.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.4rem] text-primary"/>
 				</Button>
 				<Button class="flex items-center !px-2 text-surface-0 hover:bg-transparent" text rounded aria-label="Profile" @click="toggleProfile">
-					<i class="pi pi-user rounded-full border-1.5 border-surface-0 p-2" style="font-size: 1.1rem;"/>
-					<p class="font-semibold">{{ user.github_username || `${user.first_name} ${user.last_name}` }}</p>
+					<i class="pi rounded-full border-1.5 border-surface-0 p-2" :class="account.current.org_id ? 'pi-building' : 'pi-user'" style="font-size: 1.1rem;"/>
+					<p class="max-w-48 truncate font-semibold xl:max-w-64">{{ account.current.name }}<span v-if="account.current.org_id" class="ml-1 font-normal opacity-70">({{ account.personal.name }})</span></p>
 					<i class="pi pi-chevron-down" style="font-size: .7rem;"/>
 				</Button>
-				<TieredMenu ref="profilePanel" :model="items" popup>
+				<TieredMenu
+					ref="profilePanel"
+					:model="items"
+					class="!left-auto !right-6"
+					:pt="{
+						itemContent: ({ context }) => ({ class: { 'bg-surface-200 dark:bg-dark-600': context.focused } }),
+						submenu: { class: '!left-auto !right-full w-max rounded-md max-w-[calc(100vw-100%-48px)]', 'aria-label': 'Switch account', 'aria-labelledby': undefined },
+					}"
+					:pt-options="{ mergeProps: true }"
+					auto-display
+					popup
+				>
 					<template #item="{ item, props, hasSubmenu }">
 						<router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
 							<a v-ripple :href="href" v-bind="props.action" @click="navigate">
@@ -51,14 +64,24 @@
 								<span class="ml-2">{{ item.label }}</span>
 							</a>
 						</router-link>
-						<a v-else v-ripple :href="item.url" :target="item.target" v-bind="props.action">
-							<span :class="item.icon"/>
-							<span class="ml-2">{{ item.label }}</span>
-							<span v-if="hasSubmenu" class="pi pi-angle-right ml-auto"/>
+						<a
+							v-else
+							v-ripple
+							:href="item.url"
+							:target="item.target"
+							v-bind="props.action">
+							<span :class="[ item.icon, { 'text-primary': item.active } ]"/>
+							<span class="ml-2 min-w-0 grow truncate" :class="{ 'font-bold text-primary': item.active }" :title="typeof item.label === 'string' ? item.label : undefined">{{ item.label }}</span>
+							<Tag v-if="item.badge" class="ml-6 h-[21px] shrink-0 bg-surface-100 !py-0 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300" severity="secondary" :value="item.badge"/>
+							<i v-if="hasSubmenu" class="pi pi-angle-right ml-4 text-xs"/>
 						</a>
 					</template>
 				</TieredMenu>
 			</div>
+
+			<GPDialog v-model:visible="manageAccountsDialog" header="Manage accounts" size="large">
+				<GpDialogContentManageAccounts/>
+			</GPDialog>
 
 			<div class="hidden max-lg:flex">
 				<Button class="relative mr-4 text-surface-0 hover:bg-transparent" text aria-label="Notifications" @click="toggleNotifications">
@@ -69,10 +92,12 @@
 				<Drawer v-model:visible="mobileSidebar" class="border bg-surface-100 pt-4">
 					<template #header>
 						<div class="text-lg font-semibold" data-pc-section="title">
-							<i class="pi pi-user mr-2 rounded-full border-1.5 border-main-900 p-2" style="font-size: 1.1rem;"/>
-							<span class="font-semibold">{{ user.github_username || `${user.first_name} ${user.last_name}` }}</span>
+							<i class="pi mr-2 rounded-full border-1.5 border-main-900 p-2" :class="account.current.org_id ? 'pi-building' : 'pi-user'" style="font-size: 1.1rem;"/>
+							<span class="font-semibold">{{ account.current.name }}</span><span v-if="account.current.org_id" class="ml-1 font-normal opacity-70">({{ account.personal.name }})</span>
 						</div>
 					</template>
+
+					<p class="mb-2 px-4 text-sm">Account tier: <span class="font-semibold">{{ capitalize(account.current.user_type) }}</span></p>
 
 					<NuxtLink active-class="active" class="sidebar-link" to="/" @click="mobileSidebar = false"><i class="pi pi-home sidebar-link-icon"/>Overview</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" :class="{'active': $route.path.startsWith('/probes')}" to="/probes" @click="mobileSidebar = false"><NuxtIcon class="pi sidebar-link-icon" name="probe"/>Probes</NuxtLink>
@@ -81,7 +106,15 @@
 					<NuxtLink v-if="auth.isAdmin && auth.adminMode" active-class="active" class="sidebar-link" to="/sponsors" @click="mobileSidebar = false">
 						<i class="pi pi-users sidebar-link-icon"/>Sponsors<i class="pi pi-shield ml-auto pr-4 text-xs text-bluegray-400" aria-hidden="true"/>
 					</NuxtLink>
-					<NuxtLink active-class="active" class="sidebar-link" to="/settings" @click="mobileSidebar = false"><i class="pi pi-cog sidebar-link-icon"/>Settings</NuxtLink>
+					<NuxtLink active-class="active" class="sidebar-link" :to="settingsRoute" @click="mobileSidebar = false"><i class="pi pi-cog sidebar-link-icon"/>Settings</NuxtLink>
+					<div v-if="!auth.adminMode" class="my-2 flex flex-col border-y py-2">
+						<p class="px-4 py-2 text-sm font-bold text-bluegray-500">Switch account</p>
+						<button v-for="item in accountOptions" :key="item.key" class="sidebar-link" :class="{ 'font-bold !text-primary': item.active }" @click="item.command(); mobileSidebar = false">
+							<i class="sidebar-link-icon shrink-0" :class="[ item.icon, { '!text-primary': item.active } ]"/>
+							<span class="w-0 grow truncate text-left" :title="item.label">{{ item.label }}</span>
+							<Tag v-if="item.badge" class="ml-6 shrink-0 bg-surface-0 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="item.badge"/>
+						</button>
+					</div>
 					<button active-class="active" class="sidebar-link" @click="auth.logout"><i class="pi pi-power-off sidebar-link-icon"/>Sign out</button>
 					<div class="flex flex-col border-t">
 						<NuxtLink class="ml-6 mt-4 text-bluegray-600 no-underline hover:underline dark:text-bluegray-100" to="https://www.jsdelivr.com/" target="_blank">
@@ -123,7 +156,7 @@
 						</span>
 						<Button
 							v-if="inboxNotificationIds.length"
-							:disabled="auth.adminMode"
+							:disabled="auth.adminMode || !!auth.impersonation"
 							severity="secondary"
 							outlined
 							label="Mark all as read"
@@ -151,7 +184,7 @@
 							:value="notification.id"
 							class="!rounded-xl border-none bg-surface-50 !p-0 !pb-4 dark:!border dark:!border-solid dark:!border-table-border dark:bg-dark-800"
 							:class="{ 'bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:!bg-dark-700 dark:bg-none': notification.status === 'inbox' }"
-							@click="markNotificationsAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
+							@click="!auth.adminMode && !auth.impersonation && markNotificationsAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 						>
 							<AccordionHeader
 								class="relative -mb-4 !p-4 !pr-8 text-left [&[aria-expanded='true']>i]:rotate-90"
@@ -216,12 +249,13 @@
 			</div>
 		</aside>
 
-		<div class="overflow-auto">
+		<div ref="content" class="overflow-auto">
 			<div class="mx-auto h-full max-w-[1664px]">
 				<slot/>
 			</div>
 		</div>
-		<NavigationGuard/>
+		<NavigationGuard ref="navigationGuard"/>
+		<OnboardingDialog/>
 		<Popover
 			ref="adminPanel"
 			class="absolute !ml-4 !mt-2 !overflow-hidden !rounded-xl bg-[var(--p-surface-0)] dark:bg-[var(--main-bg)]"
@@ -236,18 +270,26 @@
 	import { defaults } from 'chart.js';
 	import capitalize from 'lodash/capitalize';
 	import { useNotifications } from '~/composables/useNotifications';
+	import { useAccount } from '~/store/account';
 	import { useAppearance } from '~/store/appearance';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
 	import { formatNumber } from '~/utils/format-number';
+	import { sendErrorToast } from '~/utils/send-toast';
 
 	const auth = useAuth();
+	const account = useAccount();
 	const appearance = useAppearance();
-	const { user } = storeToRefs(auth);
 	const { headerNotifications, inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead, updateHeaderNotifications } = useNotifications();
 
 	const isFormDirty = ref(false);
 	provide('form-dirty', isFormDirty);
+
+	const content = ref<HTMLElement>();
+	const route = useRoute();
+
+	// Pages scroll inside this container rather than the window, so the router's scroll reset doesn't reach it.
+	watch(() => route.path, () => content.value?.scrollTo({ top: 0 }));
 
 	useHead({
 		meta: [
@@ -273,12 +315,62 @@
 
 	// PROFILE
 
-	const items = ref([
+	const settingsRoute = computed(() => account.canManageOrg ? '/settings?tab=organization' : '/settings');
+	const manageAccountsDialog = ref(false);
+	const navigationGuard = ref();
+
+	// The switch is saved before the reload, so unsaved changes must be confirmed first.
+	const switchAccount = async (accountId: string | null) => {
+		if (accountId !== account.activeId && await navigationGuard.value.confirmLeave()) {
+			// A probe page would switch back to the account of its probe.
+			if (route.name === 'probes-id') {
+				await navigateTo('/probes');
+			}
+
+			await account.switchTo(accountId);
+		}
+	};
+
+	const accountOptions = computed(() => [
+		{
+			key: 'personal',
+			label: account.personal.name,
+			badge: 'Personal',
+			icon: 'pi pi-user',
+			active: !account.current.org_id,
+			command: () => switchAccount(null).catch(sendErrorToast),
+		},
+		...account.selectedOrgs.map(membership => ({
+			key: membership.org.account,
+			label: membership.org.name,
+			badge: capitalize(membership.role),
+			icon: 'pi pi-building',
+			active: membership.org.account === account.current.id,
+			command: () => switchAccount(membership.org.account).catch(sendErrorToast),
+		})),
+		{
+			key: 'manage-accounts',
+			label: 'Manage accounts',
+			active: false,
+			badge: undefined,
+			icon: 'pi pi-sliders-h',
+			command: () => { manageAccountsDialog.value = true; },
+		},
+	]);
+
+	const items = computed(() => [
 		{
 			label: 'Settings',
 			icon: 'pi pi-cog',
-			route: '/settings',
+			route: settingsRoute.value,
 		},
+		...auth.adminMode ? [] : [
+			{
+				label: 'Switch account',
+				icon: 'pi pi-building',
+				items: accountOptions.value,
+			},
+		],
 		{
 			separator: true,
 		},
@@ -294,7 +386,7 @@
 		profilePanel.value.toggle(event);
 	};
 
-	const isSponsor = computed(() => user.value.user_type === 'sponsor' || user.value.user_type === 'special');
+	const isSponsor = computed(() => account.current.user_type === 'sponsor' || account.current.user_type === 'special');
 
 	// PROFILE END
 

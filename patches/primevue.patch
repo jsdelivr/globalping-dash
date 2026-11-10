@@ -26,3 +26,71 @@ index abae48ec6e71927f2f026857f1c909ff2ec4deaa..04576687ebd4e809d1e6e37a652b3689
        var top = hostOffset.top + (getOuterHeight(el) - getOuterHeight(tooltipElement)) / 2;
        tooltipElement.style.left = left + 'px';
        tooltipElement.style.top = top + 'px';
+diff --git a/tieredmenu/BaseTieredMenu.vue b/tieredmenu/BaseTieredMenu.vue
+index 4febf5901b3944b7a316f7ca40af3cab968ecf95..6dea18b1b7eb0d40ef3459385fd0c98c093fe126 100644
+--- a/tieredmenu/BaseTieredMenu.vue
++++ b/tieredmenu/BaseTieredMenu.vue
+@@ -10,6 +10,10 @@ export default {
+             type: Boolean,
+             default: false
+         },
++        autoDisplay: {
++            type: Boolean,
++            default: false
++        },
+         model: {
+             type: Array,
+             default: null
+diff --git a/tieredmenu/TieredMenu.vue b/tieredmenu/TieredMenu.vue
+index 76eecae740993d3f04b41383ef8d30932e975888..1974822c00564cff3db168e123e198a09f77eed6 100644
+--- a/tieredmenu/TieredMenu.vue
++++ b/tieredmenu/TieredMenu.vue
+@@ -304,7 +304,7 @@ export default {
+             }
+         },
+         onItemMouseEnter(event) {
+-            if (this.dirty) {
++            if (this.dirty || (this.autoDisplay && !isTouchDevice())) {
+                 this.onItemChange(event, 'hover');
+             }
+         },
+diff --git a/tieredmenu/index.d.ts b/tieredmenu/index.d.ts
+index ae26977ef1c72669ab23a8ae9beb679dc358a0b7..5db4864daf3d4ad0e63fad63d08821c08d405339 100644
+--- a/tieredmenu/index.d.ts
++++ b/tieredmenu/index.d.ts
+@@ -226,6 +226,11 @@ export interface TieredMenuProps {
+      * @defaultValue false
+      */
+     popup?: boolean | undefined;
++    /**
++     * Whether submenus open on hover without an initial click on non-touch devices.
++     * @defaultValue false
++     */
++    autoDisplay?: boolean | undefined;
+     /**
+      * The breakpoint to define the maximum width boundary.
+      * @defaultValue 960px
+diff --git a/tieredmenu/index.mjs b/tieredmenu/index.mjs
+index 22cc0e5b2cea323564d8eb9d9ded9d7c9f234062..2d74a7259c2a37356aac320ceabfa05b21f774d0 100644
+--- a/tieredmenu/index.mjs
++++ b/tieredmenu/index.mjs
+@@ -18,6 +18,10 @@ var script$2 = {
+       type: Boolean,
+       "default": false
+     },
++    autoDisplay: {
++      type: Boolean,
++      "default": false
++    },
+     model: {
+       type: Array,
+       "default": null
+@@ -614,7 +618,7 @@ var script = {
+       }
+     },
+     onItemMouseEnter: function onItemMouseEnter(event) {
+-      if (this.dirty) {
++      if (this.dirty || (this.autoDisplay && !isTouchDevice())) {
+         this.onItemChange(event, 'hover');
+       }
+     },

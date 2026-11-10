@@ -10,7 +10,7 @@
 			</span>
 			<Button
 				v-if="inboxNotificationIds.length"
-				:disabled="auth.adminMode"
+				:disabled="auth.adminMode || !!auth.impersonation"
 				severity="secondary"
 				outlined
 				label="Mark all as read"
@@ -26,7 +26,7 @@
 				:value="notification.id"
 				class="group rounded-xl border border-surface-300 bg-white p-0 dark:border-table-border dark:bg-dark-800"
 				:class="{ 'cursor-pointer bg-gradient-to-r from-[rgba(244,252,247,1)] to-[rgba(229,252,246,1)] dark:bg-dark-700 dark:bg-none': notification.status === 'inbox' }"
-				@click="markNotificationsAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
+				@click="!auth.adminMode && !auth.impersonation && markNotificationsAsRead(notification.status === 'inbox' ? [ notification.id ] : [])"
 			>
 				<div class="relative p-6 pb-4">
 					<div class="relative flex flex-col items-start gap-y-1 pr-10">
@@ -60,6 +60,7 @@
 		<p v-else class="p-4 text-lg font-bold leading-5">No notifications at the moment.</p>
 
 		<Paginator
+			v-if="notifications.length"
 			class="mt-6"
 			:first="first"
 			:rows="itemsPerPage"
@@ -76,28 +77,27 @@
 	import { usePagination } from '~/composables/pagination';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useNotifications } from '~/composables/useNotifications';
-	import { useUserFilter } from '~/composables/useUserFilter';
 	import { useAuth } from '~/store/auth';
 	import { formatDateTime } from '~/utils/date-formatters';
 	import { formatNumber } from '~/utils/format-number';
 
 	const auth = useAuth();
 	const route = useRoute();
+	const router = useRouter();
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const { page, first, pageLinkSize, template } = usePagination({ itemsPerPage });
-	const { inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead } = useNotifications();
+	const { getNotificationsFilter, inboxNotificationIds, markNotificationsAsRead, markAllNotificationsAsRead } = useNotifications();
 	const notificationBus = useEventBus<string[]>('notification-updated');
-	const { getUserFilter } = useUserFilter();
 
-	const { data: notifications, error: notificationError } = await useLazyAsyncData(
+	const { data: notifications, status: notificationsStatus, error: notificationError } = await useLazyAsyncData(
 		'directus_notifications_page',
 		() => $directus.request<DirectusNotification[]>(readNotifications({
 			format: 'html',
 			limit: itemsPerPage.value,
 			offset: first.value,
-			filter: getUserFilter('recipient'),
+			filter: getNotificationsFilter(),
 			sort: [ '-timestamp' ],
 		})),
 		{ default: () => [], watch: [ first, itemsPerPage ] },
@@ -106,7 +106,7 @@
 	const { data: notificationsCount, error: notificationCountError } = await useLazyAsyncData(
 		'directus_notifications_cnt',
 		() => $directus.request<{ count: { id: number } }[]>(readNotifications({
-			filter: getUserFilter('recipient'),
+			filter: getNotificationsFilter(),
 			aggregate: {
 				count: [ 'id' ],
 			},
@@ -115,6 +115,12 @@
 	);
 
 	useErrorToast(notificationError, notificationCountError);
+
+	watch([ notifications, notificationsStatus ], ([ pageNotifications, status ]) => {
+		if (status === 'success' && !pageNotifications.length && page.value) {
+			router.replace({ query: { ...route.query, page: undefined, limit: undefined } });
+		}
+	});
 
 	notificationBus.on((idsToArchive) => {
 		notifications.value.forEach((notification) => {

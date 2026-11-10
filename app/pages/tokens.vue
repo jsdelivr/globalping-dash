@@ -3,7 +3,9 @@
 		<div data-testid="tokens-table">
 			<div class="mb-4 flex">
 				<h1 class="page-title">Tokens</h1>
-				<Button class="ml-auto" label="Generate new token" :disabled="!!auth.impersonation" @click="openTokenDetails('generate')"/>
+				<span v-tooltip.top="account.canCreateTokens ? null : 'Org viewers can\'t create tokens'" class="ml-auto">
+					<Button label="Generate new token" :disabled="!!auth.impersonation || !account.canCreateTokens" @click="openTokenDetails('generate')"/>
+				</span>
 			</div>
 			<p class="xl:w-1/2">
 				Generate a token and use it in your API requests to get a higher hourly measurements limit.
@@ -192,7 +194,7 @@
 		</div>
 		<GPDialog
 			v-model:visible="tokenDetailsDialog"
-			:header="tokenDetails ? 'Edit token' : 'Generate new token'"
+			:header="tokenDetails ? 'Edit token' : `Generate new ${account.current.org_id ? `${account.current.name} ` : ''}token`"
 			content-class="!p-0"
 		>
 			<TokenDetails
@@ -265,6 +267,7 @@
 	import { usePagination } from '~/composables/pagination';
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { useAccount } from '~/store/account';
 	import { useAuth } from '~/store/auth';
 	import { formatDate, getRelativeTimeString } from '~/utils/date-formatters';
 	import { minDelay } from '~/utils/min-delay';
@@ -276,8 +279,9 @@
 
 	const config = useRuntimeConfig();
 	const { $directus } = useNuxtApp();
-	const { getUserFilter, getAccountId } = useUserFilter();
+	const { getUserFilter, getAccountIdOrAll } = useUserFilter();
 	const auth = useAuth();
+	const account = useAccount();
 
 	const itemsPerPage = ref(Math.round(config.public.itemsPerTablePage / 2));
 
@@ -444,12 +448,13 @@
 
 	const { page: appsPage, first: firstApp } = usePagination({ itemsPerPage, pageKey: 'appsPage' });
 
+	// Org viewers can't approve applications, and the endpoint refuses to list them for a viewer.
 	const { data: applicationData, pending: loadingApplications, error: applicationError, refresh: loadApplications } = await useLazyAsyncData(
-		() => minDelay($directus.request<{ applications: Application[]; total: number }>(customEndpoint({
+		() => !account.canCreateTokens ? Promise.resolve({ applications: [], total: 0 }) : minDelay($directus.request<{ applications: Application[]; total: number }>(customEndpoint({
 			method: 'GET',
 			path: '/applications',
 			params: {
-				accountId: getAccountId('all'),
+				accountId: getAccountIdOrAll(),
 				offset: firstApp.value,
 				limit: itemsPerPage.value,
 			},

@@ -15,7 +15,13 @@
 			class="pi pi-share-alt shrink-0 text-xs text-bluegray-400"
 			role="img"
 			:aria-label="`Credits redirected to ${redirectTarget}`"/>
-		<i v-if="dashboardAccountId" v-tooltip.top="'Dashboard account linked'" role="img" class="pi pi-user shrink-0 text-xs text-bluegray-400" aria-label="Dashboard account linked"/>
+		<i
+			v-if="dashboardAccountId"
+			v-tooltip.top="'Dashboard account linked'"
+			role="img"
+			class="pi shrink-0 text-xs text-bluegray-400"
+			:class="dashboardAccountIsOrg ? 'pi-building' : 'pi-user'"
+			aria-label="Dashboard account linked"/>
 	</span>
 </template>
 
@@ -24,6 +30,7 @@
 		githubLogin: string | null;
 		githubId: string;
 		dashboardAccountId: string | null;
+		dashboardAccountIsOrg: boolean;
 		redirectTarget?: string | null;
 		wrap?: boolean;
 	}>();

@@ -15,25 +15,27 @@
 					</span>
 				</div>
 
-				<ToggleSwitch
-					v-if="field.type === 'boolean'"
-					v-model="formSettings[field.key]"
-					:input-id="getInputId(field.key)"
-					:aria-label="field.label"
-					:disabled="probeDetailsUpdating"
-					class="shrink-0"
-				/>
+				<ProbeOwnerOnly v-if="field.type === 'boolean'" v-slot="{ disabled }" class="flex shrink-0">
+					<ToggleSwitch
+						v-model="formSettings[field.key]"
+						:input-id="getInputId(field.key)"
+						:aria-label="field.label"
+						:disabled="probeDetailsUpdating || disabled"
+					/>
+				</ProbeOwnerOnly>
 			</div>
 		</div>
 
 		<div class="pt-6 text-right max-sm:mt-auto">
-			<Button
-				class="w-full sm:w-auto"
-				label="Save settings"
-				:loading="probeDetailsUpdating"
-				:disabled="probeDetailsUpdating || !hasChanges"
-				@click="saveSettings"
-			/>
+			<ProbeOwnerOnly v-slot="{ disabled }" class="inline-block w-full sm:w-auto">
+				<Button
+					class="w-full sm:w-auto"
+					label="Save settings"
+					:loading="probeDetailsUpdating"
+					:disabled="probeDetailsUpdating || !hasChanges || disabled"
+					@click="saveSettings"
+				/>
+			</ProbeOwnerOnly>
 		</div>
 	</div>
 </template>

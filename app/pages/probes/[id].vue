@@ -88,11 +88,16 @@
 				</div>
 			</show-more>
 
+			<Message v-if="probeOrgNotSelected" severity="warn" icon="pi pi-exclamation-triangle" :pt="{ content: { class: 'flex items-center gap-2 px-3 py-2' }, text: { class: 'flex w-full flex-wrap items-center gap-2' } }">
+				<span class="mr-auto">This probe belongs to the organization <b>{{ probeOrg!.name }}</b>, which is not in your “Switch account” menu. Add it to open the probe in that account.</span>
+				<Button label="Add and switch" size="small" :loading="switching" :disabled="!!auth.impersonation" @click="addAndSwitch"/>
+			</Message>
+
 			<Message v-if="probeDetails?.isOutdated && probeDetails.hardwareDevice" severity="warn" icon="pi pi-exclamation-triangle">
 				Your hardware probe is running an outdated firmware and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="https://github.com/jsdelivr/globalping-hwprobe#download-the-latest-firmware" target="_blank">our guide</NuxtLink> to update it manually.
 			</Message>
 
-			<Message v-else-if="probeDetails?.isOutdated && !probeDetails.hardwareDevice" severity="warn" icon="pi pi-exclamation-triangle">
+			<Message v-else-if="probeDetails?.isOutdated && !probeDetails.hardwareDevice && !editingDisabled" severity="warn" icon="pi pi-exclamation-triangle">
 				Your probe container is running an outdated software and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="#" @click="updateProbeDialog = true">our guide</NuxtLink> to update it manually.
 			</Message>
 
@@ -103,10 +108,12 @@
 						:key="tab.value"
 						:value="tab.value"
 						tabindex="0"
-						class="!w-1/3 border-none !px-6 !py-2 !text-[14px] !font-bold sm:!w-auto"
+						class="!w-1/3 border-none !px-1 !py-2 !text-[14px] !font-bold sm:!w-auto sm:!px-6"
 						@click.capture="selectTab($event, tab.value)"
 						@keydown.capture="selectTabWithKeyboard($event, tab.value)"
 					>
+						<NuxtIcon v-if="tab.svgIcon" :name="tab.svgIcon" class="pi mr-2 translate-y-px text-sm [&_svg]:inline-block [&_svg]:!align-text-bottom" filled aria-hidden="true"/>
+						<i v-else :class="tab.icon" class="mr-2 translate-y-px text-sm" aria-hidden="true"/>
 						{{ tab.label }}
 					</Tab>
 				</TabList>
@@ -139,7 +146,7 @@
 			header="Update a probe"
 			size="large"
 		>
-			<GpDialogContentUpdateProbe/>
+			<GpDialogContentUpdateProbe :account-id="probeAccountId ?? undefined"/>
 		</GPDialog>
 	</div>
 </template>
@@ -147,7 +154,9 @@
 <script setup lang="ts">
 	import { readItem, aggregate } from '@directus/sdk';
 	import { useErrorToast } from '~/composables/useErrorToast';
-	import { useProbeDetailTabs } from '~/composables/useProbeDetailTabs';
+	import { PROBE_ACCOUNT_KEY, useProbeEditing } from '~/composables/useProbeEditing';
+	import { useQueryTabs } from '~/composables/useQueryTabs';
+	import { useAccount } from '~/store/account';
 	import { useAuth } from '~/store/auth';
 	import { formatNumber } from '~/utils/format-number';
 	import { getOfflineDurationText, getProbeStatusColor, getProbeStatusText } from '~/utils/probe-status';
@@ -157,39 +166,56 @@
 	const route = useRoute();
 	const router = useRouter();
 	const auth = useAuth();
-	const { user } = storeToRefs(auth);
+	const account = useAccount();
 	const probeId = computed(() => route.params.id as string);
 	const probeDetailsUpdating = ref(false);
 	const updateProbeDialog = ref(false);
 	const showMoreIps = ref(false);
 	const windowSize = useWindowSize();
 	const tabListRef = useTemplateRef('tabListRef');
-	const { activeTab, setActiveTab } = useProbeDetailTabs();
 	const probePageLink = ref('/probes');
 	const probeTabs = [
-		{ value: 'details', label: 'Details' },
-		{ value: 'logs', label: 'Logs' },
-		{ value: 'settings', label: 'Settings' },
+		{ value: 'details', label: 'Details', svgIcon: 'radio' },
+		{ value: 'logs', label: 'Logs', icon: 'pi pi-file' },
+		{ value: 'settings', label: 'Settings', icon: 'pi pi-cog' },
 	];
-
-	const selectTab = (event: Event, value: string) => {
-		event.stopImmediatePropagation();
-		setActiveTab(value);
-	};
-
-	const selectTabWithKeyboard = (event: KeyboardEvent, value: string) => {
-		if (![ 'Enter', 'NumpadEnter', 'Space' ].includes(event.code)) {
-			return;
-		}
-
-		event.preventDefault();
-		selectTab(event, value);
-	};
+	const { activeTab, setActiveTab, selectTab, selectTabWithKeyboard } = useQueryTabs(probeTabs.map(({ value }) => value), 'details');
 
 	const { data: probeDetails, error: probeDetailsError } = await useAsyncData(
 		probeId,
 		() => $directus.request<Probe>(readItem('gp_probes', probeId.value)),
 	);
+
+	const probeAccountId = computed(() => probeDetails.value?.account_id);
+	provide(PROBE_ACCOUNT_KEY, probeAccountId);
+	const probeOrg = computed(() => account.findAccount(probeAccountId.value));
+	const probeOwnerGithubId = computed(() => probeOrg.value?.github_id ?? '');
+	const probeOrgNotSelected = computed(() => {
+		const orgId = probeOrg.value?.org_id;
+		return !!orgId && !auth.adminMode && !auth.user.selected_orgs.includes(orgId);
+	});
+	const { disabled: editingDisabled } = useProbeEditing(probeAccountId);
+	const switching = ref(false);
+
+	// A link to a probe of another account opens it in that account.
+	watch(probeOrg, (probeOrg) => {
+		if (probeOrg && !auth.adminMode && probeOrg.id !== account.current.id && !probeOrgNotSelected.value) {
+			account.switchTo(probeOrg.id).catch(sendErrorToast);
+		}
+	}, { immediate: true });
+
+	const addAndSwitch = async () => {
+		switching.value = true;
+
+		try {
+			const { id, org_id: orgId } = probeOrg.value!;
+			await account.setSelected([ ...auth.user.selected_orgs, orgId! ]);
+			await account.switchTo(id);
+		} catch (e) {
+			sendErrorToast(e);
+			switching.value = false;
+		}
+	};
 
 	watch(probeDetailsError, (newError) => {
 		if (!newError) {
@@ -233,7 +259,7 @@
 		() => $directus.request<{ sum: { amount: number }; adopted_probe: string }[]>(aggregate('gp_credits_additions', {
 			query: {
 				filter: {
-					github_id: { _eq: user.value.external_identifier || 'admin' },
+					...!auth.adminMode && { github_id: { _eq: probeOwnerGithubId.value } },
 					adopted_probe: { _eq: probeDetails?.value?.id },
 					date_created: { _gte: '$NOW(-30 day)' },
 				},

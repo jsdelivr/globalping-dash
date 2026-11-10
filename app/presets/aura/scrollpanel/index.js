@@ -1,8 +1,11 @@
 export default {
+	root: {
+		class: 'group/scrollpanel relative flex min-h-0 flex-col overflow-hidden',
+	},
 	contentContainer: {
 		class: [
 			// Size & Position
-			'h-full w-full',
+			'flex min-h-0 flex-col',
 
 			// Layering
 			'z-[1]',
@@ -11,16 +14,16 @@ export default {
 			'overflow-hidden',
 
 			// Misc
-			'relative float-left',
+			'relative',
 		],
 	},
 	content: {
 		class: [
 			// Size & Spacing
-			'h-[calc(100%+18px)] w-[calc(100%+18px)] pr-[18px] pb-[18px] pl-0 pt-0',
+			'min-h-0',
 
 			// Overflow & Scrollbar
-			'overflow-scroll scrollbar-none',
+			'overflow-auto overscroll-contain [scrollbar-width:none]',
 
 			// Box Model
 			'box-border',
@@ -35,43 +38,45 @@ export default {
 	barX: {
 		class: [
 			// Size & Position
-			'h-[9px] bottom-0',
+			'h-3 bottom-0',
 
 			// Appearance
-			'bg-surface-50 dark:bg-surface-700 rounded',
+			'rounded-full border-[3px] border-transparent bg-surface-300 bg-clip-padding hover:bg-surface-400 dark:bg-surface-600 dark:hover:bg-surface-500',
 
 			// Interactivity
-			'cursor-pointer',
+			'cursor-default',
 
 			// Visibility & Layering
-			'invisible z-20',
+			'z-20 opacity-0 group-hover/scrollpanel:opacity-100 group-active/scrollpanel:opacity-100 focus:opacity-100 data-[p-scrollpanel-grabbed=true]:opacity-100 data-[p-scrollpanel-hidden=true]:hidden',
 
 			// Transition
-			'transition duration-[250ms] ease-linear',
+			'transition duration-150',
 
 			// Misc
-			'relative',
+			'absolute !bottom-0',
+			'focus:outline-none focus-visible:ring-1 focus-visible:ring-surface-500',
 		],
 	},
 	barY: {
 		class: [
 			// Size & Position
-			'w-[9px] top-0',
+			'w-3 top-0',
 
 			// Appearance
-			'bg-surface-50 dark:bg-surface-700 rounded',
+			'rounded-full border-[3px] border-transparent bg-surface-300 bg-clip-padding hover:bg-surface-400 dark:bg-surface-600 dark:hover:bg-surface-500',
 
 			// Interactivity
-			'cursor-pointer',
+			'cursor-default',
 
 			// Visibility & Layering
-			'z-20',
+			'z-20 opacity-0 group-hover/scrollpanel:opacity-100 group-active/scrollpanel:opacity-100 focus:opacity-100 data-[p-scrollpanel-grabbed=true]:opacity-100 data-[p-scrollpanel-hidden=true]:hidden',
 
 			// Transition
-			'transition duration-[250ms] ease-linear',
+			'transition duration-150',
 
 			// Misc
-			'relative',
+			'absolute !end-0',
+			'focus:outline-none focus-visible:ring-1 focus-visible:ring-surface-500',
 		],
 	},
 };

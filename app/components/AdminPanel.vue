@@ -53,8 +53,8 @@
 </template>
 
 <script setup lang="ts">
-	import { customEndpoint } from '@directus/sdk';
-	import { useAuth } from '~/store/auth';
+	import { readUsers } from '@directus/sdk';
+	import { MEMBERSHIP_FIELDS, useAuth } from '~/store/auth';
 
 	const auth = useAuth();
 	const { adminMode, impersonation } = storeToRefs(auth);
@@ -90,14 +90,11 @@
 			}
 
 			impersonationLoading.value = true;
-			const users = await $directus.request<DirectusUser[]>(customEndpoint({
-				method: 'GET',
-				path: '/users',
-				params: {
-					filter: {
-						github_username: { _eq: impersonateUsername.value },
-					},
+			const users = await $directus.request(readUsers({
+				filter: {
+					github_username: { _eq: impersonateUsername.value },
 				},
+				fields: [ '*', { memberships: MEMBERSHIP_FIELDS }],
 			}));
 
 			if (!users.length) {

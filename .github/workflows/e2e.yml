@@ -25,6 +25,7 @@ jobs:
       - name: Clone globalping-dash-directus
         env:
           CURRENT_BRANCH: ${{ github.head_ref || github.ref_name }}
+          BASE_BRANCH: ${{ github.base_ref }}
         run: |
           echo "Current branch: $CURRENT_BRANCH."
           pnpm run test:e2e:build:directus

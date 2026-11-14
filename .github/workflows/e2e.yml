@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Run e2e tests
-    runs-on: ubuntu-latest
+    runs-on: ubicloud-standard-4
 
     steps:
       - uses: actions/checkout@v6

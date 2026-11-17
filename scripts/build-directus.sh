@@ -5,6 +5,14 @@ set -euo pipefail
 IFS=$'\n\t'
 
 CURRENT_BRANCH=${CURRENT_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}
+REPO=https://github.com/jsdelivr/globalping-dash-directus.git
+
+# Use the branch with the same name, then the base branch of the pull request, then master.
+for BRANCH in "$CURRENT_BRANCH" ${BASE_BRANCH:-} master; do
+	git ls-remote --exit-code --heads "$REPO" "refs/heads/$BRANCH" > /dev/null && break
+done
+
+echo "globalping-dash-directus branch: $BRANCH."
 
 # Checkout and sync the branch if the directory exists; otherwise, clone the repository
 if [ -d "test/e2e/globalping-dash-directus" ]; then
@@ -12,10 +20,10 @@ if [ -d "test/e2e/globalping-dash-directus" ]; then
 	git add .
 	git reset --hard "@{u}"
 	git fetch
-	git checkout "$CURRENT_BRANCH" || git checkout master
+	git checkout "$BRANCH"
 	git reset --hard "@{u}"
 else
-	git clone -b "$CURRENT_BRANCH" https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus || git clone https://github.com/jsdelivr/globalping-dash-directus.git test/e2e/globalping-dash-directus
+	git clone -b "$BRANCH" "$REPO" test/e2e/globalping-dash-directus
 	cd test/e2e/globalping-dash-directus || exit
 fi
 

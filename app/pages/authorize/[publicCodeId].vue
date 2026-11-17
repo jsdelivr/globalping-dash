@@ -29,7 +29,7 @@
 				</Select>
 			</template>
 			<h3 v-else class="mt-8">to perform measurements under your <strong>{{ account.personal.name }}</strong> account.</h3>
-			<p v-if="canAddOrg" class="mt-2 text-sm text-bluegray-500">Want to act as an organization? Add it under "Switch account" in the dashboard account menu, then select here.</p>
+			<p v-if="canAddOrg" class="mt-2 text-sm text-bluegray-500">If your organization is missing from the list, add it through the dashboard account menu, then refresh this page.</p>
 
 			<Divider class="h-2 before:border-t-2"/>
 

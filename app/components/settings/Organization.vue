@@ -147,7 +147,7 @@
 			</div>
 			<div class="min-w-0 grow sm:w-3/5">
 				<label for="org-default-role" class="flex items-center font-bold">
-					Default role for new members <i v-tooltip.top="{ value: 'The role members get when they join the organization. GitHub admins of the organization always join as admins.', class: 'max-w-sm' }" class="pi pi-info-circle ml-2"/>
+					Default role for new members <i v-tooltip.top="{ value: 'The role assigned to new members. GitHub organization admins always join as admins.', class: 'max-w-sm [&>[data-pc-section=text]]:leading-normal' }" class="pi pi-info-circle ml-2"/>
 				</label>
 				<Select
 					v-model="defaultRole"
@@ -160,7 +160,7 @@
 					class="mt-2 w-full"
 					@update:model-value="changeDefaultRole"
 				/>
-				<p class="mb-2 mt-6 font-bold">List of members</p>
+				<p class="mb-3 mt-8 font-bold">List of members</p>
 				<DataTable
 					:page-link-size="3"
 					:paginator-template="paginatorTemplate"
@@ -259,8 +259,8 @@
 		confirmationDialog.value?.confirm({
 			header: `Set the default role to ${role}?`,
 			label: `Set to ${role}`,
-			message: [ 'Members who join the organization from now on will be ', { bold: `${role}s` }, '. Existing members keep their roles.' ],
-			note: 'GitHub admins of the organization always join as admins.',
+			message: [ 'New members will join as ', { bold: `${role}s` }, '. Existing members keep their roles.' ],
+			note: 'GitHub organization admins always join as admins.',
 			action: async () => {
 				await $directus.request(updateItem('gp_orgs', orgId, { default_role: role }));
 				org.value!.default_role = role;

@@ -52,7 +52,7 @@
 				>
 					<div class="flex w-full max-w-full flex-col">
 						<Message v-if="probe.tags[0]?.format === 'v1'" severity="warn" class="rounded-b-none">
-							<p class="mt-2 font-bold">The tags format has changed</p>
+							<p class="mt-2 font-bold">The tag format has changed</p>
 
 							<p class="mt-4">
 								Your tags use an outdated format and will be converted to the new format after saving.
@@ -256,7 +256,7 @@
 		const updatedTags = convertTags(tagsToEdit.value);
 
 		if (updatedTags.some(({ value }) => !isTagValid(value))) {
-			sendToast('error', 'Tags are invalid', 'Some tag values have an invalid format');
+			sendToast('error', 'Invalid tags', 'Check the format of your tags and try again.');
 			probeDetailsUpdating.value = false;
 			return;
 		}
@@ -272,7 +272,7 @@
 			probe.value = { ...probe.value, tags: updatedTags };
 
 			closeEditTagsPopover();
-			sendToast('success', 'Done', 'The probe has been successfully updated');
+			sendToast('success', 'Tags saved', 'The probe’s tags have been updated.');
 		} catch (e) {
 			sendErrorToast(e);
 		} finally {

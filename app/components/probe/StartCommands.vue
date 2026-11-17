@@ -75,7 +75,7 @@
 
 	const account = useAccount();
 	const owner = computed(() => account.findAccount(props.accountId) ?? account.current);
-	const ownerName = computed(() => owner.value.org_id ? owner.value.name : 'your');
+	const ownerName = computed(() => owner.value.org_id ? `${owner.value.name}’s` : 'your');
 	const canAdopt = computed(() => !owner.value.org_id || owner.value.org_role === 'admin');
 
 	const codeWrapperElem = ref<HTMLElement>();

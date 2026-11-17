@@ -29,7 +29,7 @@
 					<OrgRoleTag class="ml-4" :value="capitalize(option.role)"/>
 				</template>
 			</Select>
-			<p v-if="orgs.length" class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Only organizations where you're an admin or a member are listed.</p>
+			<p v-if="orgs.length" class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">Only organizations where you are an admin or a member are listed.</p>
 			<p v-else class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">No organizations are available for transfers. You need an admin or member role.</p>
 
 			<Message v-if="org" severity="warn" icon="pi pi-exclamation-triangle" class="mt-4">

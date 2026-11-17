@@ -58,7 +58,7 @@
 							<div><i class="pi pi-info-circle mr-3 text-xl"/></div>
 							<div>
 								<p class="font-bold">Copy your new access token.</p>
-								<p class="mt-2">You won’t be able to see it again.</p>
+								<p class="mt-2">You will not be able to see it again.</p>
 								<CodeBlock data-testid="token-value" class="mt-2" :commands="[[generatedToken!.value]]"/>
 							</div>
 							<div class="ml-auto">
@@ -84,7 +84,7 @@
 								<p>
 									<i class="pi pi-info-circle mr-2"/>
 									<span class="font-bold">Copy your new access token <Tag class="bg-surface-300 dark:bg-dark-700">{{generatedToken.name}}</Tag>.</span>
-									You won’t be able to see it again.
+									You will not be able to see it again.
 								</p>
 								<Button
 									icon="pi pi-times"

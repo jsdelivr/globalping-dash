@@ -236,8 +236,8 @@
 			<div class="m-6 flex grow flex-col items-center justify-center rounded-xl bg-surface-50 p-4 text-center sm:p-6 dark:bg-dark-600">
 				<img class="mx-auto w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
 				<p class="mt-6 leading-tight">
-					<b>You don't have any probes yet.</b><br><br>
-					Get started in 30 seconds by running a Docker container with our probe.  It's free and simple.<br>
+					<b>You do not have any probes yet.</b><br><br>
+					Get started in 30 seconds by running a Docker container with our probe.  It is free and simple.<br>
 					Each probe will generate additional credits for you to use. Nowhere to run the container?<br>
 					<NuxtLink class="font-semibold text-primary hover:underline" to="https://github.com/sponsors/jsdelivr">Become a GitHub Sponsor</NuxtLink> and get a hardware ARM powered probe delivered to you.<br>
 					Plug-and-play simplicity guaranteed.

@@ -94,11 +94,11 @@
 			</Message>
 
 			<Message v-if="probeDetails?.isOutdated && probeDetails.hardwareDevice" severity="warn" icon="pi pi-exclamation-triangle">
-				Your hardware probe is running an outdated firmware and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="https://github.com/jsdelivr/globalping-hwprobe#download-the-latest-firmware" target="_blank">our guide</NuxtLink> to update it manually.
+				Your hardware probe is running an outdated firmware and we could not update it automatically. Please follow <NuxtLink class="font-semibold" to="https://github.com/jsdelivr/globalping-hwprobe#download-the-latest-firmware" target="_blank">our guide</NuxtLink> to update it manually.
 			</Message>
 
 			<Message v-else-if="probeDetails?.isOutdated && !probeDetails.hardwareDevice && !editingDisabled" severity="warn" icon="pi pi-exclamation-triangle">
-				Your probe container is running an outdated software and we couldn't update it automatically. Please follow <NuxtLink class="font-semibold" to="#" @click="updateProbeDialog = true">our guide</NuxtLink> to update it manually.
+				Your probe container is running an outdated software and we could not update it automatically. Please follow <NuxtLink class="font-semibold" to="#" @click="updateProbeDialog = true">our guide</NuxtLink> to update it manually.
 			</Message>
 
 			<Tabs v-if="probeDetails" :key="probeDetails.id" :value="activeTab" lazy class="flex min-h-0 flex-1 flex-col">

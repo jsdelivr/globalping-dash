@@ -98,7 +98,7 @@
 						<Tag class="-my-1 text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${user.default_prefix}`"/>
 						to
 						<Tag class="-my-1 text-nowrap bg-surface-0 font-normal dark:bg-dark-800" severity="secondary" :value="`u-${defaultPrefix}`"/> on all probes.
-						Other existing tags won't change unless you update them in the probe settings.
+						Other existing tags will not change unless you update them in the probe settings.
 					</Message>
 				</template>
 			</div>
@@ -162,7 +162,7 @@
 			<div class="grow sm:w-3/5">
 				<template v-if="notificationAccountOptions.length > 1">
 					<label for="notificationAccount" class="flex items-center font-bold">
-						Account <i v-tooltip.top="'Manage your notifications separately for each account. Organizations are listed if you’ve added them and are an admin.'" class="pi pi-info-circle ml-2"/>
+						Account <i v-tooltip.top="'Manage your notifications separately for each account. Organizations are listed if you have added them and are an admin.'" class="pi pi-info-circle ml-2"/>
 					</label>
 					<Select
 						v-model="notificationAccount"

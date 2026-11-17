@@ -139,7 +139,7 @@
 					<div v-if="!adoptedProbes.length" class="flex rounded-xl bg-surface-50 p-4 max-sm:flex-col max-sm:items-center sm:p-6 dark:bg-dark-600">
 						<img class="size-24 max-sm:mb-4" src="~/assets/images/hw-probe.png" alt="Hardware probe">
 						<p class="ml-6 leading-tight">
-							<b>You don't have any probes yet.</b><br><br>
+							<b>You do not have any probes yet.</b><br><br>
 							Get started by going to the <NuxtLink class="font-semibold text-primary hover:underline" to="/probes">Probes</NuxtLink> page to create a container probe.<br>
 							<NuxtLink class="font-semibold text-primary hover:underline" to="https://github.com/sponsors/jsdelivr" target="_blank" rel="noopener">Become a sponsor</NuxtLink> and get a free plug-and-play hardware device.
 						</p>

@@ -109,8 +109,8 @@
 			<StepPanel v-slot="{ activateCallback }" value="1">
 				<Tabs v-model:value="activeTab" :pt="{ inkbar: {class: 'hidden'}}" class="border-t dark:border-dark-400" @update:value="onChangeTab">
 					<TabList>
-						<Tab value="0" :class="{ grow: true }"><i class="pi pi-check mr-2"/>I'm already running a probe</Tab>
-						<Tab value="1" :class="{ grow: true }"><i class="pi pi-times mr-2"/>I'm not running a probe yet</Tab>
+						<Tab value="0" :class="{ grow: true }"><i class="pi pi-check mr-2"/>I am already running a probe</Tab>
+						<Tab value="1" :class="{ grow: true }"><i class="pi pi-times mr-2"/>I am not running a probe yet</Tab>
 					</TabList>
 					<TabPanels ref="tabPanels" class="box-content overflow-hidden transition-[height] duration-500">
 						<TabPanel value="0">
@@ -135,7 +135,7 @@
 				<div v-if="!isSuccess && !isFailed" class="px-5 py-7">
 					<div class="rounded-xl bg-surface-50 p-7 text-center dark:bg-dark-600">
 						<p class="text-lg font-bold">Waiting for the probe to connect...</p>
-						<p class="mt-2">This shouldn't take more than a few seconds.</p>
+						<p class="mt-2">This should not take more than a few seconds.</p>
 						<div class="mt-4">
 							<span class="pi pi-spinner animate-spin text-4xl text-primary-500"/>
 						</div>
@@ -151,7 +151,7 @@
 							Adoption failed
 						</p>
 						<p class="mt-4">
-							We haven't detected any new probes under {{ account.owner }} account.<br>
+							We have not detected any new probes under {{ account.owner }} account.<br>
 							If your probe is up and running, please try manual adoption instead.
 						</p>
 
@@ -188,14 +188,14 @@
 					<div v-if="!activeProbe" class="px-5 py-7">
 						<div class="rounded-xl bg-surface-50 p-7 text-center dark:bg-dark-600">
 							<p class="text-lg font-bold">Waiting for the probe to boot...</p>
-							<p class="mt-2">If it's in the same network, it will automatically appear here.</p>
+							<p class="mt-2">If it is in the same network, it will automatically appear here.</p>
 							<p class="mt-1 text-sm text-surface-500 dark:text-bluegray-200">We recommend waiting 1-2 minutes for the probe to be adopted automatically.</p>
 							<div class="mt-6">
 								<span class="pi pi-spinner animate-spin text-4xl text-primary-500"/>
 							</div>
 
 							<div v-if="showManualAdoptionBtn" class="mt-6 flex flex-col items-center gap-3 border-t pt-4 dark:border-dark-400">
-								If the automated adoption doesn't work, you may also adopt the probe manually.
+								If the automated adoption does not work, you may also adopt the probe manually.
 								<Button
 									label="Adopt the probe manually"
 									severity="contrast"
@@ -239,7 +239,7 @@
 
 					<p>
 						Enter your probe's public IP address and we will send it a verification code.
-						The probe will have the same IP address as the network it's connected to.
+						The probe will have the same IP address as the network it is connected to.
 						<span v-if="userPublicIp">Your current IP address is <span class="font-semibold">{{ userPublicIp }}</span></span>
 					</p>
 
@@ -256,7 +256,7 @@
 					</div>
 					<p v-if="probeType === 'hardware' && !props.manualHwAdoption" class="my-2 text-sm text-surface-500 dark:text-bluegray-200">
 						<span class="pi pi-spinner mr-1 animate-spin text-xs"/>
-						We’re still searching for your probe in the background. If we find it, we’ll automatically move you to the next step.
+						We are still searching for your probe in the background. If we find it, we will automatically move you to the next step.
 					</p>
 					<div class="text-right">
 						<Button class="mr-2" label="Back" severity="secondary" text @click="probeType === 'software' ? activateCallback('0') : activateCallback('4')"/>

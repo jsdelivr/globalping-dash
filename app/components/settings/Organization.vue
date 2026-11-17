@@ -183,7 +183,7 @@
 							Role <i v-tooltip.top="{ value: rolesHint, escape: false, class: 'max-w-md max-sm:!left-4 max-sm:max-w-[calc(100vw-32px)] max-sm:[&>[data-pc-section=arrow]]:hidden [&>[data-pc-section=text]]:leading-normal' }" class="pi pi-info-circle" aria-label="Organization roles"/>
 						</template>
 						<template #body="{ data }">
-							<span v-if="data.id === ownMembershipId" v-tooltip.top="'You can\'t change your own role'" class="inline-flex h-[2.125rem] items-center px-3">{{ roleLabel(data.role) }}</span>
+							<span v-if="data.id === ownMembershipId" v-tooltip.top="'You cannot change your own role'" class="inline-flex h-[2.125rem] items-center px-3">{{ roleLabel(data.role) }}</span>
 							<Select
 								v-else
 								:input-id="`member-role-${data.id}`"
@@ -224,8 +224,8 @@
 	const MEMBERS_PER_PAGE = 10;
 	const ROLES: { value: Membership['role']; label: string; description: string }[] = [
 		{ value: 'admin', label: 'Admin', description: 'Manages the organization\'s settings, adoption token, members, and their roles. Adopts and edits its probes, gets its notifications, and uses its credits.' },
-		{ value: 'member', label: 'Member', description: 'Sees the organization\'s probes and credits, and creates tokens and app approvals that spend its credits. Can\'t adopt or edit probes.' },
-		{ value: 'viewer', label: 'Viewer', description: 'Sees the organization\'s probes and credits. Can\'t create tokens or run measurements on globalping.io as the organization.' },
+		{ value: 'member', label: 'Member', description: 'Sees the organization\'s probes and credits, and creates tokens and app approvals that spend its credits. Cannot adopt or edit probes.' },
+		{ value: 'viewer', label: 'Viewer', description: 'Sees the organization\'s probes and credits. Cannot create tokens or run measurements on globalping.io as the organization.' },
 	];
 	const DEFAULT_ROLES = ROLES.filter(({ value }) => value !== 'admin');
 	const rolesHint = ROLES.map(({ label, description }) => `<p class="mb-2 last:mb-0"><strong>${label}</strong><br>${description}</p>`).join('');
@@ -399,7 +399,7 @@
 		sendToast('success', 'Saved', `${member.github_username} is now ${role === 'admin' ? 'an' : 'a'} ${role}`);
 	};
 
-	const githubAdminNote = (member: OrgMember) => `If ${member.github_username} is a GitHub organization admin, they’ll regain the Admin role on their next sign-in.`;
+	const githubAdminNote = (member: OrgMember) => `If ${member.github_username} is a GitHub organization admin, they will regain the Admin role on their next sign-in.`;
 
 	const roleChangeConfirmation = (member: OrgMember, role: Membership['role']) => {
 		const name = { bold: member.github_username ?? '' };

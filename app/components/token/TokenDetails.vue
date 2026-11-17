@@ -8,7 +8,7 @@
 			:invalid="isNameInvalid"
 			@update:model-value="resetInvalid"
 		/>
-		<p v-if="isNameInvalid" class="pl-1 text-red-500">Name can't be empty</p>
+		<p v-if="isNameInvalid" class="pl-1 text-red-500">Name cannot be empty</p>
 		<p class="mt-1 text-xs text-bluegray-400">A unique name for this token.</p>
 		<p class="mt-6">Expiration</p>
 		<div class="mt-2">

@@ -52,7 +52,7 @@
 			v-model:visible="addCreditsDialog"
 			header="Add credits"
 			content-class="!p-0"
-			size="w-[700px]"
+			size="medium"
 		>
 			<GpDialogContentAddCredits @cancel="addCreditsDialog = false"/>
 		</GPDialog>
@@ -61,7 +61,7 @@
 			v-model:visible="startAProbeDialog"
 			header="Start a probe"
 			content-class="!p-0"
-			size="w-[700px]"
+			size="medium"
 		>
 			<GpDialogContentStartProbeLogin @cancel="startAProbeDialog = false"/>
 		</GPDialog>

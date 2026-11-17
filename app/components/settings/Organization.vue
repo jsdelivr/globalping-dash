@@ -399,27 +399,27 @@
 		sendToast('success', 'Saved', `${member.github_username} is now ${role === 'admin' ? 'an' : 'a'} ${role}`);
 	};
 
-	const githubAdminNote = (member: OrgMember) => `If ${member.github_username} is an admin of the organization on GitHub, they'll become an admin again on their next sign-in.`;
+	const githubAdminNote = (member: OrgMember) => `If ${member.github_username} is a GitHub organization admin, they’ll regain the Admin role on their next sign-in.`;
 
 	const roleChangeConfirmation = (member: OrgMember, role: Membership['role']) => {
 		const name = { bold: member.github_username ?? '' };
 
 		if (role === 'viewer') {
 			return {
-				message: [ name, ' will no longer be able to spend the organization\'s credits. Their tokens and app approvals in this organization will be deleted. This can\'t be undone.' ],
+				message: [ name, ' will no longer be able to spend the organization’s credits. Their tokens and app approvals for this organization will be permanently deleted.' ],
 				note: member.role === 'admin' ? githubAdminNote(member) : undefined,
 			};
 		}
 
 		if (member.role === 'admin') {
 			return {
-				message: [ name, ' will no longer be able to manage the organization\'s settings, adoption token and members, adopt or edit its probes, or get its notifications.' ],
+				message: [ name, ' will no longer be able to manage the organization’s settings, adoption token, or members. They will no longer be able to adopt or edit its probes or receive its notifications.' ],
 				note: githubAdminNote(member),
 			};
 		}
 
 		if (role === 'admin') {
-			return { message: [ name, ' will be able to manage the organization\'s settings, adoption token, members and their roles, adopt and edit its probes, get its notifications and spend its credits.' ] };
+			return { message: [ name, ' will be able to manage the organization’s settings, adoption token, members, and their roles. They will also be able to adopt and edit its probes, receive its notifications, and spend its credits.' ] };
 		}
 
 		return { message: [ name, ' will be able to create tokens and app approvals that spend the organization\'s credits.' ] };
@@ -433,7 +433,7 @@
 		pickedRoles[member.id] = role;
 
 		confirmationDialog.value?.confirm({
-			header: `Change ${member.github_username} to ${role}?`,
+			header: `Change ${member.github_username}’s role to ${role}?`,
 			label: `Change to ${role}`,
 			action: () => updateRole(member, role),
 			afterHide: () => {

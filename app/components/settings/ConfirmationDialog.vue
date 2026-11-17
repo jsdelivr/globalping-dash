@@ -1,5 +1,5 @@
 <template>
-	<GPDialog v-model:visible="visible" :header="confirmation?.header" class="sm:min-w-[32rem]" @after-hide="confirmation?.afterHide?.()">
+	<GPDialog v-model:visible="visible" :header="confirmation?.header" size="medium" class="sm:min-w-[32rem]" @after-hide="confirmation?.afterHide?.()">
 		<div class="flex items-start gap-4">
 			<i class="pi pi-exclamation-triangle mt-0.5 text-xl text-red-500 dark:text-red-400"/>
 			<div>
@@ -9,7 +9,7 @@
 						<span v-else class="font-bold">{{ part.bold }}</span>
 					</template>
 				</p>
-				<p v-if="confirmation?.note" class="mt-2 text-sm text-bluegray-500 dark:text-bluegray-300">{{ confirmation.note }}</p>
+				<p v-if="confirmation?.note" class="mt-3 text-sm text-bluegray-500 dark:text-bluegray-300">{{ confirmation.note }}</p>
 				<p v-if="confirmation?.warning" class="mt-4 font-bold">{{ confirmation.warning }}</p>
 			</div>
 		</div>

@@ -162,7 +162,7 @@
 			view-name="add-credits"
 			header="Add credits"
 			content-class="!p-0"
-			size="w-[700px]"
+			size="medium"
 		>
 			<GpDialogContentAddCredits
 				@cancel="creditsDialog = false"

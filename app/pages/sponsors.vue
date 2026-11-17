@@ -28,7 +28,7 @@
 			<SponsorsEventsTable :period="period"/>
 		</div>
 
-		<GPDialog v-model:visible="creditsDialog" header="Add credits" size="w-[700px]">
+		<GPDialog v-model:visible="creditsDialog" header="Add credits" size="medium">
 			<GpDialogContentAdminAddCredits
 				v-if="creditsDialog"
 				@cancel="creditsDialog = false"

@@ -6,8 +6,9 @@
 		:class="{
 			'gp-dialog-overlay-scrollbars': props.overlayScrollbars,
 			'w-auto max-w-[min(900px,95vw)]': props.size === 'auto',
+			'w-[700px]': props.size === 'medium',
 			'w-[50vw] min-w-[700px] max-w-[min(900px,95vw)] max-md:min-w-[95%]': props.size === 'large',
-			[ props.size ]: ![ 'auto', 'large' ].includes(props.size),
+			[ props.size ]: ![ 'auto', 'medium', 'large' ].includes(props.size),
 		}"
 		modal
 		dismissable-mask
@@ -43,7 +44,7 @@
 			default: false,
 		},
 		size: {
-			type: String as PropType<'auto' | 'large' | string>,
+			type: String as PropType<'auto' | 'medium' | 'large' | string>,
 			default: 'auto',
 		},
 

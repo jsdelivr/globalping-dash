@@ -52,7 +52,7 @@
 
 					<Column field="name" :sortable="true" class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.name}px` }">
 						<template #header>
-							Name <i v-tooltip.top="`Private name of the probe, visible only to ${account.current.org_id ? `${account.current.name} members` : 'you'}`" class="pi pi-info-circle"/>
+							Name <i v-tooltip.top="`Private probe name, visible only to ${account.current.org_id ? `members of ${account.current.name}` : 'you'}.`" class="pi pi-info-circle"/>
 						</template>
 
 						<template #body="slotProps">

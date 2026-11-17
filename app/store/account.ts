@@ -83,7 +83,7 @@ export const useAccount = defineStore('account', {
 			};
 		},
 		owner (): string {
-			return this.current.org_id ? this.current.name : 'your';
+			return this.current.org_id ? `${this.current.name}’s` : 'your';
 		},
 		canManageProbes (): boolean {
 			return !this.current.org_id || this.current.org_role === 'admin';

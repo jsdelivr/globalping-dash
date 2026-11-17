@@ -10,7 +10,7 @@ export const useProbeEditing = (probeAccountId = inject(PROBE_ACCOUNT_KEY, ref()
 	const account = useAccount();
 
 	const foreign = computed(() => !!probeAccountId.value && probeAccountId.value !== account.current.id && !auth.adminMode);
-	const hint = computed(() => foreign.value || account.canManageProbes ? null : 'Only organization admins can do this');
+	const hint = computed(() => foreign.value || account.canManageProbes ? null : 'Only organization admins can manage probes.');
 
 	return {
 		hint,

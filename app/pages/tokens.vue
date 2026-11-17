@@ -3,8 +3,8 @@
 		<div data-testid="tokens-table">
 			<div class="mb-4 flex">
 				<h1 class="page-title">Tokens</h1>
-				<span v-tooltip.top="account.canCreateTokens ? null : 'Org viewers can\'t create tokens'" class="ml-auto">
-					<Button label="Generate new token" :disabled="!!auth.impersonation || !account.canCreateTokens" @click="openTokenDetails('generate')"/>
+				<span v-tooltip.top="account.canCreateTokens ? null : 'Organization viewers cannot create tokens.'" class="ml-auto">
+					<Button label="Generate a new token" :disabled="!!auth.impersonation || !account.canCreateTokens" @click="openTokenDetails('generate')"/>
 				</span>
 			</div>
 			<p class="xl:w-1/2">
@@ -57,7 +57,7 @@
 						<div class="flex rounded-xl bg-surface-50 p-4 dark:bg-dark-600">
 							<div><i class="pi pi-info-circle mr-3 text-xl"/></div>
 							<div>
-								<p class="font-bold">Don't forget to copy your new access token.</p>
+								<p class="font-bold">Copy your new access token.</p>
 								<p class="mt-2">You won’t be able to see it again.</p>
 								<CodeBlock data-testid="token-value" class="mt-2" :commands="[[generatedToken!.value]]"/>
 							</div>
@@ -83,7 +83,7 @@
 							<div class="flex gap-2">
 								<p>
 									<i class="pi pi-info-circle mr-2"/>
-									<span class="font-bold">Don't forget to copy your new access token <Tag class="bg-surface-300 dark:bg-dark-700">{{generatedToken.name}}</Tag>.</span>
+									<span class="font-bold">Copy your new access token <Tag class="bg-surface-300 dark:bg-dark-700">{{generatedToken.name}}</Tag>.</span>
 									You won’t be able to see it again.
 								</p>
 								<Button
@@ -122,13 +122,14 @@
 			<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
 				<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
 					<p class="font-semibold">No data to show</p>
-					<p class="mt-4">Generate a token and use it in your API requests to get a higher hourly measurements limit.</p>
+					<p v-if="!account.canCreateTokens" class="mt-4">Organization viewers cannot create tokens.</p>
+					<p v-else class="mt-4">Generate a token and use it in your API requests to get a higher hourly measurements limit.</p>
 				</div>
 			</div>
 		</div>
 		<div data-testid="applications-table">
 			<div class="mb-4 mt-12">
-				<h2 class="page-title">Authorized Apps</h2>
+				<h2 class="page-title">Authorized apps</h2>
 			</div>
 			<p class="xl:w-1/2">
 				Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.
@@ -187,14 +188,17 @@
 			</div>
 			<div v-else class="mt-6 rounded-xl border bg-surface-0 px-4 py-3 dark:bg-dark-800">
 				<div class="rounded-xl bg-surface-50 p-6 text-center dark:bg-dark-600">
-					<p class="font-semibold">No data to show</p>
-					<p class="mt-4">Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.</p>
+					<p v-if="!account.canCreateTokens">Organization viewers cannot authorize apps for this account.</p>
+					<template v-else>
+						<p class="font-semibold">No data to show</p>
+						<p class="mt-4">Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.</p>
+					</template>
 				</div>
 			</div>
 		</div>
 		<GPDialog
 			v-model:visible="tokenDetailsDialog"
-			:header="tokenDetails ? 'Edit token' : `Generate new ${account.current.org_id ? `${account.current.name} ` : ''}token`"
+			:header="tokenDetails ? 'Edit token' : `Generate a new ${account.current.org_id ? `${account.current.name} ` : ''}token`"
 			content-class="!p-0"
 		>
 			<TokenDetails

@@ -78,6 +78,10 @@
 	const onFilterChangeDebounced = debounce(() => onFilterChange(searchInput.value), 500);
 	const filterDeps = computed(() => ({ ...filter.value }));
 
+	watch(() => filter.value.search, (search) => {
+		searchInput.value = search;
+	});
+
 	const adminOptsRef = ref();
 	const STATUS_CODES = Object.keys(STATUS_MAP) as StatusCode[];
 

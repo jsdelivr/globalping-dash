@@ -44,13 +44,13 @@
 					>
 						<template #value="{ value }">
 							<span class="flex items-center">
-								<i class="mr-2 shrink-0" :class="optionOf(value)?.icon" aria-hidden="true"/>
+								<AccountAvatar :github-id="optionOf(value)?.githubId" :icon="optionOf(value)?.icon" class="mr-2 size-5 rounded-full"/>
 								<span class="min-w-0 grow truncate">{{ optionOf(value)?.label }}</span>
 								<OrgRoleTag class="ml-6" :value="optionOf(value)?.role"/>
 							</span>
 						</template>
 						<template #option="{ option }">
-							<i class="mr-2 shrink-0" :class="option.icon" aria-hidden="true"/>
+							<AccountAvatar :github-id="option.githubId" :icon="option.icon" class="mr-2 size-5 rounded-full"/>
 							<span class="-my-0.5 min-w-0 grow truncate leading-normal">{{ option.label }}</span>
 							<OrgRoleTag class="ml-6" :value="option.role"/>
 						</template>
@@ -175,13 +175,13 @@
 					>
 						<template #value="{ value }">
 							<span class="flex items-center">
-								<i class="mr-2 shrink-0" :class="optionOf(value)?.icon" aria-hidden="true"/>
+								<AccountAvatar :github-id="optionOf(value)?.githubId" :icon="optionOf(value)?.icon" class="mr-2 size-5 rounded-full"/>
 								<span class="min-w-0 grow truncate">{{ optionOf(value)?.label }}</span>
 								<OrgRoleTag class="ml-6" :value="optionOf(value)?.role"/>
 							</span>
 						</template>
 						<template #option="{ option }">
-							<i class="mr-2 shrink-0" :class="option.icon" aria-hidden="true"/>
+							<AccountAvatar :github-id="option.githubId" :icon="option.icon" class="mr-2 size-5 rounded-full"/>
 							<span class="-my-0.5 min-w-0 grow truncate leading-normal">{{ option.label }}</span>
 							<OrgRoleTag class="ml-6" :value="option.role"/>
 						</template>
@@ -298,8 +298,8 @@
 	const account = useAccount();
 	const canTransfer = computed(() => user.value.memberships.some(({ role }) => role !== 'viewer'));
 	const defaultAccountOptions = computed(() => [
-		{ label: account.personal.name, value: account.personal.id, role: 'Personal', icon: 'pi pi-user' },
-		...account.selectedOrgs.map(({ org, role }) => ({ label: org.name, value: org.account, role: capitalize(role), icon: 'pi pi-building' })),
+		{ label: account.personal.name, value: account.personal.id, githubId: account.personal.github_id, role: 'Personal', icon: 'pi pi-user' },
+		...account.selectedOrgs.map(({ org, role }) => ({ label: org.name, value: org.account, githubId: org.github_id, role: capitalize(role), icon: 'pi pi-building' })),
 	]);
 	const optionOf = (value: string) => defaultAccountOptions.value.find(option => option.value === value);
 	const savedDefaultAccount = () => defaultAccountOptions.value.some(({ value }) => value === user.value.default_account) ? user.value.default_account : account.personal.id;

@@ -19,12 +19,14 @@
 			>
 				<template #value="{ placeholder }">
 					<span v-if="org" class="flex items-center">
+						<AccountAvatar :github-id="org.github_id" icon="pi pi-building" class="mr-2 size-5 rounded-full"/>
 						<span class="min-w-0 grow truncate">{{ org.name }}</span>
 						<OrgRoleTag class="ml-4" :value="capitalize(org.role)"/>
 					</span>
 					<template v-else>{{ placeholder }}</template>
 				</template>
 				<template #option="{ option }">
+					<AccountAvatar :github-id="option.github_id" icon="pi pi-building" class="mr-2 size-5 rounded-full"/>
 					<span class="-my-0.5 min-w-0 grow truncate leading-normal">{{ option.name }}</span>
 					<OrgRoleTag class="ml-4" :value="capitalize(option.role)"/>
 				</template>

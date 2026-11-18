@@ -14,8 +14,9 @@
 				<tr v-for="row in accounts" :key="row.id" class="account-row border-b last:border-b-0 max-sm:grid max-sm:grid-cols-[minmax(0,1fr)_auto] max-sm:py-3">
 					<td class="px-2 py-3 max-sm:block max-sm:min-w-0 max-sm:self-end max-sm:pb-2 max-sm:pt-0 max-sm:font-semibold max-sm:[grid-area:name]">
 						<div class="flex items-center gap-2 max-sm:flex-wrap">
-							<span class="max-sm:wrap-anywhere max-sm:min-w-0">
-								<i :class="row.orgId ? 'pi pi-building' : 'pi pi-user'" class="mr-2 text-bluegray-400" aria-hidden="true"/>{{ row.name }}
+							<span class="inline-flex items-center gap-2 max-sm:min-w-0">
+								<AccountAvatar :github-id="row.githubId" :icon="row.orgId ? 'pi pi-building' : 'pi pi-user'" class="size-5 rounded-full text-bluegray-400"/>
+								<span class="max-sm:wrap-anywhere max-sm:min-w-0">{{ row.name }}</span>
 							</span>
 							<Tag v-if="isDefault(row)" value="Default" icon="pi pi-star-fill" severity="secondary" class="text-xs font-normal"/>
 						</div>
@@ -64,6 +65,7 @@
 	type AccountRow = {
 		id: string;
 		name: string;
+		githubId: string;
 		orgId: string | null;
 		role: string;
 		selected: boolean;
@@ -76,10 +78,11 @@
 	const savingDefaultAccountId = ref<string | null>(null);
 
 	const accounts = computed<AccountRow[]>(() => [
-		{ id: account.personal.id, name: account.personal.name, orgId: null, role: 'Personal', selected: true },
+		{ id: account.personal.id, name: account.personal.name, githubId: account.personal.github_id, orgId: null, role: 'Personal', selected: true },
 		...auth.user.memberships.map(({ org, role }) => ({
 			id: org.account,
 			name: org.name,
+			githubId: org.github_id,
 			orgId: org.id,
 			role: capitalize(role),
 			selected: auth.user.selected_orgs.includes(org.id),

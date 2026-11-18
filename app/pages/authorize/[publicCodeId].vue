@@ -18,12 +18,12 @@
 				>
 					<template #value="{ value }">
 						<span class="flex items-center">
-							<i class="mr-2 shrink-0" :class="optionOf(value)?.icon" aria-hidden="true"/>
+							<AccountAvatar :github-id="optionOf(value)?.githubId" :icon="optionOf(value)?.icon" class="mr-2 size-5 rounded-full"/>
 							<span class="min-w-0 grow truncate">{{ optionOf(value)?.name }}</span>
 						</span>
 					</template>
 					<template #option="{ option }">
-						<i class="mr-2 shrink-0" :class="option.icon" aria-hidden="true"/>
+						<AccountAvatar :github-id="option.githubId" :icon="option.icon" class="mr-2 size-5 rounded-full"/>
 						<span class="-my-0.5 min-w-0 grow truncate leading-normal">{{ option.name }}</span>
 					</template>
 				</Select>
@@ -83,8 +83,8 @@
 	const config = useRuntimeConfig();
 
 	const accountOptions = [
-		{ id: account.personal.id, name: account.personal.name, icon: 'pi pi-user' },
-		...account.nonViewerOrgs.map(({ org }) => ({ id: org.account, name: org.name, icon: 'pi pi-building' })),
+		{ id: account.personal.id, name: account.personal.name, githubId: account.personal.github_id, icon: 'pi pi-user' },
+		...account.nonViewerOrgs.map(({ org }) => ({ id: org.account, name: org.name, githubId: org.github_id, icon: 'pi pi-building' })),
 	];
 	const optionOf = (id: string) => accountOptions.find(option => option.id === id);
 

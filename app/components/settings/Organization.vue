@@ -173,6 +173,7 @@
 					<Column header="Member" class="max-w-0">
 						<template #body="{ data }">
 							<div class="flex min-w-0 items-center gap-1">
+								<AccountAvatar :github-id="data.github_id ?? undefined" icon="pi pi-user" class="mr-1 size-5 rounded-full text-bluegray-400"/>
 								<span class="truncate font-semibold" :title="data.github_username">{{ data.github_username }}</span>
 								<span v-if="data.id === ownMembershipId" class="shrink-0 text-bluegray-500 dark:text-bluegray-300">(you)</span>
 							</div>
@@ -219,7 +220,7 @@
 	import { type BannerChange, isValidWebsite, saveBanner } from '~/utils/org-profile';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
-	type OrgMember = { id: string; role: Membership['role']; github_username: string | null };
+	type OrgMember = { id: string; role: Membership['role']; github_username: string | null; github_id?: string | null };
 
 	const MEMBERS_PER_PAGE = 10;
 	const ROLES: { value: Membership['role']; label: string; description: string }[] = [
@@ -379,7 +380,7 @@
 		'organization-members',
 		() => $directus.request<OrgMember[]>(readItems('gp_org_members', {
 			filter: { org: { id: { _eq: orgId } } },
-			// github_username is added to every row by the gp_org_members read hook.
+			// github_username and github_id are added by the gp_org_members read hook.
 			fields: [ 'id', 'role' ],
 			limit: -1,
 		})),

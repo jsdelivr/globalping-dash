@@ -40,8 +40,18 @@
 					<i class="pi pi-bell text-[1.3rem]"/>
 					<i v-if="inboxNotificationIds.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.4rem] text-primary"/>
 				</Button>
-				<Button class="flex items-center !px-2 text-surface-0 hover:bg-transparent" text rounded aria-label="Profile" @click="toggleProfile">
-					<i class="pi rounded-full border-1.5 border-surface-0 p-2" :class="account.current.org_id ? 'pi-building' : 'pi-user'" style="font-size: 1.1rem;"/>
+				<Button
+					class="flex items-center !bg-[#29374c] !py-1.5 !pl-2 !pr-3 text-surface-0 hover:!bg-[#35425A]"
+					text
+					rounded
+					aria-label="Profile"
+					@click="toggleProfile"
+				>
+					<AccountAvatar
+						:github-id="account.current.github_id"
+						:icon="account.current.org_id ? 'pi pi-building' : 'pi pi-user'"
+						class="size-6 rounded-full text-[1.1rem]"
+					/>
 					<p class="max-w-48 truncate font-semibold xl:max-w-64">{{ account.current.name }}<span v-if="account.current.org_id" class="ml-1 font-normal opacity-70">({{ account.personal.name }})</span></p>
 					<i class="pi pi-chevron-down" style="font-size: .7rem;"/>
 				</Button>
@@ -70,7 +80,8 @@
 							:href="item.url"
 							:target="item.target"
 							v-bind="props.action">
-							<span :class="[ item.icon, { 'text-primary': item.active } ]"/>
+							<AccountAvatar v-if="item.key" :github-id="item.githubId" :icon="item.icon" class="size-5 rounded-full" :class="{ 'text-primary': item.active }"/>
+							<span v-else :class="item.icon" class="w-3.5 shrink-0 text-center !text-xs"/>
 							<span class="ml-2 min-w-0 grow truncate" :class="{ 'font-bold text-primary': item.active }" :title="typeof item.label === 'string' ? item.label : undefined">{{ item.label }}</span>
 							<Tag v-if="item.badge" class="ml-6 h-[21px] shrink-0 bg-surface-100 !py-0 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300" severity="secondary" :value="item.badge"/>
 							<i v-if="hasSubmenu" class="pi pi-angle-right ml-4 text-xs"/>
@@ -89,10 +100,14 @@
 					<i v-if="inboxNotificationIds.length" class="pi pi-circle-fill absolute right-3 top-1 text-[0.4rem] text-primary"/>
 				</Button>
 				<Button class="text-[1.5rem] text-surface-0 hover:bg-transparent" icon="pi pi-bars" aria-label="Menu" text @click="mobileSidebar = true"/>
-				<Drawer v-model:visible="mobileSidebar" class="border bg-surface-100 pt-4">
+				<Drawer v-model:visible="mobileSidebar" class="mobile-nav border bg-surface-100 pt-4">
 					<template #header>
 						<div class="text-lg font-semibold" data-pc-section="title">
-							<i class="pi mr-2 rounded-full border-1.5 border-main-900 p-2" :class="account.current.org_id ? 'pi-building' : 'pi-user'" style="font-size: 1.1rem;"/>
+							<AccountAvatar
+								:github-id="account.current.github_id"
+								:icon="account.current.org_id ? 'pi pi-building' : 'pi pi-user'"
+								class="mr-2 size-6 rounded-full align-middle text-[1.1rem] ring-1 ring-black/10 dark:ring-white/15"
+							/>
 							<span class="font-semibold">{{ account.current.name }}</span><span v-if="account.current.org_id" class="ml-1 font-normal opacity-70">({{ account.personal.name }})</span>
 						</div>
 					</template>
@@ -110,12 +125,17 @@
 					<div v-if="!auth.adminMode" class="my-2 flex flex-col border-y py-2">
 						<p class="px-4 py-2 text-sm font-bold text-bluegray-500">Switch account</p>
 						<button v-for="item in accountOptions" :key="item.key" class="sidebar-link" :class="{ 'font-bold !text-primary': item.active }" @click="item.command(); mobileSidebar = false">
-							<i class="sidebar-link-icon shrink-0" :class="[ item.icon, { '!text-primary': item.active } ]"/>
+							<AccountAvatar
+								:github-id="item.githubId"
+								:icon="item.icon"
+								class="sidebar-link-icon rounded-full"
+								:class="{ '!text-primary': item.active, '!text-sm': item.key === 'manage-accounts' }"
+							/>
 							<span class="w-0 grow truncate text-left" :title="item.label">{{ item.label }}</span>
 							<Tag v-if="item.badge" class="ml-6 shrink-0 bg-surface-0 font-normal text-bluegray-600 dark:border-white/15 dark:bg-transparent dark:text-bluegray-300 dark:[[data-p-selected=true]_&]:border-transparent dark:[[data-p-selected=true]_&]:bg-surface-0 dark:[[data-p-selected=true]_&]:text-primary-700" severity="secondary" :value="item.badge"/>
 						</button>
 					</div>
-					<button active-class="active" class="sidebar-link" @click="auth.logout"><i class="pi pi-power-off sidebar-link-icon"/>Sign out</button>
+					<button active-class="active" class="sidebar-link" @click="auth.logout"><i class="pi pi-sign-out sidebar-link-icon !text-sm" aria-hidden="true"/>Sign out</button>
 					<div class="flex flex-col border-t">
 						<NuxtLink class="ml-6 mt-4 text-bluegray-600 no-underline hover:underline dark:text-bluegray-100" to="https://www.jsdelivr.com/" target="_blank">
 							<i class="pi pi-external-link text-bluegray-300"/>
@@ -336,6 +356,7 @@
 			key: 'personal',
 			label: account.personal.name,
 			badge: 'Personal',
+			githubId: account.personal.github_id,
 			icon: 'pi pi-user',
 			active: !account.current.org_id,
 			command: () => switchAccount(null).catch(sendErrorToast),
@@ -344,6 +365,7 @@
 			key: membership.org.account,
 			label: membership.org.name,
 			badge: capitalize(membership.role),
+			githubId: membership.org.github_id,
 			icon: 'pi pi-building',
 			active: membership.org.account === account.current.id,
 			command: () => switchAccount(membership.org.account).catch(sendErrorToast),
@@ -367,7 +389,7 @@
 		...auth.adminMode ? [] : [
 			{
 				label: 'Switch account',
-				icon: 'pi pi-building',
+				icon: 'pi pi-arrow-right-arrow-left',
 				items: accountOptions.value,
 			},
 		],
@@ -376,7 +398,7 @@
 		},
 		{
 			label: 'Sign out',
-			icon: 'pi pi-power-off',
+			icon: 'pi pi-sign-out',
 			command: auth.logout,
 		},
 	]);
@@ -420,6 +442,10 @@
 
 	.sidebar-link-icon {
 		@apply pl-4 pr-3 text-lg text-bluegray-400;
+	}
+
+	.mobile-nav .sidebar-link-icon {
+		@apply ml-4 mr-2.5 inline-flex size-5 shrink-0 items-center justify-center p-0;
 	}
 
 	.dark .sidebar-link {

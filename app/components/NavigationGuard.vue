@@ -70,14 +70,11 @@
 
 	onMounted(() => {
 		window.addEventListener('beforeunload', handleBeforeUnload);
-		router.beforeEach(handleNavigation);
-
 		const removeGuard = router.beforeEach(handleNavigation);
-		const guardRemover = ref(removeGuard);
 
 		onUnmounted(() => {
 			window.removeEventListener('beforeunload', handleBeforeUnload);
-			guardRemover.value();
+			removeGuard();
 		});
 	});
 </script>

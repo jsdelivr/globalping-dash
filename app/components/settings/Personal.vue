@@ -192,7 +192,7 @@
 					:key="notificationTypeId"
 					:class="{ 'mt-6': index > 0 }"
 				>
-					<p class="font-bold">{{ notificationType.description }}</p>
+					<p :id="`notification-description-${notificationTypeId}`" class="font-bold">{{ notificationType.description }}</p>
 					<div class="mt-2 flex items-center gap-4">
 						<div class="flex items-center gap-2">
 							<ToggleSwitch
@@ -214,9 +214,15 @@
 						</div>
 					</div>
 					<div v-if="notificationType.hasParameter" class="mt-3 flex items-center gap-2">
-						<label class="cursor-text text-nowrap">Threshold:</label>
+						<label
+							:id="`notification-threshold-label-${notificationTypeId}`"
+							:for="`notification-threshold-${notificationTypeId}`"
+							class="cursor-text text-nowrap"
+						>Threshold:</label>
 						<InputNumber
 							v-if="notificationPreferences[notificationTypeId]"
+							:input-id="`notification-threshold-${notificationTypeId}`"
+							:aria-labelledby="`notification-description-${notificationTypeId} notification-threshold-label-${notificationTypeId}`"
 							:model-value="notificationPreferences[notificationTypeId].parameter ? Number(notificationPreferences[notificationTypeId].parameter) : null"
 							fluid
 							:disabled="!!auth.impersonation || !notificationPreferences[notificationTypeId].enabled"
@@ -318,7 +324,8 @@
 	const notificationAccount = ref(account.personal.id);
 	const accountsNotificationPreferences = ref<Record<string, EditablePreferences>>({});
 	const notificationPreferences = computed(() => accountsNotificationPreferences.value[notificationAccount.value] ?? {});
-	let initialNotificationPreferences: Record<string, string> = {};
+	const initialNotificationPreferences = ref<Record<string, string>>({});
+	const savingOrgNotificationPreferences = ref(false);
 
 	const lastSavedAppearance = ref(user.value.appearance);
 
@@ -330,6 +337,7 @@
 		|| defaultPrefix.value !== user.value.default_prefix
 		|| defaultAccount.value !== savedDefaultAccount()
 		|| adoptionToken.value !== user.value.adoption_token
+		|| savingOrgNotificationPreferences.value
 		|| Object.keys(accountsNotificationPreferences.value).some(isNotificationPreferencesChanged));
 
 	// A probe transfer replaces the adoption token outside of this form.
@@ -358,9 +366,14 @@
 	const saveLoading = ref(false);
 	const save = async () => {
 		saveLoading.value = true;
-		const savedNotificationPreferences = serializeAllNotificationPreferences();
 
 		try {
+			const personalPreferences = normalizeNotificationPreferences(account.personal.id);
+			const orgUpdates = adminMemberships.value
+				.filter(({ org }) => isNotificationPreferencesChanged(org.account))
+				.map(({ id, org }) => ({ id, accountId: org.account, preferences: normalizeNotificationPreferences(org.account) }));
+			savingOrgNotificationPreferences.value = orgUpdates.length > 0;
+
 			await $directus.request(updateMe({
 				first_name: firstName.value,
 				last_name: lastName.value,
@@ -368,17 +381,19 @@
 				email: email.value,
 				public_probes: publicProbes.value,
 				default_prefix: defaultPrefix.value,
-				notification_preferences: normalizeNotificationPreferences(account.personal.id),
+				notification_preferences: personalPreferences,
 				...defaultAccount.value !== savedDefaultAccount() ? { default_account: defaultAccount.value } : {},
 				// Adoption token values are generated on BE and stored there for a limited time. So we are sending 'adoption_token' only if it is really changed.
 				...user.value.adoption_token !== adoptionToken.value ? { adoption_token: adoptionToken.value } : {},
 			}));
 
 			lastSavedAppearance.value = appearance.value;
+			initialNotificationPreferences.value[account.personal.id] = JSON.stringify(personalPreferences);
 
-			const orgResults = await Promise.allSettled(adminMemberships.value
-				.filter(({ org }) => isNotificationPreferencesChanged(org.account))
-				.map(({ id, org }) => $directus.request(updateItem('gp_org_members', id, { notification_preferences: normalizeNotificationPreferences(org.account) }))));
+			const orgResults = await Promise.allSettled(orgUpdates.map(async ({ id, accountId, preferences }) => {
+				await $directus.request(updateItem('gp_org_members', id, { notification_preferences: preferences }));
+				initialNotificationPreferences.value[accountId] = JSON.stringify(preferences);
+			}));
 
 			await auth.refresh();
 
@@ -388,14 +403,13 @@
 				throw failed.reason;
 			}
 
-			initialNotificationPreferences = savedNotificationPreferences;
-
 			sendToast('success', 'Saved', 'All settings saved');
 		} catch (e) {
 			sendErrorToast(e);
+		} finally {
+			savingOrgNotificationPreferences.value = false;
+			saveLoading.value = false;
 		}
-
-		saveLoading.value = false;
 	};
 
 	// APPEARANCE
@@ -471,7 +485,7 @@
 
 		for (const [ accountId, preferences ] of savedPreferences) {
 			accountsNotificationPreferences.value[accountId] = buildNotificationPreferences(preferences);
-			initialNotificationPreferences[accountId] = JSON.stringify(normalizeNotificationPreferences(accountId));
+			initialNotificationPreferences.value[accountId] = JSON.stringify(normalizeNotificationPreferences(accountId));
 		}
 	}, { immediate: true });
 
@@ -480,7 +494,7 @@
 	watch(notificationAccountOptions, (options) => {
 		const accountIds = options.map(({ value }) => value);
 		accountsNotificationPreferences.value = pick(accountsNotificationPreferences.value, accountIds);
-		initialNotificationPreferences = pick(initialNotificationPreferences, accountIds);
+		initialNotificationPreferences.value = pick(initialNotificationPreferences.value, accountIds);
 
 		if (!accountIds.includes(notificationAccount.value)) {
 			notificationAccount.value = account.personal.id;
@@ -510,12 +524,8 @@
 		}));
 	}
 
-	function serializeAllNotificationPreferences () {
-		return Object.fromEntries(Object.keys(accountsNotificationPreferences.value).map(accountId => [ accountId, JSON.stringify(normalizeNotificationPreferences(accountId)) ]));
-	}
-
 	function isNotificationPreferencesChanged (accountId: string) {
-		return JSON.stringify(normalizeNotificationPreferences(accountId)) !== initialNotificationPreferences[accountId];
+		return JSON.stringify(normalizeNotificationPreferences(accountId)) !== initialNotificationPreferences.value[accountId];
 	}
 
 	// This builds an object to use and edit by the form UI.

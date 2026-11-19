@@ -3,21 +3,24 @@
 		<div class="mb-4 flex">
 			<h1 class="page-title">Probes</h1>
 
-			<Button
-				v-if="selectedProbes.length"
-				class="ml-auto max-md:hidden"
-				label="Delete selected"
-				severity="danger"
-				icon="pi pi-trash"
-				outlined
-				@click="deleteProbesDialog = true"
-			/>
+			<ProbeOwnerOnly v-if="selectedProbes.length" v-slot="{ disabled }" class="ml-auto max-md:hidden">
+				<Button
+					label="Delete selected"
+					severity="danger"
+					icon="pi pi-trash"
+					outlined
+					:disabled="disabled"
+					@click="deleteProbesDialog = true"
+				/>
+			</ProbeOwnerOnly>
 			<span class="ml-auto max-md:inline-block" :class="{ 'hidden': selectedProbes.length }"/>
 
-			<Button class="ml-2" @click="adoptProbeDialog = true">
-				<NuxtIcon class="pi" name="capture" aria-hidden="true"/>
-				<span class="font-bold">Adopt a probe</span>
-			</Button>
+			<ProbeOwnerOnly v-slot="{ disabled }" class="ml-2">
+				<Button :disabled="disabled" @click="adoptProbeDialog = true">
+					<NuxtIcon class="pi" name="capture" aria-hidden="true"/>
+					<span class="font-bold">Adopt a probe</span>
+				</Button>
+			</ProbeOwnerOnly>
 		</div>
 		<div v-if="hasAnyProbes || firstLoading || countLoading">
 			<div class="max-md:hidden">
@@ -49,7 +52,7 @@
 
 					<Column field="name" :sortable="true" class="w-96" body-class="!p-0 h-16" :style="{ width: `${columnWidths.name}px` }">
 						<template #header>
-							Name <i v-tooltip.top="'Private name of the probe, visible only to you'" class="pi pi-info-circle"/>
+							Name <i v-tooltip.top="`Private probe name, visible only to ${account.current.org_id ? `members of ${account.current.name}` : 'you'}.`" class="pi pi-info-circle"/>
 						</template>
 
 						<template #body="slotProps">
@@ -113,14 +116,16 @@
 								</Tag>
 							</div>
 
-							<Button
-								class="ml-auto"
-								severity="secondary"
-								outlined
-								label="Start a probe"
-								icon="pi pi-question-circle"
-								@click="startProbeDialog = true"
-							/>
+							<ProbeOwnerOnly v-slot="{ disabled }" class="ml-auto">
+								<Button
+									severity="secondary"
+									outlined
+									label="Start a probe"
+									icon="pi pi-question-circle"
+									:disabled="disabled"
+									@click="startProbeDialog = true"
+								/>
+							</ProbeOwnerOnly>
 						</div>
 					</template>
 
@@ -199,14 +204,17 @@
 									<span class="text-xs font-bold">Number of probes:</span>
 									<Tag class="ml-2 flex items-center border bg-surface-0 !text-sm" severity="success">{{ formatNumber(filteredProbeCount) }}</Tag>
 								</div>
-								<Button
-									class="mt-2 w-full"
-									severity="secondary"
-									outlined
-									label="Start a probe"
-									icon="pi pi-question-circle"
-									@click="startProbeDialog = true"
-								/>
+								<ProbeOwnerOnly v-slot="{ disabled }" class="mt-2 block w-full">
+									<Button
+										class="w-full"
+										severity="secondary"
+										outlined
+										label="Start a probe"
+										icon="pi pi-question-circle"
+										:disabled="disabled"
+										@click="startProbeDialog = true"
+									/>
+								</ProbeOwnerOnly>
 							</div>
 						</div>
 					</AsyncBlock>
@@ -228,13 +236,15 @@
 			<div class="m-6 flex grow flex-col items-center justify-center rounded-xl bg-surface-50 p-4 text-center sm:p-6 dark:bg-dark-600">
 				<img class="mx-auto w-24" src="~/assets/images/hw-probe.png" alt="Hardware probe">
 				<p class="mt-6 leading-tight">
-					<b>You don't have any probes yet.</b><br><br>
-					Get started in 30 seconds by running a Docker container with our probe.  It's free and simple.<br>
+					<b>You do not have any probes yet.</b><br><br>
+					Get started in 30 seconds by running a Docker container with our probe.  It is free and simple.<br>
 					Each probe will generate additional credits for you to use. Nowhere to run the container?<br>
 					<NuxtLink class="font-semibold text-primary hover:underline" to="https://github.com/sponsors/jsdelivr">Become a GitHub Sponsor</NuxtLink> and get a hardware ARM powered probe delivered to you.<br>
 					Plug-and-play simplicity guaranteed.
 				</p>
-				<Button class="mt-6" label="Start a probe" @click="startProbeDialog = true"/>
+				<ProbeOwnerOnly v-slot="{ disabled }" class="mt-6 inline-block">
+					<Button label="Start a probe" :disabled="disabled" @click="startProbeDialog = true"/>
+				</ProbeOwnerOnly>
 			</div>
 		</div>
 
@@ -265,7 +275,7 @@
 			header="Update a probe"
 			size="large"
 		>
-			<GpDialogContentUpdateProbe/>
+			<GpDialogContentUpdateProbe :account-id="route.query.account?.toString()"/>
 		</GPDialog>
 	</div>
 </template>
@@ -279,6 +289,7 @@
 	import { useErrorToast } from '~/composables/useErrorToast';
 	import { useProbeFilters } from '~/composables/useProbeFilters';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { useAccount } from '~/store/account';
 	import { useAuth } from '~/store/auth';
 	import { formatNumber } from '~/utils/format-number';
 	import { minDelay } from '~/utils/min-delay';
@@ -290,6 +301,7 @@
 	const router = useRouter();
 	const route = useRoute();
 	const auth = useAuth();
+	const account = useAccount();
 
 	const itemsPerPage = ref(config.public.itemsPerTablePage);
 	const startProbeDialog = ref(false);

@@ -77,26 +77,31 @@
 				>
 					<div class="flex items-center justify-between max-sm:flex-col max-sm:text-center">
 						<div class="ml-2">You get <span class="ml-1.5 whitespace-nowrap rounded-full border bg-surface-0 px-2.5 py-1.5 max-sm:leading-10 dark:bg-dark-700"><span class="font-bold" :class="{'text-primary': step2Completed}">+{{ formatNumber(creditsPerAdoptedProbe) }} credits</span> / probe / day</span></div>
-						<Button
-							v-if="!step1Completed"
-							disabled
-							severity="secondary"
-							outlined
-							label="Adopt a probe"
-						/>
-						<Button
-							v-else-if="step2Completed"
-							severity="secondary"
-							outlined
-							label="Adopt another probe"
-							class="text-primary !opacity-100"
-							@click="$emit('adopt-a-probe')"
-						/>
-						<Button
-							v-else
-							label="Adopt your first probe"
-							@click="$emit('adopt-a-probe')"
-						/>
+						<ProbeOwnerOnly v-slot="{ disabled }">
+							<Button
+								v-if="!step1Completed"
+								disabled
+								severity="secondary"
+								outlined
+								label="Adopt a probe"
+							/>
+							<Button
+								v-else-if="step2Completed"
+								severity="secondary"
+								outlined
+								label="Adopt another probe"
+								class="text-primary"
+								:class="{ '!opacity-100': !disabled }"
+								:disabled="disabled"
+								@click="$emit('adopt-a-probe')"
+							/>
+							<Button
+								v-else
+								label="Adopt your first probe"
+								:disabled="disabled"
+								@click="$emit('adopt-a-probe')"
+							/>
+						</ProbeOwnerOnly>
 					</div>
 				</div>
 			</div>
@@ -166,16 +171,17 @@
 <script setup lang="ts">
 	import { customEndpoint, readItems } from '@directus/sdk';
 	import { useUserFilter } from '~/composables/useUserFilter';
+	import { useAccount } from '~/store/account';
 	import { useAuth } from '~/store/auth';
 	import { useMetadata } from '~/store/metadata';
 	import { formatNumber } from '~/utils/format-number';
 	const { $directus } = useNuxtApp();
 
 	const auth = useAuth();
-	const { user } = storeToRefs(auth);
+	const account = useAccount();
 	const metadata = useMetadata();
 	const { creditsPerAdoptedProbe, creditsPerDollar } = storeToRefs(metadata);
-	const { getUserFilter, getAccountId } = useUserFilter();
+	const { getUserFilter } = useUserFilter();
 
 	defineEmits([ 'cancel', 'adopt-a-probe' ]);
 
@@ -195,7 +201,7 @@
 		() => auth.isLoggedIn
 			? $directus.request<SponsorshipDetails>(customEndpoint({
 				path: '/sponsorship-details',
-				params: { accountId: getAccountId() },
+				params: { accountId: account.current.id },
 			}))
 			: Promise.resolve({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }),
 		{ default: () => ({ bonus: 0, donatedInLastYear: 0, donatedByMonth: [] }) },
@@ -203,5 +209,5 @@
 
 	const step1Completed = computed(() => auth.isLoggedIn);
 	const step2Completed = computed(() => adoptionsExists.value);
-	const step3Completed = computed(() => user.value.user_type === 'sponsor' || user.value.user_type === 'special');
+	const step3Completed = computed(() => account.current.user_type === 'sponsor' || account.current.user_type === 'special');
 </script>

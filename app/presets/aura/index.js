@@ -64,7 +64,7 @@ import popover from './popover';
 import radiobutton from './radiobutton';
 // import rating from './rating';
 // import ripple from './ripple';
-// import scrollpanel from './scrollpanel';
+import scrollpanel from './scrollpanel';
 // import scrolltop from './scrolltop';
 import select from './select';
 import selectbutton from './selectbutton';
@@ -89,7 +89,7 @@ import tabs from './tabs';
 import tabview from './tabview';
 import tag from './tag';
 // import terminal from './terminal';
-// import textarea from './textarea';
+import textarea from './textarea';
 import tieredmenu from './tieredmenu';
 // import timeline from './timeline';
 import toast from './toast';
@@ -133,7 +133,7 @@ export default {
 	// inputmask,
 	// knob,
 	treeselect,
-	// textarea,
+	textarea,
 	// password,
 	iconfield,
 	// floatlabel,
@@ -167,7 +167,7 @@ export default {
 	tabview,
 	divider,
 	// toolbar,
-	// scrollpanel,
+	scrollpanel,
 	// splitter,
 	// splitterpanel,
 	stepper,

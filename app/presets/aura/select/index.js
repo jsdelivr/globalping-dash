@@ -34,7 +34,7 @@ export default {
 			// Misc
 			'cursor-pointer',
 			'select-none',
-			{ 'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default': props.disabled },
+			{ 'bg-surface-100 dark:bg-dark-500 select-none pointer-events-none cursor-default': props.disabled },
 		],
 	}),
 	label: ({ props, parent }) => ({
@@ -49,7 +49,7 @@ export default {
 			// Color and Background
 			'bg-transparent',
 			'border-0',
-			{ 'text-surface-800 dark:text-white': props.modelValue != null, 'text-surface-400 dark:text-surface-500': props.modelValue === undefined },
+			{ 'text-surface-800 dark:text-white': props.modelValue != null && !props.disabled, 'text-bluegray-400': props.modelValue == null && !props.disabled, 'text-bluegray-500': props.disabled },
 			'placeholder:text-surface-400 dark:placeholder:text-surface-500',
 
 			// Sizing and Spacing
@@ -78,7 +78,7 @@ export default {
 			'appearance-none',
 		],
 	}),
-	dropdown: {
+	dropdown: ({ props }) => ({
 		class: [
 			// Flexbox
 			'flex items-center justify-center',
@@ -86,7 +86,7 @@ export default {
 
 			// Color and Background
 			'bg-transparent',
-			'dark:text-surface-0',
+			{ 'dark:text-surface-0': !props.disabled, 'text-bluegray-500': props.disabled },
 
 			// Size
 			'w-12',
@@ -94,11 +94,14 @@ export default {
 			// Shape
 			'rounded-r-md',
 		],
-	},
+	}),
 	overlay: {
 		class: [
 			// Spacing follows the overlay's top or bottom placement
 			'!mt-0.5 [&[style*="transform-origin:_center_bottom"]]:!-mt-0.5',
+
+			// Size: never wider than the screen
+			'max-w-[calc(100vw-32px)]',
 
 			// Colors
 			'bg-surface-0 dark:bg-dark-700',

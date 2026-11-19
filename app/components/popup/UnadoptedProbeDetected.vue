@@ -28,6 +28,8 @@
 			<div class="mb-2 flex w-full flex-col gap-3">
 				<p v-if="!hasError">
 					A new Globalping hardware probe is available on your network.
+					It can be adopted into
+					<template v-if="account.current.org_id">the <b>{{ account.current.name }}</b> organization</template><template v-else>your personal account</template>.
 				</p>
 
 				<div class="rounded-xl border bg-surface-0 p-3 dark:border-dark-500 dark:bg-dark-800">
@@ -86,12 +88,14 @@
 
 <script setup lang="ts">
 	import CountryFlag from 'vue-country-flag-next';
+	import { useAccount } from '~/store/account';
 	import { LINK_TOKEN_STORAGE_KEY, useHardwareProbeAdoption } from '~/store/local-adoption';
 	import { sendErrorToast } from '~/utils/send-toast';
 
 	const config = useRuntimeConfig().public;
 	const store = useHardwareProbeAdoption();
 	const { activeProbe, isIdlePolling, showLocalNetworkAccessPopup } = storeToRefs(store);
+	const account = useAccount();
 
 	const loading = ref(false);
 	const hasError = ref(false);

@@ -8,7 +8,7 @@
 			:invalid="isNameInvalid"
 			@update:model-value="resetInvalid"
 		/>
-		<p v-if="isNameInvalid" class="pl-1 text-red-500">Name can't be empty</p>
+		<p v-if="isNameInvalid" class="pl-1 text-red-500">Name cannot be empty</p>
 		<p class="mt-1 text-xs text-bluegray-400">A unique name for this token.</p>
 		<p class="mt-6">Expiration</p>
 		<div class="mt-2">
@@ -42,7 +42,7 @@
 				rounded
 				@click="changeExpiration(6)"
 			>
-				6 month
+				6 months
 			</Button>
 			<Button
 				class="mb-2 mr-2"
@@ -64,7 +64,7 @@
 				<TokenCalendar :value="expire && new Date(expire)" @change="changeDate"/>
 			</Popover>
 		</div>
-		<div class="text-xs text-bluegray-400">{{ expire ? `Token will expire ${formatDate(expire)}.` : 'Token will never expire.' }}</div>
+		<div class="text-xs text-bluegray-400">{{ expire ? `This token expires on ${formatDate(expire)}.` : 'This token never expires.' }}</div>
 		<label for="origins" class="mt-6 block">Origins</label>
 		<AutoComplete
 			id="origins"
@@ -79,7 +79,7 @@
 			@blur="onAutoCompleteBlur"
 		/>
 		<p class="mt-1 text-xs text-bluegray-400">
-			A list of origins which are allowed to use the token. If empty, any origin is valid.
+			Origins allowed to use this token. Leave empty to allow any origin.
 			Examples of valid origins: "https://www.jsdelivr.com", "https://www.jsdelivr.com:10000".
 		</p>
 		<div v-if="token" class="mt-7 flex flex-wrap justify-end gap-x-2 gap-y-1">
@@ -101,6 +101,7 @@
 
 <script setup lang="ts">
 	import { createItem, customEndpoint, updateItem } from '@directus/sdk';
+	import { useAccount } from '~/store/account';
 	import { formatDate } from '~/utils/date-formatters';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
@@ -114,6 +115,7 @@
 	const emit = defineEmits([ 'generate', 'cancel', 'save', 'regenerate' ]);
 
 	const { $directus } = useNuxtApp();
+	const account = useAccount();
 
 	// NAME
 
@@ -227,6 +229,7 @@
 				origins: origins.value,
 				expire: expire.value && expire.value.toISOString().split('T')[0],
 				value: token,
+				account_id: account.current.id,
 			}));
 
 			emit('generate', response.id, token, name.value);
@@ -253,7 +256,7 @@
 				expire: expire.value && expire.value.toISOString().split('T')[0],
 			}));
 
-			sendToast('success', 'Done', 'The token settings have been updated');
+			sendToast('success', 'Token saved', 'The token settings have been updated.');
 
 			emit('save');
 		} catch (e) {
@@ -282,7 +285,7 @@
 				value: token,
 			}));
 
-			sendToast('success', 'Done', 'The token has been successfully regenerated');
+			sendToast('success', 'Token regenerated', 'The token has been regenerated.');
 
 			emit('regenerate', response.id, token, name.value);
 		} catch (e) {

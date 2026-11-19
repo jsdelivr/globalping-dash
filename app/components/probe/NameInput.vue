@@ -2,8 +2,10 @@
 	<div
 		v-if="probe"
 		ref="probeNameInput"
+		v-tooltip.top="hint"
 		class="relative flex h-[42px] w-full cursor-pointer items-center gap-1 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-offset-2 sm:w-auto"
 		:class="{
+			'!cursor-default': disabled,
 			'[&>input]:border-primary [&>input]:outline-none [&>input]:ring-[0.5px] [&>input]:ring-primary-500': isEditingName,
 			'[&>input]:dark:border-primary-400 [&>input]:dark:bg-dark-800 [&>input]:dark:ring-primary-400': isEditingName,
 		}"
@@ -61,14 +63,16 @@
 			@blur="cancelNameEditingOnBlur"
 		/>
 
-		<i v-if="!isEditingName" class="pi pi-pencil text-lg" aria-hidden="true"/>
+		<i v-if="!isEditingName" class="pi pi-pencil text-lg" :class="{ 'opacity-40': disabled }" aria-hidden="true"/>
 	</div>
 </template>
 
 <script setup lang="ts">
 	import { updateItem } from '@directus/sdk';
+	import { useProbeEditing } from '~/composables/useProbeEditing';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
+	const { hint, disabled } = useProbeEditing();
 	const { $directus } = useNuxtApp();
 
 	const probe = defineModel('probe', {
@@ -105,7 +109,7 @@
 	}, { immediate: true });
 
 	const enableNameEditing = async () => {
-		if (isEditingName.value) {
+		if (isEditingName.value || disabled.value) {
 			return;
 		}
 

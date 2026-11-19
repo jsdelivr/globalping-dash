@@ -37,7 +37,7 @@ export default {
 	header: {
 		class: [
 			// Flexbox and Alignment
-			'flex items-center justify-between',
+			'flex items-center justify-between gap-4',
 			'shrink-0',
 
 			// Spacing

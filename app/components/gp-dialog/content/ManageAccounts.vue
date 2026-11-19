@@ -51,7 +51,7 @@
 			</tbody>
 		</table>
 	</div>
-	<p v-if="!auth.user.memberships.length" class="mb-2 mt-3 text-sm text-surface-500 dark:text-bluegray-200">No GitHub organizations are available for your account.</p>
+	<p v-if="!auth.user.memberships.length" class="mb-2 mt-3 text-sm text-bluegray-500 dark:text-bluegray-200">No GitHub organizations are available for your account.</p>
 </template>
 
 <script setup lang="ts">

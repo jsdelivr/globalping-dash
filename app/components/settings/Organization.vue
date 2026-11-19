@@ -84,7 +84,10 @@
 				<ul class="flex flex-col gap-2">
 					<li v-for="extraToken in extraAdoptionTokens" :key="extraToken.token" class="flex items-center gap-3 rounded-lg border bg-surface-50 px-4 py-3 max-sm:flex-wrap dark:border-dark-600 dark:bg-dark-700">
 						<span class="flex min-w-0 grow flex-wrap items-center gap-x-3 max-sm:w-full">
-							<span class="max-w-full break-words font-semibold">{{ extraToken.github_username }}</span>
+							<span class="flex max-w-full items-center gap-2 font-semibold">
+								<AccountAvatar :github-id="extraToken.github_id ?? undefined" icon="pi pi-user" class="size-5 rounded-full text-bluegray-400"/>
+								<span class="min-w-0 break-words">{{ extraToken.github_username }}</span>
+							</span>
 							<code class="text-sm text-bluegray-500 dark:text-bluegray-300">{{ maskToken(extraToken.token) }}</code>
 						</span>
 						<Button

@@ -310,6 +310,7 @@
 		() => minDelay($directus.request(readItems('gp_tokens', {
 			filter: {
 				...getUserFilter('account_id'),
+				...getUserFilter('user_created'),
 				app_id: { _null: true },
 			},
 			offset: firstToken.value,
@@ -329,6 +330,7 @@
 				query: {
 					filter: {
 						...getUserFilter('account_id'),
+						...getUserFilter('user_created'),
 						app_id: { _null: true },
 					},
 				},
@@ -473,6 +475,7 @@
 			path: '/applications',
 			params: {
 				accountId: getAccountIdOrAll(),
+				userCreated: auth.user.id,
 				offset: firstApp.value,
 				limit: itemsPerPage.value,
 			},

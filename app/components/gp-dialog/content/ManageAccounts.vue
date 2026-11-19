@@ -1,5 +1,5 @@
 <template>
-	<p class="mb-4">Manage accounts in your “Switch account” menu and choose your default. Organizations are refreshed from GitHub each time you sign in.</p>
+	<p class="mb-4">Manage accounts in your “Switch account” menu and choose your default. Organizations are refreshed from GitHub every time you sign in.</p>
 
 	<div class="mb-2 overflow-hidden rounded-2xl border bg-surface-0 px-4 dark:bg-dark-800">
 		<table class="w-full border-collapse text-left leading-[normal] max-sm:block">
@@ -51,7 +51,7 @@
 			</tbody>
 		</table>
 	</div>
-	<p v-if="!auth.user.memberships.length" class="mb-2 font-semibold">No GitHub organizations are available for your account.</p>
+	<p v-if="!auth.user.memberships.length" class="mb-2 mt-3 text-sm text-surface-500 dark:text-bluegray-200">No GitHub organizations are available for your account.</p>
 </template>
 
 <script setup lang="ts">

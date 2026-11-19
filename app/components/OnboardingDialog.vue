@@ -24,21 +24,10 @@
 					</span>
 					<span class="flex flex-col gap-2 p-5 max-sm:p-4">
 						<span class="flex items-center gap-2 font-bold">
-							<AccountAvatar
-								:github-id="card.value === 'personal' ? account.personal.github_id : undefined"
-								:icon="card.icon"
-								class="size-5 rounded-full text-bluegray-400 group-has-[:checked]:text-primary sm:hidden"
-							/>
-							{{ card.title }}
+							<i :class="card.icon" class="text-bluegray-400 group-has-[:checked]:text-primary sm:!hidden" aria-hidden="true"/>{{ card.title }}
 						</span>
 						<span>{{ isDisabled(card.value) ? 'No GitHub organizations are available for your account.' : card.description }}</span>
-						<span class="mt-auto flex pt-2 max-sm:hidden">
-							<AccountAvatar
-								:github-id="card.value === 'personal' ? account.personal.github_id : undefined"
-								:icon="card.icon"
-								class="size-9 rounded-full text-3xl text-bluegray-400 group-has-[:checked]:text-primary"
-							/>
-						</span>
+						<i :class="card.icon" class="mt-auto pt-2 text-3xl text-bluegray-400 group-has-[:checked]:text-primary max-sm:!hidden" aria-hidden="true"/>
 					</span>
 				</label>
 			</div>

@@ -1,5 +1,6 @@
 <template>
 	<span class="flex min-w-0 items-center gap-1.5">
+		<AccountAvatar :github-id="githubId" icon="pi pi-github" class="size-5 rounded-full text-bluegray-400"/>
 		<a
 			v-if="githubLogin"
 			class="min-w-0 font-semibold text-inherit underline transition-none hover:text-inherit"

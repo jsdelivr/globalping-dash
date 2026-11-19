@@ -24,10 +24,21 @@
 					</span>
 					<span class="flex flex-col gap-2 p-5 max-sm:p-4">
 						<span class="flex items-center gap-2 font-bold">
-							<i :class="card.icon" class="text-bluegray-400 group-has-[:checked]:text-primary sm:!hidden" aria-hidden="true"/>{{ card.title }}
+							<AccountAvatar
+								:github-id="card.value === 'personal' ? account.personal.github_id : undefined"
+								:icon="card.icon"
+								class="size-5 rounded-full text-bluegray-400 group-has-[:checked]:text-primary sm:hidden"
+							/>
+							{{ card.title }}
 						</span>
 						<span>{{ isDisabled(card.value) ? 'No GitHub organizations are available for your account.' : card.description }}</span>
-						<i :class="card.icon" class="mt-auto pt-2 text-3xl text-bluegray-400 group-has-[:checked]:text-primary max-sm:!hidden" aria-hidden="true"/>
+						<span class="mt-auto flex pt-2 max-sm:hidden">
+							<AccountAvatar
+								:github-id="card.value === 'personal' ? account.personal.github_id : undefined"
+								:icon="card.icon"
+								class="size-9 rounded-full text-3xl text-bluegray-400 group-has-[:checked]:text-primary"
+							/>
+						</span>
 					</span>
 				</label>
 			</div>
@@ -61,12 +72,14 @@
 				>
 					<template #value="{ placeholder }">
 						<span v-if="membership" class="flex items-center">
+							<AccountAvatar :github-id="membership.org.github_id" icon="pi pi-building" class="mr-2 size-5 rounded-full"/>
 							<span class="min-w-0 grow truncate">{{ membership.org.name }}</span>
 							<OrgRoleTag class="ml-6" :value="capitalize(membership.role)"/>
 						</span>
 						<template v-else>{{ placeholder }}</template>
 					</template>
 					<template #option="{ option }">
+						<AccountAvatar :github-id="option.org.github_id" icon="pi pi-building" class="mr-2 size-5 rounded-full"/>
 						<span class="-my-0.5 min-w-0 grow truncate leading-normal">{{ option.org.name }}</span>
 						<OrgRoleTag class="ml-6" :value="capitalize(option.role)"/>
 					</template>

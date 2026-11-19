@@ -210,6 +210,7 @@ declare global {
 
 	type ExtraAdoptionToken = {
 		github_username: string;
+		github_id?: string | null;
 		token: string;
 	};
 

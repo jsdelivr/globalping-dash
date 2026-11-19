@@ -97,10 +97,18 @@
 				<p class="mt-4 text-sm font-bold">Current redirects</p>
 				<ul aria-label="Current redirects" class="mt-2 flex flex-col gap-2">
 					<li v-for="redirect in redirects" :key="redirect.source.githubId" class="flex items-center gap-3 rounded-lg border bg-surface-50 px-4 py-2 max-sm:flex-wrap dark:border-dark-600 dark:bg-dark-700">
-						<span class="flex min-w-0 grow flex-wrap items-center gap-x-3 max-sm:w-full">
-							<span class="max-w-full break-words font-semibold">{{ redirect.source.name }}</span>
-							<i class="pi pi-arrow-right text-sm text-bluegray-400"/>
-							<span class="max-w-full break-words font-semibold">{{ redirect.target.name }}</span>
+						<span class="flex min-w-0 grow flex-wrap items-center gap-x-3 gap-y-1 max-sm:w-full">
+							<span class="flex max-w-full items-center gap-2 font-semibold">
+								<AccountAvatar :github-id="redirect.source.githubId" icon="pi pi-github" class="size-5 rounded-full text-bluegray-400"/>
+								<span class="min-w-0 break-words">{{ redirect.source.name }}</span>
+							</span>
+							<span class="flex max-w-full items-center gap-3">
+								<i class="pi pi-arrow-right shrink-0 text-sm text-bluegray-400"/>
+								<span class="flex min-w-0 items-center gap-2 font-semibold">
+									<AccountAvatar :github-id="redirect.target.githubId" icon="pi pi-github" class="size-5 rounded-full text-bluegray-400"/>
+									<span class="min-w-0 break-words">{{ redirect.target.name }}</span>
+								</span>
+							</span>
 						</span>
 						<Button
 							class="ml-auto shrink-0"

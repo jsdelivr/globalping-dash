@@ -136,7 +136,7 @@
 				<h2 class="page-title">Your authorized apps</h2>
 			</div>
 			<p v-if="account.current.org_id" class="xl:w-1/2">
-				Sign in with your Globalping account in supported apps and select <strong>{{ account.current.name }}</strong> to get a higher hourly measurements limit.
+				Signing in to a supported app with your Globalping account and authorizing it for <strong>{{ account.current.name }}</strong> gives you a higher hourly measurements limit.
 				After reaching the hourly limit, you can keep running measurements by spending the organization’s credits.
 			</p>
 			<p v-else class="xl:w-1/2">
@@ -263,8 +263,8 @@
 				</div>
 				<div>
 					<template v-if="account.current.org_id">
-						<p>Revoke the access you granted <strong>{{ appToRevoke!.name }}</strong> for <strong>{{ account.current.name }}</strong>?</p>
-						<p>Other members can continue using the app.</p>
+						<p>Revoke access for <strong>{{ appToRevoke!.name }}</strong> in <strong>{{ account.current.name }}</strong>?</p>
+						<p>This removes one authorization. Other authorizations for this app stay active.</p>
 					</template>
 					<template v-else>
 						<p>You are about to revoke access for the app <span class="font-bold">{{ appToRevoke!.name }}</span>.</p>

@@ -2,12 +2,16 @@
 	<div class="min-h-full p-4 sm:p-6">
 		<div data-testid="tokens-table">
 			<div class="mb-4 flex">
-				<h1 class="page-title">Tokens</h1>
+				<h1 class="page-title">Your tokens</h1>
 				<span v-tooltip.top="account.canCreateTokens ? null : 'Organization viewers cannot create tokens.'" class="ml-auto">
 					<Button label="Generate a new token" :disabled="!!auth.impersonation || !account.canCreateTokens" @click="openTokenDetails('generate')"/>
 				</span>
 			</div>
-			<p class="xl:w-1/2">
+			<p v-if="account.current.org_id" class="xl:w-1/2">
+				Generate a token for <strong>{{ account.current.name }}</strong> and use it in your API requests to get a higher hourly measurements limit.
+				After reaching the hourly limit, you can keep running measurements by spending the organization’s credits.
+			</p>
+			<p v-else class="xl:w-1/2">
 				Generate a token and use it in your API requests to get a higher hourly measurements limit.
 				After reaching the hourly limit, you can keep running measurements by spending the earned credits.
 			</p>
@@ -129,9 +133,13 @@
 		</div>
 		<div data-testid="applications-table">
 			<div class="mb-4 mt-12">
-				<h2 class="page-title">Authorized apps</h2>
+				<h2 class="page-title">Your authorized apps</h2>
 			</div>
-			<p class="xl:w-1/2">
+			<p v-if="account.current.org_id" class="xl:w-1/2">
+				Sign in with your Globalping account in supported apps and select <strong>{{ account.current.name }}</strong> to get a higher hourly measurements limit.
+				After reaching the hourly limit, you can keep running measurements by spending the organization’s credits.
+			</p>
+			<p v-else class="xl:w-1/2">
 				Sign in with your Globalping account in supported apps to get a higher hourly measurements limit.
 				After reaching the hourly limit, you can keep running measurements by spending the earned credits.
 			</p>
@@ -254,8 +262,14 @@
 					<i class="pi pi-exclamation-triangle text-xl text-red-500 dark:text-red-400"/>
 				</div>
 				<div>
-					<p>You are about to revoke access for the app <span class="font-bold">{{ appToRevoke!.name }}</span>.</p>
-					<p>Are you sure you want to proceed? You will not be able to undo this action.</p>
+					<template v-if="account.current.org_id">
+						<p>Revoke the access you granted <strong>{{ appToRevoke!.name }}</strong> for <strong>{{ account.current.name }}</strong>?</p>
+						<p>Other members can continue using the app.</p>
+					</template>
+					<template v-else>
+						<p>You are about to revoke access for the app <span class="font-bold">{{ appToRevoke!.name }}</span>.</p>
+						<p>Are you sure you want to proceed? You will not be able to undo this action.</p>
+					</template>
 				</div>
 			</div>
 			<div class="mt-6 text-right">

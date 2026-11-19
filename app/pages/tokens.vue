@@ -149,7 +149,7 @@
 					lazy
 					:first="firstApp"
 					:rows="itemsPerPage"
-					data-key="id"
+					:data-key="getApplicationKey"
 					:total-records="appsCount"
 					:loading="loadingApplications"
 					class="max-md:hidden"
@@ -168,7 +168,7 @@
 					</Column>
 					<Column :row-editor="true" body-class="!py-2">
 						<template #body="slotProps">
-							<ApplicationOptions @revoke="openRevokeDialog(slotProps.data.id)"/>
+							<ApplicationOptions @revoke="openRevokeDialog(slotProps.data)"/>
 						</template>
 					</Column>
 				</DataTable>
@@ -176,10 +176,10 @@
 					<div v-if="loadingApplications && !apps.length" class="flex h-32 w-full items-center justify-center">
 						<i class="pi pi-spin pi-spinner text-xl"/>
 					</div>
-					<AsyncRow v-for="app in apps" v-else :key="app.id" :loading="loadingApplications">
+					<AsyncRow v-for="app in apps" v-else :key="getApplicationKey(app)" :loading="loadingApplications">
 						<ListItemApps
 							:app="app"
-							@revoke="openRevokeDialog(app.id)"
+							@revoke="openRevokeDialog(app)"
 						/>
 					</AsyncRow>
 				</div>
@@ -310,6 +310,7 @@
 		() => minDelay($directus.request(readItems('gp_tokens', {
 			filter: {
 				...getUserFilter('account_id'),
+				...getUserFilter('user_created'),
 				app_id: { _null: true },
 			},
 			offset: firstToken.value,
@@ -329,6 +330,7 @@
 				query: {
 					filter: {
 						...getUserFilter('account_id'),
+						...getUserFilter('user_created'),
 						app_id: { _null: true },
 					},
 				},
@@ -473,6 +475,7 @@
 			path: '/applications',
 			params: {
 				accountId: getAccountIdOrAll(),
+				userCreated: auth.user.id,
 				offset: firstApp.value,
 				limit: itemsPerPage.value,
 			},
@@ -484,15 +487,15 @@
 
 	const apps = computed(() => applicationData.value?.applications ?? []);
 	const appsCount = computed(() => applicationData.value?.total ?? 0);
+	const getApplicationKey = (app: Application) => `${app.id}:${app.account_id}:${app.user_created}`;
 
 	// REVOKE APP ACCESS
 
 	const revokeDialog = ref(false);
 	const appToRevoke = ref<Application | null>(null);
 
-	const openRevokeDialog = (id: string) => {
-		const app = apps.value.find(app => app.id === id);
-		appToRevoke.value = app!;
+	const openRevokeDialog = (app: Application) => {
+		appToRevoke.value = app;
 		revokeDialog.value = true;
 	};
 

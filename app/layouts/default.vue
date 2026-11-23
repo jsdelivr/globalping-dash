@@ -102,17 +102,18 @@
 				<Button class="text-[1.5rem] text-surface-0 hover:bg-transparent" icon="pi pi-bars" aria-label="Menu" text @click="mobileSidebar = true"/>
 				<Drawer v-model:visible="mobileSidebar" class="mobile-nav border bg-surface-100 pt-4">
 					<template #header>
-						<div class="text-lg font-semibold" data-pc-section="title">
+						<div class="mr-2 flex min-w-0 flex-1 items-center gap-3" data-pc-section="title">
 							<AccountAvatar
 								:github-id="account.current.github_id"
 								:icon="account.current.org_id ? 'pi pi-building' : 'pi pi-user'"
-								class="mr-2 size-6 rounded-full align-middle text-[1.1rem] ring-1 ring-black/10 dark:ring-white/15"
+								class="size-8 rounded-full text-[1.1rem] ring-1 ring-black/10 dark:ring-white/15"
 							/>
-							<span class="font-semibold">{{ account.current.name }}</span><span v-if="account.current.org_id" class="ml-1 font-normal opacity-70">({{ account.personal.name }})</span>
+							<div class="min-w-0">
+								<p class="truncate text-lg font-semibold leading-tight">{{ account.current.name }}</p>
+								<p v-if="account.current.org_id" class="truncate text-sm leading-tight opacity-70">{{ account.personal.name }}</p>
+							</div>
 						</div>
 					</template>
-
-					<p class="mb-2 px-4 text-sm">Account tier: <span class="font-semibold">{{ capitalize(account.current.user_type) }}</span></p>
 
 					<NuxtLink active-class="active" class="sidebar-link" to="/" @click="mobileSidebar = false"><i class="pi pi-home sidebar-link-icon"/>Overview</NuxtLink>
 					<NuxtLink active-class="active" class="sidebar-link" :class="{'active': $route.path.startsWith('/probes')}" to="/probes" @click="mobileSidebar = false"><NuxtIcon class="pi sidebar-link-icon" name="probe"/>Probes</NuxtLink>
@@ -136,14 +137,12 @@
 						</button>
 					</div>
 					<button active-class="active" class="sidebar-link" @click="auth.logout"><i class="pi pi-sign-out sidebar-link-icon !text-sm" aria-hidden="true"/>Sign out</button>
-					<div class="flex flex-col border-t">
-						<NuxtLink class="ml-6 mt-4 text-bluegray-600 no-underline hover:underline dark:text-bluegray-100" to="https://www.jsdelivr.com/" target="_blank">
-							<i class="pi pi-external-link text-bluegray-300"/>
-							<span class="m-2">jsDelivr</span>
+					<div class="flex flex-col border-t pt-2">
+						<NuxtLink class="sidebar-link" to="https://www.jsdelivr.com/" target="_blank">
+							<i class="pi pi-external-link sidebar-link-icon !text-sm" aria-hidden="true"/>jsDelivr
 						</NuxtLink>
-						<NuxtLink class="ml-6 mt-4 text-bluegray-600 no-underline hover:underline dark:text-bluegray-100" to="https://globalping.io" target="_blank">
-							<i class="pi pi-external-link text-bluegray-300"/>
-							<span class="m-2">Globalping</span>
+						<NuxtLink class="sidebar-link" to="https://globalping.io" target="_blank">
+							<i class="pi pi-external-link sidebar-link-icon !text-sm" aria-hidden="true"/>Globalping
 						</NuxtLink>
 					</div>
 

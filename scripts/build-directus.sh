@@ -4,28 +4,49 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-CURRENT_BRANCH=${CURRENT_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}
-REPO=https://github.com/jsdelivr/globalping-dash-directus.git
+DIRECTUS_DIR=test/e2e/globalping-dash-directus
 
-# Use the branch with the same name, then the base branch of the pull request, then master.
-for BRANCH in "$CURRENT_BRANCH" ${BASE_BRANCH:-} master; do
-	git ls-remote --exit-code --heads "$REPO" "refs/heads/$BRANCH" > /dev/null && break
-done
+checkout_directus() (
+	CURRENT_BRANCH=${CURRENT_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}
+	REPO=https://github.com/jsdelivr/globalping-dash-directus.git
 
-echo "globalping-dash-directus branch: $BRANCH."
+	# Use the branch with the same name, then the base branch of the pull request, then master.
+	for BRANCH in "$CURRENT_BRANCH" ${BASE_BRANCH:-} master; do
+		git ls-remote --exit-code --heads "$REPO" "refs/heads/$BRANCH" > /dev/null && break
+	done
 
-# Checkout and sync the branch if the directory exists; otherwise, clone the repository
-if [ -d "test/e2e/globalping-dash-directus" ]; then
-	cd test/e2e/globalping-dash-directus || exit
-	git add .
-	git reset --hard "@{u}"
-	git fetch
-	git checkout "$BRANCH"
-	git reset --hard "@{u}"
-else
-	git clone -b "$BRANCH" "$REPO" test/e2e/globalping-dash-directus
-	cd test/e2e/globalping-dash-directus || exit
-fi
+	echo "globalping-dash-directus branch: $BRANCH."
+
+	# Checkout and sync the branch if the directory exists; otherwise, clone the repository.
+	if [ -d "$DIRECTUS_DIR" ]; then
+		cd "$DIRECTUS_DIR"
+		git add .
+		git reset --hard "@{u}"
+		git fetch
+		git checkout "$BRANCH"
+		git reset --hard "@{u}"
+	else
+		git clone -b "$BRANCH" "$REPO" "$DIRECTUS_DIR"
+	fi
+)
+
+case "${1:-}" in
+	--checkout-only)
+		checkout_directus
+		exit
+		;;
+	--skip-checkout)
+		;;
+	'')
+		checkout_directus
+		;;
+	*)
+		echo "Usage: $0 [--checkout-only | --skip-checkout]" >&2
+		exit 2
+		;;
+esac
+
+cd "$DIRECTUS_DIR"
 
 # Install globalping-dash-directus dependencies
 pnpm i
@@ -40,5 +61,3 @@ perl -pi -e 's/DASH_INDEX_FILE_PATH=.*/DASH_INDEX_FILE_PATH=..\/..\/..\/.output\
 docker compose -f docker-compose.e2e.yml up --build -d
 pnpm run init:e2e
 docker compose -f docker-compose.e2e.yml stop
-
-cd ../../../ || exit

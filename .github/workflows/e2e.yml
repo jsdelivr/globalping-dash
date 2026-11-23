@@ -22,13 +22,35 @@ jobs:
           corepack enable
           pnpm install
 
-      - name: Clone globalping-dash-directus
+      - name: Checkout globalping-dash-directus
         env:
           CURRENT_BRANCH: ${{ github.head_ref || github.ref_name }}
           BASE_BRANCH: ${{ github.base_ref }}
-        run: |
-          echo "Current branch: $CURRENT_BRANCH."
-          pnpm run test:e2e:build:directus
+        run: ./scripts/build-directus.sh --checkout-only
+
+      - name: Restore Docker Turbo cache
+        id: docker-turbo-cache
+        if: hashFiles('test/e2e/globalping-dash-directus/turbo.json') != ''
+        uses: actions/cache@v6
+        with:
+          path: .local/docker-turbo-cache
+          key: docker-turbo-${{ runner.arch }}-${{ hashFiles('test/e2e/globalping-dash-directus/pnpm-lock.yaml', 'test/e2e/globalping-dash-directus/turbo.json') }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            docker-turbo-${{ runner.arch }}-${{ hashFiles('test/e2e/globalping-dash-directus/pnpm-lock.yaml', 'test/e2e/globalping-dash-directus/turbo.json') }}-
+
+      - name: Persist Docker cache mount
+        if: steps.docker-turbo-cache.outcome == 'success'
+        uses: reproducible-containers/buildkit-cache-dance@5422eac04292c961a382e0f584ea0f03ad9da723 # v3.4.0
+        continue-on-error: true
+        with:
+          builder: default
+          dockerfile: test/e2e/globalping-dash-directus/Dockerfile
+          cache-dir: .local/docker-turbo-cache
+
+      - name: Build globalping-dash-directus
+        env:
+          BUILDX_BUILDER: default
+        run: pnpm run test:e2e:build:directus --skip-checkout
 
       - name: Build globalping-dash
         run: |

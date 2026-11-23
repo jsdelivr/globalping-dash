@@ -49,7 +49,13 @@
 		class="mt-2 flex flex-wrap items-center gap-4 rounded-xl border p-3 max-sm:flex-col max-sm:items-stretch dark:border-dark-600"
 	>
 		<div class="aspect-[1224/200] min-w-0 overflow-hidden rounded-md border border-surface-200 bg-gradient-to-r from-surface-50 to-surface-100 max-sm:w-full sm:min-w-72 sm:flex-1 dark:border-dark-600 dark:from-dark-700 dark:to-dark-600">
-			<img v-if="previewUrl && !previewFailed" :src="previewUrl" alt="Banner preview" class="size-full object-cover" @error="previewFailed = true">
+			<img
+				v-if="previewUrl && !previewFailed"
+				:src="previewUrl"
+				:srcset="previewSrcset"
+				alt="Banner preview"
+				class="size-full object-cover"
+				@error="previewFailed = true">
 			<div v-else class="flex size-full items-center justify-center gap-2 text-bluegray-400 dark:text-bluegray-300">
 				<i class="pi pi-image text-xl" aria-hidden="true"/>
 				<span class="text-sm">{{ previewUrl ? 'Could not load the banner' : 'No banner' }}</span>
@@ -127,13 +133,9 @@
 	watch(stagedUrl, (_url, previous) => previous && URL.revokeObjectURL(previous));
 	onBeforeUnmount(() => stagedUrl.value && URL.revokeObjectURL(stagedUrl.value));
 
-	const previewUrl = computed(() => {
-		if (banner.value !== undefined) {
-			return stagedUrl.value;
-		}
-
-		return props.bannerId ? `${directusUrl}/assets/${props.bannerId}?key=banner` : null;
-	});
+	const assetUrl = computed(() => banner.value === undefined && props.bannerId ? `${directusUrl}/assets/${props.bannerId}` : undefined);
+	const previewUrl = computed(() => assetUrl.value ? `${assetUrl.value}?key=banner` : stagedUrl.value);
+	const previewSrcset = computed(() => assetUrl.value && `${assetUrl.value}?key=banner 1x, ${assetUrl.value}?key=banner-2x 2x`);
 
 	const previewFailed = ref(false);
 	watch(previewUrl, () => previewFailed.value = false);

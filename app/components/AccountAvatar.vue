@@ -41,4 +41,11 @@
 			failedId.value = props.githubId;
 		}
 	};
+
+	// the error event may fire inside a pending Suspense, before the template ref is set
+	onMounted(() => {
+		if (image.value?.complete && !image.value.naturalWidth) {
+			failedId.value = props.githubId;
+		}
+	});
 </script>

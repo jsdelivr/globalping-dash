@@ -4,10 +4,9 @@
 			v-if="githubId && /^\d+$/.test(githubId) && failedId !== githubId"
 			:key="githubId"
 			ref="image"
-			:src="`https://avatars.githubusercontent.com/u/${avatarId}?s=80`"
+			:src="`${config.public.gpSiteUrl}/github-logo/${avatarId}?size=80`"
 			class="size-full object-cover"
 			alt=""
-			referrerpolicy="no-referrer"
 			@error="onImageError"
 		>
 		<i v-else :class="icon"/>
@@ -16,6 +15,7 @@
 
 <script setup lang="ts">
 	const props = defineProps<{ githubId?: string; icon?: string }>();
+	const config = useRuntimeConfig();
 
 	// Show sample avatars for the synthetic IDs in the Directus development seeds.
 	const developmentAvatarIds: Partial<Record<string, string>> = {

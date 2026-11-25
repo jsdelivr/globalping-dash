@@ -30,7 +30,7 @@
 	const isFormDirty = inject<Ref<boolean>>('form-dirty');
 
 	const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-		if (isFormDirty?.value) {
+		if (isFormDirty?.value && auth.isLoggedIn) {
 			e.preventDefault();
 			e.returnValue = '';
 		}

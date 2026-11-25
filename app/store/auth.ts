@@ -1,6 +1,6 @@
-import { readItems, readMe, readRolesMe, deleteUser } from '@directus/sdk';
+import { readItems, readMe, readRolesMe, readUser, deleteUser } from '@directus/sdk';
 import { defineStore } from 'pinia';
-import { clearImpersonationActiveId, readSessionActiveId, useAccount } from '~/store/account';
+import { readSessionActiveId, useAccount } from '~/store/account';
 import { useHardwareProbeAdoption } from '~/store/local-adoption';
 
 interface AuthState {
@@ -11,10 +11,30 @@ interface AuthState {
 		originalUser: User;
 		github_username: string;
 		impersonatedUser: User | null;
+		accountId?: string;
 	} | null;
 	adminMode: boolean;
 	user: User;
 }
+
+export const ADMIN_CONFIG_KEY = 'adminConfig';
+type AdminConfig = { adminId: string; sessionId: string; adminMode: boolean; userId?: string; accountId?: string };
+let signedOut = false;
+
+const readAdminConfig = (storage: Storage): AdminConfig | null => {
+	try {
+		const value: Partial<AdminConfig> | null = JSON.parse(storage.getItem(ADMIN_CONFIG_KEY) ?? 'null');
+
+		if (typeof value?.adminId === 'string' && typeof value.sessionId === 'string' && typeof value.adminMode === 'boolean') {
+			const { adminId, sessionId, adminMode, userId, accountId } = value;
+			return { adminId, sessionId, adminMode, userId: typeof userId === 'string' ? userId : undefined, accountId: typeof accountId === 'string' ? accountId : undefined };
+		}
+	} catch {
+		// Treat invalid browser storage as an unset preference.
+	}
+
+	return null;
+};
 
 export const MEMBERSHIP_FIELDS = [ 'id', 'role', 'notification_preferences', { org: [ 'id', 'name', 'github_id', 'account', 'user_type', 'public_probes', 'default_role', 'website', 'description', 'banner' ] }] as const;
 
@@ -89,75 +109,68 @@ export const useAuth = defineStore('auth', {
 
 			return redirectUrl.toString();
 		},
-		impersonate (directusUser: DirectusUser) {
-			const user = toUser(directusUser);
+		impersonate (user: Pick<DirectusUser, 'id' | 'github_username'>) {
+			if (user.github_username) {
+				this.setAdminConfig(false, user.id);
+			}
+		},
+		clearImpersonation () {
+			this.setAdminConfig(false);
+		},
+		setAdminConfig (adminMode: boolean, userId?: string, accountId?: string) {
+			const tab = readAdminConfig(sessionStorage);
 
-			if (!user.github_username || !this.isAdmin) {
+			if (!this.isAdmin || !tab || tab.sessionId !== readAdminConfig(localStorage)?.sessionId) {
 				return;
 			}
 
-			this.adminMode = false;
-
-			this.impersonation = {
-				originalUser: this.impersonation?.originalUser || this.user,
-				github_username: user.github_username,
-				impersonatedUser: {
-					...user,
-					last_page: this.user.last_page,
-				},
-			};
-
-			this.user = {
-				...user,
-				last_page: this.user.last_page,
-			};
-
-			clearImpersonationActiveId();
-			this.storeAdminConfig();
+			const config = JSON.stringify({ adminId: tab.adminId, sessionId: tab.sessionId, adminMode, userId, accountId });
+			localStorage.setItem(ADMIN_CONFIG_KEY, config);
+			sessionStorage.setItem(ADMIN_CONFIG_KEY, config);
 			window.location.reload();
 		},
-		clearImpersonation () {
-			this.user = this.impersonation?.originalUser || this.user;
-			this.impersonation = null;
-			this.storeAdminConfig();
-			window.location.reload();
-		},
-		storeAdminConfig () {
-			sessionStorage.setItem('adminConfig', JSON.stringify({
-				adminMode: this.adminMode,
-				impersonation: this.impersonation,
-			}));
-		},
-		applyAdminConfig () {
-			try {
-				const adminConfig: Pick<AuthState, 'adminMode' | 'impersonation'> = JSON.parse(sessionStorage.getItem('adminConfig') || '');
+		async applyAdminConfig () {
+			const { $directus } = useNuxtApp();
+			const originalUser = this.user;
+			let shared = readAdminConfig(localStorage);
 
-				if (
-					typeof adminConfig?.adminMode !== 'boolean'
-					|| (adminConfig?.impersonation !== null && (
-						typeof adminConfig?.impersonation !== 'object'
-						|| typeof adminConfig?.impersonation?.github_username !== 'string'
-						|| typeof adminConfig?.impersonation?.originalUser?.id !== 'string'
-						|| typeof adminConfig?.impersonation?.impersonatedUser?.account !== 'string'
-						|| !Array.isArray(adminConfig?.impersonation?.impersonatedUser?.memberships)
-					))
-				) {
-					this.clearAdminConfig();
-					return;
-				}
-
-				this.adminMode = adminConfig?.adminMode || false;
-				this.impersonation = adminConfig?.impersonation || null;
-
-				if (this.impersonation) {
-					this.user = this.impersonation.impersonatedUser || this.user;
-				}
-			} catch {
-				sessionStorage.setItem('adminConfig', JSON.stringify({ adminMode: false, impersonation: null }));
+			if (shared?.adminId !== originalUser.id) {
+				shared = { adminId: originalUser.id, sessionId: crypto.randomUUID(), adminMode: false };
+				localStorage.setItem(ADMIN_CONFIG_KEY, JSON.stringify(shared));
 			}
+
+			const tab = readAdminConfig(sessionStorage);
+			const config = tab?.adminId === shared.adminId && tab.sessionId === shared.sessionId ? tab : shared;
+			let target: User | null = null;
+
+			if (!config.adminMode && config.userId) {
+				const user = await $directus.request(readUser(config.userId, { fields: [ '*', { memberships: MEMBERSHIP_FIELDS }] })).catch(console.error);
+				const currentAdmin = this.user === this.impersonation?.impersonatedUser ? this.impersonation.originalUser : this.user;
+
+				if (!this.isAdmin || currentAdmin.id !== originalUser.id) {
+					return false;
+				}
+
+				target = user ? { ...toUser(user as DirectusUser), last_page: originalUser.last_page } : null;
+			}
+
+			if (signedOut || config.sessionId !== readAdminConfig(localStorage)?.sessionId) {
+				this.finishLogout();
+				return false;
+			}
+
+			this.adminMode = config.adminMode;
+
+			this.impersonation = target?.github_username
+				? { originalUser, github_username: target.github_username, impersonatedUser: target, accountId: config.accountId }
+				: null;
+
+			this.user = this.impersonation?.impersonatedUser ?? originalUser;
+			sessionStorage.setItem(ADMIN_CONFIG_KEY, JSON.stringify(config));
+			return true;
 		},
 		clearAdminConfig () {
-			sessionStorage.removeItem('adminConfig');
+			sessionStorage.removeItem(ADMIN_CONFIG_KEY);
 		},
 		async login () {
 			const config = useRuntimeConfig();
@@ -174,13 +187,30 @@ export const useAuth = defineStore('auth', {
 		},
 		async logout () {
 			const { $directus } = useNuxtApp();
-			const probeStore = useHardwareProbeAdoption();
+			const sessionId = readAdminConfig(localStorage)?.sessionId;
 
+			try {
+				await $directus.logout();
+			} catch (error) {
+				const { response, errors } = (error ?? {}) as DashboardError;
+
+				if (response?.status !== 401 && !(response?.status === 400 && errors?.[0]?.message?.includes('The refresh token is required'))) {
+					throw error;
+				}
+			}
+
+			if (sessionId === readAdminConfig(localStorage)?.sessionId) {
+				localStorage.removeItem(ADMIN_CONFIG_KEY);
+			}
+
+			this.finishLogout();
+		},
+		finishLogout () {
+			signedOut = true;
 			this.clearAdminConfig();
-			await $directus.logout();
-			probeStore.reset();
+			useHardwareProbeAdoption().reset();
 			this.$reset();
-			navigateTo('/login');
+			window.location.replace('/login');
 		},
 		async refresh () {
 			const { $directus } = useNuxtApp();
@@ -194,24 +224,49 @@ export const useAuth = defineStore('auth', {
 					$directus.request(readItems('gp_orgs', { filter: { members: { role: { _eq: 'admin' } } }, limit: 100 })),
 					readSessionActiveId(),
 				]);
+
+				if (signedOut) {
+					return;
+				}
+
+				const isAdmin = roles.some(role => role.name === 'Administrator');
+				const previousUserId = this.impersonation?.originalUser.id ?? this.user.id;
+				const keepContext = this.isLoggedIn && this.isAdmin === isAdmin && previousUserId === user.id;
 				this.user = toUser(user as DirectusUser);
 				this.user.memberships = withOrgAdoptionTokens(this.user.memberships, adminOrgs);
-				this.isAdmin = !!roles.some(role => role.name === 'Administrator');
+				this.isAdmin = isAdmin;
 				this.expiresAt = Number(expires_at);
 
-				if (this.isAdmin) {
-					this.applyAdminConfig();
+				if (isAdmin && !keepContext) {
+					if (!await this.applyAdminConfig()) {
+						return;
+					}
+				} else if (isAdmin) {
+					this.user = this.impersonation?.impersonatedUser ?? this.user;
+				} else {
+					this.clearAdminConfig();
+					this.adminMode = false;
+					this.impersonation = null;
+				}
+
+				if (signedOut) {
+					return;
 				}
 
 				// For a Directus admin `adminOrgs` are all orgs, so the orgs of a Directus admin (or of the impersonated user) are read by id.
 				if (this.isAdmin) {
 					const adminOrgIds = this.user.memberships.filter(({ role }) => role === 'admin').map(({ org }) => org.id);
 					const userOrgs = adminOrgIds.length ? await $directus.request(readItems('gp_orgs', { filter: { id: { _in: adminOrgIds } } })) : [];
+
+					if (signedOut) {
+						return;
+					}
+
 					this.user.memberships = withOrgAdoptionTokens(this.user.memberships, userOrgs);
 				}
 
-				await useAccount().loadActiveAccount(sessionActiveId);
-				this.isLoggedIn = true;
+				await useAccount().loadActiveAccount(sessionActiveId, !keepContext);
+				this.isLoggedIn = !signedOut;
 			} catch (error) {
 				console.error(error);
 			}

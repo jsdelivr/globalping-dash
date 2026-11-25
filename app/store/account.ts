@@ -2,15 +2,6 @@ import { customEndpoint, updateItem, updateUser } from '@directus/sdk';
 import { defineStore } from 'pinia';
 import { useAuth } from '~/store/auth';
 
-const IMPERSONATION_KEY = 'impersonationActiveAccount';
-
-const readImpersonationActiveId = () => {
-	const [ userId, accountId ] = (sessionStorage.getItem(IMPERSONATION_KEY) ?? '').split(':');
-	return userId === useAuth().user.id && accountId ? accountId : null;
-};
-
-export const clearImpersonationActiveId = () => sessionStorage.removeItem(IMPERSONATION_KEY);
-
 export const readSessionActiveId = async () => {
 	const { $directus } = useNuxtApp();
 	const { accountId } = await $directus.request<{ accountId: string }>(customEndpoint({ path: '/accounts/active' }));
@@ -96,7 +87,7 @@ export const useAccount = defineStore('account', {
 		},
 	},
 	actions: {
-		async loadActiveAccount (sessionActiveId: string) {
+		async loadActiveAccount (sessionActiveId: string, contextChanged: boolean) {
 			const { adminMode, impersonation, isLoggedIn } = useAuth();
 
 			if (adminMode) {
@@ -104,11 +95,11 @@ export const useAccount = defineStore('account', {
 				return;
 			}
 
-			if (isLoggedIn) {
+			if (isLoggedIn && !contextChanged) {
 				return;
 			}
 
-			const accountId = impersonation ? readImpersonationActiveId() : sessionActiveId;
+			const accountId = impersonation ? impersonation.accountId : sessionActiveId;
 			const offered = this.selectedOrgs.map(({ org }) => org.account);
 			this.activeId = accountId && offered.includes(accountId) ? accountId : null;
 
@@ -123,15 +114,15 @@ export const useAccount = defineStore('account', {
 				return;
 			}
 
-			const { impersonation, user } = useAuth();
+			const auth = useAuth();
 			const id = accountId ?? this.personal.id;
 
-			if (impersonation) {
-				sessionStorage.setItem(IMPERSONATION_KEY, `${user.id}:${id}`);
-			} else {
-				await storeSessionActiveId(id);
+			if (auth.impersonation) {
+				auth.setAdminConfig(false, auth.user.id, id);
+				return;
 			}
 
+			await storeSessionActiveId(id);
 			window.location.reload();
 		},
 		async setPublicProbes (publicProbes: boolean) {

@@ -256,18 +256,27 @@
 	// HANDLE CREDITS
 	const { data: probeCreditsPerMonth, error: creditsError } = await useAsyncData(
 		probeCreditsKey,
-		() => $directus.request<{ sum: { amount: number }; adopted_probe: string }[]>(aggregate('gp_credits_additions', {
-			query: {
-				filter: {
-					...!auth.adminMode && { github_id: { _eq: probeOwnerGithubId.value } },
-					adopted_probe: { _eq: probeDetails?.value?.id },
-					date_created: { _gte: '$NOW(-30 day)' },
+		async () => {
+			const id = probeDetails.value?.id;
+			const githubId = probeOwnerGithubId.value;
+
+			if (!id || (!auth.adminMode && !githubId)) {
+				return [];
+			}
+
+			return $directus.request<{ sum: { amount: number }; adopted_probe: string }[]>(aggregate('gp_credits_additions', {
+				query: {
+					filter: {
+						...!auth.adminMode && { github_id: { _eq: githubId } },
+						adopted_probe: { _eq: id },
+						date_created: { _gte: '$NOW(-30 day)' },
+					},
 				},
-			},
-			groupBy: [ 'adopted_probe' ],
-			aggregate: { sum: 'amount' },
-		})),
-		{ watch: [ probeDetails ], transform: data => data[0]?.sum.amount ?? 0 },
+				groupBy: [ 'adopted_probe' ],
+				aggregate: { sum: 'amount' },
+			}));
+		},
+		{ watch: [ probeDetails, probeOwnerGithubId ], transform: data => data[0]?.sum.amount ?? 0 },
 	);
 
 	useErrorToast(creditsError);

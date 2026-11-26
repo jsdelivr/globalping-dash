@@ -3,7 +3,7 @@
 		<p class="text-sm font-semibold">Admin mode</p>
 		<div class="flex items-center justify-between gap-2">
 			<p>Show data of all users.</p>
-			<ToggleSwitch v-model="auth.adminMode"/>
+			<ToggleSwitch :model-value="auth.adminMode" @update:model-value="auth.setAdminConfig"/>
 		</div>
 		<Divider class="!my-0"/>
 		<p class="text-sm font-semibold">User impersonation</p>
@@ -54,27 +54,18 @@
 
 <script setup lang="ts">
 	import { readUsers } from '@directus/sdk';
-	import { MEMBERSHIP_FIELDS, useAuth } from '~/store/auth';
+	import { useAuth } from '~/store/auth';
+
+	type ImpersonationCandidate = Pick<DirectusUser, 'id' | 'first_name' | 'last_name' | 'github_username'>;
 
 	const auth = useAuth();
-	const { adminMode, impersonation } = storeToRefs(auth);
+	const { impersonation } = storeToRefs(auth);
 	const { $directus } = useNuxtApp();
 
 	const impersonateUsername = ref(auth.impersonation?.github_username || '');
 	const impersonationError = ref('');
 	const impersonationLoading = ref(false);
-	const impersonationList = ref<DirectusUser[]>([]);
-
-	// ADMIN
-	watch([ adminMode ], () => {
-		if (adminMode.value) {
-			impersonateUsername.value = '';
-			impersonation.value = null;
-		}
-
-		auth.storeAdminConfig();
-		window.location.reload();
-	});
+	const impersonationList = ref<ImpersonationCandidate[]>([]);
 
 	const checkImpersonation = async () => {
 		impersonationError.value = '';
@@ -94,14 +85,14 @@
 				filter: {
 					github_username: { _eq: impersonateUsername.value },
 				},
-				fields: [ '*', { memberships: MEMBERSHIP_FIELDS }],
+				fields: [ 'id', 'first_name', 'last_name', 'github_username' ],
 			}));
 
 			if (!users.length) {
 				throw new Error('User not found');
 			}
 
-			impersonationList.value = users as (DirectusUser & { github_username: string })[];
+			impersonationList.value = users;
 
 			if (impersonationList.value.length === 1) {
 				applyImpersonation(impersonationList.value[0]!);
@@ -114,7 +105,7 @@
 		}
 	};
 
-	const applyImpersonation = (user: DirectusUser) => {
+	const applyImpersonation = (user: ImpersonationCandidate) => {
 		auth.impersonate(user);
 	};
 

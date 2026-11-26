@@ -26,7 +26,7 @@
 				<p v-if="errors.recipient" class="text-sm text-red-500">{{ errors.recipient }}</p>
 
 				<div v-if="recipient" class="mt-2 flex items-center gap-3 rounded-lg border bg-surface-50 p-3 dark:bg-dark-700">
-					<img :src="recipient.avatarUrl" class="size-12 rounded-full" alt="">
+					<AccountAvatar :github-id="recipient.githubId" icon="pi pi-github" class="size-12 rounded-full text-2xl text-bluegray-400"/>
 					<div class="min-w-0 grow">
 						<a v-if="recipient.dashboardAccount" :href="recipient.profileUrl" target="_blank" rel="noopener" class="font-bold text-inherit underline transition-none hover:text-inherit">@{{ recipient.login }}</a>
 						<span v-else class="font-bold">@{{ recipient.login }}</span>
@@ -174,13 +174,12 @@
 	import { minDelay } from '~/utils/min-delay';
 	import { sendErrorToast, sendToast } from '~/utils/send-toast';
 
-	type GithubUser = { id: number; login: string; avatar_url: string; html_url: string };
+	type GithubUser = { id: number; login: string; html_url: string };
 	type RedirectTarget = { githubId: string; githubLogin: string; dashboardAccount: string | null };
 
 	type Recipient = {
 		githubId: string;
 		login: string;
-		avatarUrl: string;
 		profileUrl: string;
 		dashboardAccount: string | null;
 		// undefined means the lookup failed; null confirms there is no redirect.
@@ -284,7 +283,6 @@
 				return {
 					githubId: String(githubUser.id),
 					login: githubUser.login,
-					avatarUrl: githubUser.avatar_url,
 					profileUrl: githubUser.html_url,
 					dashboardAccount: dashboardUser?.github_username || dashboardUser?.id || dashboardOrg?.name || null,
 					redirectTarget,

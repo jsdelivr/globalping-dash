@@ -4,7 +4,7 @@
 			v-if="githubId && /^\d+$/.test(githubId) && failedId !== githubId"
 			:key="githubId"
 			ref="image"
-			:src="`${config.public.gpSiteUrl}/github-logo/${avatarId}?size=80`"
+			:src="`${config.public.gpSiteUrl}/avatar/github/${avatarId}?size=80`"
 			class="size-full object-cover"
 			alt=""
 			@error="onImageError"
